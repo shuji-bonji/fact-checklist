@@ -41,10 +41,7 @@
 		}
 	}
 
-	function updateExportOption<K extends keyof ExportOptions>(
-		key: K, 
-		value: ExportOptions[K]
-	) {
+	function updateExportOption<K extends keyof ExportOptions>(key: K, value: ExportOptions[K]) {
 		exportOptions[key] = value;
 	}
 
@@ -77,7 +74,7 @@
 
 		// 動的インポートでjsPDFを読み込み
 		const { default: jsPDF } = await import('jspdf');
-		
+
 		const doc = new jsPDF();
 		const pageWidth = doc.internal.pageSize.width;
 		const margin = 20;
@@ -102,7 +99,11 @@
 		yPosition += 10;
 
 		doc.setFontSize(10);
-		doc.text(`総合スコア: ${checklist.score.total}/${checklist.score.maxScore} (${checklist.confidenceLevel}%)`, margin, yPosition);
+		doc.text(
+			`総合スコア: ${checklist.score.total}/${checklist.score.maxScore} (${checklist.confidenceLevel}%)`,
+			margin,
+			yPosition
+		);
 		yPosition += 8;
 		doc.text(`信頼度: ${checklist.confidenceText}`, margin, yPosition);
 		yPosition += 8;
@@ -116,7 +117,8 @@
 
 		doc.setFontSize(9);
 		checklist.items.forEach(item => {
-			if (yPosition > 280) { // 改ページチェック
+			if (yPosition > 280) {
+				// 改ページチェック
 				doc.addPage();
 				yPosition = margin;
 			}
@@ -133,11 +135,11 @@
 				doc.addPage();
 				yPosition = margin;
 			}
-			
+
 			doc.setFontSize(12);
 			doc.text('評価メモ', margin, yPosition);
 			yPosition += 10;
-			
+
 			doc.setFontSize(9);
 			const noteLines = doc.splitTextToSize(checklist.notes, pageWidth - 2 * margin);
 			doc.text(noteLines, margin, yPosition);
@@ -164,8 +166,8 @@
 			exportOptions
 		};
 
-		const blob = new Blob([JSON.stringify(exportData, null, 2)], { 
-			type: 'application/json;charset=utf-8' 
+		const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+			type: 'application/json;charset=utf-8'
 		});
 		downloadBlob(blob, `${checklist.title}_データ.json`);
 	}
@@ -212,30 +214,42 @@
 
 	<div class="check-section">
 		<h2>チェック済み項目 (${checkedItems.length}件)</h2>
-		${checkedItems.map(item => `
+		${checkedItems
+			.map(
+				item => `
 			<div class="check-item checked">
 				<strong>✅ ${item.title}</strong>
 				<p>${item.description}</p>
 			</div>
-		`).join('')}
+		`
+			)
+			.join('')}
 	</div>
 
 	<div class="check-section">
 		<h2>未チェック項目 (${uncheckedItems.length}件)</h2>
-		${uncheckedItems.map(item => `
+		${uncheckedItems
+			.map(
+				item => `
 			<div class="check-item unchecked">
 				<strong>❌ ${item.title}</strong>
 				<p>${item.description}</p>
 			</div>
-		`).join('')}
+		`
+			)
+			.join('')}
 	</div>
 
-	${exportOptions.includeNotes && checklist.notes ? `
+	${
+		exportOptions.includeNotes && checklist.notes
+			? `
 		<div class="notes">
 			<h2>評価メモ</h2>
 			<p>${checklist.notes.replace(/\n/g, '<br>')}</p>
 		</div>
-	` : ''}
+	`
+			: ''
+	}
 
 	<div class="footer" style="margin-top: 40px; text-align: center; color: #666; border-top: 1px solid #ddd; padding-top: 20px;">
 		<p>実用的事実確認チェックシートによる評価 - ${new Date().toLocaleDateString('ja-JP')}</p>
@@ -258,18 +272,23 @@
 
 	function getJudgmentText(judgment: string | null): string {
 		switch (judgment) {
-			case 'accept': return '採用';
-			case 'caution': return '要注意';
-			case 'reject': return '不採用';
-			default: return '未判定';
+			case 'accept':
+				return '採用';
+			case 'caution':
+				return '要注意';
+			case 'reject':
+				return '不採用';
+			default:
+				return '未判定';
 		}
 	}
 
 	async function shareViaEmail() {
 		if (!checklist) return;
-		
+
 		const subject = encodeURIComponent(`事実確認評価結果: ${checklist.title}`);
-		const body = encodeURIComponent(`
+		const body = encodeURIComponent(
+			`
 評価結果をお送りします。
 
 タイトル: ${checklist.title}
@@ -278,8 +297,9 @@
 最終判定: ${getJudgmentText(checklist.judgment)}
 
 詳細は添付ファイルをご確認ください。
-		`.trim());
-		
+		`.trim()
+		);
+
 		window.open(`mailto:?subject=${subject}&body=${body}`);
 	}
 
@@ -311,20 +331,24 @@ ${checklist.notes ? `評価メモ:\n${checklist.notes}` : ''}
 	}
 </script>
 
-<div 
-	class="modal-backdrop" 
+<div
+	class="modal-backdrop"
 	bind:this={modalElement}
 	onclick={handleBackdropClick}
-	role="dialog" 
+	onkeydown={e => {
+		if (e.key === 'Escape') {
+			onClose();
+		}
+	}}
+	role="dialog"
 	aria-modal="true"
 	aria-labelledby="modal-title"
+	tabindex="-1"
 >
 	<div class="modal-content">
 		<div class="modal-header">
 			<h2 id="modal-title">📄 エクスポート・共有</h2>
-			<button class="close-btn" onclick={onClose} aria-label="閉じる">
-				✕
-			</button>
+			<button class="close-btn" onclick={onClose} aria-label="閉じる"> ✕ </button>
 		</div>
 
 		<div class="modal-body">
@@ -333,9 +357,9 @@ ${checklist.notes ? `評価メモ:\n${checklist.notes}` : ''}
 				<h3>出力形式</h3>
 				<div class="format-options">
 					<label class="radio-option">
-						<input 
-							type="radio" 
-							name="format" 
+						<input
+							type="radio"
+							name="format"
 							value="pdf"
 							checked={exportOptions.format === 'pdf'}
 							onchange={() => updateExportOption('format', 'pdf')}
@@ -343,11 +367,11 @@ ${checklist.notes ? `評価メモ:\n${checklist.notes}` : ''}
 						<span>📄 PDF</span>
 						<small>印刷・共有に最適</small>
 					</label>
-					
+
 					<label class="radio-option">
-						<input 
-							type="radio" 
-							name="format" 
+						<input
+							type="radio"
+							name="format"
 							value="html"
 							checked={exportOptions.format === 'html'}
 							onchange={() => updateExportOption('format', 'html')}
@@ -355,11 +379,11 @@ ${checklist.notes ? `評価メモ:\n${checklist.notes}` : ''}
 						<span>🌐 HTML</span>
 						<small>ブラウザで表示可能</small>
 					</label>
-					
+
 					<label class="radio-option">
-						<input 
-							type="radio" 
-							name="format" 
+						<input
+							type="radio"
+							name="format"
 							value="json"
 							checked={exportOptions.format === 'json'}
 							onchange={() => updateExportOption('format', 'json')}
@@ -375,19 +399,21 @@ ${checklist.notes ? `評価メモ:\n${checklist.notes}` : ''}
 				<h3>含める内容</h3>
 				<div class="checkbox-options">
 					<label class="checkbox-option">
-						<input 
-							type="checkbox" 
+						<input
+							type="checkbox"
 							checked={exportOptions.includeGuides}
-							onchange={(e) => updateExportOption('includeGuides', (e.target as HTMLInputElement).checked)}
+							onchange={e =>
+								updateExportOption('includeGuides', (e.target as HTMLInputElement).checked)}
 						/>
 						<span>📖 ガイド情報を含める</span>
 					</label>
-					
+
 					<label class="checkbox-option">
-						<input 
-							type="checkbox" 
+						<input
+							type="checkbox"
 							checked={exportOptions.includeNotes}
-							onchange={(e) => updateExportOption('includeNotes', (e.target as HTMLInputElement).checked)}
+							onchange={e =>
+								updateExportOption('includeNotes', (e.target as HTMLInputElement).checked)}
 						/>
 						<span>📝 評価メモを含める</span>
 					</label>
@@ -396,31 +422,19 @@ ${checklist.notes ? `評価メモ:\n${checklist.notes}` : ''}
 
 			<!-- アクションボタン -->
 			<div class="action-buttons">
-				<button 
-					class="btn btn-primary"
-					onclick={exportChecklist}
-					disabled={isExporting}
-				>
+				<button class="btn btn-primary" onclick={exportChecklist} disabled={isExporting}>
 					{#if isExporting}
 						⏳ エクスポート中...
 					{:else}
 						📥 ダウンロード
 					{/if}
 				</button>
-				
-				<button 
-					class="btn btn-secondary"
-					onclick={shareViaEmail}
-					disabled={isExporting}
-				>
+
+				<button class="btn btn-secondary" onclick={shareViaEmail} disabled={isExporting}>
 					📧 メール共有
 				</button>
-				
-				<button 
-					class="btn btn-secondary"
-					onclick={copyToClipboard}
-					disabled={isExporting}
-				>
+
+				<button class="btn btn-secondary" onclick={copyToClipboard} disabled={isExporting}>
 					📋 コピー
 				</button>
 			</div>
@@ -520,7 +534,7 @@ ${checklist.notes ? `評価メモ:\n${checklist.notes}` : ''}
 		border-color: var(--secondary-color);
 	}
 
-	.radio-option input[type="radio"] {
+	.radio-option input[type='radio'] {
 		margin: 0;
 		accent-color: var(--secondary-color);
 	}
@@ -550,7 +564,7 @@ ${checklist.notes ? `評価メモ:\n${checklist.notes}` : ''}
 		padding: var(--spacing-xs) 0;
 	}
 
-	.checkbox-option input[type="checkbox"] {
+	.checkbox-option input[type='checkbox'] {
 		margin: 0;
 		accent-color: var(--secondary-color);
 	}
