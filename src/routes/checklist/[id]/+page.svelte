@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import { base } from '$app/paths';
 	import { checklistStore } from '$lib/stores/checklistStore.svelte.js';
 	import { CATEGORIES } from '$lib/data/checklist-items.js';
 	import type { ChecklistResult, JudgmentType } from '$lib/types/checklist.js';
@@ -25,7 +26,7 @@
 
 	function loadChecklist() {
 		if (!checklistId) {
-			goto('/');
+			goto(base || '/');
 			return;
 		}
 
@@ -34,19 +35,19 @@
 			checklist = checklistStore.currentChecklist;
 		} else {
 			// チェックリストが見つからない場合はホームに戻る
-			goto('/');
+			goto(base || '/');
 			return;
 		}
 		loading = false;
 	}
 
 	function editChecklist() {
-		goto(`/?id=${checklistId}`);
+		goto(`${base}/?id=${checklistId}`);
 	}
 
 	function createNewChecklist() {
 		const id = checklistStore.createNewChecklist();
-		goto(`/?id=${id}`);
+		goto(`${base}/?id=${id}`);
 	}
 
 	function getJudgmentDisplay(judgment: JudgmentType) {
@@ -332,7 +333,7 @@
 	<div class="error-container">
 		<h1>❌ チェックリストが見つかりません</h1>
 		<p>指定されたチェックリストは存在しないか、削除された可能性があります。</p>
-		<button class="btn btn-primary" onclick={() => goto('/')}> 🏠 ホームに戻る </button>
+		<button class="btn btn-primary" onclick={() => goto(base || '/')}> 🏠 ホームに戻る </button>
 	</div>
 {/if}
 

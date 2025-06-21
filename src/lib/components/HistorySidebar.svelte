@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { base } from '$app/paths';
 	import { checklistStore } from '$lib/stores/checklistStore.svelte.js';
 	import type { ChecklistHistoryItem, JudgmentType } from '$lib/types/checklist.js';
 
@@ -13,7 +14,7 @@
 	);
 
 	function loadHistoryItem(item: ChecklistHistoryItem) {
-		goto(`/checklist/${item.id}`);
+		goto(`${base}/checklist/${item.id}`);
 	}
 
 	function deleteHistoryItem(item: ChecklistHistoryItem, event: Event) {
@@ -29,7 +30,7 @@
 
 	function createNewChecklist() {
 		const id = checklistStore.createNewChecklist();
-		goto(`/?id=${id}`);
+		goto(`${base}/?id=${id}`);
 	}
 
 	// 判定タイプに応じたアイコンとスタイル
@@ -68,10 +69,7 @@
 <div class="history-sidebar">
 	<!-- 新規作成ボタン -->
 	<div class="new-checklist card">
-		<button 
-			class="btn btn-primary w-full"
-			onclick={createNewChecklist}
-		>
+		<button class="btn btn-primary w-full" onclick={createNewChecklist}>
 			➕ 新しいチェックリスト
 		</button>
 	</div>
@@ -81,10 +79,7 @@
 		<div class="history-header">
 			<h3>📚 評価履歴</h3>
 			{#if history.length > 5}
-				<button 
-					class="toggle-view-btn"
-					onclick={toggleHistoryView}
-				>
+				<button class="toggle-view-btn" onclick={toggleHistoryView}>
 					{showAllHistory ? '最新5件' : '全て表示'}
 				</button>
 			{/if}
@@ -98,12 +93,12 @@
 		{:else}
 			<div class="history-list">
 				{#each displayedHistory as item (item.id)}
-					<div 
+					<div
 						class="history-item"
 						onclick={() => loadHistoryItem(item)}
 						role="button"
 						tabindex="0"
-						onkeydown={(e) => {
+						onkeydown={e => {
 							if (e.key === 'Enter' || e.key === ' ') {
 								e.preventDefault();
 								loadHistoryItem(item);
@@ -114,16 +109,16 @@
 							<div class="item-title" title={item.title}>
 								{item.title}
 							</div>
-							<button 
+							<button
 								class="delete-btn"
-								onclick={(e) => deleteHistoryItem(item, e)}
+								onclick={e => deleteHistoryItem(item, e)}
 								title="削除"
 								aria-label="履歴から削除"
 							>
 								🗑️
 							</button>
 						</div>
-						
+
 						<div class="item-meta">
 							<div class="completion-date">
 								{formatDate(item.completedAt)}
@@ -132,13 +127,13 @@
 								スコア: {item.score.total}/{item.score.maxScore}
 							</div>
 						</div>
-						
+
 						<div class="item-status">
 							<div class="confidence-indicator {getConfidenceClass(item.confidenceLevel)}">
 								{item.confidenceLevel}%
 							</div>
 							<div class="judgment-indicator {getJudgmentDisplay(item.judgment).class}">
-								{getJudgmentDisplay(item.judgment).icon} 
+								{getJudgmentDisplay(item.judgment).icon}
 								{getJudgmentDisplay(item.judgment).text}
 							</div>
 						</div>
@@ -331,10 +326,22 @@
 		min-width: 45px;
 	}
 
-	.confidence-indicator.high { background: #e8f5e8; color: #2e7d32; }
-	.confidence-indicator.medium { background: #fff3e0; color: #ef6c00; }
-	.confidence-indicator.low { background: #ffebee; color: #c62828; }
-	.confidence-indicator.very-low { background: #ffebee; color: #c62828; }
+	.confidence-indicator.high {
+		background: #e8f5e8;
+		color: #2e7d32;
+	}
+	.confidence-indicator.medium {
+		background: #fff3e0;
+		color: #ef6c00;
+	}
+	.confidence-indicator.low {
+		background: #ffebee;
+		color: #c62828;
+	}
+	.confidence-indicator.very-low {
+		background: #ffebee;
+		color: #c62828;
+	}
 
 	.judgment-indicator {
 		padding: 2px 6px;
@@ -344,10 +351,22 @@
 		text-align: center;
 	}
 
-	.judgment-indicator.accept { background: #e8f5e8; color: #2e7d32; }
-	.judgment-indicator.caution { background: #fff3e0; color: #ef6c00; }
-	.judgment-indicator.reject { background: #ffebee; color: #c62828; }
-	.judgment-indicator.unknown { background: var(--surface-color); color: var(--text-muted); }
+	.judgment-indicator.accept {
+		background: #e8f5e8;
+		color: #2e7d32;
+	}
+	.judgment-indicator.caution {
+		background: #fff3e0;
+		color: #ef6c00;
+	}
+	.judgment-indicator.reject {
+		background: #ffebee;
+		color: #c62828;
+	}
+	.judgment-indicator.unknown {
+		background: var(--surface-color);
+		color: var(--text-muted);
+	}
 
 	/* レスポンシブ対応 */
 	@media (max-width: 768px) {

@@ -10,7 +10,7 @@ export default defineConfig({
 			workbox: {
 				globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2}']
 			},
-			includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'pwa-192x192.png'],
+			includeAssets: ['favicon.png'],
 			manifest: {
 				name: '実用的事実確認チェックシート',
 				short_name: 'FactCheckList',
@@ -60,5 +60,6 @@ export default defineConfig({
 	},
 	build: {
 		target: 'es2022'
-	}
+	},
+	base: process.env.NODE_ENV === 'production' && process.env.GITHUB_PAGES === 'true' ? '/fact-checklist/' : '/'
 });

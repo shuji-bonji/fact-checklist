@@ -36,7 +36,7 @@ const config = {
 		
 		// ルーティング設定
 		paths: {
-			base: process.env.NODE_ENV === 'production' ? '/fact-checklist' : ''
+			base: process.env.NODE_ENV === 'production' && process.env.GITHUB_PAGES === 'true' ? '/fact-checklist' : ''
 		}
 	}
 };

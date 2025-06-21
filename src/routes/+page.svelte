@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
+	import { base } from '$app/paths';
 	import { checklistStore } from '$lib/stores/checklistStore.svelte.js';
 	import { CATEGORIES } from '$lib/data/checklist-items.js';
 	import type { JudgmentType } from '$lib/types/checklist.js';
@@ -96,7 +97,7 @@
 	function completeChecklist() {
 		if (checklistStore.completeChecklist()) {
 			// 完了ページにリダイレクト
-			goto(`/checklist/${currentChecklist?.id}?completed=true`);
+			goto(`${base}/checklist/${currentChecklist?.id}?completed=true`);
 		}
 	}
 
