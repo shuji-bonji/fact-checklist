@@ -5,7 +5,7 @@
 	import { checklistStore } from '$lib/stores/checklistStore.svelte.js';
 	import { CATEGORIES } from '$lib/data/checklist-items.js';
 	import type { ChecklistResult, JudgmentType } from '$lib/types/checklist.js';
-	
+
 	import ExportModal from '$lib/components/ExportModal.svelte';
 
 	// State
@@ -112,7 +112,7 @@
 				{#if checklist.description}
 					<p class="description">{checklist.description}</p>
 				{/if}
-				
+
 				<div class="meta-info">
 					<span class="meta-item">
 						📅 作成: {checklist.createdAt.toLocaleDateString('ja-JP')}
@@ -127,17 +127,13 @@
 					</span>
 				</div>
 			</div>
-			
+
 			<div class="header-actions">
-				<button class="btn btn-secondary" onclick={editChecklist}>
-					✏️ 編集
-				</button>
-				<button class="btn btn-primary" onclick={() => showExportModal = true}>
+				<button class="btn btn-secondary" onclick={editChecklist}> ✏️ 編集 </button>
+				<button class="btn btn-primary" onclick={() => (showExportModal = true)}>
 					📄 エクスポート
 				</button>
-				<button class="btn btn-success" onclick={createNewChecklist}>
-					➕ 新規作成
-				</button>
+				<button class="btn btn-success" onclick={createNewChecklist}> ➕ 新規作成 </button>
 			</div>
 		</header>
 
@@ -147,7 +143,7 @@
 				<!-- スコアサマリー -->
 				<div class="score-summary card">
 					<h2>📊 評価結果</h2>
-					
+
 					<div class="score-grid">
 						<div class="score-card critical">
 							<div class="score-icon">🚨</div>
@@ -156,7 +152,7 @@
 								<div class="score-value">{checklist.score.critical}/6</div>
 							</div>
 						</div>
-						
+
 						<div class="score-card detailed">
 							<div class="score-icon">📝</div>
 							<div class="score-info">
@@ -164,7 +160,7 @@
 								<div class="score-value">{checklist.score.detailed}/6</div>
 							</div>
 						</div>
-						
+
 						<div class="score-card verification">
 							<div class="score-icon">🔍</div>
 							<div class="score-info">
@@ -172,7 +168,7 @@
 								<div class="score-value">{checklist.score.verification}/4</div>
 							</div>
 						</div>
-						
+
 						<div class="score-card context">
 							<div class="score-icon">🌐</div>
 							<div class="score-info">
@@ -187,10 +183,10 @@
 							<span class="total-label">総合スコア</span>
 							<span class="total-value">{checklist.score.total}/{checklist.score.maxScore}</span>
 						</div>
-						
+
 						<div class="confidence-display">
 							<div class="confidence-meter">
-								<div 
+								<div
 									class="confidence-bar {getConfidenceClass(checklist.confidenceLevel)}"
 									style="width: {checklist.confidenceLevel}%"
 								></div>
@@ -204,7 +200,9 @@
 					{#if checklist.judgment}
 						<div class="final-judgment {getJudgmentDisplay(checklist.judgment).class}">
 							<span class="judgment-icon">{getJudgmentDisplay(checklist.judgment).icon}</span>
-							<span class="judgment-text">最終判定: {getJudgmentDisplay(checklist.judgment).text}</span>
+							<span class="judgment-text"
+								>最終判定: {getJudgmentDisplay(checklist.judgment).text}</span
+							>
 						</div>
 					{/if}
 				</div>
@@ -212,24 +210,27 @@
 				<!-- チェック項目詳細 -->
 				<div class="items-detail card">
 					<h2>📋 チェック項目詳細</h2>
-					
+
 					{#each CATEGORIES as category (category.id)}
-						{@const categoryItems = checklist.items.filter(item => item.category.id === category.id)}
+						{@const categoryItems = checklist.items.filter(
+							item => item.category.id === category.id
+						)}
 						{@const checkedCount = categoryItems.filter(item => item.checked).length}
-						
+
 						<div class="category-section">
 							<div class="category-header {category.id}">
 								<span class="category-title">
-									{category.emoji} {category.name}
+									{category.emoji}
+									{category.name}
 								</span>
 								<span class="category-score">
 									{checkedCount}/{categoryItems.length}
 								</span>
 							</div>
-							
+
 							<div class="category-items">
 								{#each categoryItems as item, index (item.id)}
-									<div 
+									<div
 										class="item-row {item.checked ? 'checked' : 'unchecked'}"
 										style="animation-delay: {getItemDelay(index)}"
 									>
@@ -265,7 +266,7 @@
 					<div class="advice-content">
 						{checklist.judgmentAdvice}
 					</div>
-					
+
 					{#if checklist.confidenceLevel < 60}
 						<div class="improvement-tips">
 							<h4>信頼性向上のために:</h4>
@@ -298,7 +299,9 @@
 						<div class="stat-item">
 							<span class="stat-label">完了率</span>
 							<span class="stat-value">
-								{Math.round((checklist.items.filter(i => i.checked).length / checklist.items.length) * 100)}%
+								{Math.round(
+									(checklist.items.filter(i => i.checked).length / checklist.items.length) * 100
+								)}%
 							</span>
 						</div>
 					</div>
@@ -308,12 +311,10 @@
 				<div class="action-panel card">
 					<h3>🔧 アクション</h3>
 					<div class="action-buttons">
-						<button class="btn btn-primary w-full" onclick={() => showExportModal = true}>
+						<button class="btn btn-primary w-full" onclick={() => (showExportModal = true)}>
 							📄 エクスポート・共有
 						</button>
-						<button class="btn btn-secondary w-full" onclick={editChecklist}>
-							✏️ 再編集
-						</button>
+						<button class="btn btn-secondary w-full" onclick={editChecklist}> ✏️ 再編集 </button>
 						<button class="btn btn-success w-full" onclick={createNewChecklist}>
 							➕ 新しいチェックリスト
 						</button>
@@ -325,18 +326,13 @@
 
 	<!-- エクスポートモーダル -->
 	{#if showExportModal}
-		<ExportModal 
-			{checklist}
-			onClose={() => showExportModal = false}
-		/>
+		<ExportModal {checklist} onClose={() => (showExportModal = false)} />
 	{/if}
 {:else}
 	<div class="error-container">
 		<h1>❌ チェックリストが見つかりません</h1>
 		<p>指定されたチェックリストは存在しないか、削除された可能性があります。</p>
-		<button class="btn btn-primary" onclick={() => goto('/')}>
-			🏠 ホームに戻る
-		</button>
+		<button class="btn btn-primary" onclick={() => goto('/')}> 🏠 ホームに戻る </button>
 	</div>
 {/if}
 
@@ -368,8 +364,12 @@
 	}
 
 	@keyframes spin {
-		0% { transform: rotate(0deg); }
-		100% { transform: rotate(360deg); }
+		0% {
+			transform: rotate(0deg);
+		}
+		100% {
+			transform: rotate(360deg);
+		}
 	}
 
 	/* 完了バナー */
@@ -459,7 +459,8 @@
 		margin-bottom: var(--spacing-md);
 	}
 
-	.card h2, .card h3 {
+	.card h2,
+	.card h3 {
 		margin: 0 0 var(--spacing-md) 0;
 		color: var(--text-color);
 	}
@@ -481,10 +482,22 @@
 		border-left: 4px solid;
 	}
 
-	.score-card.critical { border-left-color: #e74c3c; background: #fdf2f2; }
-	.score-card.detailed { border-left-color: #f39c12; background: #fefaf5; }
-	.score-card.verification { border-left-color: #3498db; background: #f4f9fd; }
-	.score-card.context { border-left-color: #9b59b6; background: #f8f4fd; }
+	.score-card.critical {
+		border-left-color: #e74c3c;
+		background: #fdf2f2;
+	}
+	.score-card.detailed {
+		border-left-color: #f39c12;
+		background: #fefaf5;
+	}
+	.score-card.verification {
+		border-left-color: #3498db;
+		background: #f4f9fd;
+	}
+	.score-card.context {
+		border-left-color: #9b59b6;
+		background: #f8f4fd;
+	}
 
 	.score-icon {
 		font-size: 1.5em;
@@ -541,10 +554,18 @@
 		transition: width 0.5s ease;
 	}
 
-	.confidence-bar.high { background: #27ae60; }
-	.confidence-bar.medium { background: #f39c12; }
-	.confidence-bar.low { background: #e67e22; }
-	.confidence-bar.very-low { background: #e74c3c; }
+	.confidence-bar.high {
+		background: #27ae60;
+	}
+	.confidence-bar.medium {
+		background: #f39c12;
+	}
+	.confidence-bar.low {
+		background: #e67e22;
+	}
+	.confidence-bar.very-low {
+		background: #e74c3c;
+	}
 
 	.confidence-text {
 		text-align: center;
@@ -562,10 +583,22 @@
 		font-weight: 600;
 	}
 
-	.final-judgment.accept { background: #e8f5e8; color: #2e7d32; }
-	.final-judgment.caution { background: #fff3e0; color: #ef6c00; }
-	.final-judgment.reject { background: #ffebee; color: #c62828; }
-	.final-judgment.unknown { background: var(--surface-color); color: var(--text-muted); }
+	.final-judgment.accept {
+		background: #e8f5e8;
+		color: #2e7d32;
+	}
+	.final-judgment.caution {
+		background: #fff3e0;
+		color: #ef6c00;
+	}
+	.final-judgment.reject {
+		background: #ffebee;
+		color: #c62828;
+	}
+	.final-judgment.unknown {
+		background: var(--surface-color);
+		color: var(--text-muted);
+	}
 
 	/* カテゴリセクション */
 	.category-section {
@@ -583,10 +616,18 @@
 		font-weight: 600;
 	}
 
-	.category-header.critical { background: linear-gradient(135deg, #e74c3c, #c0392b); }
-	.category-header.detailed { background: linear-gradient(135deg, #f39c12, #e67e22); }
-	.category-header.verification { background: linear-gradient(135deg, #3498db, #2980b9); }
-	.category-header.context { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+	.category-header.critical {
+		background: linear-gradient(135deg, #e74c3c, #c0392b);
+	}
+	.category-header.detailed {
+		background: linear-gradient(135deg, #f39c12, #e67e22);
+	}
+	.category-header.verification {
+		background: linear-gradient(135deg, #3498db, #2980b9);
+	}
+	.category-header.context {
+		background: linear-gradient(135deg, #9b59b6, #8e44ad);
+	}
 
 	.category-items {
 		display: flex;
@@ -605,7 +646,7 @@
 
 	.item-row.checked {
 		background: #f8fff8;
-		border-left: 3px solid #4CAF50;
+		border-left: 3px solid #4caf50;
 	}
 
 	.item-row.unchecked {
@@ -719,18 +760,29 @@
 		box-shadow: var(--shadow-hover);
 	}
 
-	.btn-primary { background: linear-gradient(135deg, var(--primary-color), #34495e); color: white; }
-	.btn-secondary { background: linear-gradient(135deg, var(--secondary-color), #2980b9); color: white; }
-	.btn-success { background: linear-gradient(135deg, var(--success-color), #229954); color: white; }
+	.btn-primary {
+		background: linear-gradient(135deg, var(--primary-color), #34495e);
+		color: white;
+	}
+	.btn-secondary {
+		background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+		color: white;
+	}
+	.btn-success {
+		background: linear-gradient(135deg, var(--success-color), #229954);
+		color: white;
+	}
 
-	.w-full { width: 100%; }
+	.w-full {
+		width: 100%;
+	}
 
 	/* レスポンシブ対応 */
 	@media (max-width: 1024px) {
 		.main-content {
 			grid-template-columns: 1fr;
 		}
-		
+
 		.sidebar {
 			position: static;
 			order: -1;
@@ -741,26 +793,26 @@
 		.container {
 			padding: 10px;
 		}
-		
+
 		.detail-header {
 			flex-direction: column;
 			align-items: stretch;
 			gap: var(--spacing-md);
 		}
-		
+
 		.header-actions {
 			justify-content: center;
 		}
-		
+
 		.score-grid {
 			grid-template-columns: 1fr;
 		}
-		
+
 		.meta-info {
 			flex-direction: column;
 			gap: var(--spacing-xs);
 		}
-		
+
 		.card {
 			padding: var(--spacing-md);
 		}
@@ -790,10 +842,15 @@
 	}
 
 	@keyframes bounce {
-		0%, 20%, 53%, 80%, 100% {
+		0%,
+		20%,
+		53%,
+		80%,
+		100% {
 			transform: translate3d(0, 0, 0);
 		}
-		40%, 43% {
+		40%,
+		43% {
 			transform: translate3d(0, -5px, 0);
 		}
 		70% {

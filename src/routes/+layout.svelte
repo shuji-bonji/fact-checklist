@@ -1,12 +1,22 @@
 <script lang="ts">
 	import '../app.css';
-	
+
 	// PWA設定
 	import { onMount } from 'svelte';
-	import { dev } from '$app/environment';
-	
+	import { dev, browser } from '$app/environment';
+
 	onMount(async () => {
-		if (!dev && 'serviceWorker' in navigator) {
+		// ローディング画面を確実に非表示にする（ブラウザ環境でのみ）
+		if (browser) {
+			document.body.classList.add('app-loaded');
+			const loadingElement = document.querySelector('.app-loading') as HTMLElement;
+			if (loadingElement) {
+				loadingElement.style.display = 'none';
+				console.log('Loading screen hidden from layout');
+			}
+		}
+
+		if (!dev && 'serviceWorker' in navigator && browser) {
 			try {
 				const registration = await navigator.serviceWorker.register('/service-worker.js');
 				console.log('Service Worker registered successfully:', registration);
@@ -20,27 +30,30 @@
 <svelte:head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<meta name="description" content="情報の信頼性を科学的・体系的に評価するための実用的事実確認チェックシート" />
+	<meta
+		name="description"
+		content="情報の信頼性を科学的・体系的に評価するための実用的事実確認チェックシート"
+	/>
 	<meta name="keywords" content="事実確認,ファクトチェック,情報検証,信頼性評価,PWA" />
 	<meta name="author" content="Fact Checklist Team" />
-	
+
 	<!-- PWA用メタタグ -->
 	<meta name="theme-color" content="#2c3e50" />
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta name="apple-mobile-web-app-status-bar-style" content="default" />
 	<meta name="apple-mobile-web-app-title" content="事実確認チェックシート" />
-	
+
 	<!-- Open Graph -->
 	<meta property="og:type" content="website" />
 	<meta property="og:title" content="実用的事実確認チェックシート" />
 	<meta property="og:description" content="情報の信頼性を科学的・体系的に評価するためのPWA" />
 	<meta property="og:locale" content="ja_JP" />
-	
+
 	<!-- アイコン -->
 	<link rel="icon" href="/favicon.ico" />
 	<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 	<link rel="manifest" href="/manifest.json" />
-	
+
 	<title>実用的事実確認チェックシート</title>
 </svelte:head>
 
@@ -52,7 +65,8 @@
 
 <style>
 	:global(html) {
-		font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', system-ui, sans-serif;
+		font-family:
+			'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', system-ui, sans-serif;
 		line-height: 1.6;
 		color-scheme: light dark;
 	}
@@ -82,8 +96,8 @@
 		--text-color: #2c3e50;
 		--text-muted: #7f8c8d;
 		--border-color: #e9ecef;
-		--shadow: 0 2px 10px rgba(0,0,0,0.1);
-		--shadow-hover: 0 5px 20px rgba(0,0,0,0.15);
+		--shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+		--shadow-hover: 0 5px 20px rgba(0, 0, 0, 0.15);
 		--border-radius: 12px;
 		--border-radius-sm: 6px;
 		--spacing-xs: 0.5rem;
@@ -100,8 +114,8 @@
 		--text-color: #f7fafc;
 		--text-muted: #a0aec0;
 		--border-color: #4a5568;
-		--shadow: 0 2px 10px rgba(0,0,0,0.3);
-		--shadow-hover: 0 5px 20px rgba(0,0,0,0.4);
+		--shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+		--shadow-hover: 0 5px 20px rgba(0, 0, 0, 0.4);
 	}
 
 	/* レスポンシブタイポグラフィ */
@@ -239,7 +253,7 @@
 		cursor: pointer;
 	}
 
-	:global(.checkbox-wrapper input[type="checkbox"]) {
+	:global(.checkbox-wrapper input[type='checkbox']) {
 		width: 18px;
 		height: 18px;
 		cursor: pointer;
@@ -276,20 +290,48 @@
 	}
 
 	/* ユーティリティクラス */
-	:global(.text-center) { text-align: center; }
-	:global(.text-left) { text-align: left; }
-	:global(.text-right) { text-align: right; }
-	:global(.font-bold) { font-weight: 700; }
-	:global(.font-medium) { font-weight: 500; }
-	:global(.text-muted) { color: var(--text-muted); }
-	:global(.mb-0) { margin-bottom: 0; }
-	:global(.mb-1) { margin-bottom: var(--spacing-xs); }
-	:global(.mb-2) { margin-bottom: var(--spacing-sm); }
-	:global(.mb-3) { margin-bottom: var(--spacing-md); }
-	:global(.mt-0) { margin-top: 0; }
-	:global(.mt-1) { margin-top: var(--spacing-xs); }
-	:global(.mt-2) { margin-top: var(--spacing-sm); }
-	:global(.mt-3) { margin-top: var(--spacing-md); }
+	:global(.text-center) {
+		text-align: center;
+	}
+	:global(.text-left) {
+		text-align: left;
+	}
+	:global(.text-right) {
+		text-align: right;
+	}
+	:global(.font-bold) {
+		font-weight: 700;
+	}
+	:global(.font-medium) {
+		font-weight: 500;
+	}
+	:global(.text-muted) {
+		color: var(--text-muted);
+	}
+	:global(.mb-0) {
+		margin-bottom: 0;
+	}
+	:global(.mb-1) {
+		margin-bottom: var(--spacing-xs);
+	}
+	:global(.mb-2) {
+		margin-bottom: var(--spacing-sm);
+	}
+	:global(.mb-3) {
+		margin-bottom: var(--spacing-md);
+	}
+	:global(.mt-0) {
+		margin-top: 0;
+	}
+	:global(.mt-1) {
+		margin-top: var(--spacing-xs);
+	}
+	:global(.mt-2) {
+		margin-top: var(--spacing-sm);
+	}
+	:global(.mt-3) {
+		margin-top: var(--spacing-md);
+	}
 
 	.app {
 		min-height: 100vh;

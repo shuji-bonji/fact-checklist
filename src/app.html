@@ -125,6 +125,12 @@
 				min-height: 100vh;
 				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 				color: white;
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				z-index: 9999;
 			}
 			
 			.spinner {
@@ -190,6 +196,30 @@
 
 		<!-- PWA install prompt helper -->
 		<script>
+			// ローディング画面を非表示にする
+			function hideLoadingScreen() {
+				document.body.classList.add('app-loaded');
+				// 追加の確実性のため
+				const loadingElement = document.querySelector('.app-loading');
+				if (loadingElement && loadingElement instanceof HTMLElement) {
+					loadingElement.style.display = 'none';
+					console.log('Loading screen hidden');
+				}
+			}
+			
+			// DOMContentLoadedでローディング画面を非表示
+			if (document.readyState === 'loading') {
+				document.addEventListener('DOMContentLoaded', hideLoadingScreen);
+			} else {
+				hideLoadingScreen();
+			}
+			
+			// アプリの初期化完了後にも確実に非表示にする
+			setTimeout(hideLoadingScreen, 100);
+			
+			// ウィンドウの読み込み完了後にも確認
+			window.addEventListener('load', hideLoadingScreen);
+			
 			// PWAインストールプロンプト用のイベントハンドラ
 			let deferredPrompt;
 			
