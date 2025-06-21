@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>実用的事実確認チェックシート</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 0;
+            min-height: 800px;
+        }
+
+        .evaluation-area {
+            padding: 30px;
+        }
+
+        .sidebar {
+            background: #f8f9fa;
+            padding: 30px 20px;
+            border-left: 1px solid #e9ecef;
+        }
+
+        .quick-start {
+            background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .section:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .section-header {
+            padding: 20px 25px;
+            font-weight: bold;
+            font-size: 1.2em;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .section-header.critical { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .section-header.important { background: linear-gradient(135deg, #f39c12, #e67e22); }
+        .section-header.verification { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .section-header.context { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+        .section-header.decision { background: linear-gradient(135deg, #27ae60, #229954); }
+
+        .section-content {
+            padding: 25px;
+            background: white;
+        }
+
+        .check-group {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            transition: background 0.2s ease;
+        }
+
+        .check-item:hover {
+            background: rgba(52, 152, 219, 0.05);
+        }
+
+        .check-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .checkbox-wrapper {
+            margin-right: 15px;
+            margin-top: 2px;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .check-content {
+            flex: 1;
+        }
+
+        .check-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .check-description {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .risk-indicator {
+            margin-left: 10px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .risk-high { background: #ffebee; color: #c62828; }
+        .risk-medium { background: #fff3e0; color: #ef6c00; }
+        .risk-low { background: #e8f5e8; color: #2e7d32; }
+
+        .score-display {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .score-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .score-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .score-value {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .confidence-meter {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .confidence-bar {
+            width: 100%;
+            height: 20px;
+            background: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #e74c3c 0%, #f39c12 50%, #27ae60 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .final-judgment {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .judgment-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .judgment-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            min-width: 80px;
+        }
+
+        .judgment-btn.accept {
+            background: #27ae60;
+            color: white;
+        }
+
+        .judgment-btn.caution {
+            background: #f39c12;
+            color: white;
+        }
+
+        .judgment-btn.reject {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .judgment-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .judgment-btn.active {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+        }
+
+        .guide-toggle {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8em;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .guide-toggle:hover {
+            background: #2980b9;
+            transform: translateY(-1px);
+        }
+
+        .detailed-guide {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .detailed-guide.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .guide-section {
+            margin-bottom: 20px;
+        }
+
+        .guide-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .guide-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .guide-content {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .guide-examples {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+            border-left: 4px solid #3498db;
+        }
+
+        .example-item {
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .example-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .example-good {
+            color: #27ae60;
+            font-weight: 500;
+        }
+
+        .example-bad {
+            color: #e74c3c;
+            font-weight: 500;
+        }
+
+        .case-studies {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+        }
+
+        .case-study {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .case-study:last-child {
+            margin-bottom: 0;
+        }
+
+        .case-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .case-content {
+            line-height: 1.6;
+        }
+
+        .case-analysis {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            border-left: 4px solid rgba(255,255,255,0.3);
+        }
+
+        .mode-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .mode-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .mode-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .collapsible-content {
+            max-height: 1000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .collapsible-content.collapsed {
+            max-height: 0;
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-icon.rotated {
+            transform: rotate(180deg);
+        }
+
+        .notes-area {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .notes-area textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .export-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .export-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                order: -1;
+                border-left: none;
+                border-bottom: 1px solid #e9ecef;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .evaluation-area, .sidebar {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="mode-switch">
+        <button class="mode-btn" onclick="toggleGuideMode()" id="mode-toggle">
+            📖 詳細ガイドモード
+        </button>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🔍 実用的事実確認チェックシート</h1>
+            <p>情報の信頼性を科学的・体系的に評価するための統合システム</p>
+        </div>
+
+        <div class="main-content">
+            <div class="evaluation-area">
+                <!-- Critical Section -->
+                <div class="section">
+                    <div class="section-header critical" onclick="toggleSection(this)">
+                        <span>🚨 クリティカル評価（必須）</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="section-content">
+                            <div class="check-group">
+                                <h4>📊 情報源の信頼性</h4>
+                                <div class="check-item">
+                                    <div class="checkbox-wrapper">
+                                        <input type="checkbox" id="source-authority" onchange="updateScore()">
+                                    </div>
+                                    <div class="check-content">
+                                        <div class="check-title">
+                                            権威ある情報源からの発表 
+                                            <span class="risk-indicator risk-high">高リスク</span>
+                                            <button class="guide-toggle" onclick="toggleGuide('source-authority-guide')">ガイド</button>
+                                        </div>
+                                        <div class="check-description">政府機関、学術機関、専門機関、査読済み論文、信頼できるメディアなど</div>
+                                        <div class="detailed-guide" id="source-authority-guide">
+                                            <div class="guide-section">
+                                                <div class="guide-title">🏛️ 権威ある情報源の判断基準</div>
+                                                <div class="guide-content">
+                                                    <strong>政府・公的機関：</strong>省庁、統計局、中央銀行、裁判所など<br>
+                                                    <strong>学術機関：</strong>大学、研究所、学会、査読済み学術誌<br>
+                                                    <strong>専門機関：</strong>専門分野に応じた国内外の機関（例：医療なら厚労省やWHO、教育なら文科省やUNESCOなど）<br>
+                                                    <strong>信頼できるメディア：</strong>編集方針が明確で、訂正・謝罪の実績がある報道機関
+                                                </div>
+                                                <div class="guide-examples">
+                                                    <div class="example-item">
+                                                        <div class="example-good">✅ 良い例：厚生労働省の統計データ、Nature誌の査読論文</div>
+                                                    </div>
+                                                    <div class="example-item">
+                                                        <div class="example-bad">❌ 悪い例：個人ブログ、匿名掲示板、広告サイト</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="check-item">
+                                    <div class="checkbox-wrapper">
+                                        <input type="checkbox" id="source-primary" onchange="updateScore()">
+                                    </div>
+                                    <div class="check-content">
+                                        <div class="check-title">
+                                            一次情報の確認 
+                                            <span class="risk-indicator risk-high">高リスク</span>
+                                            <button class="guide-toggle" onclick="toggleGuide('source-primary-guide')">ガイド</button>
+                                        </div>
+                                        <div class="check-description">又聞き・伝聞ではなく、直接的な情報源からの発信</div>
+                                        <div class="detailed-guide" id="source-primary-guide">
+                                            <div class="guide-section">
+                                                <div class="guide-title">🎯 一次情報の見極め方</div>
+                                                <div class="guide-content">
+                                                    <strong>一次情報：</strong>研究者本人の論文、当事者の証言、公式発表、生データ<br>
+                                                    <strong>二次情報：</strong>解説記事、まとめサイト、他者の分析<br>
+                                                    <strong>確認ポイント：</strong>「〜によると」「〜が報じた」などの表現に注意
+                                                </div>
+                                                <div class="guide-examples">
+                                                    <div class="example-item">
+                                                        <div class="example-good">✅ 研究者が自ら発表した論文、企業の決算発表</div>
+                                                    </div>
+                                                    <div class="example-item">
+                                                        <div class="example-bad">❌ 「専門家によると」「ある調査で」などの曖昧な引用</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="check-item">
+                                    <div class="checkbox-wrapper">
+                                        <input type="checkbox" id="source-multiple" onchange="updateScore()">
+                                    </div>
+                                    <div class="check-content">
+                                        <div class="check-title">
+                                            複数の独立した情報源 
+                                            <span class="risk-indicator risk-high">高リスク</span>
+                                            <button class="guide-toggle" onclick="toggleGuide('source-multiple-guide')">ガイド</button>
+                                        </div>
+                                        <div class="check-description">異なる立場・組織からの同様の報告や確認</div>
+                                        <div class="detailed-guide" id="source-multiple-guide">
+                                            <div class="guide-section">
+                                                <div class="guide-title">🔄 独立性の確認方法</div>
+                                                <div class="guide-content">
+                                                    <strong>独立した情報源：</strong>異なる組織、資金源、利害関係を持つ情報源<br>
+                                                    <strong>最低基準：</strong>2-3の独立した信頼できる情報源からの確認<br>
+                                                    <strong>注意点：</strong>同じプレスリリースを元にした記事は「独立」ではない
+                                                </div>
+                                                <div class="guide-examples">
+                                                    <div class="example-item">
+                                                        <div class="example-good">✅ 政府発表 + 学術研究 + 複数メディア報道</div>
+                                                    </div>
+                                                    <div class="example-item">
+                                                        <div class="example-bad">❌ 同じ企業グループ内の複数メディア、転載記事</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="check-group">
+                                <h4>⚠️ 明らかな警告サイン</h4>
+                                <div class="check-item">
+                                    <div class="checkbox-wrapper">
+                                        <input type="checkbox" id="warning-anonymous" onchange="updateScore()">
+                                    </div>
+                                    <div class="check-content">
+                                        <div class="check-title">
+                                            匿名・出典不明な情報ではない 
+                                            <span class="risk-indicator risk-high">高リスク</span>
+                                            <button class="guide-toggle" onclick="toggleGuide('warning-anonymous-guide')">ガイド</button>
+                                        </div>
+                                        <div class="check-description">作成者・発信者が明確に特定できる</div>
+                                        <div class="detailed-guide" id="warning-anonymous-guide">
+                                            <div class="guide-section">
+                                                <div class="guide-title">🔍 発信者特定の確認ポイント</div>
+                                                <div class="guide-content">
+                                                    <strong>必須情報：</strong>作成者の実名、所属、連絡先、専門性<br>
+                                                    <strong>警告サイン：</strong>「内部関係者によると」「匿名の専門家」「ある研究」<br>
+                                                    <strong>許容される匿名：</strong>ジャーナリズムでの情報提供者保護（ただし記者は特定可能）
+                                                </div>
+                                                <div class="guide-examples">
+                                                    <div class="example-item">
+                                                        <div class="example-good">✅ 「田中一郎氏（東京大学医学部教授）によると」</div>
+                                                    </div>
+                                                    <div class="example-item">
+                                                        <div class="example-bad">❌ 「ある医師によると」「関係者の話では」</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="check-item">
+                                    <div class="checkbox-wrapper">
+                                        <input type="checkbox" id="warning-sensational" onchange="updateScore()">
+                                    </div>
+                                    <div class="check-content">
+                                        <div class="check-title">
+                                            扇動的・煽情的な表現が少ない 
+                                            <span class="risk-indicator risk-medium">中リスク</span>
+                                            <button class="guide-toggle" onclick="toggleGuide('warning-sensational-guide')">ガイド</button>
+                                        </div>
+                                        <div class="check-description">冷静で客観的な記述、感情に訴える過度な表現がない</div>
+                                        <div class="detailed-guide" id="warning-sensational-guide">
+                                            <div class="guide-section">
+                                                <div class="guide-title">⚠️ 扇動的表現の見分け方</div>
+                                                <div class="guide-content">
+                                                    <strong>警告する表現：</strong>「絶対に」「完全に」「驚愕の」「衝撃的な」「○○業界が隠す」<br>
+                                                    <strong>感情誘導：</strong>恐怖、怒り、嫉妬を煽る表現<br>
+                                                    <strong>適切な表現：</strong>「研究結果によると」「データが示している」「専門家の見解では」
+                                                </div>
+                                                <div class="guide-examples">
+                                                    <div class="example-item">
+                                                        <div class="example-good">✅ 「研究では75%の被験者に改善が見られた」</div>
+                                                    </div>
+                                                    <div class="example-item">
+                                                        <div class="example-bad">❌ 「医師が絶対に教えない驚愕の真実！」</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="check-item">
+                                    <div class="checkbox-wrapper">
+                                        <input type="checkbox" id="warning-logical" onchange="updateScore()">
+                                    </div>
+                                    <div class="check-content">
+                                        <div class="check-title">
+                                            論理的な矛盾がない 
+                                            <span class="risk-indicator risk-medium">中リスク</span>
+                                            <button class="guide-toggle" onclick="toggleGuide('warning-logical-guide')">ガイド</button>
+                                        </div>
+                                        <div class="check-description">内容に一貫性があり、明らかな論理的飛躍がない</div>
+                                        <div class="detailed-guide" id="warning-logical-guide">
+                                            <div class="guide-section">
+                                                <div class="guide-title">🧠 論理的一貫性の確認方法</div>
+                                                <div class="guide-content">
+                                                    <strong>チェック項目：</strong><br>
+                                                    • 前提と結論が適切につながっているか<br>
+                                                    • 因果関係が明確に示されているか<br>
+                                                    • 矛盾する主張が同時にされていないか<br>
+                                                    <strong>よくある論理的誤謬：</strong>相関関係を因果関係と混同、極端な一般化
+                                                </div>
+                                                <div class="guide-examples">
+                                                    <div class="example-item">
+                                                        <div class="example-good">✅ 統計的に有意差があり、他の要因も考慮した分析</div>
+                                                    </div>
+                                                    <div class="example-item">
+                                                        <div class="example-bad">❌ 「AとBが同時に起きたからAがBの原因」</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Important Section -->
+                <div class="section">
+                    <div class="section-header important" onclick="toggleSection(this)">
+                        <span>📝 詳細評価（重要）</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="section-content">
+                            <div class="check-group">
+                                <h4>📅 時間的要素</h4>
+                                <div class="check-item">
+                                    <div class="checkbox-wrapper">
+                                        <input type="checkbox" id="time-recent" onchange="updateScore()">
+                                    </div>
+                                    <div class="check-content">
+                                        <div class="check-title">
+                                            情報の新しさ 
+                                            <span class="risk-indicator risk-medium">中リスク</span>
+                                            <button class="guide-toggle" onclick="toggleGuide('time-recent-guide')">ガイド</button>
+                                        </div>
+                                        <div class="check-description">公開日が明記され、内容に適した新しさを保っている</div>
+                                        <div class="detailed-guide" id="time-recent-guide">
+                                            <div class="guide-section">
+                                                <div class="guide-title">⏰ 情報の適切な新しさの判断</div>
+                                                <div class="guide-content">
+                                                    <strong>分野別の基準：</strong><br>
+                                                    • ニュース・時事：数日～1週間以内<br>
+                                                    • 医学・科学：2-3年以内（基礎研究は5年程度まで）<br>
+                                                    • 技術・IT：1-2年以内<br>
+                                                    • 法律・制度：最新の改正を反映<br>
+                                                    <strong>確認ポイント：</strong>公開日時の明記、最終更新日の記載
+                                                </div>
+                                                <div class="guide-examples">
+                                                    <div class="example-item">
+                                                        <div class="example-good">✅ 「2024年12月発表」「最終更新：2025年1月」</div>
+                                                    </div>
+                                                    <div class="example-item">
+                                                        <div class="example-bad">❌ 日付の記載なし、5年前の技術情報</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="check-item">
+                                    <div class="checkbox-wrapper">
+                                        <input type="checkbox" id="time-update" onchange="updateScore()">
+                                    </div>
+                                    <div class="check-content">
+                                        <div class="check-title">
+                                            更新・訂正の履歴 
+                                            <span class="risk-indicator risk-low">低リスク</span>
+                                            <button class="guide-toggle" onclick="toggleGuide('time-update-guide')">ガイド</button>
+                                        </div>
+                                        <div class="check-description">必要に応じて内容が更新され、訂正が透明に行われている</div>
+                                        <div class="detailed-guide" id="time-update-guide">
+                                            <div class="guide-section">
+                                                <div class="guide-title">📝 透明な更新・訂正の確認</div>
+                                                <div class="guide-content">
+                                                    <strong>良い更新の特徴：</strong><br>
+                                                    • 更新内容の明記<br>
+                                                    • 訂正理由の説明<br>
+                                                    • 更新日時の記録<br>
+                                                    • 重要な変更の場合は注記<br>
+                                                    <strong>信頼性の指標：</strong>間違いを認めて訂正する姿勢
+                                                </div>
+                                                <div class="guide-examples">
+                                                    <div class="example-item">
+                                                        <div class="example-good">✅ 「2025年1月15日更新：統計データを最新版に差し替え」</div>
+                                                    </div>
+                                                    <div class="example-item">
+                                                        <div class="example-bad">❌ 古い情報のまま放置、訂正の記録なし</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="check-group">
+                                <h4>🎯 専門性と詳細度</h4>
+                                <div class="check-item">
+                                    <div class="checkbox-wrapper">
+                                        <input type="checkbox" id="expert-knowledge" onchange="updateScore()">
+                                    </div>
+                                    <div class="check-content">
+                                        <div class="check-title">
+                                            適切な専門知識 
+                                            <span class="risk-indicator risk-medium">中リスク</span>
+                                            <button class="guide-toggle" onclick="toggleGuide('expert-knowledge-guide')">ガイド</button>
+                                        </div>
+                                        <div class="check-description">作成者が該当分野の十分な知識・経験を持っている</div>
+                                        <div class="detailed-guide" id="expert-knowledge-guide">
+                                            <div class="guide-section">
+                                                <div class="guide-title">🎓 専門性の確認方法</div>
+                                                <div class="guide-content">
+                                                    <strong>確認項目：</strong><br>
+                                                    • 関連分野での学位・資格<br>
+                                                    • 実務経験・研究歴<br>
+                                                    • 学会発表・論文発表実績<br>
+                                                    • 専門機関での職歴<br>
+                                                    <strong>注意：</strong>関連分野での専門性が重要（医師が経済を語る場合など）
+                                                </div>
+                                                <div class="guide-examples">
+                                                    <div class="example-item">
+                                                        <div class="example-good">✅ 感染症専門医がワクチンについて解説</div>
+                                                    </div>
+                                                    <div class="example-item">
+                                                        <div class="example-bad">❌ 専門外の有名人が医学について断言</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="check-item">
+                                    <div class="checkbox-wrapper">
+                                        <input type="checkbox" id="detail-sufficient" onchange="updateScore()">
+                                    </div>
+                                    <div class="check-content">
+                                        <div class="check-title">
+                                            十分な詳細と根拠 
+                                            <span class="risk-indicator risk-medium">中リスク</span>
+                                            <button class="guide-toggle" onclick="toggleGuide('detail-sufficient-guide')">ガイド</button>
+                                        </div>
+                                        <div class="check-description">結論に至る過程や根拠が適切に説明されている</div>
+                                        <div class="detailed-guide" id="detail-sufficient-guide">
+                                            <div class="guide-section">
+                                                <div class="guide-title">📋 根拠の十分性の判断</div>
+                                                <div class="guide-content">
+                                                    <strong>必要な要素：</strong><br>
+                                                    • 主張を支持する具体的データ<br>
+                                                    • 方法論の説明<br>
+                                                    • 制限・限界の言及<br>
+                                                    • 反対意見への言及<br>
+                                                    <strong>警告サイン：</strong>結論だけで過程が不明、根拠が曖昧
+                                                </div>
+                                                <div class="guide-examples">
+                                                    <div class="example-item">
+                                                        <div class="example-good">✅ サンプル数、統計手法、信頼区間まで記載</div>
+                                                    </div>
+                                                    <div class="example-item">
+                                                        <div class="example-bad">❌ 「効果が証明された」だけで詳細なし</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="check-group">
+                                <h4>🔗 引用と参照</h4>
+                                <div class="check-item">
+                                    <div class="checkbox-wrapper">
+                                        <input type="checkbox" id="citation-proper" onchange="updateScore()">
+                                    </div>
+                                    <div class="check-content">
+                                        <div class="check-title">
+                                            適切な引用・参照 
+                                            <span class="risk-indicator risk-medium">中リスク</span>
+                                            <button class="guide-toggle" onclick="toggleGuide('citation-proper-guide')">ガイド</button>
+                                        </div>
+                                        <div class="check-description">重要な主張に対して信頼できる情報源が示されている</div>
+                                        <div class="detailed-guide" id="citation-proper-guide">
+                                            <div class="guide-section">
+                                                <div class="guide-title">📚 適切な引用の基準</div>
+                                                <div class="guide-content">
+                                                    <strong>引用すべき内容：</strong><br>
+                                                    • 統計データ・数値<br>
+                                                    • 専門的な主張<br>
+                                                    • 他者の研究結果<br>
+                                                    • 法令・規則の内容<br>
+                                                    <strong>引用形式：</strong>著者名、出版年、タイトル、出版社など最低限の情報
+                                                </div>
+                                                <div class="guide-examples">
+                                                    <div class="example-item">
+                                                        <div class="example-good">✅ 「田中(2024)の研究によると...」「厚労省統計(2025)では...」</div>
+                                                    </div>
+                                                    <div class="example-item">
+                                                        <div class="example-bad">❌ 「研究によると」「データでは」（出典不明）</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="check-item">
+                                    <div class="checkbox-wrapper">
+                                        <input type="checkbox" id="citation-accessible" onchange="updateScore()">
+                                    </div>
+                                    <div class="check-content">
+                                        <div class="check-title">
+                                            引用元の確認可能性 
+                                            <span class="risk-indicator risk-low">低リスク</span>
+                                            <button class="guide-toggle" onclick="toggleGuide('citation-accessible-guide')">ガイド</button>
+                                        </div>
+                                        <div class="check-description">引用された情報源に実際にアクセスして確認できる</div>
+                                        <div class="detailed-guide" id="citation-accessible-guide">
+                                            <div class="guide-section">
+                                                <div class="guide-title">🌐 引用元アクセス性の確認</div>
+                                                <div class="guide-content">
+                                                    <strong>理想的な状態：</strong><br>
+                                                    • 直接リンクまたはDOI<br>
+                                                    • 公開されている情報源<br>
+                                                    • 検索可能な具体的情報<br>
+                                                    <strong>許容範囲：</strong>有料データベース、図書館で確認可能な資料<br>
+                                                    <strong>問題のある引用：</strong>私的な会話、確認不可能な内部資料
+                                                </div>
+                                                <div class="guide-examples">
+                                                    <div class="example-item">
+                                                        <div class="example-good">✅ URLリンク、DOI、ISBN番号付きの書籍</div>
+                                                    </div>
+                                                    <div class="example-item">
+                                                        <div class="example-bad">❌ 「内部資料によると」「個人的な話し合いで」</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Verification Section -->
+                <div class="section">
+                    <div class="section-header verification" onclick="toggleSection(this)">
+                        <span>🔍 検証・照合</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="section-content">
+                            <div class="check-group">
+                                <h4>🔄 クロスチェック</h4>
+                                <div class="check-item">
+                                    <div class="checkbox-wrapper">
+                                        <input type="checkbox" id="cross-check" onchange="updateScore()">
+                                    </div>
+                                    <div class="check-content">
+                                        <div class="check-title">
+                                            他情報源との照合 
+                                            <span class="risk-indicator risk-high">高リスク</span>
+                                            <button class="guide-toggle" onclick="toggleGuide('cross-check-guide')">ガイド</button>
+                                        </div>
+                                        <div class="check-description">独立した複数の情報源で同様の内容が確認できる</div>
+                                        <div class="detailed-guide" id="cross-check-guide">
+                                            <div class="guide-section">
+                                                <div class="guide-title">🔍 効果的なクロスチェック方法</div>
+                                                <div class="guide-content">
+                                                    <strong>段階的確認：</strong><br>
+                                                    1. 同じ事実を報じる他の信頼できる情報源を探す<br>
+                                                    2. 異なる角度から同じ事象を扱った報告を確認<br>
+                                                    3. 反対意見や批判的視点も調査<br>
+                                                    <strong>確認ツール：</strong>Google Scholar、公的データベース、ファクトチェックサイト
+                                                </div>
+                                                <div class="guide-examples">
+                                                    <div class="example-item">
+                                                        <div class="example-good">✅ 複数の査読論文で同様の結果、政府統計との整合性</div>
+                                                    </div>
+                                                    <div class="example-item">
+                                                        <div class="example-bad">❌ 1つの情報源のみ、同じ出典を使った複数記事</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="check-item">
+                                    <div class="checkbox-wrapper">
+                                        <input type="checkbox" id="fact-check" onchange="updateScore()">
+                                    </div>
+                                    <div class="check-content">
+                                        <div class="check-title">
+                                            ファクトチェック組織の検証 
+                                            <span class="risk-indicator risk-medium">中リスク</span>
+                                            <button class="guide-toggle" onclick="toggleGuide('fact-check-guide')">ガイド</button>
+                                        </div>
+                                        <div class="check-description">信頼できるファクトチェック機関による検証がある</div>
+                                        <div class="detailed-guide" id="fact-check-guide">
+                                            <div class="guide-section">
+                                                <div class="guide-title">✅ 信頼できるファクトチェック機関</div>
+                                                <div class="guide-content">
+                                                    <strong>国際的な組織：</strong>Snopes、PolitiFact、AFP Fact Check、Full Fact（英国）など、立場・地域の異なる機関<br>
+                                                    <strong>日本の組織：</strong>InFact、日本ファクトチェックセンター、FIJ（ファクトチェック・イニシアティブ）など
+                                                    <strong>メディア系：</strong>NHK、朝日新聞、読売新聞のファクトチェック部門<br>
+                                                    <strong>確認方法：</strong>該当情報をファクトチェックサイトで検索
+                                                </div>
+                                                <div class="guide-examples">
+                                                    <div class="example-item">
+                                                        <div class="example-good">✅ 複数のファクトチェック機関が「真実」と判定</div>
+                                                    </div>
+                                                    <div class="example-item">
+                                                        <div class="example-bad">❌ ファクトチェックで「偽情報」と判定されている</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="check-group">
+                                <h4>📊 データと証拠</h4>
+                                <div class="check-item">
+                                    <div class="checkbox-wrapper">
+                                        <input type="checkbox" id="data-verifiable" onchange="updateScore()">
+                                    </div>
+                                    <div class="check-content">
+                                        <div class="check-title">
+                                            検証可能なデータ 
+                                            <span class="risk-indicator risk-medium">中リスク</span>
+                                            <button class="guide-toggle" onclick="toggleGuide('data-verifiable-guide')">ガイド</button>
+                                        </div>
+                                        <div class="check-description">主張を支持するデータが客観的に確認できる</div>
+                                        <div class="detailed-guide" id="data-verifiable-guide">
+                                            <div class="guide-section">
+                                                <div class="guide-title">📈 データの検証可能性の確認</div>
+                                                <div class="guide-content">
+                                                    <strong>確認すべき要素：</strong><br>
+                                                    • データの出典（調査機関、統計局など）<br>
+                                                    • 収集方法・期間の明記<br>
+                                                    • サンプルサイズ・対象の詳細<br>
+                                                    • 生データまたは詳細データへのアクセス可能性<br>
+                                                    <strong>警告サイン：</strong>「内部データ」「独自調査」のみで詳細不明
+                                                </div>
+                                                <div class="guide-examples">
+                                                    <div class="example-item">
+                                                        <div class="example-good">✅ 総務省統計局データ、論文の補足資料でデータ公開</div>
+                                                    </div>
+                                                    <div class="example-item">
+                                                        <div class="example-bad">❌ 「弊社調査によると」（詳細な調査概要なし）</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="check-item">
+                                    <div class="checkbox-wrapper">
+                                        <input type="checkbox" id="methodology" onchange="updateScore()">
+                                    </div>
+                                    <div class="check-content">
+                                        <div class="check-title">
+                                            手法・方法論の妥当性 
+                                            <span class="risk-indicator risk-low">低リスク</span>
+                                            <button class="guide-toggle" onclick="toggleGuide('methodology-guide')">ガイド</button>
+                                        </div>
+                                        <div class="check-description">研究や調査の方法論が適切で再現可能</div>
+                                        <div class="detailed-guide" id="methodology-guide">
+                                            <div class="guide-section">
+                                                <div class="guide-title">🔬 方法論の妥当性評価</div>
+                                                <div class="guide-content">
+                                                    <strong>評価ポイント：</strong><br>
+                                                    • 研究デザインの適切性（RCT、コホート研究など）<br>
+                                                    • バイアス対策の有無<br>
+                                                    • 統計手法の妥当性<br>
+                                                    • 再現性の担保（プロトコル公開など）<br>
+                                                    <strong>専門外でも確認できる点：</strong>手法の詳細記載、他研究との比較
+                                                </div>
+                                                <div class="guide-examples">
+                                                    <div class="example-item">
+                                                        <div class="example-good">✅ 二重盲検試験、適切な対照群設定</div>
+                                                    </div>
+                                                    <div class="example-item">
+                                                        <div class="example-bad">❌ 方法論の記載なし、偏ったサンプル選択</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Context Section -->
+                <div class="section">
+                    <div class="section-header context" onclick="toggleSection(this)">
+                        <span>🌐 文脈・バイアス評価</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="section-content">
+                            <div class="check-group">
+                                <h4>⚖️ バイアスと利害関係</h4>
+                                <div class="check-item">
+                                    <div class="checkbox-wrapper">
+                                        <input type="checkbox" id="bias-disclosure" onchange="updateScore()">
+                                    </div>
+                                    <div class="check-content">
+                                        <div class="check-title">
+                                            利害関係の開示 
+                                            <span class="risk-indicator risk-high">高リスク</span>
+                                            <button class="guide-toggle" onclick="toggleGuide('bias-disclosure-guide')">ガイド</button>
+                                        </div>
+                                        <div class="check-description">金銭的・政治的・個人的な利害関係が適切に開示されている</div>
+                                        <div class="detailed-guide" id="bias-disclosure-guide">
+                                            <div class="guide-section">
+                                                <div class="guide-title">💰 利害関係の確認項目</div>
+                                                <div class="guide-content">
+                                                    <strong>開示すべき利害関係：</strong><br>
+                                                    • 研究資金の提供元<br>
+                                                    • 企業からの謝礼・コンサルティング料<br>
+                                                    • 株式保有などの金銭的利益<br>
+                                                    • 政治的・イデオロギー的立場<br>
+                                                    <strong>確認方法：</strong>「利益相反」「COI」「資金提供」などの記載を探す
+                                                </div>
+                                                <div class="guide-examples">
+                                                    <div class="example-item">
+                                                        <div class="example-good">✅ 「本研究は○○財団の助成を受けて実施」</div>
+                                                    </div>
+                                                    <div class="example-item">
+                                                        <div class="example-bad">❌ 製薬会社の研究で利益相反の記載なし</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="check-item">
+                                    <div class="checkbox-wrapper">
+                                        <input type="checkbox" id="balanced-view" onchange="updateScore()">
+                                    </div>
+                                    <div class="check-content">
+                                        <div class="check-title">
+                                            バランスの取れた視点 
+                                            <span class="risk-indicator risk-medium">中リスク</span>
+                                            <button class="guide-toggle" onclick="toggleGuide('balanced-view-guide')">ガイド</button>
+                                        </div>
+                                        <div class="check-description">異なる立場や反対意見も考慮されている</div>
+                                        <div class="detailed-guide" id="balanced-view-guide">
+                                            <div class="guide-section">
+                                                <div class="guide-title">⚖️ バランス評価の観点</div>
+                                                <div class="guide-content">
+                                                    <strong>確認ポイント：</strong><br>
+                                                    • 反対意見・批判的視点の紹介<br>
+                                                    • 異なる研究結果の言及<br>
+                                                    • 不確実性・限界の言及<br>
+                                                    • 複数の専門家の意見<br>
+                                                    <strong>警告サイン：</strong>一方的な主張のみ、都合の良い情報だけ選択
+                                                </div>
+                                                <div class="guide-examples">
+                                                    <div class="example-item">
+                                                        <div class="example-good">✅ 「一方で、○○教授は異なる見解を示している」</div>
+                                                    </div>
+                                                    <div class="example-item">
+                                                        <div class="example-bad">❌ 支持する証拠のみ列挙、反対意見への言及なし</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="check-group">
+                                <h4>📍 文脈の理解</h4>
+                                <div class="check-item">
+                                    <div class="checkbox-wrapper">
+                                        <input type="checkbox" id="context-adequate" onchange="updateScore()">
+                                    </div>
+                                    <div class="check-content">
+                                        <div class="check-title">
+                                            十分な背景情報 
+                                            <span class="risk-indicator risk-medium">中リスク</span>
+                                            <button class="guide-toggle" onclick="toggleGuide('context-adequate-guide')">ガイド</button>
+                                        </div>
+                                        <div class="check-description">情報を理解するのに必要な背景や文脈が提供されている</div>
+                                        <div class="detailed-guide" id="context-adequate-guide">
+                                            <div class="guide-section">
+                                                <div class="guide-title">🌍 文脈情報の確認項目</div>
+                                                <div class="guide-content">
+                                                    <strong>必要な背景情報：</strong><br>
+                                                    • 歴史的経緯・これまでの研究<br>
+                                                    • 関連する法律・制度<br>
+                                                    • 社会的・文化的背景<br>
+                                                    • 国際的な動向・比較<br>
+                                                    <strong>評価ポイント：</strong>読者が適切に理解・判断できる文脈の提供
+                                                </div>
+                                                <div class="guide-examples">
+                                                    <div class="example-item">
+                                                        <div class="example-good">✅ 過去の類似事例、他国との比較データも提示</div>
+                                                    </div>
+                                                    <div class="example-item">
+                                                        <div class="example-bad">❌ 単発の数値のみ、背景情報なし</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="check-item">
+                                    <div class="checkbox-wrapper">
+                                        <input type="checkbox" id="scope-clear" onchange="updateScore()">
+                                    </div>
+                                    <div class="check-content">
+                                        <div class="check-title">
+                                            適用範囲の明確化 
+                                            <span class="risk-indicator risk-low">低リスク</span>
+                                            <button class="guide-toggle" onclick="toggleGuide('scope-clear-guide')">ガイド</button>
+                                        </div>
+                                        <div class="check-description">情報の適用可能な範囲や限界が明確に示されている</div>
+                                        <div class="detailed-guide" id="scope-clear-guide">
+                                            <div class="guide-section">
+                                                <div class="guide-title">🎯 適用範囲の明確化</div>
+                                                <div class="guide-content">
+                                                    <strong>明確にすべき範囲：</strong><br>
+                                                    • 対象となる人・地域・期間<br>
+                                                    • 研究の限界・制約<br>
+                                                    • 一般化可能性の程度<br>
+                                                    • 除外されるケース<br>
+                                                    <strong>重要性：</strong>過度な一般化や誤用を防ぐため
+                                                </div>
+                                                <div class="guide-examples">
+                                                    <div class="example-item">
+                                                        <div class="example-good">✅ 「日本の成人男性を対象とした研究のため、他の集団への適用は慎重に」</div>
+                                                    </div>
+                                                    <div class="example-item">
+                                                        <div class="example-bad">❌ 限定的な研究結果を無制限に一般化</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes Area -->
+                <div class="notes-area">
+                    <h3>📝 評価メモ・追加確認事項</h3>
+                    <textarea id="evaluation-notes" placeholder="疑問点、追加で確認したい事項、総合的な印象など、自由に記録してください..."></textarea>
+                </div>
+
+                <!-- Case Studies -->
+                <div class="case-studies">
+                    <h2 style="color: white; margin-top: 0; border: none; padding: 0;">📚 実践的活用例</h2>
+                    
+                    <div class="case-study">
+                        <div class="case-title">🧬 ケース1: 新しい健康食品の効果に関する記事</div>
+                        <div class="case-content">
+                            <strong>情報：</strong>「○○エキスが癌を予防する効果が研究で証明」という記事を発見
+                        </div>
+                        <div class="case-analysis">
+                            <strong>📋 チェックシート適用例：</strong><br>
+                            ✅ <strong>情報源確認：</strong>掲載サイトは健康食品販売会社のブログ → 利害関係あり<br>
+                            ❌ <strong>一次情報：</strong>「ある研究によると」のみで具体的な論文名なし<br>
+                            ❌ <strong>複数情報源：</strong>同様の報告が他に見つからない<br>
+                            ❌ <strong>査読確認：</strong>査読済み論文の根拠なし<br>
+                            <strong>→ 判定：不採用</strong> （商業的バイアスが強く、科学的根拠不十分）
+                        </div>
+                    </div>
+
+                    <div class="case-study">
+                        <div class="case-title">📊 ケース2: 経済統計に関するニュース報道</div>
+                        <div class="case-content">
+                            <strong>情報：</strong>「日本の失業率が過去最低を記録」という新聞記事
+                        </div>
+                        <div class="case-analysis">
+                            <strong>📋 チェックシート適用例：</strong><br>
+                            ✅ <strong>情報源確認：</strong>総務省統計局の発表を元にした報道<br>
+                            ✅ <strong>一次情報：</strong>政府統計の直接引用<br>
+                            ✅ <strong>複数情報源：</strong>複数の主要メディアが同じ統計を報道<br>
+                            ✅ <strong>時期確認：</strong>最新の月次データ<br>
+                            ✅ <strong>文脈提供：</strong>過去データとの比較、季節調整の説明あり<br>
+                            <strong>→ 判定：採用</strong> （信頼できる一次情報源、適切な文脈提供）
+                        </div>
+                    </div>
+
+                    <div class="case-study">
+                        <div class="case-title">🔬 ケース3: COVID-19ワクチンに関する学術論文</div>
+                        <div class="case-content">
+                            <strong>情報：</strong>mRNAワクチンの効果を検証した論文を発見
+                        </div>
+                        <div class="case-analysis">
+                            <strong>📋 チェックシート適用例：</strong><br>
+                            ✅ <strong>情報源確認：</strong>The New England Journal of Medicine（高インパクト査読誌）<br>
+                            ✅ <strong>査読確認：</strong>査読済み、DOI付きの正式論文<br>
+                            ✅ <strong>専門性：</strong>著者は感染症専門医・研究者<br>
+                            ✅ <strong>利害関係開示：</strong>資金提供元と利益相反が明記<br>
+                            ✅ <strong>手法透明性：</strong>統計手法、サンプルサイズが詳細記載<br>
+                            ⚠️ <strong>再現性：</strong>他の独立研究による検証を待つ段階<br>
+                            <strong>→ 判定：条件付き採用</strong> （高品質だが追加検証待ち）
+                        </div>
+                    </div>
+
+                    <div class="case-study">
+                        <div class="case-title">📱 ケース4: SNSで拡散されている社会問題の情報</div>
+                        <div class="case-content">
+                            <strong>情報：</strong>「○○県で環境汚染が深刻化」というSNS投稿が拡散
+                        </div>
+                        <div class="case-analysis">
+                            <strong>📋 チェックシート適用例：</strong><br>
+                            ❌ <strong>情報源確認：</strong>個人アカウント、専門性不明<br>
+                            ❌ <strong>一次情報：</strong>写真のみ、出典・撮影日時不明<br>
+                            ⚠️ <strong>感情的表現：</strong>扇動的な言葉遣い<br>
+                            <strong>→ 追加確認を実施：</strong><br>
+                            ✅ 環境省の公式データで同地域の汚染状況を確認<br>
+                            ✅ 地元自治体の公式発表をチェック<br>
+                            ✅ 地元メディアの報道を検索<br>
+                            <strong>→ 最終判定：部分的に事実だが誇張あり</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="quick-start">
+                    <h3>🚀 クイックスタート</h3>
+                    <p>まず「クリティカル評価」から始めて、基本的な信頼性を確認しましょう。</p>
+                </div>
+
+                <div class="score-display">
+                    <h3>📊 評価スコア</h3>
+                    <div class="score-item">
+                        <span>クリティカル</span>
+                        <span class="score-value" id="critical-score">0/6</span>
+                    </div>
+                    <div class="score-item">
+                        <span>詳細評価</span>
+                        <span class="score-value" id="detailed-score">0/6</span>
+                    </div>
+                    <div class="score-item">
+                        <span>検証・照合</span>
+                        <span class="score-value" id="verification-score">0/4</span>
+                    </div>
+                    <div class="score-item">
+                        <span>文脈・バイアス</span>
+                        <span class="score-value" id="context-score">0/4</span>
+                    </div>
+                    <hr>
+                    <div class="score-item">
+                        <strong>総合スコア</strong>
+                        <strong class="score-value" id="total-score">0/20</strong>
+                    </div>
+                </div>
+
+                <div class="confidence-meter">
+                    <h3>🎯 信頼度</h3>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" id="confidence-fill"></div>
+                    </div>
+                    <div id="confidence-text">評価を開始してください</div>
+                </div>
+
+                <div class="final-judgment">
+                    <h3>⚖️ 最終判定</h3>
+                    <div class="judgment-buttons">
+                        <button class="judgment-btn accept" onclick="setJudgment('accept')">採用</button>
+                        <button class="judgment-btn caution" onclick="setJudgment('caution')">要注意</button>
+                        <button class="judgment-btn reject" onclick="setJudgment('reject')">不採用</button>
+                    </div>
+                    <div id="judgment-advice" style="margin-top: 15px; font-size: 0.9em; color: #7f8c8d;"></div>
+                </div>
+
+                <div class="export-section">
+                    <button class="export-btn" onclick="exportEvaluation()">📄 評価結果をエクスポート</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentJudgment = null;
+        let guideMode = false;
+
+        function toggleSection(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            
+            content.classList.toggle('collapsed');
+            icon.classList.toggle('rotated');
+        }
+
+        function toggleGuide(guideId) {
+            const guide = document.getElementById(guideId);
+            if (guide.classList.contains('show')) {
+                guide.classList.remove('show');
+            } else {
+                guide.classList.add('show');
+            }
+        }
+
+        function toggleGuideMode() {
+            guideMode = !guideMode;
+            const modeToggle = document.getElementById('mode-toggle');
+            const guideButtons = document.querySelectorAll('.guide-toggle');
+            
+            if (guideMode) {
+                modeToggle.textContent = '📝 通常モード';
+                guideButtons.forEach(btn => btn.style.display = 'inline-block');
+                // Show all guides
+                document.querySelectorAll('.detailed-guide').forEach(guide => {
+                    guide.classList.add('show');
+                });
+            } else {
+                modeToggle.textContent = '📖 詳細ガイドモード';
+                guideButtons.forEach(btn => btn.style.display = 'none');
+                // Hide all guides
+                document.querySelectorAll('.detailed-guide').forEach(guide => {
+                    guide.classList.remove('show');
+                });
+            }
+        }
+
+        function updateScore() {
+            const sections = {
+                critical: ['source-authority', 'source-primary', 'source-multiple', 'warning-anonymous', 'warning-sensational', 'warning-logical'],
+                detailed: ['time-recent', 'time-update', 'expert-knowledge', 'detail-sufficient', 'citation-proper', 'citation-accessible'],
+                verification: ['cross-check', 'fact-check', 'data-verifiable', 'methodology'],
+                context: ['bias-disclosure', 'balanced-view', 'context-adequate', 'scope-clear']
+            };
+
+            let totalScore = 0;
+            let maxScore = 0;
+
+            Object.keys(sections).forEach(section => {
+                const checkboxes = sections[section];
+                const checkedCount = checkboxes.filter(id => document.getElementById(id)?.checked).length;
+                const sectionMax = checkboxes.length;
+                
+                totalScore += checkedCount;
+                maxScore += sectionMax;
+                
+                document.getElementById(`${section}-score`).textContent = `${checkedCount}/${sectionMax}`;
+            });
+
+            document.getElementById('total-score').textContent = `${totalScore}/${maxScore}`;
+            
+            // Update confidence meter
+            const confidence = (totalScore / maxScore) * 100;
+            document.getElementById('confidence-fill').style.width = `${confidence}%`;
+            
+            let confidenceText = '';
+            let judgmentAdvice = '';
+            
+            if (confidence >= 80) {
+                confidenceText = '高い信頼性';
+                judgmentAdvice = '採用を推奨します。十分な検証が行われています。';
+            } else if (confidence >= 60) {
+                confidenceText = '中程度の信頼性';
+                judgmentAdvice = '追加確認を推奨します。重要な決定には慎重に。';
+            } else if (confidence >= 40) {
+                confidenceText = '低い信頼性';
+                judgmentAdvice = '要注意です。さらなる検証が必要です。';
+            } else {
+                confidenceText = '信頼性に問題';
+                judgmentAdvice = '不採用を推奨します。信頼できる情報源を探しましょう。';
+            }
+            
+            document.getElementById('confidence-text').textContent = confidenceText;
+            document.getElementById('judgment-advice').textContent = judgmentAdvice;
+        }
+
+        function setJudgment(judgment) {
+            // Remove active class from all buttons
+            document.querySelectorAll('.judgment-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active class to selected button
+            document.querySelector(`.judgment-btn.${judgment}`).classList.add('active');
+            currentJudgment = judgment;
+        }
+
+        function exportEvaluation() {
+            const checkedItems = [];
+            document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+                const checkItem = checkbox.closest('.check-item');
+                const title = checkItem.querySelector('.check-title').textContent;
+                checkedItems.push(title);
+            });
+
+            const notes = document.getElementById('evaluation-notes').value;
+            const totalScore = document.getElementById('total-score').textContent;
+            const confidenceText = document.getElementById('confidence-text').textContent;
+
+            const report = `
+## 事実確認評価レポート
+**評価日時:** ${new Date().toLocaleString('ja-JP')}
+**総合スコア:** ${totalScore}
+**信頼度:** ${confidenceText}
+**最終判定:** ${currentJudgment ? currentJudgment : '未設定'}
+
+### チェック済み項目
+${checkedItems.map(item => `- ${item}`).join('\n')}
+
+### 評価メモ
+${notes || 'なし'}
+
+---
+*実用的事実確認チェックシートによる評価*
+            `;
+
+            // Create downloadable file
+            const blob = new Blob([report], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `事実確認評価_${new Date().toISOString().split('T')[0]}.md`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize collapsed state for better UX
+        document.addEventListener('DOMContentLoaded', function() {
+            // Keep Critical section open, collapse others
+            const sections = document.querySelectorAll('.section');
+            for (let i = 1; i < sections.length; i++) {
+                const header = sections[i].querySelector('.section-header');
+                toggleSection(header);
+            }
+            
+            // Hide guide buttons initially
+            document.querySelectorAll('.guide-toggle').forEach(btn => {
+                btn.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+{
+  "name": "実用的事実確認チェックシート",
+  "short_name": "FactCheckList",
+  "description": "情報の信頼性を科学的・体系的に評価するためのPWA",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#2c3e50",
+  "background_color": "#ffffff",
+  "lang": "ja-JP",
+  "categories": ["education", "productivity", "utilities"],
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "デスクトップ版のメイン画面"
+    },
+    {
+      "src": "/screenshot-narrow.png",
+      "sizes": "375x812",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "モバイル版のメイン画面"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "新しいチェックリスト",
+      "short_name": "新規作成",
+      "description": "新しい事実確認チェックリストを開始する",
+      "url": "/?action=new",
+      "icons": [
+        {
+          "src": "/icon.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "履歴",
+      "short_name": "履歴",
+      "description": "過去のチェックリスト履歴を表示する",
+      "url": "/?action=history",
+      "icons": [
+        {
+          "src": "/icon-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "share_target": {
+    "action": "/",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
+}
