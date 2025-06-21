@@ -332,7 +332,7 @@
 		.sidebar {
 			position: static;
 			max-height: none;
-			order: -1;
+			/* order: -1; */
 		}
 
 		.header-actions {
