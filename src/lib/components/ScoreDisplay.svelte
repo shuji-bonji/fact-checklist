@@ -81,7 +81,7 @@
 				<div
 					class="confidence-fill"
 					style:width="{confidenceLevel}%"
-					style:background-color={confidenceBarColor}
+					style:background-color={confidenceBarColor.toString()}
 				></div>
 			</div>
 			<div class="confidence-percentage">{confidenceLevel}%</div>
