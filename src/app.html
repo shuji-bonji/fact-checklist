@@ -3,11 +3,14 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<meta name="description" content="情報の信頼性を科学的・体系的に評価するための実用的事実確認チェックシート。PWA対応でオフラインでも利用可能。" />
+		<meta
+			name="description"
+			content="情報の信頼性を科学的・体系的に評価するための実用的事実確認チェックシート。PWA対応でオフラインでも利用可能。"
+		/>
 		<meta name="keywords" content="事実確認,ファクトチェック,情報検証,信頼性評価,PWA,オフライン" />
 		<meta name="author" content="Fact Checklist Team" />
 		<meta name="robots" content="index, follow" />
-		
+
 		<!-- PWA用メタタグ -->
 		<meta name="application-name" content="実用的事実確認チェックシート" />
 		<meta name="theme-color" content="#2c3e50" />
@@ -17,7 +20,7 @@
 		<meta name="mobile-web-app-capable" content="yes" />
 		<meta name="msapplication-TileColor" content="#2c3e50" />
 		<meta name="msapplication-tap-highlight" content="no" />
-		
+
 		<!-- Open Graph / Facebook -->
 		<meta property="og:type" content="website" />
 		<meta property="og:url" content="https://shuji-bonji.github.io/fact-checklist/" />
@@ -26,14 +29,20 @@
 		<meta property="og:image" content="https://shuji-bonji.github.io/fact-checklist/og-image.png" />
 		<meta property="og:locale" content="ja_JP" />
 		<meta property="og:site_name" content="実用的事実確認チェックシート" />
-		
+
 		<!-- Twitter -->
 		<meta property="twitter:card" content="summary_large_image" />
 		<meta property="twitter:url" content="https://shuji-bonji.github.io/fact-checklist/" />
 		<meta property="twitter:title" content="実用的事実確認チェックシート" />
-		<meta property="twitter:description" content="情報の信頼性を科学的・体系的に評価するためのPWA" />
-		<meta property="twitter:image" content="https://shuji-bonji.github.io/fact-checklist/og-image.png" />
-		
+		<meta
+			property="twitter:description"
+			content="情報の信頼性を科学的・体系的に評価するためのPWA"
+		/>
+		<meta
+			property="twitter:image"
+			content="https://shuji-bonji.github.io/fact-checklist/og-image.png"
+		/>
+
 		<!-- アイコン -->
 		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
 		<link rel="icon" type="image/png" sizes="16x16" href="%sveltekit.assets%/favicon.png" />
@@ -42,80 +51,109 @@
 		<link rel="apple-touch-icon" sizes="152x152" href="%sveltekit.assets%/favicon.png" />
 		<link rel="apple-touch-icon" sizes="180x180" href="%sveltekit.assets%/favicon.png" />
 		<link rel="apple-touch-icon" sizes="167x167" href="%sveltekit.assets%/favicon.png" />
-		
+
 		<!-- マニフェストファイル -->
 		<link rel="manifest" href="%sveltekit.assets%/manifest.json" />
-		
+
 		<!-- スプラッシュスクリーン用（iOS） -->
-		<link rel="apple-touch-startup-image" href="%sveltekit.assets%/apple-launch-640x1136.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" />
-		<link rel="apple-touch-startup-image" href="%sveltekit.assets%/apple-launch-750x1334.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" />
-		<link rel="apple-touch-startup-image" href="%sveltekit.assets%/apple-launch-1242x2208.png" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" />
-		<link rel="apple-touch-startup-image" href="%sveltekit.assets%/apple-launch-1125x2436.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" />
-		<link rel="apple-touch-startup-image" href="%sveltekit.assets%/apple-launch-1536x2048.png" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)" />
-		<link rel="apple-touch-startup-image" href="%sveltekit.assets%/apple-launch-1668x2224.png" media="(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2)" />
-		<link rel="apple-touch-startup-image" href="%sveltekit.assets%/apple-launch-2048x2732.png" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)" />
-		
+		<link
+			rel="apple-touch-startup-image"
+			href="%sveltekit.assets%/apple-launch-640x1136.png"
+			media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)"
+		/>
+		<link
+			rel="apple-touch-startup-image"
+			href="%sveltekit.assets%/apple-launch-750x1334.png"
+			media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)"
+		/>
+		<link
+			rel="apple-touch-startup-image"
+			href="%sveltekit.assets%/apple-launch-1242x2208.png"
+			media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)"
+		/>
+		<link
+			rel="apple-touch-startup-image"
+			href="%sveltekit.assets%/apple-launch-1125x2436.png"
+			media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)"
+		/>
+		<link
+			rel="apple-touch-startup-image"
+			href="%sveltekit.assets%/apple-launch-1536x2048.png"
+			media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)"
+		/>
+		<link
+			rel="apple-touch-startup-image"
+			href="%sveltekit.assets%/apple-launch-1668x2224.png"
+			media="(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2)"
+		/>
+		<link
+			rel="apple-touch-startup-image"
+			href="%sveltekit.assets%/apple-launch-2048x2732.png"
+			media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)"
+		/>
+
 		<!-- フォントの事前読み込み -->
 		<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		
+
 		<!-- セキュリティ -->
 		<meta http-equiv="X-Content-Type-Options" content="nosniff" />
 		<meta http-equiv="X-Frame-Options" content="DENY" />
 		<meta http-equiv="X-XSS-Protection" content="1; mode=block" />
 		<meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
 		<meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()" />
-		
+
 		<!-- DNS Prefetch -->
 		<link rel="dns-prefetch" href="//fonts.googleapis.com" />
 		<link rel="dns-prefetch" href="//fonts.gstatic.com" />
-		
+
 		<!-- JSON-LD構造化データ -->
 		<script type="application/ld+json">
-		{
-			"@context": "https://schema.org",
-			"@type": "WebApplication",
-			"name": "実用的事実確認チェックシート",
-			"description": "情報の信頼性を科学的・体系的に評価するためのPWA",
-			"url": "https://shuji-bonji.github.io/fact-checklist/",
-			"applicationCategory": "EducationalApplication",
-			"operatingSystem": "Any",
-			"permissions": "browser",
-			"offers": {
-				"@type": "Offer",
-				"price": "0",
-				"priceCurrency": "JPY"
-			},
-			"author": {
-				"@type": "Organization",
-				"name": "Fact Checklist Team"
-			},
-			"inLanguage": "ja-JP",
-			"browserRequirements": "Requires JavaScript. Requires HTML5.",
-			"softwareVersion": "1.0.0",
-			"aggregateRating": {
-				"@type": "AggregateRating",
-				"ratingValue": "5",
-				"ratingCount": "1"
+			{
+				"@context": "https://schema.org",
+				"@type": "WebApplication",
+				"name": "実用的事実確認チェックシート",
+				"description": "情報の信頼性を科学的・体系的に評価するためのPWA",
+				"url": "https://shuji-bonji.github.io/fact-checklist/",
+				"applicationCategory": "EducationalApplication",
+				"operatingSystem": "Any",
+				"permissions": "browser",
+				"offers": {
+					"@type": "Offer",
+					"price": "0",
+					"priceCurrency": "JPY"
+				},
+				"author": {
+					"@type": "Organization",
+					"name": "Fact Checklist Team"
+				},
+				"inLanguage": "ja-JP",
+				"browserRequirements": "Requires JavaScript. Requires HTML5.",
+				"softwareVersion": "1.0.0",
+				"aggregateRating": {
+					"@type": "AggregateRating",
+					"ratingValue": "5",
+					"ratingCount": "1"
+				}
 			}
-		}
 		</script>
-		
+
 		<title>%sveltekit.title%</title>
-		
+
 		<!-- インラインCSS（重要なスタイルの先読み） -->
 		<style>
 			/* Critical CSS for faster loading */
 			body {
 				margin: 0;
 				padding: 0;
-				font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', system-ui, sans-serif;
+				font-family:
+					'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', system-ui, sans-serif;
 				line-height: 1.6;
 				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 				min-height: 100vh;
 				color: #2c3e50;
 			}
-			
+
 			/* Loading spinner */
 			.app-loading {
 				display: flex;
@@ -132,7 +170,7 @@
 				bottom: 0;
 				z-index: 9999;
 			}
-			
+
 			.spinner {
 				width: 40px;
 				height: 40px;
@@ -142,44 +180,50 @@
 				animation: spin 1s linear infinite;
 				margin-bottom: 20px;
 			}
-			
+
 			@keyframes spin {
-				0% { transform: rotate(0deg); }
-				100% { transform: rotate(360deg); }
+				0% {
+					transform: rotate(0deg);
+				}
+				100% {
+					transform: rotate(360deg);
+				}
 			}
-			
+
 			.loading-text {
 				font-size: 1.1em;
 				opacity: 0.9;
 			}
-			
+
 			/* Hide loading screen when app loads */
 			#svelte .app-loading {
 				display: none;
 			}
 		</style>
-		
+
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">
 		<!-- NoScript fallback -->
 		<noscript>
-			<div style="
-				display: flex; 
-				flex-direction: column; 
-				align-items: center; 
-				justify-content: center; 
-				min-height: 100vh; 
-				padding: 20px; 
-				text-align: center;
-				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-				color: white;
-				font-family: system-ui, sans-serif;
-			">
+			<div
+				style="
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					justify-content: center;
+					min-height: 100vh;
+					padding: 20px;
+					text-align: center;
+					background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+					color: white;
+					font-family: system-ui, sans-serif;
+				"
+			>
 				<h1>⚠️ JavaScript が必要です</h1>
 				<p>このアプリケーションを使用するには、ブラウザでJavaScriptを有効にしてください。</p>
-				<p style="margin-top: 20px; opacity: 0.8;">
-					<strong>実用的事実確認チェックシート</strong><br>
+				<p style="margin-top: 20px; opacity: 0.8">
+					<strong>実用的事実確認チェックシート</strong><br />
 					情報の信頼性を評価するためのツールです
 				</p>
 			</div>
@@ -206,35 +250,35 @@
 					console.log('Loading screen hidden');
 				}
 			}
-			
+
 			// DOMContentLoadedでローディング画面を非表示
 			if (document.readyState === 'loading') {
 				document.addEventListener('DOMContentLoaded', hideLoadingScreen);
 			} else {
 				hideLoadingScreen();
 			}
-			
+
 			// アプリの初期化完了後にも確実に非表示にする
 			setTimeout(hideLoadingScreen, 100);
-			
+
 			// ウィンドウの読み込み完了後にも確認
 			window.addEventListener('load', hideLoadingScreen);
-			
+
 			// PWAインストールプロンプト用のイベントハンドラ
 			let deferredPrompt;
-			
-			window.addEventListener('beforeinstallprompt', (e) => {
+
+			window.addEventListener('beforeinstallprompt', e => {
 				console.log('PWA install prompt available');
 				e.preventDefault();
 				deferredPrompt = e;
-				
+
 				// カスタムインストールボタンを表示する場合
 				const installButton = document.querySelector('#pwa-install-button');
 				if (installButton) {
 					installButton.style.display = 'block';
 					installButton.addEventListener('click', () => {
 						deferredPrompt.prompt();
-						deferredPrompt.userChoice.then((choiceResult) => {
+						deferredPrompt.userChoice.then(choiceResult => {
 							if (choiceResult.outcome === 'accepted') {
 								console.log('User accepted PWA install');
 							} else {
@@ -246,15 +290,15 @@
 					});
 				}
 			});
-			
-			window.addEventListener('appinstalled', (e) => {
+
+			window.addEventListener('appinstalled', e => {
 				console.log('PWA was installed');
 				const installButton = document.querySelector('#pwa-install-button');
 				if (installButton) {
 					installButton.style.display = 'none';
 				}
 			});
-			
+
 			// Service Worker の更新通知
 			if ('serviceWorker' in navigator) {
 				navigator.serviceWorker.addEventListener('controllerchange', () => {
@@ -266,12 +310,12 @@
 		<!-- Error tracking (optional) -->
 		<script>
 			// Global error handler
-			window.addEventListener('error', (e) => {
+			window.addEventListener('error', e => {
 				console.error('Global error:', e.error);
 				// ここで分析サービスにエラーを送信することもできます
 			});
-			
-			window.addEventListener('unhandledrejection', (e) => {
+
+			window.addEventListener('unhandledrejection', e => {
 				console.error('Unhandled promise rejection:', e.reason);
 				// ここで分析サービスにエラーを送信することもできます
 			});
@@ -282,23 +326,23 @@
 			// Core Web Vitals monitoring
 			if ('PerformanceObserver' in window) {
 				// LCP (Largest Contentful Paint)
-				new PerformanceObserver((list) => {
+				new PerformanceObserver(list => {
 					const entries = list.getEntries();
 					const lastEntry = entries[entries.length - 1];
 					console.log('LCP:', lastEntry.startTime);
 				}).observe({ entryTypes: ['largest-contentful-paint'] });
-				
+
 				// FID (First Input Delay)
-				new PerformanceObserver((list) => {
-					list.getEntries().forEach((entry) => {
+				new PerformanceObserver(list => {
+					list.getEntries().forEach(entry => {
 						console.log('FID:', entry.processingStart - entry.startTime);
 					});
 				}).observe({ entryTypes: ['first-input'] });
-				
+
 				// CLS (Cumulative Layout Shift)
-				new PerformanceObserver((list) => {
+				new PerformanceObserver(list => {
 					let clsValue = 0;
-					list.getEntries().forEach((entry) => {
+					list.getEntries().forEach(entry => {
 						if (!entry.hadRecentInput) {
 							clsValue += entry.value;
 						}

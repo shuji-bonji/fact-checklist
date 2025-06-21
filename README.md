@@ -27,7 +27,8 @@
 
 ### オンラインで利用
 
-**👉 [https://shuji-bonji.github.io/fact-checklist/](https://shuji-bonji.github.io/fact-checklist/)**
+**👉
+[https://shuji-bonji.github.io/fact-checklist/](https://shuji-bonji.github.io/fact-checklist/)**
 
 ### ローカル開発
 
@@ -48,6 +49,7 @@ npm run dev
 ## 📋 チェック項目
 
 ### 🚨 クリティカル評価（必須）
+
 - 権威ある情報源からの発表
 - 一次情報の確認
 - 複数の独立した情報源
@@ -56,6 +58,7 @@ npm run dev
 - 論理的一貫性
 
 ### 📝 詳細評価（重要）
+
 - 情報の新しさ
 - 更新・訂正の履歴
 - 適切な専門知識
@@ -64,12 +67,14 @@ npm run dev
 - 引用元の確認可能性
 
 ### 🔍 検証・照合
+
 - 他情報源との照合
 - ファクトチェック組織の検証
 - 検証可能なデータ
 - 手法・方法論の妥当性
 
 ### 🌐 文脈・バイアス評価
+
 - 利害関係の開示
 - バランスの取れた視点
 - 十分な背景情報
@@ -78,17 +83,20 @@ npm run dev
 ## 🛠️ 技術スタック
 
 ### フロントエンド
+
 - **[Svelte 5](https://svelte.dev/)** - 最新のrunesシステムによるリアクティブUI
 - **[SvelteKit](https://kit.svelte.dev/)** - フルスタックフレームワーク
 - **[TypeScript](https://www.typescriptlang.org/)** - 型安全な開発
 - **[Vite](https://vitejs.dev/)** - 高速ビルドツール
 
 ### PWA・インフラ
+
 - **[Vite PWA Plugin](https://vite-pwa-org.netlify.app/)** - PWA機能
 - **[GitHub Pages](https://pages.github.com/)** - ホスティング
 - **[GitHub Actions](https://github.com/features/actions)** - CI/CD
 
 ### 開発ツール
+
 - **[ESLint](https://eslint.org/)** - コード品質チェック
 - **[Prettier](https://prettier.io/)** - コードフォーマット
 - **[Lighthouse](https://developers.google.com/web/tools/lighthouse)** - パフォーマンス監視
@@ -170,17 +178,20 @@ npm run format
 ### 🧪 開発ガイドライン
 
 - **コードスタイル**: ESLint + Prettierに従う
-- **コミットメッセージ**: [Conventional Commits](https://conventionalcommits.org/)形式
+- **コミットメッセージ**:
+  [Conventional Commits](https://conventionalcommits.org/)形式
 - **テスト**: 新機能にはテストを追加
 - **ドキュメント**: 変更内容をドキュメントに反映
 
 ## 📱 PWAインストール
 
 ### デスクトップ
+
 1. ブラウザのアドレスバーのインストールアイコンをクリック
 2. または設定メニューから「アプリをインストール」を選択
 
 ### モバイル
+
 1. Safariまたは Chrome でサイトを開く
 2. **Safari**: 共有ボタン → 「ホーム画面に追加」
 3. **Chrome**: メニュー → 「ホーム画面に追加」
@@ -195,12 +206,14 @@ npm run format
 ## 📚 関連リソース
 
 ### 事実確認・メディアリテラシー
+
 - [日本ファクトチェックセンター](https://jfc.or.jp/)
 - [InFact](https://infact.press/)
 - [First Draft](https://firstdraftnews.org/long-form-article/information-disorder-part-1/)
 - [IFCN Code of Principles](https://www.poynter.org/ifcn-code-of-principles/)
 
 ### 技術ドキュメント
+
 - [Svelte 5 Documentation](https://svelte.dev/docs/svelte/overview)
 - [SvelteKit Documentation](https://kit.svelte.dev/docs/introduction)
 - [PWA Best Practices](https://web.dev/progressive-web-apps/)
