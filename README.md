@@ -141,11 +141,11 @@ npm run format
 
 ## 📊 パフォーマンス
 
-- **Lighthouse Score**: 95+ (Performance, Accessibility, Best Practices, SEO)
+<!-- - **Lighthouse Score**: 95+ (Performance, Accessibility, Best Practices, SEO)
 - **Core Web Vitals**: すべて「Good」評価
 - **Bundle Size**: < 100KB (gzip)
 - **First Load**: < 2秒
-- **Offline Ready**: 完全オフライン対応
+- **Offline Ready**: 完全オフライン対応 -->
 
 ## 🤝 貢献方法
 
