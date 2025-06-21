@@ -1,7 +1,7 @@
-import type { 
-	ChecklistResult, 
-	CheckItem, 
-	ChecklistScore, 
+import type {
+	ChecklistResult,
+	CheckItem,
+	ChecklistScore,
 	JudgmentType,
 	ChecklistHistoryItem,
 	ChecklistStatus
@@ -51,18 +51,12 @@ class ChecklistStore {
 		}
 
 		const items = this._currentChecklist.items;
-		const critical = items.filter(item => 
-			item.category.id === 'critical' && item.checked
+		const critical = items.filter(item => item.category.id === 'critical' && item.checked).length;
+		const detailed = items.filter(item => item.category.id === 'detailed' && item.checked).length;
+		const verification = items.filter(
+			item => item.category.id === 'verification' && item.checked
 		).length;
-		const detailed = items.filter(item => 
-			item.category.id === 'detailed' && item.checked
-		).length;
-		const verification = items.filter(item => 
-			item.category.id === 'verification' && item.checked
-		).length;
-		const context = items.filter(item => 
-			item.category.id === 'context' && item.checked
-		).length;
+		const context = items.filter(item => item.category.id === 'context' && item.checked).length;
 
 		const total = critical + detailed + verification + context;
 		const maxScore = 20;
@@ -104,7 +98,7 @@ class ChecklistStore {
 	createNewChecklist(title: string = '', description: string = ''): string {
 		const id = uuidv4();
 		const now = new Date();
-		
+
 		// チェックアイテムのコピーを作成（チェック状態をリセット）
 		const items: CheckItem[] = CHECKLIST_ITEMS.map(item => ({
 			...item,
@@ -163,13 +157,13 @@ class ChecklistStore {
 		if (item) {
 			item.checked = checked;
 			this._currentChecklist.updatedAt = new Date();
-			
+
 			// スコアを更新
 			this._currentChecklist.score = this.score;
 			this._currentChecklist.confidenceLevel = this.confidenceLevel;
 			this._currentChecklist.confidenceText = this.confidenceText;
 			this._currentChecklist.judgmentAdvice = this.judgmentAdvice;
-			
+
 			this.saveToStorage();
 		}
 	}
@@ -177,7 +171,7 @@ class ChecklistStore {
 	// メモを更新
 	updateNotes(notes: string): void {
 		if (!this._currentChecklist) return;
-		
+
 		this._currentChecklist.notes = notes;
 		this._currentChecklist.updatedAt = new Date();
 		this.saveToStorage();
@@ -200,7 +194,7 @@ class ChecklistStore {
 		this._currentChecklist.status = 'completed';
 		this._currentChecklist.completedAt = now;
 		this._currentChecklist.updatedAt = now;
-		
+
 		// 履歴に追加
 		const historyItem: ChecklistHistoryItem = {
 			id: this._currentChecklist.id,
@@ -233,7 +227,7 @@ class ChecklistStore {
 	deleteFromHistory(id: string): void {
 		this._history = this._history.filter(h => h.id !== id);
 		this.saveHistory();
-		
+
 		// ローカルストレージからも削除
 		if (isBrowser) {
 			localStorage.removeItem(`checklist_${id}`);
@@ -246,7 +240,7 @@ class ChecklistStore {
 
 		try {
 			localStorage.setItem(
-				`checklist_${this._currentChecklist.id}`, 
+				`checklist_${this._currentChecklist.id}`,
 				JSON.stringify(this._currentChecklist)
 			);
 		} catch (error) {

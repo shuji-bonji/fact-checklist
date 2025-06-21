@@ -11,10 +11,10 @@
 		onCheckItem: (itemId: string, checked: boolean) => void;
 	}
 
-	let { 
-		category, 
-		items, 
-		collapsed = false, 
+	let {
+		category,
+		items,
+		collapsed = false,
 		showGuideMode = false,
 		onToggle,
 		onCheckItem
@@ -23,7 +23,7 @@
 	// カテゴリ別のスタイルクラス
 	const categoryClasses = {
 		critical: 'critical',
-		detailed: 'important', 
+		detailed: 'important',
 		verification: 'verification',
 		context: 'context'
 	};
@@ -32,34 +32,29 @@
 </script>
 
 <div class="section">
-	<button 
-		class="section-header {categoryClass}" 
+	<button
+		class="section-header {categoryClass}"
 		onclick={onToggle}
 		aria-expanded={!collapsed}
 		aria-controls="section-{category.id}"
 	>
 		<span class="section-title">
-			{category.emoji} {category.name}
+			{category.emoji}
+			{category.name}
 		</span>
 		<span class="section-description">
 			{category.description}
 		</span>
-		<span class="toggle-icon" class:rotated={!collapsed}>
-			▼
-		</span>
+		<span class="toggle-icon" class:rotated={!collapsed}> ▼ </span>
 	</button>
-	
-	<div 
-		id="section-{category.id}"
-		class="collapsible-content"
-		class:collapsed
-	>
+
+	<div id="section-{category.id}" class="collapsible-content" class:collapsed>
 		<div class="section-content">
 			{#each items as item (item.id)}
-				<CheckItemComponent 
+				<CheckItemComponent
 					{item}
 					{showGuideMode}
-					onCheckChange={(checked) => onCheckItem(item.id, checked)}
+					onCheckChange={checked => onCheckItem(item.id, checked)}
 				/>
 			{/each}
 		</div>
@@ -107,20 +102,20 @@
 		outline-offset: -2px;
 	}
 
-	.section-header.critical { 
-		background: linear-gradient(135deg, #e74c3c, #c0392b); 
+	.section-header.critical {
+		background: linear-gradient(135deg, #e74c3c, #c0392b);
 	}
-	
-	.section-header.important { 
-		background: linear-gradient(135deg, #f39c12, #e67e22); 
+
+	.section-header.important {
+		background: linear-gradient(135deg, #f39c12, #e67e22);
 	}
-	
-	.section-header.verification { 
-		background: linear-gradient(135deg, #3498db, #2980b9); 
+
+	.section-header.verification {
+		background: linear-gradient(135deg, #3498db, #2980b9);
 	}
-	
-	.section-header.context { 
-		background: linear-gradient(135deg, #9b59b6, #8e44ad); 
+
+	.section-header.context {
+		background: linear-gradient(135deg, #9b59b6, #8e44ad);
 	}
 
 	.section-title {

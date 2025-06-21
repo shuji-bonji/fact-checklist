@@ -26,7 +26,7 @@
 	// 信頼度バーの色を動的に決定
 	const confidenceBarColor = $derived(() => {
 		if (confidenceLevel >= 80) return '#27ae60';
-		if (confidenceLevel >= 60) return '#f39c12'; 
+		if (confidenceLevel >= 60) return '#f39c12';
 		if (confidenceLevel >= 40) return '#e67e22';
 		return '#e74c3c';
 	});
@@ -34,8 +34,8 @@
 	// 判定ボタンのスタイル決定
 	function getJudgmentButtonClass(judgment: JudgmentType) {
 		const baseClass = 'judgment-btn';
-		const typeClass = judgment === 'accept' ? 'accept' : 
-		                  judgment === 'caution' ? 'caution' : 'reject';
+		const typeClass =
+			judgment === 'accept' ? 'accept' : judgment === 'caution' ? 'caution' : 'reject';
 		const activeClass = currentJudgment === judgment ? 'active' : '';
 		return `${baseClass} ${typeClass} ${activeClass}`.trim();
 	}
@@ -45,7 +45,7 @@
 	<!-- スコア表示 -->
 	<div class="score-display card">
 		<h3>📊 評価スコア</h3>
-		
+
 		<div class="score-breakdown">
 			<div class="score-item">
 				<span class="score-label">🚨 クリティカル</span>
@@ -64,7 +64,7 @@
 				<span class="score-value">{score.context}/4</span>
 			</div>
 		</div>
-		
+
 		<div class="total-score">
 			<div class="score-item total">
 				<strong class="score-label">総合スコア</strong>
@@ -78,7 +78,7 @@
 		<h3>🎯 信頼度</h3>
 		<div class="confidence-bar-container">
 			<div class="confidence-bar">
-				<div 
+				<div
 					class="confidence-fill"
 					style="width: {confidenceLevel}%; background-color: {confidenceBarColor}"
 				></div>
@@ -92,21 +92,21 @@
 	<div class="final-judgment card">
 		<h3>⚖️ 最終判定</h3>
 		<div class="judgment-buttons">
-			<button 
+			<button
 				class={getJudgmentButtonClass('accept')}
 				onclick={() => setJudgment('accept')}
 				aria-pressed={currentJudgment === 'accept'}
 			>
 				✅ 採用
 			</button>
-			<button 
+			<button
 				class={getJudgmentButtonClass('caution')}
 				onclick={() => setJudgment('caution')}
 				aria-pressed={currentJudgment === 'caution'}
 			>
 				⚠️ 要注意
 			</button>
-			<button 
+			<button
 				class={getJudgmentButtonClass('reject')}
 				onclick={() => setJudgment('reject')}
 				aria-pressed={currentJudgment === 'reject'}
@@ -114,7 +114,7 @@
 				❌ 不採用
 			</button>
 		</div>
-		
+
 		<div class="judgment-advice">
 			{judgmentAdvice}
 		</div>
@@ -205,7 +205,9 @@
 
 	.confidence-fill {
 		height: 100%;
-		transition: width 0.5s ease, background-color 0.3s ease;
+		transition:
+			width 0.5s ease,
+			background-color 0.3s ease;
 		border-radius: 10px;
 	}
 
@@ -250,7 +252,7 @@
 
 	.judgment-btn:hover {
 		transform: translateY(-2px);
-		box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 		opacity: 1;
 	}
 
@@ -276,7 +278,7 @@
 
 	.judgment-btn.active {
 		transform: scale(1.05);
-		box-shadow: 0 0 15px rgba(0,0,0,0.3);
+		box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
 		opacity: 1;
 	}
 

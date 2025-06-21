@@ -25,11 +25,11 @@ export default defineConfig({
 				categories: ['education', 'productivity', 'utilities'],
 				icons: [
 					{
-            src: '/icon.svg',
-            sizes: 'any',
-            type: 'image/svg+xml',
-            purpose: 'any maskable'
-					},
+						src: '/icon.svg',
+						sizes: 'any',
+						type: 'image/svg+xml',
+						purpose: 'any maskable'
+					}
 				],
 				screenshots: [
 					{
@@ -61,5 +61,8 @@ export default defineConfig({
 	build: {
 		target: 'es2022'
 	},
-	base: process.env.NODE_ENV === 'production' && process.env.GITHUB_PAGES === 'true' ? '/fact-checklist/' : '/'
+	base:
+		process.env.NODE_ENV === 'production' && process.env.GITHUB_PAGES === 'true'
+			? '/fact-checklist/'
+			: '/'
 });

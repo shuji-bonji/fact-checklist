@@ -20,12 +20,12 @@ const config = {
 			precompress: false,
 			strict: false
 		}),
-		
+
 		// PWA用の設定
 		serviceWorker: {
 			register: false
 		},
-		
+
 		// プリレンダリング設定
 		prerender: {
 			handleHttpError: 'warn',
@@ -33,10 +33,13 @@ const config = {
 			entries: ['/'],
 			crawl: true
 		},
-		
+
 		// ルーティング設定
 		paths: {
-			base: process.env.NODE_ENV === 'production' && process.env.GITHUB_PAGES === 'true' ? '/fact-checklist' : ''
+			base:
+				process.env.NODE_ENV === 'production' && process.env.GITHUB_PAGES === 'true'
+					? '/fact-checklist'
+					: ''
 		}
 	}
 };

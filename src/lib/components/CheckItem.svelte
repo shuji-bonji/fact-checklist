@@ -7,11 +7,7 @@
 		onCheckChange: (checked: boolean) => void;
 	}
 
-	let { 
-		item, 
-		showGuideMode = false,
-		onCheckChange
-	}: Props = $props();
+	let { item, showGuideMode = false, onCheckChange }: Props = $props();
 
 	let showGuide = $state(false);
 
@@ -36,7 +32,7 @@
 	// リスクレベルに応じたスタイルクラス
 	const riskClasses = {
 		high: 'risk-high',
-		medium: 'risk-medium', 
+		medium: 'risk-medium',
 		low: 'risk-low'
 	};
 </script>
@@ -44,25 +40,28 @@
 <div class="check-item">
 	<div class="check-content">
 		<div class="checkbox-wrapper">
-			<input 
-				type="checkbox" 
+			<input
+				type="checkbox"
 				id="check-{item.id}"
 				checked={item.checked}
 				onchange={handleCheckChange}
 				aria-describedby="desc-{item.id}"
 			/>
 		</div>
-		
+
 		<div class="item-content">
 			<label for="check-{item.id}" class="item-title">
 				{item.title}
 				<span class="risk-indicator {riskClasses[item.riskLevel]}">
-					{item.riskLevel === 'high' ? '高リスク' : 
-					 item.riskLevel === 'medium' ? '中リスク' : '低リスク'}
+					{item.riskLevel === 'high'
+						? '高リスク'
+						: item.riskLevel === 'medium'
+							? '中リスク'
+							: '低リスク'}
 				</span>
-				
+
 				{#if item.guideContent && !showGuideMode}
-					<button 
+					<button
 						class="guide-toggle"
 						onclick={toggleGuide}
 						aria-expanded={showGuide}
@@ -73,17 +72,13 @@
 					</button>
 				{/if}
 			</label>
-			
+
 			<div id="desc-{item.id}" class="item-description">
 				{item.description}
 			</div>
-			
+
 			{#if item.guideContent && showGuide}
-				<div 
-					id="guide-{item.id}"
-					class="detailed-guide"
-					class:show={showGuide}
-				>
+				<div id="guide-{item.id}" class="detailed-guide" class:show={showGuide}>
 					<div class="guide-section">
 						<div class="guide-title">
 							{item.guideContent.title}
@@ -91,7 +86,7 @@
 						<div class="guide-content">
 							{@html item.guideContent.content.replace(/\n/g, '<br>')}
 						</div>
-						
+
 						{#if item.guideContent.examples}
 							<div class="guide-examples">
 								{#if item.guideContent.examples.good.length > 0}
@@ -102,7 +97,7 @@
 										{/each}
 									</div>
 								{/if}
-								
+
 								{#if item.guideContent.examples.bad.length > 0}
 									<div class="examples-section">
 										<h5>❌ 悪い例:</h5>
@@ -146,7 +141,7 @@
 		flex-shrink: 0;
 	}
 
-	.checkbox-wrapper input[type="checkbox"] {
+	.checkbox-wrapper input[type='checkbox'] {
 		width: 18px;
 		height: 18px;
 		cursor: pointer;
@@ -185,19 +180,19 @@
 		white-space: nowrap;
 	}
 
-	.risk-high { 
-		background: #ffebee; 
-		color: #c62828; 
+	.risk-high {
+		background: #ffebee;
+		color: #c62828;
 	}
 
-	.risk-medium { 
-		background: #fff3e0; 
-		color: #ef6c00; 
+	.risk-medium {
+		background: #fff3e0;
+		color: #ef6c00;
 	}
 
-	.risk-low { 
-		background: #e8f5e8; 
-		color: #2e7d32; 
+	.risk-low {
+		background: #e8f5e8;
+		color: #2e7d32;
 	}
 
 	.guide-toggle {
