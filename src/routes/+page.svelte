@@ -164,9 +164,8 @@
 
 			<!-- クイックスタートガイド -->
 			<div class="quick-start card">
-				<h3>🚀 クイックスタート</h3>
 				<p>
-					まず「クリティカル評価」から始めて、基本的な信頼性を確認しましょう。各項目をチェックすると、右側のスコアがリアルタイムで更新されます。
+					まず「クリティカル評価」から始めて、基本的な信頼性を確認しましょう。<br>各項目をチェックすると、右側のスコアがリアルタイムで更新されます。
 				</p>
 			</div>
 
@@ -284,8 +283,16 @@
 		position: sticky;
 		top: 20px;
 		max-height: calc(100vh - 40px);
-		overflow-y: auto;
-	}
+    overflow-y: scroll;
+    /*スクロールバー非表示（IE・Edge）*/
+    -ms-overflow-style: none;
+    /*スクロールバー非表示（Firefox）*/
+    scrollbar-width: none;
+  }
+  /*スクロールバー非表示（Chrome・Safari）*/
+  .sidebar::-webkit-scrollbar{
+    display:none;
+  }
 
 	.quick-start {
 		background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%);
