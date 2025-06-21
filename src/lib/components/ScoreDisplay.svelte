@@ -10,7 +10,7 @@
 		onJudgmentChange: (judgment: JudgmentType) => void;
 	}
 
-	let {
+	const {
 		score,
 		confidenceLevel,
 		confidenceText,
@@ -80,7 +80,8 @@
 			<div class="confidence-bar">
 				<div
 					class="confidence-fill"
-					style="width: {confidenceLevel}%; background-color: {confidenceBarColor}"
+					style:width="{confidenceLevel}%"
+					style:background-color={confidenceBarColor}
 				></div>
 			</div>
 			<div class="confidence-percentage">{confidenceLevel}%</div>

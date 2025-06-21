@@ -11,7 +11,7 @@
 		onCheckItem: (itemId: string, checked: boolean) => void;
 	}
 
-	let {
+	const {
 		category,
 		items,
 		collapsed = false,

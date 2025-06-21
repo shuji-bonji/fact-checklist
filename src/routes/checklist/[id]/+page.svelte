@@ -63,11 +63,6 @@
 		}
 	}
 
-	function getCategoryIcon(categoryId: string): string {
-		const category = CATEGORIES.find(c => c.id === categoryId);
-		return category?.emoji || '📋';
-	}
-
 	function getConfidenceClass(level: number): string {
 		if (level >= 80) return 'high';
 		if (level >= 60) return 'medium';

@@ -7,7 +7,7 @@
 		onCheckChange: (checked: boolean) => void;
 	}
 
-	let { item, showGuideMode = false, onCheckChange }: Props = $props();
+	const { item, showGuideMode = false, onCheckChange }: Props = $props();
 
 	let showGuide = $state(false);
 
@@ -84,7 +84,7 @@
 							{item.guideContent.title}
 						</div>
 						<div class="guide-content">
-							{@html item.guideContent.content.replace(/\n/g, '<br>')}
+							{item.guideContent.content}
 						</div>
 
 						{#if item.guideContent.examples}
@@ -247,6 +247,7 @@
 		color: var(--text-color);
 		line-height: 1.6;
 		margin-bottom: var(--spacing-sm);
+		white-space: pre-line;
 	}
 
 	.guide-examples {

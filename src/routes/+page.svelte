@@ -20,7 +20,7 @@
 	let currentJudgment = $state<JudgmentType>(null);
 	let showGuideMode = $state(false);
 	let showExportModal = $state(false);
-	let collapsedSections = $state<Record<string, boolean>>({});
+	const collapsedSections = $state<Record<string, boolean>>({});
 
 	// Derived state
 	const currentChecklist = $derived(checklistStore.currentChecklist);

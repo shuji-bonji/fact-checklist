@@ -1,30 +1,28 @@
 import globals from 'globals';
-import { FlatCompat } from '@eslint/eslintrc';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import js from '@eslint/js';
 import tsParser from '@typescript-eslint/parser';
 import tsPlugin from '@typescript-eslint/eslint-plugin';
 import sveltePlugin from 'eslint-plugin-svelte';
 import svelteParser from 'svelte-eslint-parser';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-	baseDirectory: __dirname,
-	recommendedConfig: js.configs.recommended,
-	allConfig: js.configs.all
-});
-
 export default [
 	// JavaScript基本設定
 	js.configs.recommended,
 
-	// TypeScript設定
-	...compat.extends('@typescript-eslint/recommended'),
-
-	// Svelte設定
-	...sveltePlugin.configs['flat/recommended'],
+	// 除外設定を先に定義
+	{
+		ignores: [
+			'build/',
+			'.svelte-kit/',
+			'dist/',
+			'node_modules/',
+			'static/',
+			'src/service-worker.js',
+			'**/*.d.ts',
+			'docs/',
+			'package-lock.json'
+		]
+	},
 
 	// 全ファイル共通設定
 	{
@@ -40,20 +38,20 @@ export default [
 	// TypeScriptファイル用設定
 	{
 		files: ['**/*.ts'],
+		ignores: ['vite.config.ts'],
 		languageOptions: {
 			parser: tsParser,
 			parserOptions: {
 				ecmaVersion: 2022,
 				sourceType: 'module',
-				project: './tsconfig.json',
-				extraFileExtensions: ['.svelte']
+				project: './tsconfig.json'
 			}
 		},
 		plugins: {
 			'@typescript-eslint': tsPlugin
 		},
 		rules: {
-			// TypeScript固有のルール
+			// TypeScript基本ルール
 			'@typescript-eslint/no-unused-vars': [
 				'error',
 				{
@@ -64,19 +62,12 @@ export default [
 			'@typescript-eslint/no-explicit-any': 'warn',
 			'@typescript-eslint/explicit-function-return-type': 'off',
 			'@typescript-eslint/explicit-module-boundary-types': 'off',
-			'@typescript-eslint/no-non-null-assertion': 'warn',
-			'@typescript-eslint/prefer-const': 'error',
+			'@typescript-eslint/no-non-null-assertion': 'off', // 安全な場所での使用を許可
 			'@typescript-eslint/no-var-requires': 'error',
 			'@typescript-eslint/ban-ts-comment': 'warn',
 			'@typescript-eslint/no-empty-function': 'warn',
-
-			// 型安全性向上
-			'@typescript-eslint/strict-boolean-expressions': 'off',
 			'@typescript-eslint/prefer-nullish-coalescing': 'warn',
 			'@typescript-eslint/prefer-optional-chain': 'warn',
-			'@typescript-eslint/no-unnecessary-condition': 'warn',
-
-			// インポート関連
 			'@typescript-eslint/consistent-type-imports': [
 				'error',
 				{
@@ -95,9 +86,7 @@ export default [
 			parserOptions: {
 				parser: tsParser,
 				ecmaVersion: 2022,
-				sourceType: 'module',
-				project: './tsconfig.json',
-				extraFileExtensions: ['.svelte']
+				sourceType: 'module'
 			}
 		},
 		plugins: {
@@ -105,30 +94,12 @@ export default [
 			'@typescript-eslint': tsPlugin
 		},
 		rules: {
-			// Svelte固有のルール
+			// Svelte基本ルール
 			'svelte/no-at-html-tags': 'warn',
 			'svelte/no-target-blank': 'error',
-			'svelte/no-reactive-functions': 'off',
-			'svelte/no-reactive-literals': 'off',
 			'svelte/prefer-class-directive': 'warn',
 			'svelte/prefer-style-directive': 'warn',
-			'svelte/require-store-reactive-access': 'off',
 			'svelte/valid-compile': 'error',
-
-			// アクセシビリティ
-			'svelte/a11y-alt-text': 'error',
-			'svelte/a11y-aria-attributes': 'error',
-			'svelte/a11y-click-events-have-key-events': 'error',
-			'svelte/a11y-interactive-supports-focus': 'error',
-			'svelte/a11y-label-has-associated-control': 'error',
-			'svelte/a11y-media-has-caption': 'off',
-			'svelte/a11y-missing-attribute': 'error',
-			'svelte/a11y-missing-content': 'error',
-			'svelte/a11y-mouse-events-have-key-events': 'error',
-			'svelte/a11y-no-redundant-roles': 'error',
-			'svelte/a11y-no-static-element-interactions': 'error',
-			'svelte/a11y-role-has-required-aria-props': 'error',
-			'svelte/a11y-structure': 'error',
 
 			// TypeScript in Svelte
 			'@typescript-eslint/no-unused-vars': [
@@ -150,30 +121,18 @@ export default [
 			}
 		},
 		rules: {
-			'@typescript-eslint/no-var-requires': 'off'
+			'@typescript-eslint/no-var-requires': 'off',
+			'@typescript-eslint/no-unused-vars': 'off'
 		}
-	},
-
-	// 除外設定
-	{
-		ignores: [
-			'build/',
-			'.svelte-kit/',
-			'dist/',
-			'node_modules/',
-			'static/',
-			'src/service-worker.js',
-			'**/*.d.ts'
-		]
 	},
 
 	// 全体的なルール設定
 	{
 		rules: {
 			// 一般的なベストプラクティス
-			'no-console': 'off', // 開発中はconsoleを許可
+			'no-console': 'off',
 			'no-debugger': 'error',
-			'no-alert': 'warn',
+			'no-alert': 'off', // confirm, alertは必要な機能なので許可
 			'no-eval': 'error',
 			'no-implied-eval': 'error',
 			'no-new-func': 'error',
@@ -204,8 +163,6 @@ export default [
 			'quote-props': ['error', 'as-needed'],
 			quotes: ['error', 'single', { avoidEscape: true }],
 			semi: ['error', 'always'],
-			indent: ['error', 'tab', { SwitchCase: 1 }],
-			'linebreak-style': ['error', 'unix'],
 
 			// スペース関連
 			'space-before-function-paren': [

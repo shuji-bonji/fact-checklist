@@ -7,9 +7,9 @@
 		onClose: () => void;
 	}
 
-	let { checklist, onClose }: Props = $props();
+	const { checklist, onClose }: Props = $props();
 
-	let exportOptions = $state<ExportOptions>({
+	const exportOptions = $state<ExportOptions>({
 		format: 'pdf',
 		includeGuides: true,
 		includeNotes: true

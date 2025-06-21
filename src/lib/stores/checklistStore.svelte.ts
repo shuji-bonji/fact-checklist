@@ -3,10 +3,9 @@ import type {
 	CheckItem,
 	ChecklistScore,
 	JudgmentType,
-	ChecklistHistoryItem,
-	ChecklistStatus
+	ChecklistHistoryItem
 } from '../types/checklist.js';
-import { CHECKLIST_ITEMS, CATEGORIES } from '../data/checklist-items.js';
+import { CHECKLIST_ITEMS } from '../data/checklist-items.js';
 import { v4 as uuidv4 } from 'uuid';
 
 // ブラウザ環境でのみIndexedDBを使用
