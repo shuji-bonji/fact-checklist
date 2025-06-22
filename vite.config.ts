@@ -12,6 +12,8 @@ export default defineConfig({
 			registerType: 'autoUpdate',
 			// Service Workerを手動で管理するため無効化
 			injectRegister: false,
+			// manifestファイル名を明示的に指定
+			manifestFilename: 'manifest.json',
 			workbox: {
 				globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2}'],
 				// GitHub Pagesでの動作に最適化
@@ -41,7 +43,13 @@ export default defineConfig({
 					}
 				]
 			},
-			includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'icon.svg'],
+			includeAssets: [
+				'favicon.ico',
+				'apple-touch-icon.png',
+				'icon.svg',
+				'icon-192x192.png',
+				'icon-512x512.png'
+			],
 			manifest: {
 				name: '実用的事実確認チェックシート',
 				short_name: 'FactCheckList',
@@ -51,44 +59,38 @@ export default defineConfig({
 				display: 'standalone',
 				orientation: 'portrait',
 				// GitHub Pagesでのベースパス対応
-				scope: base,
-				start_url: base,
+				scope: './',
+				start_url: './',
 				lang: 'ja-JP',
 				categories: ['education', 'productivity', 'utilities'],
 				icons: [
 					{
-						src: `${base}icon.svg`,
+						src: 'icon.svg',
 						sizes: 'any',
 						type: 'image/svg+xml',
 						purpose: 'any maskable'
 					},
 					{
-						src: `${base}icon-192x192.png`,
+						src: 'icon-192x192.png',
 						sizes: '192x192',
 						type: 'image/png'
 					},
 					{
-						src: `${base}icon-512x512.png`,
+						src: 'icon-512x512.png',
 						sizes: '512x512',
 						type: 'image/png'
-					},
-					{
-						src: `${base}maskable-icon-512x512.png`,
-						sizes: '512x512',
-						type: 'image/png',
-						purpose: 'maskable'
 					}
 				],
 				screenshots: [
 					{
-						src: `${base}screenshot-wide.png`,
+						src: 'screenshot-wide.png',
 						sizes: '1280x720',
 						type: 'image/png',
 						form_factor: 'wide',
 						label: 'デスクトップ版のスクリーンショット'
 					},
 					{
-						src: `${base}screenshot-narrow.png`,
+						src: 'screenshot-narrow.png',
 						sizes: '375x812',
 						type: 'image/png',
 						form_factor: 'narrow',
@@ -100,10 +102,10 @@ export default defineConfig({
 						name: '新しいチェックリスト',
 						short_name: '新規作成',
 						description: '新しい事実確認チェックリストを開始する',
-						url: `${base}?action=new`,
+						url: '?action=new',
 						icons: [
 							{
-								src: `${base}icon-192x192.png`,
+								src: 'icon-192x192.png',
 								sizes: '192x192',
 								type: 'image/png'
 							}
@@ -113,10 +115,10 @@ export default defineConfig({
 						name: '履歴',
 						short_name: '履歴',
 						description: '過去のチェックリスト履歴を表示する',
-						url: `${base}?action=history`,
+						url: '?action=history',
 						icons: [
 							{
-								src: `${base}icon-192x192.png`,
+								src: 'icon-192x192.png',
 								sizes: '192x192',
 								type: 'image/png'
 							}
@@ -124,7 +126,7 @@ export default defineConfig({
 					}
 				],
 				share_target: {
-					action: base,
+					action: './',
 					method: 'GET',
 					params: {
 						title: 'title',
