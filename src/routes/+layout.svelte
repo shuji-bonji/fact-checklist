@@ -59,7 +59,7 @@
 	<!-- アイコン（ベースパス対応） -->
 	<link rel="icon" href="{base}/favicon.ico" />
 	<link rel="apple-touch-icon" href="{base}/apple-touch-icon.png" />
-	<link rel="manifest" href="{base}/manifest.json" />
+	<link rel="manifest" href="{base}/manifest.webmanifest" />
 
 	<title>実用的事実確認チェックシート</title>
 </svelte:head>
