@@ -4,9 +4,11 @@
 		<meta charset="utf-8" />
 		<!-- アクセシビリティ改善：user-scalable=noを削除、maximum-scale=5に設定 -->
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-		
+
 		<!-- Content Security Policy（セキュリティ強化） -->
-		<meta http-equiv="Content-Security-Policy" content="
+		<meta
+			http-equiv="Content-Security-Policy"
+			content="
 			default-src 'self';
 			script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://cdnjs.cloudflare.com;
 			style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
@@ -17,8 +19,9 @@
 			base-uri 'self';
 			form-action 'self';
 			upgrade-insecure-requests;
-		" />
-		
+		"
+		/>
+
 		<meta
 			name="description"
 			content="情報の信頼性を科学的・体系的に評価するための実用的事実確認チェックシート。PWA対応でオフラインでも利用可能。"
@@ -274,8 +277,10 @@
 				.spinner {
 					animation: none;
 				}
-				
-				*, *::before, *::after {
+
+				*,
+				*::before,
+				*::after {
 					animation-duration: 0.01ms !important;
 					animation-iteration-count: 1 !important;
 					transition-duration: 0.01ms !important;
