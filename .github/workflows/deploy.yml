@@ -91,6 +91,13 @@ jobs:
           name: build-files
           path: build/
 
+      - name: Check build directory
+        run: |
+          echo "Build directory contents:"
+          ls -la build/
+          echo "Looking for index.html or fallback files..."
+          find build/ -name "*.html" -type f
+
       - name: Run Lighthouse CI
         run: |
           npm install -g @lhci/cli@0.12.x
