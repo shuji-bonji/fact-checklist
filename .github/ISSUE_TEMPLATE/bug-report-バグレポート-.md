@@ -1,10 +1,10 @@
 ---
 name: Bug report（バグレポート）
-about: Create a report to help us improve（改善に役立つレポートを作成してください）
+about:
+  Create a report to help us improve（改善に役立つレポートを作成してください）
 title: ''
 labels: ''
 assignees: ''
-
 ---
 
 **Describe the bug**  
@@ -16,13 +16,13 @@ assignees: ''
 （再現手順）
 
 1. Go to '...'  
-（「...」に移動する）
+   （「...」に移動する）
 2. Click on '....'  
-（「....」をクリックする）
+   （「....」をクリックする）
 3. Scroll down to '....'  
-（「....」までスクロールする）
+   （「....」までスクロールする）
 4. See error  
-（エラーが発生する）
+   （エラーが発生する）
 
 **Expected behavior**  
 (A clear and concise description of what you expected to happen.)  

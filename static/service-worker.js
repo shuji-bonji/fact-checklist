@@ -1,6 +1,6 @@
 // Service Worker for Fact Checklist PWA
-const CACHE_NAME = 'fact-checklist-v1.0.0';
-const STATIC_CACHE_NAME = 'fact-checklist-static-v1.0.0';
+const CACHE_NAME = 'fact-checklist-v1.0.1';
+const STATIC_CACHE_NAME = 'fact-checklist-static-v1.0.1';
 
 // キャッシュするリソース
 const STATIC_RESOURCES = [
@@ -8,18 +8,22 @@ const STATIC_RESOURCES = [
   '/manifest.json',
   '/icon-192x192.png',
   '/icon-512x512.png',
-  '/maskable-icon-512x512.png'
+  '/maskable-icon-512x512.png',
+  '/apple-touch-icon.png',
+  '/favicon.ico'
 ];
 
 // 動的にキャッシュするリソースのパターン
 const CACHE_PATTERNS = [
   /\/_app\//, // SvelteKitアプリファイル
+  /\/immutable\//, // SvelteKitの不変ファイル
   /\/[^/]+\.js$/, // JavaScript files
   /\/[^/]+\.css$/, // CSS files
   /\/[^/]+\.woff2?$/, // Font files
   /\/[^/]+\.png$/, // Image files
   /\/[^/]+\.svg$/, // SVG files
-  /\/[^/]+\.ico$/ // Favicon
+  /\/[^/]+\.ico$/, // Favicon
+  /\/[^/]+\.webp$/ // WebP images
 ];
 
 // ネットワーク優先戦略を使用するパス
@@ -36,7 +40,13 @@ self.addEventListener('install', (event) => {
       // 静的リソースをキャッシュ
       caches.open(STATIC_CACHE_NAME).then((cache) => {
         console.log('Service Worker: Caching static resources');
-        return cache.addAll(STATIC_RESOURCES);
+        return cache.addAll(STATIC_RESOURCES).catch(error => {
+          console.warn('Service Worker: Failed to cache some static resources:', error);
+          // 個別にリソースをキャッシュして失敗を許容
+          return Promise.allSettled(
+            STATIC_RESOURCES.map(resource => cache.add(resource))
+          );
+        });
       }),
       // すぐに有効化
       self.skipWaiting()
@@ -68,10 +78,17 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const { request } = event;
+  
+  // タイポ修正：requestを正しく使用
   const url = new URL(request.url);
   
   // 同一オリジンのリクエストのみ処理
   if (url.origin !== location.origin) {
+    return;
+  }
+  
+  // Chrome拡張機能のリクエストを除外
+  if (url.protocol === 'chrome-extension:') {
     return;
   }
   
@@ -197,28 +214,32 @@ async function syncChecklistData() {
 self.addEventListener('push', (event) => {
   if (!event.data) return;
   
-  const data = event.data.json();
-  const options = {
-    body: data.body,
-    icon: '/icon-192x192.png',
-    badge: '/icon-72x72.png',
-    tag: 'fact-checklist-notification',
-    data: data.url,
-    actions: [
-      {
-        action: 'open',
-        title: '開く'
-      },
-      {
-        action: 'close',
-        title: '閉じる'
-      }
-    ]
-  };
-  
-  event.waitUntil(
-    self.registration.showNotification(data.title, options)
-  );
+  try {
+    const data = event.data.json();
+    const options = {
+      body: data.body,
+      icon: '/icon-192x192.png',
+      badge: '/icon-72x72.png',
+      tag: 'fact-checklist-notification',
+      data: data.url,
+      actions: [
+        {
+          action: 'open',
+          title: '開く'
+        },
+        {
+          action: 'close',
+          title: '閉じる'
+        }
+      ]
+    };
+    
+    event.waitUntil(
+      self.registration.showNotification(data.title, options)
+    );
+  } catch (error) {
+    console.error('Service Worker: Push notification error:', error);
+  }
 });
 
 // 通知クリックの処理
@@ -276,6 +297,7 @@ self.addEventListener('error', (event) => {
 
 self.addEventListener('unhandledrejection', (event) => {
   console.error('Service Worker: Unhandled promise rejection:', event.reason);
+  event.preventDefault(); // Unhandled rejection を処理済みとしてマーク
 });
 
 console.log('Service Worker: Registered successfully');
