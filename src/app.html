@@ -2,7 +2,23 @@
 <html lang="ja">
 	<head>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<!-- アクセシビリティ改善：user-scalable=noを削除、maximum-scale=5に設定 -->
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+		
+		<!-- Content Security Policy（セキュリティ強化） -->
+		<meta http-equiv="Content-Security-Policy" content="
+			default-src 'self';
+			script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://cdnjs.cloudflare.com;
+			style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+			font-src 'self' https://fonts.gstatic.com data:;
+			img-src 'self' data: blob: https:;
+			connect-src 'self' blob:;
+			object-src 'none';
+			base-uri 'self';
+			form-action 'self';
+			upgrade-insecure-requests;
+		" />
+		
 		<meta
 			name="description"
 			content="情報の信頼性を科学的・体系的に評価するための実用的事実確認チェックシート。PWA対応でオフラインでも利用可能。"
@@ -44,23 +60,59 @@
 		/>
 
 		<!-- アイコン -->
-		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
-		<link rel="icon" type="image/png" sizes="16x16" href="%sveltekit.assets%/favicon.png" />
-		<link rel="icon" type="image/png" sizes="32x32" href="%sveltekit.assets%/favicon.png" />
-		<link rel="apple-touch-icon" href="%sveltekit.assets%/favicon.png" />
-		<link rel="apple-touch-icon" sizes="152x152" href="%sveltekit.assets%/favicon.png" />
-		<link rel="apple-touch-icon" sizes="180x180" href="%sveltekit.assets%/favicon.png" />
-		<link rel="apple-touch-icon" sizes="167x167" href="%sveltekit.assets%/favicon.png" />
-
-		<!-- マニフェストファイル -->
+		<link rel="icon" href="%sveltekit.assets%/favicon.ico" />
+		<link rel="icon" type="image/svg+xml" href="%sveltekit.assets%/icon.svg" />
+		<link rel="apple-touch-icon" href="%sveltekit.assets%/apple-touch-icon.png" />
 		<link rel="manifest" href="%sveltekit.assets%/manifest.json" />
 
-		<!-- スプラッシュスクリーン用（iOS） -->
+		<!-- Apple Touch Icons for various devices -->
 		<link
-			rel="apple-touch-startup-image"
-			href="%sveltekit.assets%/apple-launch-640x1136.png"
-			media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)"
+			rel="apple-touch-icon"
+			sizes="180x180"
+			href="%sveltekit.assets%/apple-touch-icon-180x180.png"
 		/>
+		<link
+			rel="apple-touch-icon"
+			sizes="152x152"
+			href="%sveltekit.assets%/apple-touch-icon-152x152.png"
+		/>
+		<link
+			rel="apple-touch-icon"
+			sizes="144x144"
+			href="%sveltekit.assets%/apple-touch-icon-144x144.png"
+		/>
+		<link
+			rel="apple-touch-icon"
+			sizes="120x120"
+			href="%sveltekit.assets%/apple-touch-icon-120x120.png"
+		/>
+		<link
+			rel="apple-touch-icon"
+			sizes="114x114"
+			href="%sveltekit.assets%/apple-touch-icon-114x114.png"
+		/>
+		<link
+			rel="apple-touch-icon"
+			sizes="76x76"
+			href="%sveltekit.assets%/apple-touch-icon-76x76.png"
+		/>
+		<link
+			rel="apple-touch-icon"
+			sizes="72x72"
+			href="%sveltekit.assets%/apple-touch-icon-72x72.png"
+		/>
+		<link
+			rel="apple-touch-icon"
+			sizes="60x60"
+			href="%sveltekit.assets%/apple-touch-icon-60x60.png"
+		/>
+		<link
+			rel="apple-touch-icon"
+			sizes="57x57"
+			href="%sveltekit.assets%/apple-touch-icon-57x57.png"
+		/>
+
+		<!-- Apple Launch Screen Images for iOS PWA splash screens -->
 		<link
 			rel="apple-touch-startup-image"
 			href="%sveltekit.assets%/apple-launch-750x1334.png"
@@ -96,7 +148,7 @@
 		<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-		<!-- セキュリティ -->
+		<!-- セキュリティヘッダー -->
 		<meta http-equiv="X-Content-Type-Options" content="nosniff" />
 		<meta http-equiv="X-Frame-Options" content="DENY" />
 		<meta http-equiv="X-XSS-Protection" content="1; mode=block" />
@@ -152,9 +204,13 @@
 				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 				min-height: 100vh;
 				color: #2c3e50;
+				/* タッチ操作の改善 */
+				touch-action: pan-x pan-y;
+				/* iOS Safariでのタップハイライトを削除 */
+				-webkit-tap-highlight-color: transparent;
 			}
 
-			/* Loading spinner */
+			/* Loading spinner - アクセシブルなデザイン */
 			.app-loading {
 				display: flex;
 				flex-direction: column;
@@ -195,9 +251,35 @@
 				opacity: 0.9;
 			}
 
-			/* Hide loading screen when app loads */
-			#svelte .app-loading {
+			/* アプリ読み込み完了時にローディング画面を非表示 */
+			body.app-loaded .app-loading {
 				display: none;
+			}
+
+			/* フォーカス管理の改善 */
+			:focus-visible {
+				outline: 3px solid #3498db;
+				outline-offset: 2px;
+			}
+
+			/* ダークモード対応 */
+			@media (prefers-color-scheme: dark) {
+				:root {
+					color-scheme: dark;
+				}
+			}
+
+			/* 縮小されたモーション対応 */
+			@media (prefers-reduced-motion: reduce) {
+				.spinner {
+					animation: none;
+				}
+				
+				*, *::before, *::after {
+					animation-duration: 0.01ms !important;
+					animation-iteration-count: 1 !important;
+					transition-duration: 0.01ms !important;
+				}
 			}
 		</style>
 
@@ -230,8 +312,8 @@
 		</noscript>
 
 		<!-- Loading screen -->
-		<div class="app-loading">
-			<div class="spinner"></div>
+		<div class="app-loading" role="status" aria-label="アプリケーション読み込み中">
+			<div class="spinner" aria-hidden="true"></div>
 			<div class="loading-text">読み込み中...</div>
 		</div>
 
@@ -240,14 +322,26 @@
 
 		<!-- PWA install prompt helper -->
 		<script>
+			// エラー処理の改善
+			function logError(message, error) {
+				console.error(message, error);
+				// 本番環境では分析サービスにエラーを送信
+				// if (!location.hostname.includes('localhost')) {
+				//     sendErrorToAnalytics(message, error);
+				// }
+			}
+
 			// ローディング画面を非表示にする
 			function hideLoadingScreen() {
-				document.body.classList.add('app-loaded');
-				// 追加の確実性のため
-				const loadingElement = document.querySelector('.app-loading');
-				if (loadingElement && loadingElement instanceof HTMLElement) {
-					loadingElement.style.display = 'none';
-					console.log('Loading screen hidden');
+				try {
+					document.body.classList.add('app-loaded');
+					const loadingElement = document.querySelector('.app-loading');
+					if (loadingElement && loadingElement instanceof HTMLElement) {
+						loadingElement.style.display = 'none';
+						console.log('Loading screen hidden');
+					}
+				} catch (error) {
+					logError('Error hiding loading screen:', error);
 				}
 			}
 
@@ -277,16 +371,18 @@
 				if (installButton) {
 					installButton.style.display = 'block';
 					installButton.addEventListener('click', () => {
-						deferredPrompt.prompt();
-						deferredPrompt.userChoice.then(choiceResult => {
-							if (choiceResult.outcome === 'accepted') {
-								console.log('User accepted PWA install');
-							} else {
-								console.log('User dismissed PWA install');
-							}
-							deferredPrompt = null;
-							installButton.style.display = 'none';
-						});
+						if (deferredPrompt) {
+							deferredPrompt.prompt();
+							deferredPrompt.userChoice.then(choiceResult => {
+								if (choiceResult.outcome === 'accepted') {
+									console.log('User accepted PWA install');
+								} else {
+									console.log('User dismissed PWA install');
+								}
+								deferredPrompt = null;
+								installButton.style.display = 'none';
+							});
+						}
 					});
 				}
 			});
@@ -299,56 +395,64 @@
 				}
 			});
 
-			// Service Worker の更新通知
+			// Service Worker の更新通知（改善版）
 			if ('serviceWorker' in navigator) {
 				navigator.serviceWorker.addEventListener('controllerchange', () => {
+					console.log('Service Worker updated, reloading...');
 					window.location.reload();
+				});
+
+				// Service Worker登録エラーのキャッチ
+				navigator.serviceWorker.ready.catch(error => {
+					logError('Service Worker registration failed:', error);
 				});
 			}
 		</script>
 
-		<!-- Error tracking (optional) -->
+		<!-- Global error handler - 改善版 -->
 		<script>
-			// Global error handler
 			window.addEventListener('error', e => {
-				console.error('Global error:', e.error);
-				// ここで分析サービスにエラーを送信することもできます
+				logError('Global error:', e.error);
 			});
 
 			window.addEventListener('unhandledrejection', e => {
-				console.error('Unhandled promise rejection:', e.reason);
-				// ここで分析サービスにエラーを送信することもできます
+				logError('Unhandled promise rejection:', e.reason);
+				// プロミスリジェクションを処理済みとしてマーク
+				e.preventDefault();
 			});
 		</script>
 
-		<!-- Performance monitoring -->
+		<!-- Performance monitoring - Core Web Vitals -->
 		<script>
-			// Core Web Vitals monitoring
 			if ('PerformanceObserver' in window) {
-				// LCP (Largest Contentful Paint)
-				new PerformanceObserver(list => {
-					const entries = list.getEntries();
-					const lastEntry = entries[entries.length - 1];
-					console.log('LCP:', lastEntry.startTime);
-				}).observe({ entryTypes: ['largest-contentful-paint'] });
+				try {
+					// LCP (Largest Contentful Paint)
+					new PerformanceObserver(list => {
+						const entries = list.getEntries();
+						const lastEntry = entries[entries.length - 1];
+						console.log('LCP:', lastEntry.startTime);
+					}).observe({ entryTypes: ['largest-contentful-paint'] });
 
-				// FID (First Input Delay)
-				new PerformanceObserver(list => {
-					list.getEntries().forEach(entry => {
-						console.log('FID:', entry.processingStart - entry.startTime);
-					});
-				}).observe({ entryTypes: ['first-input'] });
+					// FID (First Input Delay)
+					new PerformanceObserver(list => {
+						list.getEntries().forEach(entry => {
+							console.log('FID:', entry.processingStart - entry.startTime);
+						});
+					}).observe({ entryTypes: ['first-input'] });
 
-				// CLS (Cumulative Layout Shift)
-				new PerformanceObserver(list => {
-					let clsValue = 0;
-					list.getEntries().forEach(entry => {
-						if (!entry.hadRecentInput) {
-							clsValue += entry.value;
-						}
-					});
-					console.log('CLS:', clsValue);
-				}).observe({ entryTypes: ['layout-shift'] });
+					// CLS (Cumulative Layout Shift)
+					new PerformanceObserver(list => {
+						let clsValue = 0;
+						list.getEntries().forEach(entry => {
+							if (!entry.hadRecentInput) {
+								clsValue += entry.value;
+							}
+						});
+						console.log('CLS:', clsValue);
+					}).observe({ entryTypes: ['layout-shift'] });
+				} catch (error) {
+					logError('Performance monitoring error:', error);
+				}
 			}
 		</script>
 	</body>

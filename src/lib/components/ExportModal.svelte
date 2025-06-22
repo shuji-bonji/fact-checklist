@@ -76,7 +76,6 @@
 		const { default: jsPDF } = await import('jspdf');
 
 		const doc = new jsPDF();
-		const pageWidth = doc.internal.pageSize.width;
 		const margin = 20;
 		let yPosition = margin;
 
@@ -123,56 +122,52 @@
 				yPosition = margin;
 			}
 
-			const checkMark = item.checked ? '☑' : '☐';
-			const lines = doc.splitTextToSize(`${checkMark} ${item.title}`, pageWidth - 2 * margin);
-			doc.text(lines, margin, yPosition);
-			yPosition += lines.length * 5 + 3;
+			const checkMark = item.checked ? '✓' : '✗';
+			doc.text(`${checkMark} ${item.title}`, margin, yPosition);
+			yPosition += 8;
 		});
 
-		// メモ
-		if (exportOptions.includeNotes && checklist.notes) {
-			if (yPosition > 250) {
-				doc.addPage();
-				yPosition = margin;
-			}
-
-			doc.setFontSize(12);
-			doc.text('評価メモ', margin, yPosition);
-			yPosition += 10;
-
-			doc.setFontSize(9);
-			const noteLines = doc.splitTextToSize(checklist.notes, pageWidth - 2 * margin);
-			doc.text(noteLines, margin, yPosition);
-		}
-
 		// ダウンロード
-		doc.save(`${checklist.title}_評価結果.pdf`);
+		const filename = `事実確認チェックシート_${checklist.title}_${new Date().toISOString().slice(0, 10)}.pdf`;
+		doc.save(filename);
 	}
 
 	async function exportToHTML() {
 		if (!checklist) return;
 
-		const html = generateHTMLReport();
+		const html = generateHTMLContent();
 		const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-		downloadBlob(blob, `${checklist.title}_評価結果.html`);
+		const filename = `事実確認チェックシート_${checklist.title}_${new Date().toISOString().slice(0, 10)}.html`;
+		downloadBlob(blob, filename);
 	}
 
 	async function exportToJSON() {
 		if (!checklist) return;
 
+		// エクスポート用のクリーンなオブジェクトを作成
 		const exportData = {
-			...checklist,
+			title: checklist.title,
+			description: checklist.description,
+			notes: checklist.notes,
+			createdAt: checklist.createdAt.toISOString(),
+			completedAt: checklist.completedAt?.toISOString() || null,
+			judgment: checklist.judgment,
+			score: checklist.score,
+			confidenceLevel: checklist.confidenceLevel,
+			confidenceText: checklist.confidenceText,
+			judgmentAdvice: checklist.judgmentAdvice,
+			items: checklist.items,
 			exportedAt: new Date().toISOString(),
-			exportOptions
+			version: '1.0'
 		};
 
-		const blob = new Blob([JSON.stringify(exportData, null, 2)], {
-			type: 'application/json;charset=utf-8'
-		});
-		downloadBlob(blob, `${checklist.title}_データ.json`);
+		const jsonString = JSON.stringify(exportData, null, 2);
+		const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8' });
+		const filename = `事実確認チェックシート_${checklist.title}_${new Date().toISOString().slice(0, 10)}.json`;
+		downloadBlob(blob, filename);
 	}
 
-	function generateHTMLReport(): string {
+	function generateHTMLContent(): string {
 		if (!checklist) return '';
 
 		const checkedItems = checklist.items.filter(item => item.checked);
@@ -184,16 +179,18 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>${checklist.title} - 評価結果</title>
+	<title>事実確認チェックシート - ${checklist.title}</title>
 	<style>
-		body { font-family: system-ui, sans-serif; line-height: 1.6; margin: 40px; }
-		.header { border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px; }
-		.score-summary { background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0; }
-		.check-section { margin: 30px 0; }
-		.check-item { margin: 10px 0; padding: 8px; border-left: 3px solid #ddd; }
-		.checked { border-left-color: #4CAF50; background: #f8fff8; }
-		.unchecked { border-left-color: #f44336; background: #fff8f8; }
-		.notes { background: #fff9c4; padding: 20px; border-radius: 8px; margin: 20px 0; }
+		body { font-family: "Hiragino Sans", "Yu Gothic", Arial, sans-serif; margin: 40px; line-height: 1.6; color: #333; }
+		.header { border-bottom: 2px solid #2c3e50; padding-bottom: 20px; margin-bottom: 30px; }
+		.header h1 { color: #2c3e50; margin: 0 0 10px 0; }
+		.score-summary { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
+		.check-section { margin-bottom: 30px; }
+		.check-section h2 { color: #34495e; border-left: 4px solid #3498db; padding-left: 15px; }
+		.check-item { margin: 15px 0; padding: 15px; border-radius: 5px; }
+		.check-item.checked { background: #d5f4e6; border-left: 4px solid #27ae60; }
+		.check-item.unchecked { background: #ffeaa7; border-left: 4px solid #e17055; }
+		.notes { background: #e8f4fd; padding: 20px; border-radius: 8px; margin-top: 30px; }
 		@media print { body { margin: 20px; } }
 	</style>
 </head>
@@ -281,26 +278,6 @@
 			default:
 				return '未判定';
 		}
-	}
-
-	async function shareViaEmail() {
-		if (!checklist) return;
-
-		const subject = encodeURIComponent(`事実確認評価結果: ${checklist.title}`);
-		const body = encodeURIComponent(
-			`
-評価結果をお送りします。
-
-タイトル: ${checklist.title}
-総合スコア: ${checklist.score.total}/${checklist.score.maxScore}
-信頼度: ${checklist.confidenceText}
-最終判定: ${getJudgmentText(checklist.judgment)}
-
-詳細は添付ファイルをご確認ください。
-		`.trim()
-		);
-
-		window.open(`mailto:?subject=${subject}&body=${body}`);
 	}
 
 	async function copyToClipboard() {
@@ -428,10 +405,6 @@ ${checklist.notes ? `評価メモ:\n${checklist.notes}` : ''}
 					{:else}
 						📥 ダウンロード
 					{/if}
-				</button>
-
-				<button class="btn btn-secondary" onclick={shareViaEmail} disabled={isExporting}>
-					📧 メール共有
 				</button>
 
 				<button class="btn btn-secondary" onclick={copyToClipboard} disabled={isExporting}>
