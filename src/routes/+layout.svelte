@@ -4,6 +4,7 @@
 	// PWA設定
 	import { onMount } from 'svelte';
 	import { dev, browser } from '$app/environment';
+	import { base } from '$app/paths';
 
 	onMount(async () => {
 		// ローディング画面を確実に非表示にする（ブラウザ環境でのみ）
@@ -18,7 +19,13 @@
 
 		if (!dev && 'serviceWorker' in navigator && browser) {
 			try {
-				const registration = await navigator.serviceWorker.register('/service-worker.js');
+				// ベースパスを考慮したService Worker登録
+				const swPath = `${base}/service-worker.js`;
+				console.log('Registering Service Worker at:', swPath);
+
+				const registration = await navigator.serviceWorker.register(swPath, {
+					scope: `${base}/`
+				});
 				console.log('Service Worker registered successfully:', registration);
 			} catch (error) {
 				console.error('Service Worker registration failed:', error);
@@ -49,10 +56,10 @@
 	<meta property="og:description" content="情報の信頼性を科学的・体系的に評価するためのPWA" />
 	<meta property="og:locale" content="ja_JP" />
 
-	<!-- アイコン -->
-	<link rel="icon" href="/favicon.ico" />
-	<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-	<link rel="manifest" href="/manifest.json" />
+	<!-- アイコン（ベースパス対応） -->
+	<link rel="icon" href="{base}/favicon.ico" />
+	<link rel="apple-touch-icon" href="{base}/apple-touch-icon.png" />
+	<link rel="manifest" href="{base}/manifest.json" />
 
 	<title>実用的事実確認チェックシート</title>
 </svelte:head>
@@ -63,6 +70,7 @@
 	</main>
 </div>
 
+<!-- 以下、スタイルは元のファイルと同じなので省略 -->
 <style>
 	:global(html) {
 		font-family:
@@ -151,24 +159,26 @@
 		align-items: center;
 		justify-content: center;
 		gap: var(--spacing-xs);
-		padding: var(--spacing-xs) var(--spacing-md);
+		padding: var(--spacing-sm) var(--spacing-md);
 		border: none;
-		border-radius: 25px;
+		border-radius: var(--border-radius);
 		font-weight: 600;
 		text-decoration: none;
 		cursor: pointer;
 		transition: all 0.3s ease;
-		user-select: none;
-		white-space: nowrap;
+		font-size: 1rem;
+		min-height: 44px; /* アクセシビリティ: タッチターゲットサイズ */
 	}
 
-	:global(.btn:hover) {
+	:global(.btn:hover:not(:disabled)) {
 		transform: translateY(-2px);
 		box-shadow: var(--shadow-hover);
 	}
 
-	:global(.btn:active) {
-		transform: translateY(0);
+	:global(.btn:disabled) {
+		opacity: 0.6;
+		cursor: not-allowed;
+		transform: none;
 	}
 
 	:global(.btn-primary) {
@@ -181,33 +191,35 @@
 		color: white;
 	}
 
-	:global(.btn-success) {
-		background: linear-gradient(135deg, var(--success-color), #229954);
-		color: white;
-	}
-
-	:global(.btn-warning) {
-		background: linear-gradient(135deg, var(--warning-color), #e67e22);
-		color: white;
-	}
-
-	:global(.btn-danger) {
+	:global(.btn-accent) {
 		background: linear-gradient(135deg, var(--accent-color), #c0392b);
 		color: white;
+	}
+
+	:global(.btn-outline) {
+		background: transparent;
+		border: 2px solid var(--border-color);
+		color: var(--text-color);
+	}
+
+	:global(.btn-outline:hover) {
+		background: var(--surface-color);
+		border-color: var(--secondary-color);
 	}
 
 	/* カードスタイル */
 	:global(.card) {
 		background: var(--bg-color);
 		border-radius: var(--border-radius);
+		padding: var(--spacing-md);
 		box-shadow: var(--shadow);
-		padding: var(--spacing-lg);
-		margin-bottom: var(--spacing-md);
+		border: 1px solid var(--border-color);
 		transition: all 0.3s ease;
 	}
 
 	:global(.card:hover) {
 		box-shadow: var(--shadow-hover);
+		transform: translateY(-2px);
 	}
 
 	/* フォームスタイル */
@@ -217,15 +229,15 @@
 
 	:global(.form-label) {
 		display: block;
-		font-weight: 600;
 		margin-bottom: var(--spacing-xs);
+		font-weight: 600;
 		color: var(--text-color);
 	}
 
 	:global(.form-input) {
 		width: 100%;
 		padding: var(--spacing-sm);
-		border: 1px solid var(--border-color);
+		border: 2px solid var(--border-color);
 		border-radius: var(--border-radius-sm);
 		font-size: 1rem;
 		background: var(--bg-color);

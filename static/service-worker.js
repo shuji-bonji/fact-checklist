@@ -1,22 +1,35 @@
 // Service Worker for Fact Checklist PWA
-const CACHE_NAME = 'fact-checklist-v1.0.1';
-const STATIC_CACHE_NAME = 'fact-checklist-static-v1.0.1';
+const CACHE_NAME = 'fact-checklist-v1.0.2';
+const STATIC_CACHE_NAME = 'fact-checklist-static-v1.0.2';
 
-// キャッシュするリソース
+// GitHub Pagesのベースパスを取得
+const getBasePath = () => {
+  // Service WorkerのスクリプトURLからベースパスを推定
+  const swUrl = new URL(self.location);
+  const pathParts = swUrl.pathname.split('/');
+  pathParts.pop(); // service-worker.js を除去
+  return pathParts.join('/') || '';
+};
+
+const BASE_PATH = getBasePath();
+console.log('Service Worker: Base path detected:', BASE_PATH);
+
+// キャッシュするリソース（ベースパス対応）
 const STATIC_RESOURCES = [
-  '/',
-  '/manifest.json',
-  '/icon-192x192.png',
-  '/icon-512x512.png',
-  '/maskable-icon-512x512.png',
-  '/apple-touch-icon.png',
-  '/favicon.ico'
+  `${BASE_PATH}/`,
+  `${BASE_PATH}/manifest.json`,
+  `${BASE_PATH}/icon.svg`,
+  `${BASE_PATH}/icon-192x192.png`,
+  `${BASE_PATH}/icon-512x512.png`,
+  `${BASE_PATH}/maskable-icon-512x512.png`,
+  `${BASE_PATH}/apple-touch-icon.png`,
+  `${BASE_PATH}/favicon.ico`
 ];
 
 // 動的にキャッシュするリソースのパターン
 const CACHE_PATTERNS = [
-  /\/_app\//, // SvelteKitアプリファイル
-  /\/immutable\//, // SvelteKitの不変ファイル
+  new RegExp(`${BASE_PATH}/_app/`), // SvelteKitアプリファイル
+  new RegExp(`${BASE_PATH}/immutable/`), // SvelteKitの不変ファイル
   /\/[^/]+\.js$/, // JavaScript files
   /\/[^/]+\.css$/, // CSS files
   /\/[^/]+\.woff2?$/, // Font files
@@ -28,8 +41,8 @@ const CACHE_PATTERNS = [
 
 // ネットワーク優先戦略を使用するパス
 const NETWORK_FIRST_PATTERNS = [
-  /\/api\//, // API calls
-  /\/checklist\/[^/]+$/ // 動的なチェックリストページ
+  new RegExp(`${BASE_PATH}/api/`), // API calls
+  new RegExp(`${BASE_PATH}/checklist/[^/]+$`) // 動的なチェックリストページ
 ];
 
 self.addEventListener('install', (event) => {
@@ -78,8 +91,6 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const { request } = event;
-  
-  // タイポ修正：requestを正しく使用
   const url = new URL(request.url);
   
   // 同一オリジンのリクエストのみ処理
@@ -110,7 +121,7 @@ function shouldUseNetworkFirst(pathname) {
 // キャッシュするべきかチェック
 function shouldCache(pathname) {
   return CACHE_PATTERNS.some(pattern => pattern.test(pathname)) ||
-         STATIC_RESOURCES.includes(pathname);
+         STATIC_RESOURCES.some(resource => resource.endsWith(pathname));
 }
 
 // キャッシュ優先戦略
@@ -139,7 +150,7 @@ async function cacheFirstStrategy(request) {
     
     // オフライン時のフォールバック
     if (request.destination === 'document') {
-      const fallbackResponse = await caches.match('/');
+      const fallbackResponse = await caches.match(`${BASE_PATH}/`);
       if (fallbackResponse) {
         return fallbackResponse;
       }
@@ -175,7 +186,7 @@ async function networkFirstStrategy(request) {
     
     // キャッシュにもない場合のフォールバック
     if (request.destination === 'document') {
-      const fallbackResponse = await caches.match('/');
+      const fallbackResponse = await caches.match(`${BASE_PATH}/`);
       if (fallbackResponse) {
         return fallbackResponse;
       }
@@ -218,8 +229,8 @@ self.addEventListener('push', (event) => {
     const data = event.data.json();
     const options = {
       body: data.body,
-      icon: '/icon-192x192.png',
-      badge: '/icon-72x72.png',
+      icon: `${BASE_PATH}/icon-192x192.png`,
+      badge: `${BASE_PATH}/icon-72x72.png`,
       tag: 'fact-checklist-notification',
       data: data.url,
       actions: [
@@ -247,7 +258,7 @@ self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   
   if (event.action === 'open' || !event.action) {
-    const urlToOpen = event.notification.data || '/';
+    const urlToOpen = event.notification.data || `${BASE_PATH}/`;
     
     event.waitUntil(
       self.clients.matchAll({ type: 'window' }).then((clients) => {
