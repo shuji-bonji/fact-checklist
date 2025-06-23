@@ -56,10 +56,10 @@
 	<meta property="og:description" content="情報の信頼性を科学的・体系的に評価するためのPWA" />
 	<meta property="og:locale" content="ja_JP" />
 
-	<!-- アイコン（ベースパス対応） -->
-	<link rel="icon" href="{base}/favicon.ico" />
-	<link rel="apple-touch-icon" href="{base}/apple-touch-icon.png" />
-	<link rel="manifest" href="{base}/manifest.webmanifest" />
+	<!-- アイコン -->
+	<link rel="icon" href="/favicon.ico" />
+	<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+	<!-- VitePWAが自動でmanifestリンクを挿入するため、手動linkは削除 -->
 
 	<title>実用的事実確認チェックシート</title>
 </svelte:head>
@@ -70,7 +70,6 @@
 	</main>
 </div>
 
-<!-- 以下、スタイルは元のファイルと同じなので省略 -->
 <style>
 	:global(html) {
 		font-family:
@@ -193,6 +192,11 @@
 
 	:global(.btn-accent) {
 		background: linear-gradient(135deg, var(--accent-color), #c0392b);
+		color: white;
+	}
+
+	:global(.btn-success) {
+		background: linear-gradient(135deg, var(--success-color), #229954);
 		color: white;
 	}
 
@@ -343,6 +347,10 @@
 	}
 	:global(.mt-3) {
 		margin-top: var(--spacing-md);
+	}
+
+	:global(.w-full) {
+		width: 100%;
 	}
 
 	.app {
