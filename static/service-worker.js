@@ -21,7 +21,6 @@ const STATIC_RESOURCES = [
   `${BASE_PATH}/icon.svg`,
   `${BASE_PATH}/icon-192x192.png`,
   `${BASE_PATH}/icon-512x512.png`,
-  `${BASE_PATH}/maskable-icon-512x512.png`,
   `${BASE_PATH}/apple-touch-icon.png`,
   `${BASE_PATH}/favicon.png`
 ];
