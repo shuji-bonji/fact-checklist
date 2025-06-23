@@ -289,6 +289,9 @@
 		-ms-overflow-style: none;
 		/*スクロールバー非表示（Firefox）*/
 		scrollbar-width: none;
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-md);
 	}
 	/*スクロールバー非表示（Chrome・Safari）*/
 	.sidebar::-webkit-scrollbar {
