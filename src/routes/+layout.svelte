@@ -57,7 +57,7 @@
 	<meta property="og:locale" content="ja_JP" />
 
 	<!-- アイコン -->
-	<link rel="icon" href="/favicon.ico" />
+	<link rel="icon" href="/favicon.png" />
 	<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 	<!-- VitePWAが自動でmanifestリンクを挿入するため、手動linkは削除 -->
 
