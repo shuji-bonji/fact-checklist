@@ -62,11 +62,15 @@
 			content="https://shuji-bonji.github.io/fact-checklist/og-image.png"
 		/>
 
-		<!-- アイコン（VitePWAが manifest を自動管理） -->
+		<!-- アイコン -->
 		<link rel="icon" href="%sveltekit.assets%/favicon.ico" />
 		<link rel="icon" type="image/svg+xml" href="%sveltekit.assets%/icon.svg" />
 		<link rel="apple-touch-icon" href="%sveltekit.assets%/apple-touch-icon.png" />
-		<!-- manifest linkはVitePWAが自動挿入するため削除 -->
+		<link rel="manifest" href="%sveltekit.assets%/manifest.webmanifest" />
+
+		<!-- 存在しないアイコンの参照を削除 -->
+		<!-- Apple Touch Icons for various devices は削除 -->
+		<!-- Apple Launch Screen Images は削除 -->
 
 		<!-- フォントの事前読み込み -->
 		<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />

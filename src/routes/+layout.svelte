@@ -56,23 +56,22 @@
 	<meta property="og:description" content="情報の信頼性を科学的・体系的に評価するためのPWA" />
 	<meta property="og:locale" content="ja_JP" />
 
-	<!-- アイコン（VitePWAが自動管理するため、manifestは手動指定しない） -->
+	<!-- アイコン（ベースパス対応） -->
 	<link rel="icon" href="{base}/favicon.ico" />
 	<link rel="apple-touch-icon" href="{base}/apple-touch-icon.png" />
-	<!-- manifest linkはVitePWAが自動挿入するため削除 -->
+	<link rel="manifest" href="{base}/manifest.webmanifest" />
 
 	<title>実用的事実確認チェックシート</title>
 </svelte:head>
 
-<!-- スタイルは同じなので省略 -->
 <div class="app">
 	<main>
 		<slot />
 	</main>
 </div>
 
+<!-- 以下、スタイルは元のファイルと同じなので省略 -->
 <style>
-	/* 前と同じスタイル */
 	:global(html) {
 		font-family:
 			'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', system-ui, sans-serif;
@@ -127,7 +126,225 @@
 		--shadow-hover: 0 5px 20px rgba(0, 0, 0, 0.4);
 	}
 
-	/* 他のスタイルも同様に省略 */
+	/* レスポンシブタイポグラフィ */
+	:global(h1) {
+		font-size: clamp(1.8rem, 4vw, 2.5rem);
+		font-weight: 300;
+		margin: 0 0 var(--spacing-sm) 0;
+		line-height: 1.2;
+	}
+
+	:global(h2) {
+		font-size: clamp(1.4rem, 3vw, 2rem);
+		font-weight: 400;
+		margin: 0 0 var(--spacing-sm) 0;
+		line-height: 1.3;
+	}
+
+	:global(h3) {
+		font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+		font-weight: 500;
+		margin: 0 0 var(--spacing-xs) 0;
+		line-height: 1.4;
+	}
+
+	:global(p) {
+		margin: 0 0 var(--spacing-sm) 0;
+		color: var(--text-muted);
+	}
+
+	/* ボタンスタイル */
+	:global(.btn) {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--spacing-xs);
+		padding: var(--spacing-sm) var(--spacing-md);
+		border: none;
+		border-radius: var(--border-radius);
+		font-weight: 600;
+		text-decoration: none;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		font-size: 1rem;
+		min-height: 44px; /* アクセシビリティ: タッチターゲットサイズ */
+	}
+
+	:global(.btn:hover:not(:disabled)) {
+		transform: translateY(-2px);
+		box-shadow: var(--shadow-hover);
+	}
+
+	:global(.btn:disabled) {
+		opacity: 0.6;
+		cursor: not-allowed;
+		transform: none;
+	}
+
+	:global(.btn-primary) {
+		background: linear-gradient(135deg, var(--primary-color), #34495e);
+		color: white;
+	}
+
+	:global(.btn-secondary) {
+		background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+		color: white;
+	}
+
+	:global(.btn-accent) {
+		background: linear-gradient(135deg, var(--accent-color), #c0392b);
+		color: white;
+	}
+
+	:global(.btn-outline) {
+		background: transparent;
+		border: 2px solid var(--border-color);
+		color: var(--text-color);
+	}
+
+	:global(.btn-outline:hover) {
+		background: var(--surface-color);
+		border-color: var(--secondary-color);
+	}
+
+	/* カードスタイル */
+	:global(.card) {
+		background: var(--bg-color);
+		border-radius: var(--border-radius);
+		padding: var(--spacing-md);
+		box-shadow: var(--shadow);
+		border: 1px solid var(--border-color);
+		transition: all 0.3s ease;
+	}
+
+	:global(.card:hover) {
+		box-shadow: var(--shadow-hover);
+		transform: translateY(-2px);
+	}
+
+	/* フォームスタイル */
+	:global(.form-group) {
+		margin-bottom: var(--spacing-md);
+	}
+
+	:global(.form-label) {
+		display: block;
+		margin-bottom: var(--spacing-xs);
+		font-weight: 600;
+		color: var(--text-color);
+	}
+
+	:global(.form-input) {
+		width: 100%;
+		padding: var(--spacing-sm);
+		border: 2px solid var(--border-color);
+		border-radius: var(--border-radius-sm);
+		font-size: 1rem;
+		background: var(--bg-color);
+		color: var(--text-color);
+		transition: border-color 0.3s ease;
+	}
+
+	:global(.form-input:focus) {
+		outline: none;
+		border-color: var(--secondary-color);
+		box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+	}
+
+	:global(.form-textarea) {
+		min-height: 120px;
+		resize: vertical;
+		font-family: inherit;
+	}
+
+	/* チェックボックススタイル */
+	:global(.checkbox-wrapper) {
+		display: flex;
+		align-items: flex-start;
+		gap: var(--spacing-sm);
+		cursor: pointer;
+	}
+
+	:global(.checkbox-wrapper input[type='checkbox']) {
+		width: 18px;
+		height: 18px;
+		cursor: pointer;
+		accent-color: var(--secondary-color);
+	}
+
+	/* グリッドシステム */
+	:global(.container) {
+		max-width: 1400px;
+		margin: 0 auto;
+		padding: 0 var(--spacing-md);
+	}
+
+	:global(.grid) {
+		display: grid;
+		gap: var(--spacing-md);
+	}
+
+	:global(.grid-2) {
+		grid-template-columns: 1fr 300px;
+	}
+
+	/* レスポンシブ */
+	@media (max-width: 1024px) {
+		:global(.grid-2) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (max-width: 768px) {
+		:global(.container) {
+			padding: 0 var(--spacing-sm);
+		}
+	}
+
+	/* ユーティリティクラス */
+	:global(.text-center) {
+		text-align: center;
+	}
+	:global(.text-left) {
+		text-align: left;
+	}
+	:global(.text-right) {
+		text-align: right;
+	}
+	:global(.font-bold) {
+		font-weight: 700;
+	}
+	:global(.font-medium) {
+		font-weight: 500;
+	}
+	:global(.text-muted) {
+		color: var(--text-muted);
+	}
+	:global(.mb-0) {
+		margin-bottom: 0;
+	}
+	:global(.mb-1) {
+		margin-bottom: var(--spacing-xs);
+	}
+	:global(.mb-2) {
+		margin-bottom: var(--spacing-sm);
+	}
+	:global(.mb-3) {
+		margin-bottom: var(--spacing-md);
+	}
+	:global(.mt-0) {
+		margin-top: 0;
+	}
+	:global(.mt-1) {
+		margin-top: var(--spacing-xs);
+	}
+	:global(.mt-2) {
+		margin-top: var(--spacing-sm);
+	}
+	:global(.mt-3) {
+		margin-top: var(--spacing-md);
+	}
+
 	.app {
 		min-height: 100vh;
 		display: flex;
