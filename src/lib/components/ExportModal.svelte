@@ -9,7 +9,7 @@
 	}
 
 	interface ExportOptions {
-		format: 'pdf' | 'html' | 'json';
+		format: 'pdf' | 'html' | 'json' | 'markdown';
 		includeGuides: boolean;
 		includeNotes: boolean;
 		includeSummary: boolean;
@@ -22,7 +22,7 @@
 	let isExporting = $state(false);
 
 	// エクスポートオプション（個別の状態として管理）
-	let format = $state<'pdf' | 'html' | 'json'>('pdf');
+	let format = $state<'pdf' | 'html' | 'json' | 'markdown'>('pdf');
 	let includeGuides = $state(true);
 	let includeNotes = $state(true);
 	let includeSummary = $state(true);
@@ -40,7 +40,7 @@
 	function updateExportOption<K extends keyof ExportOptions>(key: K, value: ExportOptions[K]) {
 		switch (key) {
 			case 'format':
-				format = value as 'pdf' | 'html' | 'json';
+				format = value as 'pdf' | 'html' | 'json' | 'markdown';
 				break;
 			case 'includeGuides':
 				includeGuides = value as boolean;
@@ -182,6 +182,9 @@
 					break;
 				case 'json':
 					await exportToJSON();
+					break;
+				case 'markdown':
+					await exportToMarkdown();
 					break;
 			}
 		} catch (error) {
@@ -370,6 +373,13 @@
 		const jsonString = JSON.stringify(exportData, null, 2);
 		const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8' });
 		const filename = `事実確認チェックシート_${checklist!.title}_${new Date().toISOString().slice(0, 10)}.json`;
+		downloadBlob(blob, filename);
+	}
+
+	async function exportToMarkdown() {
+		const markdownContent = generateMarkdownContent();
+		const blob = new Blob([markdownContent], { type: 'text/markdown;charset=utf-8' });
+		const filename = `事実確認チェックシート_${checklist!.title}_${new Date().toISOString().slice(0, 10)}.md`;
 		downloadBlob(blob, filename);
 	}
 
@@ -682,6 +692,107 @@
 		`.trim();
 	}
 
+	function generateMarkdownContent(): string {
+		if (!checklist) return '';
+
+		const sections = groupItemsByCategory();
+
+		// Markdownヘッダー
+		let markdown = `# 📋 ${checklist.title}\n\n`;
+
+		// メタ情報
+		markdown += '## 📄 基本情報\n\n';
+		markdown += `- **作成日**: ${checklist.createdAt.toLocaleDateString('ja-JP')}\n`;
+		if (checklist.completedAt) {
+			markdown += `- **評価完了日**: ${checklist.completedAt.toLocaleDateString('ja-JP')}\n`;
+		}
+		markdown += `- **出力日**: ${new Date().toLocaleDateString('ja-JP')}\n\n`;
+
+		// サマリー
+		if (exportOptions.includeSummary) {
+			markdown += '## 📊 評価結果サマリー\n\n';
+			markdown += '| 項目 | 値 |\n';
+			markdown += '|------|----|\n';
+			markdown += `| 総合スコア | ${checklist.score.total}/${checklist.score.maxScore} (${checklist.confidenceLevel}%) |\n`;
+			markdown += `| 信頼度 | ${checklist.confidenceText} |\n`;
+			markdown += `| 最終判定 | ${getJudgmentTextPlain(checklist.judgment)} |\n`;
+			if (checklist.judgmentAdvice) {
+				markdown += `| 推奨アクション | ${checklist.judgmentAdvice} |\n`;
+			}
+			markdown += '\n';
+
+			// セクション別達成率
+			markdown += '### 📈 セクション別達成率\n\n';
+			markdown += '| セクション | 完了率 | 完了項目 |\n';
+			markdown += '|------------|--------|----------|\n';
+			sections.forEach(section => {
+				markdown += `| ${section.category.emoji} ${section.category.name} | ${section.completionRate}% | ${section.checkedItems.length}/${section.items.length} |\n`;
+			});
+			markdown += '\n';
+		}
+
+		// カテゴリ別チェック項目
+		markdown += '## 📋 チェック項目詳細\n\n';
+
+		sections.forEach((section, index) => {
+			if (exportOptions.sectionBreaks && index > 0) {
+				markdown += '---\n\n';
+			}
+
+			markdown += `### ${section.category.emoji} ${section.category.name}\n\n`;
+			markdown += `> ${section.category.description}\n\n`;
+			markdown += `**達成状況**: ${section.checkedItems.length}/${section.items.length} 完了 (${section.completionRate}%)\n\n`;
+
+			section.items.forEach(item => {
+				const checkbox = item.checked ? '- [x]' : '- [ ]';
+				markdown += `${checkbox} **${item.title}**\n`;
+				markdown += `  ${item.description}\n`;
+
+				if (exportOptions.includeGuides && item.guideContent) {
+					markdown += '\n';
+					markdown += '  <details>\n';
+					markdown += `  <summary>📚 ガイド: ${item.guideContent.title}</summary>\n\n`;
+					markdown += `  ${item.guideContent.content}\n\n`;
+
+					if (item.guideContent.examples) {
+						if (item.guideContent.examples.good.length > 0) {
+							markdown += '  **✅ 良い例:**\n';
+							item.guideContent.examples.good.forEach(ex => {
+								markdown += `  - ${ex}\n`;
+							});
+							markdown += '\n';
+						}
+
+						if (item.guideContent.examples.bad.length > 0) {
+							markdown += '  **❌ 悪い例:**\n';
+							item.guideContent.examples.bad.forEach(ex => {
+								markdown += `  - ${ex}\n`;
+							});
+							markdown += '\n';
+						}
+					}
+					markdown += '  </details>\n';
+				}
+				markdown += '\n';
+			});
+		});
+
+		// ノート
+		if (exportOptions.includeNotes && checklist.notes) {
+			markdown += '## 📝 評価メモ\n\n';
+			markdown += '```\n';
+			markdown += `${checklist.notes}\n`;
+			markdown += '```\n\n';
+		}
+
+		// フッター
+		markdown += '---\n\n';
+		markdown += '*実用的事実確認チェックシートによる評価結果*  \n';
+		markdown += `*生成日時: ${new Date().toLocaleString('ja-JP')}*\n`;
+
+		return markdown;
+	}
+
 	function downloadBlob(blob: Blob, filename: string) {
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement('a');
@@ -701,6 +812,19 @@
 				return '📙 要注意';
 			case 'reject':
 				return '📕 不採用';
+			default:
+				return '❓ 未判定';
+		}
+	}
+
+	function getJudgmentTextPlain(judgment: string | null): string {
+		switch (judgment) {
+			case 'accept':
+				return '✅ 採用';
+			case 'caution':
+				return '⚠️ 要注意';
+			case 'reject':
+				return '❌ 不採用';
 			default:
 				return '❓ 未判定';
 		}
@@ -807,6 +931,18 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
 						<span>📊 JSON</span>
 						<small>データ形式（プログラム処理用）</small>
 					</label>
+
+					<label class="radio-option">
+						<input
+							type="radio"
+							name="format"
+							value="markdown"
+							checked={exportOptions.format === 'markdown'}
+							onchange={() => updateExportOption('format', 'markdown')}
+						/>
+						<span>📝 Markdown</span>
+						<small>テキスト形式（GitHub/エディタで表示可能）</small>
+					</label>
 				</div>
 			</div>
 
@@ -847,7 +983,7 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
 						<small>追加したメモ・コメント</small>
 					</label>
 
-					{#if exportOptions.format === 'pdf'}
+					{#if exportOptions.format === 'pdf' || exportOptions.format === 'markdown'}
 						<label class="checkbox-option">
 							<input
 								type="checkbox"
@@ -855,8 +991,12 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
 								onchange={e =>
 									updateExportOption('sectionBreaks', (e.target as HTMLInputElement).checked)}
 							/>
-							<span>📄 セクション改ページ</span>
-							<small>各セクションを個別ページに分離</small>
+							<span>📄 セクション区切り</span>
+							<small
+								>{exportOptions.format === 'pdf'
+									? '各セクションを個別ページに分離'
+									: 'セクション間に区切り線を追加'}</small
+							>
 						</label>
 					{/if}
 				</div>
