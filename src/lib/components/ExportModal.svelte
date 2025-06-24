@@ -30,10 +30,7 @@
 		sectionBreaks: true
 	});
 
-	function updateExportOption<K extends keyof ExportOptions>(
-		key: K,
-		value: ExportOptions[K]
-	) {
+	function updateExportOption<K extends keyof ExportOptions>(key: K, value: ExportOptions[K]) {
 		exportOptions[key] = value;
 	}
 
@@ -45,36 +42,40 @@
 
 	// セクション別にアイテムを分類（リアクティブ）
 	const sections = $derived(
-		checklist ? CATEGORIES.map(category => {
-			const items = checklist.items.filter(item => item.category.id === category.id);
-			const checkedItems = items.filter(item => item.checked);
-			const uncheckedItems = items.filter(item => !item.checked);
-			
-			return {
-				category,
-				items,
-				checkedItems,
-				uncheckedItems,
-				completionRate: items.length > 0 ? Math.round((checkedItems.length / items.length) * 100) : 0
-			};
-		}) : []
+		checklist
+			? CATEGORIES.map(category => {
+					const items = checklist.items.filter(item => item.category.id === category.id);
+					const checkedItems = items.filter(item => item.checked);
+					const uncheckedItems = items.filter(item => !item.checked);
+
+					return {
+						category,
+						items,
+						checkedItems,
+						uncheckedItems,
+						completionRate:
+							items.length > 0 ? Math.round((checkedItems.length / items.length) * 100) : 0
+					};
+				})
+			: []
 	);
 
 	// 従来の関数も残しておく（HTML生成時に使用）
 	function groupItemsByCategory() {
 		if (!checklist) return [];
-		
+
 		return CATEGORIES.map(category => {
 			const items = checklist.items.filter(item => item.category.id === category.id);
 			const checkedItems = items.filter(item => item.checked);
 			const uncheckedItems = items.filter(item => !item.checked);
-			
+
 			return {
 				category,
 				items,
 				checkedItems,
 				uncheckedItems,
-				completionRate: items.length > 0 ? Math.round((checkedItems.length / items.length) * 100) : 0
+				completionRate:
+					items.length > 0 ? Math.round((checkedItems.length / items.length) * 100) : 0
 			};
 		});
 	}
@@ -88,32 +89,56 @@
 					<div style="flex: 1;">
 						<div class="check-item-title">${item.title}</div>
 						<div class="check-item-description">${item.description}</div>
-						${exportOptions.includeGuides && item.guideContent ? `
+						${
+							exportOptions.includeGuides && item.guideContent
+								? `
 							<div class="check-item-guide">
 								<div class="guide-title">${item.guideContent.title}</div>
 								<div>${item.guideContent.content.replace(/\n/g, '<br>')}</div>
-								${item.guideContent.examples ? `
+								${
+									item.guideContent.examples
+										? `
 									<div style="margin-top: 10px;">
-										${item.guideContent.examples.good.length > 0 ? `
+										${
+											item.guideContent.examples.good.length > 0
+												? `
 											<div style="margin-bottom: 8px;">
 												<strong style="color: #27ae60;">✅ 良い例:</strong>
-												${item.guideContent.examples.good.map(ex => `
+												${item.guideContent.examples.good
+													.map(
+														ex => `
 													<div style="margin-left: 15px; margin-top: 5px;">• ${ex}</div>
-												`).join('')}
+												`
+													)
+													.join('')}
 											</div>
-										` : ''}
-										${item.guideContent.examples.bad.length > 0 ? `
+										`
+												: ''
+										}
+										${
+											item.guideContent.examples.bad.length > 0
+												? `
 											<div>
 												<strong style="color: #e74c3c;">❌ 悪い例:</strong>
-												${item.guideContent.examples.bad.map(ex => `
+												${item.guideContent.examples.bad
+													.map(
+														ex => `
 													<div style="margin-left: 15px; margin-top: 5px;">• ${ex}</div>
-												`).join('')}
+												`
+													)
+													.join('')}
 											</div>
-										` : ''}
+										`
+												: ''
+										}
 									</div>
-								` : ''}
+								`
+										: ''
+								}
 							</div>
-						` : ''}
+						`
+								: ''
+						}
 					</div>
 				</div>
 			</div>
@@ -194,9 +219,14 @@
 		}
 	}
 
-	async function renderSectionedPDF(pdf: any, container: HTMLElement, pageWidth: number, pageHeight: number) {
+	async function renderSectionedPDF(
+		pdf: any,
+		container: HTMLElement,
+		pageWidth: number,
+		pageHeight: number
+	) {
 		const html2canvas = (await import('html2canvas')).default;
-		
+
 		// ヘッダーとサマリーを最初のページに
 		const headerSection = container.querySelector('.header-section') as HTMLElement;
 		if (headerSection) {
@@ -220,9 +250,15 @@
 		}
 	}
 
-	async function addSectionToPDF(pdf: any, element: HTMLElement, pageWidth: number, pageHeight: number, fitToPage: boolean) {
+	async function addSectionToPDF(
+		pdf: any,
+		element: HTMLElement,
+		pageWidth: number,
+		pageHeight: number,
+		fitToPage: boolean
+	) {
 		const html2canvas = (await import('html2canvas')).default;
-		
+
 		const canvas = await html2canvas(element, {
 			scale: 2,
 			useCORS: true,
@@ -245,9 +281,14 @@
 		}
 	}
 
-	async function renderContinuousPDF(pdf: any, container: HTMLElement, pageWidth: number, pageHeight: number) {
+	async function renderContinuousPDF(
+		pdf: any,
+		container: HTMLElement,
+		pageWidth: number,
+		pageHeight: number
+	) {
 		const html2canvas = (await import('html2canvas')).default;
-		
+
 		const canvas = await html2canvas(container, {
 			scale: 2,
 			useCORS: true,
@@ -524,7 +565,9 @@
 			<p><strong>出力日:</strong> ${new Date().toLocaleDateString('ja-JP')}</p>
 		</div>
 		
-		${exportOptions.includeSummary ? `
+		${
+			exportOptions.includeSummary
+				? `
 		<div class="score-summary">
 			<h2>📊 評価結果サマリー</h2>
 			<div class="score-grid">
@@ -542,19 +585,27 @@
 						${getJudgmentText(checklist.judgment)}
 					</span>
 				</div>
-				${checklist.judgmentAdvice ? `
+				${
+					checklist.judgmentAdvice
+						? `
 				<div class="score-item">
 					<strong>推奨</strong>
 					${checklist.judgmentAdvice}
 				</div>
-				` : ''}
+				`
+						: ''
+				}
 			</div>
 		</div>
-		` : ''}
+		`
+				: ''
+		}
 	</div>
 
 	<!-- カテゴリ別セクション -->
-	${sections.map(section => `
+	${sections
+		.map(
+			section => `
 		<div class="category-section">
 			<div class="section-header ${section.category.id}">
 				<div class="section-title">
@@ -576,17 +627,23 @@
 				${section.items.map(renderCheckItem).join('')}
 			</div>
 		</div>
-	`).join('')}
+	`
+		)
+		.join('')}
 
 	<!-- ノートセクション -->
-	${exportOptions.includeNotes && checklist.notes ? `
+	${
+		exportOptions.includeNotes && checklist.notes
+			? `
 		<div class="notes-section">
 			<h2>📝 評価メモ</h2>
 			<div class="notes-content">
 				${checklist.notes.replace(/\n/g, '<br>')}
 			</div>
 		</div>
-	` : ''}
+	`
+			: ''
+	}
 
 	<!-- フッター -->
 	<div class="footer">
@@ -611,19 +668,27 @@
 
 	function getJudgmentText(judgment: string | null): string {
 		switch (judgment) {
-			case 'accept': return '📗 採用';
-			case 'caution': return '📙 要注意';
-			case 'reject': return '📕 不採用';
-			default: return '❓ 未判定';
+			case 'accept':
+				return '📗 採用';
+			case 'caution':
+				return '📙 要注意';
+			case 'reject':
+				return '📕 不採用';
+			default:
+				return '❓ 未判定';
 		}
 	}
 
 	function getJudgmentColor(judgment: string | null): string {
 		switch (judgment) {
-			case 'accept': return '#27ae60';
-			case 'caution': return '#f39c12';
-			case 'reject': return '#e74c3c';
-			default: return '#95a5a6';
+			case 'accept':
+				return '#27ae60';
+			case 'caution':
+				return '#f39c12';
+			case 'reject':
+				return '#e74c3c';
+			default:
+				return '#95a5a6';
 		}
 	}
 
@@ -726,7 +791,8 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
 						<input
 							type="checkbox"
 							checked={exportOptions.includeSummary}
-							onchange={(e) => updateExportOption('includeSummary', (e.target as HTMLInputElement).checked)}
+							onchange={e =>
+								updateExportOption('includeSummary', (e.target as HTMLInputElement).checked)}
 						/>
 						<span>📊 評価サマリー</span>
 						<small>スコア・判定結果の概要</small>
@@ -736,7 +802,8 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
 						<input
 							type="checkbox"
 							checked={exportOptions.includeGuides}
-							onchange={(e) => updateExportOption('includeGuides', (e.target as HTMLInputElement).checked)}
+							onchange={e =>
+								updateExportOption('includeGuides', (e.target as HTMLInputElement).checked)}
 						/>
 						<span>📚 ガイド内容</span>
 						<small>各項目の詳細説明・例</small>
@@ -746,7 +813,8 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
 						<input
 							type="checkbox"
 							checked={exportOptions.includeNotes}
-							onchange={(e) => updateExportOption('includeNotes', (e.target as HTMLInputElement).checked)}
+							onchange={e =>
+								updateExportOption('includeNotes', (e.target as HTMLInputElement).checked)}
 						/>
 						<span>📝 評価メモ</span>
 						<small>追加したメモ・コメント</small>
@@ -757,7 +825,8 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
 							<input
 								type="checkbox"
 								checked={exportOptions.sectionBreaks}
-								onchange={(e) => updateExportOption('sectionBreaks', (e.target as HTMLInputElement).checked)}
+								onchange={e =>
+									updateExportOption('sectionBreaks', (e.target as HTMLInputElement).checked)}
 							/>
 							<span>📄 セクション改ページ</span>
 							<small>各セクションを個別ページに分離</small>
@@ -765,24 +834,15 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
 					{/if}
 				</div>
 			</div>
-
 		</div>
 
 		<div class="modal-footer">
 			<div class="action-buttons">
-				<button 
-					class="btn btn-secondary" 
-					onclick={copyToClipboard}
-					disabled={!checklist}
-				>
+				<button class="btn btn-secondary" onclick={copyToClipboard} disabled={!checklist}>
 					📋 コピー
 				</button>
-				
-				<button 
-					class="btn btn-primary" 
-					onclick={handleExport}
-					disabled={!checklist || isExporting}
-				>
+
+				<button class="btn btn-primary" onclick={handleExport} disabled={!checklist || isExporting}>
 					{isExporting ? '⏳ 出力中...' : '📤 エクスポート'}
 				</button>
 			</div>
@@ -869,13 +929,15 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
 		gap: 8px;
 	}
 
-	.format-options, .checkbox-options {
+	.format-options,
+	.checkbox-options {
 		display: flex;
 		flex-direction: column;
 		gap: 12px;
 	}
 
-	.radio-option, .checkbox-option {
+	.radio-option,
+	.checkbox-option {
 		display: flex;
 		align-items: flex-start;
 		gap: 12px;
@@ -887,29 +949,32 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
 		background: #fafafa;
 	}
 
-	.radio-option:hover, .checkbox-option:hover {
+	.radio-option:hover,
+	.checkbox-option:hover {
 		border-color: #3498db;
 		background: #f8f9fa;
 	}
 
-	.radio-option input[type="radio"]:checked + span,
-	.checkbox-option input[type="checkbox"]:checked + span {
+	.radio-option input[type='radio']:checked + span,
+	.checkbox-option input[type='checkbox']:checked + span {
 		color: #3498db;
 		font-weight: 600;
 	}
 
-	.radio-option input[type="radio"]:checked,
-	.checkbox-option input[type="checkbox"]:checked {
+	.radio-option input[type='radio']:checked,
+	.checkbox-option input[type='checkbox']:checked {
 		accent-color: #3498db;
 	}
 
-	.radio-option span, .checkbox-option span {
+	.radio-option span,
+	.checkbox-option span {
 		font-weight: 500;
 		font-size: 15px;
 		color: #2c3e50;
 	}
 
-	.radio-option small, .checkbox-option small {
+	.radio-option small,
+	.checkbox-option small {
 		display: block;
 		color: #6c757d;
 		font-size: 13px;
@@ -1065,7 +1130,9 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
 			max-height: 95vh;
 		}
 
-		.modal-header, .modal-body, .modal-footer {
+		.modal-header,
+		.modal-body,
+		.modal-footer {
 			padding-left: 20px;
 			padding-right: 20px;
 		}
@@ -1088,13 +1155,18 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
 
 	/* アクセシビリティ */
 	@media (prefers-reduced-motion: reduce) {
-		.modal-backdrop, .modal-content, .btn, .radio-option, .checkbox-option {
+		.modal-backdrop,
+		.modal-content,
+		.btn,
+		.radio-option,
+		.checkbox-option {
 			transition: none;
 		}
 	}
 
 	/* フォーカス状態 */
-	.radio-option:focus-within, .checkbox-option:focus-within {
+	.radio-option:focus-within,
+	.checkbox-option:focus-within {
 		border-color: #3498db;
 		box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
 	}
