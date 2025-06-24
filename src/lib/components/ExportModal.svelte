@@ -1,51 +1,174 @@
+<!-- src/lib/components/ExportModal.svelte -->
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import type { ChecklistResult, ExportOptions } from '$lib/types/checklist.js';
+	import type { ChecklistResult, CheckItem } from '$lib/types/checklist.js';
+	import { CATEGORIES } from '$lib/data/checklist-items.js';
 
 	interface Props {
 		checklist: ChecklistResult | null;
 		onClose: () => void;
 	}
 
+	interface ExportOptions {
+		format: 'pdf' | 'html' | 'json';
+		includeGuides: boolean;
+		includeNotes: boolean;
+		includeSummary: boolean;
+		sectionBreaks: boolean; // セクションごとのページブレイク
+	}
+
 	const { checklist, onClose }: Props = $props();
 
-	const exportOptions = $state<ExportOptions>({
-		format: 'pdf',
-		includeGuides: true,
-		includeNotes: true
-	});
-
-	let isExporting = $state(false);
 	let modalElement: HTMLDivElement;
+	let isExporting = $state(false);
 
-	onMount(() => {
-		// ESCキーでモーダルを閉じる
-		const handleKeydown = (e: KeyboardEvent) => {
-			if (e.key === 'Escape') {
-				onClose();
-			}
-		};
+	// エクスポートオプション（個別の状態として管理）
+	let format = $state<'pdf' | 'html' | 'json'>('pdf');
+	let includeGuides = $state(true);
+	let includeNotes = $state(true);
+	let includeSummary = $state(true);
+	let sectionBreaks = $state(true);
 
-		document.addEventListener('keydown', handleKeydown);
-		document.body.style.overflow = 'hidden'; // スクロールを無効化
-
-		return () => {
-			document.removeEventListener('keydown', handleKeydown);
-			document.body.style.overflow = '';
-		};
+	// リアクティブなエクスポートオプション
+	const exportOptions = $derived<ExportOptions>({
+		format,
+		includeGuides,
+		includeNotes,
+		includeSummary,
+		sectionBreaks
 	});
 
-	function handleBackdropClick(e: MouseEvent) {
-		if (e.target === modalElement) {
+	function updateExportOption<K extends keyof ExportOptions>(key: K, value: ExportOptions[K]) {
+		switch (key) {
+			case 'format':
+				format = value as 'pdf' | 'html' | 'json';
+				break;
+			case 'includeGuides':
+				includeGuides = value as boolean;
+				break;
+			case 'includeNotes':
+				includeNotes = value as boolean;
+				break;
+			case 'includeSummary':
+				includeSummary = value as boolean;
+				break;
+			case 'sectionBreaks':
+				sectionBreaks = value as boolean;
+				break;
+		}
+	}
+
+	function handleBackdropClick(event: MouseEvent) {
+		if (event.target === modalElement) {
 			onClose();
 		}
 	}
 
-	function updateExportOption<K extends keyof ExportOptions>(key: K, value: ExportOptions[K]) {
-		exportOptions[key] = value;
+	// セクション別にアイテムを分類（リアクティブ）
+	const sections = $derived(
+		checklist
+			? CATEGORIES.map(category => {
+					const items = checklist.items.filter(item => item.category.id === category.id);
+					const checkedItems = items.filter(item => item.checked);
+					const uncheckedItems = items.filter(item => !item.checked);
+
+					return {
+						category,
+						items,
+						checkedItems,
+						uncheckedItems,
+						completionRate:
+							items.length > 0 ? Math.round((checkedItems.length / items.length) * 100) : 0
+					};
+				})
+			: []
+	);
+
+	// 従来の関数も残しておく（HTML生成時に使用）
+	function groupItemsByCategory() {
+		if (!checklist) return [];
+
+		return CATEGORIES.map(category => {
+			const items = checklist.items.filter(item => item.category.id === category.id);
+			const checkedItems = items.filter(item => item.checked);
+			const uncheckedItems = items.filter(item => !item.checked);
+
+			return {
+				category,
+				items,
+				checkedItems,
+				uncheckedItems,
+				completionRate:
+					items.length > 0 ? Math.round((checkedItems.length / items.length) * 100) : 0
+			};
+		});
 	}
 
-	async function exportChecklist() {
+	// HTML生成用のヘルパー関数
+	function renderCheckItem(item: CheckItem): string {
+		return `
+			<div class="check-item ${item.checked ? 'checked' : 'unchecked'}">
+				<div class="check-item-header">
+					<span class="check-icon">${item.checked ? '✅' : '❌'}</span>
+					<div style="flex: 1;">
+						<div class="check-item-title">${item.title}</div>
+						<div class="check-item-description">${item.description}</div>
+						${
+							exportOptions.includeGuides && item.guideContent
+								? `
+							<div class="check-item-guide">
+								<div class="guide-title">${item.guideContent.title}</div>
+								<div>${item.guideContent.content.replace(/\n/g, '<br>')}</div>
+								${
+									item.guideContent.examples
+										? `
+									<div style="margin-top: 10px;">
+										${
+											item.guideContent.examples.good.length > 0
+												? `
+											<div style="margin-bottom: 8px;">
+												<strong style="color: #27ae60;">✅ 良い例:</strong>
+												${item.guideContent.examples.good
+													.map(
+														ex => `
+													<div style="margin-left: 15px; margin-top: 5px;">• ${ex}</div>
+												`
+													)
+													.join('')}
+											</div>
+										`
+												: ''
+										}
+										${
+											item.guideContent.examples.bad.length > 0
+												? `
+											<div>
+												<strong style="color: #e74c3c;">❌ 悪い例:</strong>
+												${item.guideContent.examples.bad
+													.map(
+														ex => `
+													<div style="margin-left: 15px; margin-top: 5px;">• ${ex}</div>
+												`
+													)
+													.join('')}
+											</div>
+										`
+												: ''
+										}
+									</div>
+								`
+										: ''
+								}
+							</div>
+						`
+								: ''
+						}
+					</div>
+				</div>
+			</div>
+		`;
+	}
+
+	async function handleExport() {
 		if (!checklist) return;
 
 		isExporting = true;
@@ -63,15 +186,13 @@
 			}
 		} catch (error) {
 			console.error('エクスポートエラー:', error);
-			alert('エクスポートに失敗しました。');
+			alert('エクスポートに失敗しました');
 		} finally {
 			isExporting = false;
 		}
 	}
 
 	async function exportToPDF() {
-		if (!checklist) return;
-
 		try {
 			// html2canvasとjsPDFを動的インポート
 			const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
@@ -79,8 +200,8 @@
 				import('jspdf')
 			]);
 
-			// PDF用のHTMLコンテンツを生成
-			const htmlContent = generatePDFHTMLContent();
+			// PDF用のHTMLコンテンツを生成（セクション分割対応）
+			const htmlContent = generateSectionedHTMLContent();
 
 			// 一時的なコンテナを作成
 			const tempContainer = document.createElement('div');
@@ -96,46 +217,23 @@
 			document.body.appendChild(tempContainer);
 
 			try {
-				// HTMLをCanvasに変換
-				const canvas = await html2canvas(tempContainer, {
-					scale: 2, // 高解像度
-					useCORS: true,
-					allowTaint: true,
-					backgroundColor: 'white',
-					width: tempContainer.scrollWidth,
-					height: tempContainer.scrollHeight
-				});
-
 				// PDFを作成
 				const pdf = new jsPDF('p', 'mm', 'a4');
 				const pageWidth = pdf.internal.pageSize.getWidth();
 				const pageHeight = pdf.internal.pageSize.getHeight();
 
-				// 画像データを取得
-				const imgData = canvas.toDataURL('image/png');
-				const imgWidth = pageWidth - 20; // 両側10mmのマージン
-				const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-				let heightLeft = imgHeight;
-				let position = 10; // 上マージン
-
-				// 最初のページに画像を追加
-				pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-				heightLeft -= pageHeight - 20; // 上下マージンを考慮
-
-				// 必要に応じて追加ページを作成
-				while (heightLeft >= 0) {
-					position = heightLeft - imgHeight + 10;
-					pdf.addPage();
-					pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-					heightLeft -= pageHeight - 20;
+				if (exportOptions.sectionBreaks) {
+					// セクションごとにページを分割
+					await renderSectionedPDF(pdf, tempContainer, pageWidth, pageHeight, html2canvas);
+				} else {
+					// 通常のレンダリング
+					await renderContinuousPDF(pdf, tempContainer, pageWidth, pageHeight, html2canvas);
 				}
 
 				// ダウンロード
-				const filename = `事実確認チェックシート_${checklist.title.replace(/[^\w\s]/gi, '')}_${new Date().toISOString().slice(0, 10)}.pdf`;
+				const filename = `事実確認チェックシート_${checklist!.title.replace(/[^\w\s]/gi, '')}_${new Date().toISOString().slice(0, 10)}.pdf`;
 				pdf.save(filename);
 			} finally {
-				// 一時コンテナを削除
 				document.body.removeChild(tempContainer);
 			}
 		} catch (error) {
@@ -144,236 +242,141 @@
 		}
 	}
 
-	function generatePDFHTMLContent(): string {
-		if (!checklist) return '';
+	async function renderSectionedPDF(
+		pdf: any,
+		container: HTMLElement,
+		pageWidth: number,
+		pageHeight: number,
+		html2canvas: any
+	) {
+		// ヘッダーとサマリーを最初のページに
+		const headerSection = container.querySelector('.header-section') as HTMLElement;
+		if (headerSection) {
+			await addSectionToPDF(pdf, headerSection, pageWidth, pageHeight, false, html2canvas);
+		}
 
-		const checkedItems = checklist.items.filter(item => item.checked);
-		const uncheckedItems = checklist.items.filter(item => !item.checked);
+		// 各セクションを個別ページに
+		const sections = container.querySelectorAll('.category-section');
+		for (let i = 0; i < sections.length; i++) {
+			if (i > 0 || headerSection) {
+				pdf.addPage();
+			}
+			await addSectionToPDF(
+				pdf,
+				sections[i] as HTMLElement,
+				pageWidth,
+				pageHeight,
+				true,
+				html2canvas
+			);
+		}
 
-		return `
-			<div style="
-				font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Yu Gothic', 'Meiryo', 'Takao Gothic', 'IPAexGothic', 'IPAPGothic', 'VL PGothic', 'Noto Sans CJK JP', sans-serif;
-				font-size: 14px;
-				line-height: 1.6;
-				color: #333;
-				background: white;
-				max-width: 170mm;
-				margin: 0 auto;
-			">
-				<!-- ヘッダー -->
-				<div style="border-bottom: 3px solid #2c3e50; padding-bottom: 15px; margin-bottom: 25px;">
-					<h1 style="
-						color: #2c3e50; 
-						margin: 0 0 10px 0; 
-						font-size: 24px; 
-						font-weight: bold;
-						line-height: 1.3;
-					">${checklist.title}</h1>
-					<div style="font-size: 12px; color: #666;">
-						<p style="margin: 5px 0;">作成日: ${checklist.createdAt.toLocaleDateString('ja-JP')}</p>
-						${checklist.completedAt ? `<p style="margin: 5px 0;">評価完了日: ${checklist.completedAt.toLocaleDateString('ja-JP')}</p>` : ''}
-					</div>
-				</div>
-
-				<!-- 評価結果 -->
-				<div style="
-					background: #f8f9fa; 
-					padding: 20px; 
-					border-radius: 8px; 
-					margin-bottom: 25px;
-					border-left: 4px solid #3498db;
-				">
-					<h2 style="margin: 0 0 15px 0; color: #2c3e50; font-size: 18px;">📊 評価結果</h2>
-					<div style="font-size: 13px; line-height: 1.8;">
-						<p style="margin: 8px 0;"><strong>総合スコア:</strong> ${checklist.score.total}/${checklist.score.maxScore} (${checklist.confidenceLevel}%)</p>
-						<p style="margin: 8px 0;"><strong>信頼度:</strong> ${checklist.confidenceText}</p>
-						<p style="margin: 8px 0;"><strong>最終判定:</strong> <span style="font-weight: bold; color: ${getJudgmentColor(checklist.judgment)};">${getJudgmentText(checklist.judgment)}</span></p>
-						${checklist.judgmentAdvice ? `<p style="margin: 8px 0;"><strong>推奨:</strong> ${checklist.judgmentAdvice}</p>` : ''}
-					</div>
-				</div>
-
-				<!-- チェック済み項目 -->
-				${
-					checkedItems.length > 0
-						? `
-				<div style="margin-bottom: 25px;">
-					<h2 style="
-						color: #27ae60; 
-						border-left: 4px solid #27ae60; 
-						padding-left: 15px; 
-						margin: 0 0 15px 0; 
-						font-size: 16px;
-					">✅ チェック済み項目 (${checkedItems.length}件)</h2>
-					${checkedItems
-						.map(
-							item => `
-						<div style="
-							margin: 12px 0; 
-							padding: 15px; 
-							background: #d5f4e6; 
-							border-radius: 5px; 
-							border-left: 4px solid #27ae60;
-							page-break-inside: avoid;
-						">
-							<div style="font-weight: bold; margin-bottom: 5px; color: #27ae60;">
-								${item.title}
-							</div>
-							<div style="margin-bottom: 8px; color: #2c3e50; font-size: 13px;">
-								${item.description}
-							</div>
-							${
-								exportOptions.includeGuides && item.guideContent
-									? `
-								<div style="font-size: 11px; color: #666; font-style: italic; margin-top: 8px;">
-									📖 ガイド: ${item.guideContent.content}
-								</div>
-							`
-									: ''
-							}
-						</div>
-					`
-						)
-						.join('')}
-				</div>
-				`
-						: ''
-				}
-
-				<!-- 未チェック項目 -->
-				${
-					uncheckedItems.length > 0
-						? `
-				<div style="margin-bottom: 25px;">
-					<h2 style="
-						color: #e74c3c; 
-						border-left: 4px solid #e74c3c; 
-						padding-left: 15px; 
-						margin: 0 0 15px 0; 
-						font-size: 16px;
-					">❌ 未チェック項目 (${uncheckedItems.length}件)</h2>
-					${uncheckedItems
-						.map(
-							item => `
-						<div style="
-							margin: 12px 0; 
-							padding: 15px; 
-							background: #ffeaa7; 
-							border-radius: 5px; 
-							border-left: 4px solid #e17055;
-							page-break-inside: avoid;
-						">
-							<div style="font-weight: bold; margin-bottom: 5px; color: #e74c3c;">
-								${item.title}
-							</div>
-							<div style="margin-bottom: 8px; color: #2c3e50; font-size: 13px;">
-								${item.description}
-							</div>
-							${
-								exportOptions.includeGuides && item.guideContent
-									? `
-								<div style="font-size: 11px; color: #666; font-style: italic; margin-top: 8px;">
-									📖 ガイド: ${item.guideContent.content}
-								</div>
-							`
-									: ''
-							}
-						</div>
-					`
-						)
-						.join('')}
-				</div>
-				`
-						: ''
-				}
-
-				<!-- 評価メモ -->
-				${
-					exportOptions.includeNotes && checklist.notes
-						? `
-				<div style="
-					background: #e8f4fd; 
-					padding: 20px; 
-					border-radius: 8px; 
-					margin-top: 25px;
-					border-left: 4px solid #3498db;
-				">
-					<h2 style="margin: 0 0 15px 0; color: #2c3e50; font-size: 16px;">📝 評価メモ</h2>
-					<div style="font-size: 13px; line-height: 1.7; white-space: pre-wrap;">
-						${checklist.notes}
-					</div>
-				</div>
-				`
-						: ''
-				}
-
-				<!-- フッター -->
-				<div style="
-					margin-top: 30px; 
-					text-align: center; 
-					color: #666; 
-					border-top: 1px solid #ddd; 
-					padding-top: 15px;
-					font-size: 11px;
-				">
-					実用的事実確認チェックシートによる評価 - ${new Date().toLocaleDateString('ja-JP')}
-				</div>
-			</div>
-		`;
+		// ノートセクション
+		const notesSection = container.querySelector('.notes-section') as HTMLElement;
+		if (notesSection) {
+			pdf.addPage();
+			await addSectionToPDF(pdf, notesSection, pageWidth, pageHeight, true, html2canvas);
+		}
 	}
 
-	function getJudgmentColor(judgment: string | null): string {
-		switch (judgment) {
-			case 'accept':
-				return '#27ae60';
-			case 'caution':
-				return '#f39c12';
-			case 'reject':
-				return '#e74c3c';
-			default:
-				return '#95a5a6';
+	async function addSectionToPDF(
+		pdf: any,
+		element: HTMLElement,
+		pageWidth: number,
+		pageHeight: number,
+		fitToPage: boolean,
+		html2canvas: any
+	) {
+		const canvas = await html2canvas(element, {
+			scale: 2,
+			useCORS: true,
+			allowTaint: true,
+			backgroundColor: 'white'
+		});
+
+		const imgData = canvas.toDataURL('image/png');
+		const imgWidth = pageWidth - 20; // 両側10mmのマージン
+		const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+		if (fitToPage && imgHeight > pageHeight - 40) {
+			// ページに収まるようにスケール調整
+			const scaleFactor = (pageHeight - 40) / imgHeight;
+			const scaledWidth = imgWidth * scaleFactor;
+			const scaledHeight = imgHeight * scaleFactor;
+			pdf.addImage(imgData, 'PNG', 10, 20, scaledWidth, scaledHeight);
+		} else {
+			pdf.addImage(imgData, 'PNG', 10, 20, imgWidth, imgHeight);
+		}
+	}
+
+	async function renderContinuousPDF(
+		pdf: any,
+		container: HTMLElement,
+		pageWidth: number,
+		pageHeight: number,
+		html2canvas: any
+	) {
+		const canvas = await html2canvas(container, {
+			scale: 2,
+			useCORS: true,
+			allowTaint: true,
+			backgroundColor: 'white',
+			width: container.scrollWidth,
+			height: container.scrollHeight
+		});
+
+		const imgData = canvas.toDataURL('image/png');
+		const imgWidth = pageWidth - 20;
+		const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+		let heightLeft = imgHeight;
+		let position = 10;
+
+		pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+		heightLeft -= pageHeight - 20;
+
+		while (heightLeft >= 0) {
+			position = heightLeft - imgHeight + 10;
+			pdf.addPage();
+			pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+			heightLeft -= pageHeight - 20;
 		}
 	}
 
 	async function exportToHTML() {
-		if (!checklist) return;
-
-		const html = generateHTMLContent();
-		const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-		const filename = `事実確認チェックシート_${checklist.title}_${new Date().toISOString().slice(0, 10)}.html`;
+		const htmlContent = generateSectionedHTMLContent();
+		const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+		const filename = `事実確認チェックシート_${checklist!.title}_${new Date().toISOString().slice(0, 10)}.html`;
 		downloadBlob(blob, filename);
 	}
 
 	async function exportToJSON() {
-		if (!checklist) return;
-
-		// エクスポート用のクリーンなオブジェクトを作成
 		const exportData = {
-			title: checklist.title,
-			description: checklist.description,
-			notes: checklist.notes,
-			createdAt: checklist.createdAt.toISOString(),
-			completedAt: checklist.completedAt?.toISOString() || null,
-			judgment: checklist.judgment,
-			score: checklist.score,
-			confidenceLevel: checklist.confidenceLevel,
-			confidenceText: checklist.confidenceText,
-			judgmentAdvice: checklist.judgmentAdvice,
-			items: checklist.items,
+			title: checklist!.title,
+			notes: checklist!.notes,
+			createdAt: checklist!.createdAt.toISOString(),
+			completedAt: checklist!.completedAt?.toISOString(),
+			score: checklist!.score,
+			judgment: checklist!.judgment,
+			judgmentAdvice: checklist!.judgmentAdvice,
+			confidenceLevel: checklist!.confidenceLevel,
+			confidenceText: checklist!.confidenceText,
+			items: checklist!.items,
+			sections: groupItemsByCategory(),
 			exportedAt: new Date().toISOString(),
 			version: '1.0'
 		};
 
 		const jsonString = JSON.stringify(exportData, null, 2);
 		const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8' });
-		const filename = `事実確認チェックシート_${checklist.title}_${new Date().toISOString().slice(0, 10)}.json`;
+		const filename = `事実確認チェックシート_${checklist!.title}_${new Date().toISOString().slice(0, 10)}.json`;
 		downloadBlob(blob, filename);
 	}
 
-	function generateHTMLContent(): string {
+	function generateSectionedHTMLContent(): string {
 		if (!checklist) return '';
 
-		const checkedItems = checklist.items.filter(item => item.checked);
-		const uncheckedItems = checklist.items.filter(item => !item.checked);
+		const sections = groupItemsByCategory();
 
 		return `
 <!DOCTYPE html>
@@ -384,169 +387,295 @@
 	<title>事実確認チェックシート - ${checklist.title}</title>
 	<style>
 		body { 
-			font-family: "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif; 
-			margin: 40px; 
+			font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif; 
+			margin: 20px; 
 			line-height: 1.6; 
 			color: #333; 
 			background: #fff;
 		}
-		.header { 
-			border-bottom: 2px solid #2c3e50; 
+		
+		/* ヘッダースタイル */
+		.header-section { 
+			border-bottom: 3px solid #2c3e50; 
 			padding-bottom: 20px; 
 			margin-bottom: 30px; 
 		}
-		.header h1 { 
+		.header-section h1 { 
 			color: #2c3e50; 
-			margin: 0 0 10px 0; 
-			font-size: 24px;
+			margin: 0 0 15px 0; 
+			font-size: 28px;
 		}
 		.meta-info {
 			font-size: 14px;
 			color: #666;
+			margin-bottom: 20px;
 		}
+		
+		/* サマリースタイル */
 		.score-summary { 
-			background: #f8f9fa; 
-			padding: 20px; 
-			border-radius: 8px; 
+			background: linear-gradient(135deg, #f8f9fa, #e9ecef); 
+			padding: 25px; 
+			border-radius: 10px; 
 			margin-bottom: 30px;
-			border-left: 4px solid #3498db;
+			border-left: 5px solid #3498db;
+			box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 		}
 		.score-summary h2 {
-			margin-top: 0;
-			color: #2c3e50;
+			margin: 0 0 20px 0; 
+			color: #2c3e50; 
+			font-size: 22px;
 		}
-		.check-section { 
-			margin-bottom: 30px; 
-		}
-		.check-section h2 { 
-			color: #34495e; 
-			border-left: 4px solid #3498db; 
-			padding-left: 15px; 
+		.score-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			gap: 15px;
 			margin-bottom: 15px;
 		}
+		.score-item {
+			background: white;
+			padding: 15px;
+			border-radius: 8px;
+			border-left: 4px solid #3498db;
+		}
+		.score-item strong {
+			display: block;
+			color: #2c3e50;
+			margin-bottom: 5px;
+		}
+		
+		/* セクションスタイル */
+		.category-section { 
+			margin-bottom: 40px; 
+			page-break-inside: avoid;
+			border: 1px solid #ddd;
+			border-radius: 10px;
+			overflow: hidden;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+		}
+		.section-header {
+			padding: 20px 25px;
+			color: white;
+			font-weight: bold;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+		.section-header.critical { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+		.section-header.detailed { background: linear-gradient(135deg, #f39c12, #e67e22); }
+		.section-header.verification { background: linear-gradient(135deg, #3498db, #2980b9); }
+		.section-header.context { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+		
+		.section-title {
+			font-size: 20px;
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+		.section-stats {
+			font-size: 14px;
+			opacity: 0.9;
+		}
+		
+		.section-content {
+			padding: 25px;
+			background: #fff;
+		}
+		
+		/* チェックアイテムスタイル */
 		.check-item { 
-			margin: 15px 0; 
-			padding: 15px; 
-			border-radius: 5px; 
-			border-left: 4px solid #ddd;
+			margin: 20px 0; 
+			padding: 20px; 
+			border-radius: 8px; 
+			border-left: 5px solid #ddd;
+			background: #fafafa;
+			page-break-inside: avoid;
 		}
 		.check-item.checked { 
-			background: #d5f4e6; 
+			background: linear-gradient(135deg, #d5f4e6, #a8e6cf); 
 			border-left-color: #27ae60; 
 		}
 		.check-item.unchecked { 
-			background: #ffeaa7; 
+			background: linear-gradient(135deg, #ffeaa7, #fdcb6e); 
 			border-left-color: #e17055; 
+		}
+		.check-item-header {
+			display: flex;
+			align-items: flex-start;
+			gap: 15px;
+			margin-bottom: 10px;
+		}
+		.check-icon {
+			font-size: 24px;
+			margin-top: 2px;
 		}
 		.check-item-title {
 			font-weight: bold;
-			margin-bottom: 5px;
+			font-size: 16px;
+			color: #2c3e50;
+			margin-bottom: 8px;
 		}
 		.check-item-description {
-			margin-bottom: 10px;
 			color: #555;
+			margin-bottom: 15px;
+			line-height: 1.7;
 		}
 		.check-item-guide {
-			font-size: 12px;
-			color: #777;
-			font-style: italic;
+			background: rgba(255,255,255,0.7);
+			padding: 15px;
+			border-radius: 6px;
+			font-size: 13px;
+			color: #666;
+			border-left: 3px solid #3498db;
 		}
-		.notes { 
-			background: #e8f4fd; 
-			padding: 20px; 
-			border-radius: 8px; 
+		.guide-title {
+			font-weight: bold;
+			color: #2c3e50;
+			margin-bottom: 10px;
+		}
+		
+		/* ノートセクション */
+		.notes-section { 
+			background: linear-gradient(135deg, #e8f4fd, #d1ecf1); 
+			padding: 25px; 
+			border-radius: 10px; 
 			margin-top: 30px; 
-			border-left: 4px solid #3498db;
+			border-left: 5px solid #3498db;
+			page-break-inside: avoid;
 		}
-		.notes h2 {
-			margin-top: 0;
+		.notes-section h2 {
+			margin: 0 0 20px 0;
+			color: #2c3e50;
 		}
+		.notes-content {
+			background: white;
+			padding: 20px;
+			border-radius: 8px;
+			line-height: 1.7;
+		}
+		
+		/* フッター */
 		.footer {
 			margin-top: 40px; 
 			text-align: center; 
 			color: #666; 
-			border-top: 1px solid #ddd; 
+			border-top: 2px solid #ddd; 
 			padding-top: 20px;
 			font-size: 12px;
 		}
+		
+		/* 印刷対応 */
 		@media print { 
-			body { 
-				margin: 20px; 
-			} 
-			.check-item {
+			body { margin: 15px; }
+			.category-section { 
 				page-break-inside: avoid;
+				margin-bottom: 30px;
 			}
+			.check-item { page-break-inside: avoid; }
+			${exportOptions.sectionBreaks ? '.category-section { page-break-before: always; }' : ''}
+		}
+		
+		/* レスポンシブ対応 */
+		@media (max-width: 768px) {
+			body { margin: 10px; }
+			.score-grid { grid-template-columns: 1fr; }
+			.section-header { flex-direction: column; align-items: flex-start; gap: 10px; }
 		}
 	</style>
 </head>
 <body>
-	<div class="header">
-		<h1>${checklist.title}</h1>
+	<!-- ヘッダーセクション -->
+	<div class="header-section">
+		<h1>📋 ${checklist.title}</h1>
 		<div class="meta-info">
-			<p>作成日: ${checklist.createdAt.toLocaleDateString('ja-JP')}</p>
-			<p>評価完了日: ${checklist.completedAt?.toLocaleDateString('ja-JP') || '未完了'}</p>
+			<p><strong>作成日:</strong> ${checklist.createdAt.toLocaleDateString('ja-JP')}</p>
+			${checklist.completedAt ? `<p><strong>評価完了日:</strong> ${checklist.completedAt.toLocaleDateString('ja-JP')}</p>` : ''}
+			<p><strong>出力日:</strong> ${new Date().toLocaleDateString('ja-JP')}</p>
 		</div>
-	</div>
-	
-	<div class="score-summary">
-		<h2>評価結果</h2>
-		<p><strong>総合スコア:</strong> ${checklist.score.total}/${checklist.score.maxScore} (${checklist.confidenceLevel}%)</p>
-		<p><strong>信頼度:</strong> ${checklist.confidenceText}</p>
-		<p><strong>最終判定:</strong> ${getJudgmentText(checklist.judgment)}</p>
-		${checklist.judgmentAdvice ? `<p><strong>推奨:</strong> ${checklist.judgmentAdvice}</p>` : ''}
-	</div>
-
-	<div class="check-section">
-		<h2>チェック済み項目 (${checkedItems.length}件)</h2>
-		${checkedItems
-			.map(
-				item => `
-			<div class="check-item checked">
-				<div class="check-item-title">✅ ${item.title}</div>
-				<div class="check-item-description">${item.description}</div>
+		
+		${
+			exportOptions.includeSummary
+				? `
+		<div class="score-summary">
+			<h2>📊 評価結果サマリー</h2>
+			<div class="score-grid">
+				<div class="score-item">
+					<strong>総合スコア</strong>
+					${checklist.score.total}/${checklist.score.maxScore} (${checklist.confidenceLevel}%)
+				</div>
+				<div class="score-item">
+					<strong>信頼度</strong>
+					${checklist.confidenceText}
+				</div>
+				<div class="score-item">
+					<strong>最終判定</strong>
+					<span style="color: ${getJudgmentColor(checklist.judgment)}; font-weight: bold;">
+						${getJudgmentText(checklist.judgment)}
+					</span>
+				</div>
 				${
-					exportOptions.includeGuides && item.guideContent
-						? `<div class="check-item-guide">ガイド: ${item.guideContent.content}</div>`
+					checklist.judgmentAdvice
+						? `
+				<div class="score-item">
+					<strong>推奨</strong>
+					${checklist.judgmentAdvice}
+				</div>
+				`
 						: ''
 				}
 			</div>
+		</div>
 		`
-			)
-			.join('')}
+				: ''
+		}
 	</div>
 
-	<div class="check-section">
-		<h2>未チェック項目 (${uncheckedItems.length}件)</h2>
-		${uncheckedItems
-			.map(
-				item => `
-			<div class="check-item unchecked">
-				<div class="check-item-title">❌ ${item.title}</div>
-				<div class="check-item-description">${item.description}</div>
-				${
-					exportOptions.includeGuides && item.guideContent
-						? `<div class="check-item-guide">ガイド: ${item.guideContent.content}</div>`
-						: ''
-				}
+	<!-- カテゴリ別セクション -->
+	${sections
+		.map(
+			section => `
+		<div class="category-section">
+			<div class="section-header ${section.category.id}">
+				<div class="section-title">
+					<span>${section.category.emoji}</span>
+					<div>
+						<div>${section.category.name}</div>
+						<div style="font-size: 14px; font-weight: normal; opacity: 0.9; margin-top: 5px;">
+							${section.category.description}
+						</div>
+					</div>
+				</div>
+				<div class="section-stats">
+					<div>${section.checkedItems.length}/${section.items.length} 完了</div>
+					<div>${section.completionRate}%</div>
+				</div>
 			</div>
-		`
-			)
-			.join('')}
-	</div>
+			
+			<div class="section-content">
+				${section.items.map(renderCheckItem).join('')}
+			</div>
+		</div>
+	`
+		)
+		.join('')}
 
+	<!-- ノートセクション -->
 	${
 		exportOptions.includeNotes && checklist.notes
 			? `
-		<div class="notes">
-			<h2>評価メモ</h2>
-			<p>${checklist.notes.replace(/\n/g, '<br>')}</p>
+		<div class="notes-section">
+			<h2>📝 評価メモ</h2>
+			<div class="notes-content">
+				${checklist.notes.replace(/\n/g, '<br>')}
+			</div>
 		</div>
 	`
 			: ''
 	}
 
+	<!-- フッター -->
 	<div class="footer">
-		<p>実用的事実確認チェックシートによる評価 - ${new Date().toLocaleDateString('ja-JP')}</p>
+		<p>実用的事実確認チェックシートによる評価結果</p>
+		<p>生成日時: ${new Date().toLocaleString('ja-JP')}</p>
 	</div>
 </body>
 </html>
@@ -567,13 +696,26 @@
 	function getJudgmentText(judgment: string | null): string {
 		switch (judgment) {
 			case 'accept':
-				return '採用';
+				return '📗 採用';
 			case 'caution':
-				return '要注意';
+				return '📙 要注意';
 			case 'reject':
-				return '不採用';
+				return '📕 不採用';
 			default:
-				return '未判定';
+				return '❓ 未判定';
+		}
+	}
+
+	function getJudgmentColor(judgment: string | null): string {
+		switch (judgment) {
+			case 'accept':
+				return '#27ae60';
+			case 'caution':
+				return '#f39c12';
+			case 'reject':
+				return '#e74c3c';
+			default:
+				return '#95a5a6';
 		}
 	}
 
@@ -581,7 +723,7 @@
 		if (!checklist) return;
 
 		const text = `
-事実確認評価結果
+📋 事実確認評価結果
 
 タイトル: ${checklist.title}
 作成日: ${checklist.createdAt.toLocaleDateString('ja-JP')}
@@ -589,18 +731,18 @@
 信頼度: ${checklist.confidenceText}
 最終判定: ${getJudgmentText(checklist.judgment)}
 
-チェック済み項目: ${checklist.items.filter(i => i.checked).length}件
-未チェック項目: ${checklist.items.filter(i => !i.checked).length}件
+📊 セクション別達成率:
+${sections.map(s => `${s.category.emoji} ${s.category.name}: ${s.completionRate}% (${s.checkedItems.length}/${s.items.length})`).join('\n')}
 
-${checklist.notes ? `評価メモ:\n${checklist.notes}` : ''}
+${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
 		`.trim();
 
 		try {
 			await navigator.clipboard.writeText(text);
-			alert('クリップボードにコピーしました');
+			alert('📋 クリップボードにコピーしました');
 		} catch (error) {
 			console.error('コピーに失敗:', error);
-			alert('コピーに失敗しました');
+			alert('❌ コピーに失敗しました');
 		}
 	}
 </script>
@@ -628,7 +770,7 @@ ${checklist.notes ? `評価メモ:\n${checklist.notes}` : ''}
 		<div class="modal-body">
 			<!-- フォーマット選択 -->
 			<div class="option-group">
-				<h3>出力形式</h3>
+				<h3>📋 出力形式</h3>
 				<div class="format-options">
 					<label class="radio-option">
 						<input
@@ -639,7 +781,7 @@ ${checklist.notes ? `評価メモ:\n${checklist.notes}` : ''}
 							onchange={() => updateExportOption('format', 'pdf')}
 						/>
 						<span>📄 PDF</span>
-						<small>印刷・共有に最適</small>
+						<small>印刷・共有に最適（セクション分割対応）</small>
 					</label>
 
 					<label class="radio-option">
@@ -651,7 +793,7 @@ ${checklist.notes ? `評価メモ:\n${checklist.notes}` : ''}
 							onchange={() => updateExportOption('format', 'html')}
 						/>
 						<span>🌐 HTML</span>
-						<small>ブラウザで表示可能</small>
+						<small>ブラウザで表示可能（セクション構造化）</small>
 					</label>
 
 					<label class="radio-option">
@@ -663,15 +805,26 @@ ${checklist.notes ? `評価メモ:\n${checklist.notes}` : ''}
 							onchange={() => updateExportOption('format', 'json')}
 						/>
 						<span>📊 JSON</span>
-						<small>データ形式（開発者向け）</small>
+						<small>データ形式（プログラム処理用）</small>
 					</label>
 				</div>
 			</div>
 
-			<!-- 含める内容 -->
+			<!-- 内容オプション -->
 			<div class="option-group">
-				<h3>含める内容</h3>
+				<h3>📝 含める内容</h3>
 				<div class="checkbox-options">
+					<label class="checkbox-option">
+						<input
+							type="checkbox"
+							checked={exportOptions.includeSummary}
+							onchange={e =>
+								updateExportOption('includeSummary', (e.target as HTMLInputElement).checked)}
+						/>
+						<span>📊 評価サマリー</span>
+						<small>スコア・判定結果の概要</small>
+					</label>
+
 					<label class="checkbox-option">
 						<input
 							type="checkbox"
@@ -679,7 +832,8 @@ ${checklist.notes ? `評価メモ:\n${checklist.notes}` : ''}
 							onchange={e =>
 								updateExportOption('includeGuides', (e.target as HTMLInputElement).checked)}
 						/>
-						<span>📖 ガイド情報を含める</span>
+						<span>📚 ガイド内容</span>
+						<small>各項目の詳細説明・例</small>
 					</label>
 
 					<label class="checkbox-option">
@@ -689,23 +843,34 @@ ${checklist.notes ? `評価メモ:\n${checklist.notes}` : ''}
 							onchange={e =>
 								updateExportOption('includeNotes', (e.target as HTMLInputElement).checked)}
 						/>
-						<span>📝 評価メモを含める</span>
+						<span>📝 評価メモ</span>
+						<small>追加したメモ・コメント</small>
 					</label>
+
+					{#if exportOptions.format === 'pdf'}
+						<label class="checkbox-option">
+							<input
+								type="checkbox"
+								checked={exportOptions.sectionBreaks}
+								onchange={e =>
+									updateExportOption('sectionBreaks', (e.target as HTMLInputElement).checked)}
+							/>
+							<span>📄 セクション改ページ</span>
+							<small>各セクションを個別ページに分離</small>
+						</label>
+					{/if}
 				</div>
 			</div>
+		</div>
 
-			<!-- アクションボタン -->
+		<div class="modal-footer">
 			<div class="action-buttons">
-				<button class="btn btn-primary" onclick={exportChecklist} disabled={isExporting}>
-					{#if isExporting}
-						⏳ エクスポート中...
-					{:else}
-						📥 ダウンロード
-					{/if}
+				<button class="btn btn-secondary" onclick={copyToClipboard} disabled={!checklist}>
+					📋 コピー
 				</button>
 
-				<button class="btn btn-secondary" onclick={copyToClipboard} disabled={isExporting}>
-					📋 コピー
+				<button class="btn btn-primary" onclick={handleExport} disabled={!checklist || isExporting}>
+					{isExporting ? '⏳ 出力中...' : '📤 エクスポート'}
 				</button>
 			</div>
 		</div>
@@ -719,70 +884,80 @@ ${checklist.notes ? `評価メモ:\n${checklist.notes}` : ''}
 		left: 0;
 		width: 100%;
 		height: 100%;
-		background: rgba(0, 0, 0, 0.5);
+		background: rgba(0, 0, 0, 0.6);
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		z-index: 1000;
-		padding: 20px;
+		backdrop-filter: blur(4px);
 	}
 
 	.modal-content {
-		background: var(--bg-color);
-		border-radius: var(--border-radius);
-		box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-		width: 100%;
-		max-width: 500px;
+		background: white;
+		border-radius: 16px;
+		padding: 0;
+		width: 90%;
+		max-width: 600px;
 		max-height: 90vh;
-		overflow-y: auto;
+		overflow: hidden;
+		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+		display: flex;
+		flex-direction: column;
 	}
 
 	.modal-header {
+		padding: 25px 30px;
+		border-bottom: 1px solid #e9ecef;
 		display: flex;
-		justify-content: space-between;
 		align-items: center;
-		padding: 20px 24px;
-		border-bottom: 1px solid var(--border-color);
+		justify-content: space-between;
+		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		color: white;
 	}
 
 	.modal-header h2 {
 		margin: 0;
-		color: var(--text-color);
-		font-size: 1.25rem;
+		font-size: 20px;
+		font-weight: 600;
 	}
 
 	.close-btn {
 		background: none;
 		border: none;
-		font-size: 1.5rem;
+		font-size: 24px;
+		color: white;
 		cursor: pointer;
-		color: var(--text-muted);
-		transition: color 0.2s ease;
-		padding: 4px;
-		border-radius: 4px;
+		padding: 5px 10px;
+		border-radius: 6px;
+		transition: background-color 0.2s;
 	}
 
 	.close-btn:hover {
-		color: var(--text-color);
-		background: var(--hover-color);
+		background: rgba(255, 255, 255, 0.1);
 	}
 
 	.modal-body {
-		padding: 24px;
+		padding: 30px;
+		overflow-y: auto;
+		flex: 1;
 	}
 
 	.option-group {
-		margin-bottom: 24px;
+		margin-bottom: 30px;
 	}
 
 	.option-group h3 {
-		margin: 0 0 12px 0;
-		color: var(--text-color);
-		font-size: 1rem;
+		margin: 0 0 15px 0;
+		font-size: 16px;
 		font-weight: 600;
+		color: #2c3e50;
+		display: flex;
+		align-items: center;
+		gap: 8px;
 	}
 
-	.format-options {
+	.format-options,
+	.checkbox-options {
 		display: flex;
 		flex-direction: column;
 		gap: 12px;
@@ -791,68 +966,71 @@ ${checklist.notes ? `評価メモ:\n${checklist.notes}` : ''}
 	.radio-option,
 	.checkbox-option {
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
 		gap: 12px;
-		padding: 12px;
-		border: 2px solid var(--border-color);
-		border-radius: var(--border-radius);
+		padding: 15px;
+		border: 2px solid #e9ecef;
+		border-radius: 10px;
 		cursor: pointer;
-		transition: all 0.2s ease;
+		transition: all 0.2s;
+		background: #fafafa;
 	}
 
 	.radio-option:hover,
 	.checkbox-option:hover {
-		border-color: var(--primary-color);
-		background: var(--hover-color);
+		border-color: #3498db;
+		background: #f8f9fa;
 	}
 
-	.radio-option:has(input:checked) {
-		border-color: var(--primary-color);
-		background: var(--primary-light);
+	.radio-option input[type='radio']:checked + span,
+	.checkbox-option input[type='checkbox']:checked + span {
+		color: #3498db;
+		font-weight: 600;
 	}
 
-	.radio-option input,
-	.checkbox-option input {
-		margin: 0;
+	.radio-option input[type='radio']:checked,
+	.checkbox-option input[type='checkbox']:checked {
+		accent-color: #3498db;
 	}
 
 	.radio-option span,
 	.checkbox-option span {
 		font-weight: 500;
-		color: var(--text-color);
+		font-size: 15px;
+		color: #2c3e50;
 	}
 
-	.radio-option small {
-		color: var(--text-muted);
-		font-size: 0.875rem;
-		margin-left: auto;
+	.radio-option small,
+	.checkbox-option small {
+		display: block;
+		color: #6c757d;
+		font-size: 13px;
+		margin-top: 4px;
+		line-height: 1.4;
 	}
 
-	.checkbox-options {
-		display: flex;
-		flex-direction: column;
-		gap: 8px;
+	.modal-footer {
+		padding: 20px 30px;
+		border-top: 1px solid #e9ecef;
+		background: #f8f9fa;
 	}
 
 	.action-buttons {
 		display: flex;
 		gap: 12px;
-		flex-wrap: wrap;
+		justify-content: flex-end;
 	}
 
 	.btn {
-		flex: 1;
-		min-width: 120px;
-		padding: 12px 20px;
+		padding: 12px 24px;
 		border: none;
-		border-radius: var(--border-radius);
-		font-size: 0.95rem;
-		font-weight: 500;
+		border-radius: 8px;
+		font-weight: 600;
 		cursor: pointer;
-		transition: all 0.2s ease;
+		transition: all 0.2s;
+		font-size: 14px;
 		display: flex;
 		align-items: center;
-		justify-content: center;
 		gap: 8px;
 	}
 
@@ -861,43 +1039,38 @@ ${checklist.notes ? `評価メモ:\n${checklist.notes}` : ''}
 		cursor: not-allowed;
 	}
 
+	.btn-secondary {
+		background: #6c757d;
+		color: white;
+	}
+
+	.btn-secondary:hover:not(:disabled) {
+		background: #5a6268;
+		transform: translateY(-1px);
+	}
+
 	.btn-primary {
-		background: var(--primary-color);
+		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 		color: white;
 	}
 
 	.btn-primary:hover:not(:disabled) {
-		background: var(--primary-dark);
 		transform: translateY(-1px);
-	}
-
-	.btn-secondary {
-		background: var(--secondary-color);
-		color: var(--text-color);
-		border: 1px solid var(--border-color);
-	}
-
-	.btn-secondary:hover:not(:disabled) {
-		background: var(--secondary-dark);
-		transform: translateY(-1px);
-	}
-
-	/* ダークモード対応 */
-	@media (prefers-color-scheme: dark) {
-		.modal-content {
-			box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-		}
+		box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 	}
 
 	/* レスポンシブ対応 */
-	@media (max-width: 600px) {
-		.modal-backdrop {
-			padding: 10px;
+	@media (max-width: 768px) {
+		.modal-content {
+			width: 95%;
+			max-height: 95vh;
 		}
 
 		.modal-header,
-		.modal-body {
-			padding: 16px;
+		.modal-body,
+		.modal-footer {
+			padding-left: 20px;
+			padding-right: 20px;
 		}
 
 		.action-buttons {
@@ -905,7 +1078,31 @@ ${checklist.notes ? `評価メモ:\n${checklist.notes}` : ''}
 		}
 
 		.btn {
-			min-width: auto;
+			width: 100%;
+			justify-content: center;
 		}
+	}
+
+	/* アクセシビリティ */
+	@media (prefers-reduced-motion: reduce) {
+		.modal-backdrop,
+		.modal-content,
+		.btn,
+		.radio-option,
+		.checkbox-option {
+			transition: none;
+		}
+	}
+
+	/* フォーカス状態 */
+	.radio-option:focus-within,
+	.checkbox-option:focus-within {
+		border-color: #3498db;
+		box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+	}
+
+	.btn:focus {
+		outline: 2px solid #3498db;
+		outline-offset: 2px;
 	}
 </style>
