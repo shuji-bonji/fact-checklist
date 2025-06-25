@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- ホームページ（メインチェックリスト作成ページ） -->
+  <url>
+    <loc>https://shuji-bonji.github.io/fact-checklist/</loc>
+    <lastmod>2025-06-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- About（概要・機能紹介ページ） -->
+  <url>
+    <loc>https://shuji-bonji.github.io/fact-checklist/about/</loc>
+    <lastmod>2025-06-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Help（ヘルプ・使い方ガイドページ） -->
+  <url>
+    <loc>https://shuji-bonji.github.io/fact-checklist/help/</loc>
+    <lastmod>2025-06-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Privacy（プライバシーポリシーページ） -->
+  <url>
+    <loc>https://shuji-bonji.github.io/fact-checklist/privacy/</loc>
+    <lastmod>2025-06-26</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+</urlset>
