@@ -237,15 +237,16 @@
 
 <svelte:head>
 	<title>アプリについて - 実用的事実確認チェックシート</title>
-	<meta name="description" content="実用的事実確認チェックシートのアプリ概要、特徴、使い方を詳しく紹介します。" />
+	<meta
+		name="description"
+		content="実用的事実確認チェックシートのアプリ概要、特徴、使い方を詳しく紹介します。"
+	/>
 </svelte:head>
 
 <div class="about-container">
 	<!-- ヒーローセクション -->
 	<section class="hero">
-		<button class="back-btn btn" onclick={goHome}>
-			← ホームに戻る
-		</button>
+		<button class="back-btn btn" onclick={goHome}> ← ホームに戻る </button>
 		<div class="hero-content">
 			<h1 class="hero-title">🔍 実用的事実確認チェックシート</h1>
 			<p class="hero-subtitle">
@@ -411,13 +412,13 @@
 		text-align: center;
 		margin-bottom: var(--spacing-xl);
 		padding: var(--spacing-xl);
-		
+
 		/* プライバシーページと同じパターンで背景設定 */
 		background: linear-gradient(135deg, #e8f4fd, #d1ecf1);
 		color: #2c3e50;
 		border-radius: var(--border-radius);
 		box-shadow: var(--shadow-hover);
-		
+
 		/* 境界線で分離（プライバシーページと統一） */
 		border: 2px solid var(--border-color);
 		border-left: 6px solid var(--secondary-color);
@@ -489,7 +490,7 @@
 		text-align: center;
 		margin-bottom: var(--spacing-xl);
 		padding: var(--spacing-lg);
-		
+
 		/* プライバシーページと統一したセクションヘッダー */
 		background: linear-gradient(135deg, #e8f4fd, #d1ecf1);
 		border-radius: var(--border-radius);
@@ -522,13 +523,13 @@
 		padding: var(--spacing-lg);
 		border-radius: var(--border-radius);
 		transition: all 0.3s ease;
-		
+
 		/* 特徴カードの視認性改善 */
 		background: linear-gradient(135deg, #ffffff, #f8f9fa);
 		border: 2px solid var(--border-color);
 		border-left: 6px solid var(--secondary-color);
 		box-shadow: var(--shadow);
-		
+
 		/* テキストの視認性向上 */
 		color: #2c3e50;
 	}
@@ -601,13 +602,13 @@
 		padding: var(--spacing-lg);
 		border-radius: var(--border-radius);
 		transition: all 0.3s ease;
-		
+
 		/* ステップの視認性改善 */
 		background: linear-gradient(135deg, #ffffff, #f0f7ff);
 		border: 2px solid var(--border-color);
 		border-left: 6px solid var(--success-color);
 		box-shadow: var(--shadow);
-		
+
 		/* テキストの視認性向上 */
 		color: #2c3e50;
 	}
@@ -669,13 +670,13 @@
 		padding: var(--spacing-lg);
 		border-radius: var(--border-radius);
 		transition: all 0.3s ease;
-		
+
 		/* カテゴリカードの視認性改善 */
 		background: linear-gradient(135deg, #ffffff, #f8f9fa);
 		border: 2px solid var(--border-color);
 		border-left: 6px solid var(--category-color);
 		box-shadow: var(--shadow);
-		
+
 		/* テキストの視認性向上 */
 		color: #2c3e50;
 	}
@@ -684,7 +685,10 @@
 		transform: translateY(-3px);
 		box-shadow: var(--shadow-hover);
 		border-color: var(--category-color);
-		background: linear-gradient to bottom right, #ffffff, rgba(var(--category-color), 0.05);
+		background:
+			linear-gradient to bottom right,
+			#ffffff,
+			rgba(var(--category-color), 0.05);
 	}
 
 	.category-icon {
@@ -736,13 +740,13 @@
 		border-radius: var(--border-radius-sm);
 		transition: all 0.3s ease;
 		text-align: center;
-		
+
 		/* 技術アイテムの視認性改善 */
 		background: linear-gradient(135deg, #f8f9fa, #ffffff);
 		border: 2px solid var(--border-color);
 		border-left: 4px solid var(--warning-color);
 		box-shadow: var(--shadow);
-		
+
 		/* テキストの視認性向上 */
 		color: #2c3e50;
 	}

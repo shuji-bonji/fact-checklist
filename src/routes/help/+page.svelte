@@ -32,11 +32,13 @@
 			subSections: [
 				{
 					title: '主な特徴',
-					content: '• 完全プライベート: すべてのデータは端末内に保存\n• オフライン対応: ネットワークなしでも動作\n• 科学的評価: 体系的なチェック項目\n• 履歴管理: 過去の評価結果を保存・参照'
+					content:
+						'• 完全プライベート: すべてのデータは端末内に保存\n• オフライン対応: ネットワークなしでも動作\n• 科学的評価: 体系的なチェック項目\n• 履歴管理: 過去の評価結果を保存・参照'
 				},
 				{
 					title: '対象ユーザー',
-					content: '• 一般の方: ネット情報の信頼性を確認したい方\n• 専門家: 情報分析の補助ツールとして\n• 報道関係者: ファクトチェックの支援として'
+					content:
+						'• 一般の方: ネット情報の信頼性を確認したい方\n• 専門家: 情報分析の補助ツールとして\n• 報道関係者: ファクトチェックの支援として'
 				}
 			]
 		},
@@ -45,23 +47,27 @@
 			title: '使い方ガイド',
 			emoji: '🚀',
 			description: 'ステップバイステップの利用手順',
-			content: `チェックリストの作成から評価完了まで、以下の手順で進めてください。`,
+			content: 'チェックリストの作成から評価完了まで、以下の手順で進めてください。',
 			subSections: [
 				{
 					title: 'Step 1: チェックリスト作成',
-					content: '1. タイトルと対象情報の概要を入力\n2. 評価したい情報の詳細を記録\n3. 自動的にチェックリストが作成されます'
+					content:
+						'1. タイトルと対象情報の概要を入力\n2. 評価したい情報の詳細を記録\n3. 自動的にチェックリストが作成されます'
 				},
 				{
 					title: 'Step 2: 項目評価',
-					content: '1. クリティカル評価から開始\n2. 各項目を順番にチェック\n3. 不明な項目は詳細ガイドを参照\n4. スコアがリアルタイムで更新されます'
+					content:
+						'1. クリティカル評価から開始\n2. 各項目を順番にチェック\n3. 不明な項目は詳細ガイドを参照\n4. スコアがリアルタイムで更新されます'
 				},
 				{
 					title: 'Step 3: 最終判定',
-					content: '1. すべての項目をチェック\n2. 評価メモを記録（任意）\n3. 最終判定を選択（採用・要注意・不採用）\n4. 「評価を完了」ボタンを押下'
+					content:
+						'1. すべての項目をチェック\n2. 評価メモを記録（任意）\n3. 最終判定を選択（採用・要注意・不採用）\n4. 「評価を完了」ボタンを押下'
 				},
 				{
 					title: 'Step 4: 結果確認・共有',
-					content: '1. 評価結果ページで詳細確認\n2. 必要に応じてエクスポート\n3. PDF・HTML・JSON・Markdown形式で出力可能'
+					content:
+						'1. 評価結果ページで詳細確認\n2. 必要に応じてエクスポート\n3. PDF・HTML・JSON・Markdown形式で出力可能'
 				}
 			]
 		},
@@ -70,23 +76,27 @@
 			title: '評価カテゴリ',
 			emoji: '📊',
 			description: '4つの評価カテゴリの詳細説明',
-			content: `情報の信頼性を多角的に評価するため、4つのカテゴリに分けてチェックを行います。`,
+			content: '情報の信頼性を多角的に評価するため、4つのカテゴリに分けてチェックを行います。',
 			subSections: [
 				{
 					title: 'クリティカル評価（Critical）',
-					content: '最も重要な基本的信頼性を評価します。\n• 権威ある情報源からの発表\n• 一次情報の確認\n• 複数の独立した情報源\n• 匿名・出典不明でない\n• 扇動的・煽情的表現の少なさ\n• 論理的一貫性'
+					content:
+						'最も重要な基本的信頼性を評価します。\n• 権威ある情報源からの発表\n• 一次情報の確認\n• 複数の独立した情報源\n• 匿名・出典不明でない\n• 扇動的・煽情的表現の少なさ\n• 論理的一貫性'
 				},
 				{
 					title: '詳細評価（Detailed）',
-					content: '情報の質と詳細度を評価します。\n• 情報の新しさ\n• 更新・訂正の履歴\n• 適切な専門知識\n• 十分な詳細と根拠\n• 適切な引用・参照\n• 引用元の確認可能性'
+					content:
+						'情報の質と詳細度を評価します。\n• 情報の新しさ\n• 更新・訂正の履歴\n• 適切な専門知識\n• 十分な詳細と根拠\n• 適切な引用・参照\n• 引用元の確認可能性'
 				},
 				{
 					title: '検証評価（Verification）',
-					content: '外部検証と客観性を評価します。\n• 他情報源との照合\n• ファクトチェック組織の検証\n• 検証可能なデータ\n• 手法・方法論の妥当性'
+					content:
+						'外部検証と客観性を評価します。\n• 他情報源との照合\n• ファクトチェック組織の検証\n• 検証可能なデータ\n• 手法・方法論の妥当性'
 				},
 				{
 					title: 'コンテキスト評価（Context）',
-					content: '情報の背景と偏向を評価します。\n• 利害関係の開示\n• バランスの取れた視点\n• 十分な背景情報\n• 適用範囲の明確化'
+					content:
+						'情報の背景と偏向を評価します。\n• 利害関係の開示\n• バランスの取れた視点\n• 十分な背景情報\n• 適用範囲の明確化'
 				}
 			]
 		},
@@ -95,19 +105,22 @@
 			title: 'スコアリング',
 			emoji: '🎯',
 			description: 'スコア計算と判定基準の詳細',
-			content: `各項目のチェック状況に基づいて、信頼度スコアが自動計算されます。`,
+			content: '各項目のチェック状況に基づいて、信頼度スコアが自動計算されます。',
 			subSections: [
 				{
 					title: '計算方法',
-					content: '• 各カテゴリの重要度による重み付け\n• クリティカル評価: 35%\n• 詳細評価: 25%\n• 検証評価: 25%\n• コンテキスト評価: 15%'
+					content:
+						'• 各カテゴリの重要度による重み付け\n• クリティカル評価: 35%\n• 詳細評価: 25%\n• 検証評価: 25%\n• コンテキスト評価: 15%'
 				},
 				{
 					title: '判定基準',
-					content: '• 80%以上: 高い信頼性 → 「採用」推奨\n• 60-79%: 中程度の信頼性 → 追加確認推奨\n• 40-59%: 低い信頼性 → 「要注意」\n• 40%未満: 信頼性に問題 → 「不採用」推奨'
+					content:
+						'• 80%以上: 高い信頼性 → 「採用」推奨\n• 60-79%: 中程度の信頼性 → 追加確認推奨\n• 40-59%: 低い信頼性 → 「要注意」\n• 40%未満: 信頼性に問題 → 「不採用」推奨'
 				},
 				{
 					title: '最終判定',
-					content: 'スコアは参考値です。最終的な判定は、\n評価者の専門知識と総合的な判断に委ねられます。\n「採用」「要注意」「不採用」から選択してください。'
+					content:
+						'スコアは参考値です。最終的な判定は、\n評価者の専門知識と総合的な判断に委ねられます。\n「採用」「要注意」「不採用」から選択してください。'
 				}
 			]
 		},
@@ -116,23 +129,27 @@
 			title: '機能詳細',
 			emoji: '⚙️',
 			description: 'アプリの各種機能について',
-			content: `さまざまな機能を使って、効率的に情報評価を行えます。`,
+			content: 'さまざまな機能を使って、効率的に情報評価を行えます。',
 			subSections: [
 				{
 					title: '詳細ガイドモード',
-					content: '各チェック項目の詳細説明と具体例を表示します。\n初めて使用する方や、項目の判断基準を確認したい場合に便利です。'
+					content:
+						'各チェック項目の詳細説明と具体例を表示します。\n初めて使用する方や、項目の判断基準を確認したい場合に便利です。'
 				},
 				{
 					title: 'エクスポート機能',
-					content: '評価結果を4つの形式で出力可能:\n• PDF: 印刷・共有に最適\n• HTML: ブラウザで表示可能\n• JSON: プログラム処理用\n• Markdown: テキストエディタで編集可能'
+					content:
+						'評価結果を4つの形式で出力可能:\n• PDF: 印刷・共有に最適\n• HTML: ブラウザで表示可能\n• JSON: プログラム処理用\n• Markdown: テキストエディタで編集可能'
 				},
 				{
 					title: '履歴管理',
-					content: '過去の評価結果を自動保存します。\n• 最新5件をサイドバーに表示\n• 全履歴の一覧表示\n• 個別削除機能\n• 再編集機能（完了前のみ）'
+					content:
+						'過去の評価結果を自動保存します。\n• 最新5件をサイドバーに表示\n• 全履歴の一覧表示\n• 個別削除機能\n• 再編集機能（完了前のみ）'
 				},
 				{
 					title: 'PWA対応',
-					content: '• ホーム画面への追加\n• オフライン動作\n• プッシュ通知（今後対応予定）\n• 自動アップデート'
+					content:
+						'• ホーム画面への追加\n• オフライン動作\n• プッシュ通知（今後対応予定）\n• 自動アップデート'
 				}
 			]
 		},
@@ -141,19 +158,22 @@
 			title: 'プライバシー',
 			emoji: '🔐',
 			description: 'データの取り扱いとセキュリティ',
-			content: `ユーザーのプライバシー保護を最優先に設計されています。`,
+			content: 'ユーザーのプライバシー保護を最優先に設計されています。',
 			subSections: [
 				{
 					title: 'ローカル保存',
-					content: '• すべてのデータは端末内のみに保存\n• サーバーへの送信は一切なし\n• 第三者へのデータ提供なし\n• 個人を特定する情報は収集しません'
+					content:
+						'• すべてのデータは端末内のみに保存\n• サーバーへの送信は一切なし\n• 第三者へのデータ提供なし\n• 個人を特定する情報は収集しません'
 				},
 				{
 					title: 'セキュリティ',
-					content: '• HTTPS通信の強制\n• Content Security Policy実装\n• XSS攻撃防止対策\n• Same-Origin Policy遵守'
+					content:
+						'• HTTPS通信の強制\n• Content Security Policy実装\n• XSS攻撃防止対策\n• Same-Origin Policy遵守'
 				},
 				{
 					title: 'データ削除',
-					content: 'ユーザーはいつでも保存されたデータを削除できます。\nブラウザのデータ削除でも完全に削除されます。'
+					content:
+						'ユーザーはいつでも保存されたデータを削除できます。\nブラウザのデータ削除でも完全に削除されます。'
 				}
 			]
 		},
@@ -162,23 +182,27 @@
 			title: 'トラブルシューティング',
 			emoji: '🔧',
 			description: 'よくある問題と解決方法',
-			content: `使用中に問題が発生した場合の対処法をご案内します。`,
+			content: '使用中に問題が発生した場合の対処法をご案内します。',
 			subSections: [
 				{
 					title: 'データが保存されない',
-					content: '• ブラウザのプライベートモードを確認\n• ストレージ容量の確認\n• ブラウザの設定でローカルストレージが有効か確認\n• 別のブラウザで試す'
+					content:
+						'• ブラウザのプライベートモードを確認\n• ストレージ容量の確認\n• ブラウザの設定でローカルストレージが有効か確認\n• 別のブラウザで試す'
 				},
 				{
 					title: 'スコアが表示されない',
-					content: '• ページのリロード\n• ブラウザのキャッシュクリア\n• JavaScript が有効か確認\n• ブラウザのコンソールでエラー確認'
+					content:
+						'• ページのリロード\n• ブラウザのキャッシュクリア\n• JavaScript が有効か確認\n• ブラウザのコンソールでエラー確認'
 				},
 				{
 					title: 'エクスポートできない',
-					content: '• ポップアップブロックの確認\n• ダウンロード設定の確認\n• ブラウザの権限設定\n• 十分なストレージ容量があるか確認'
+					content:
+						'• ポップアップブロックの確認\n• ダウンロード設定の確認\n• ブラウザの権限設定\n• 十分なストレージ容量があるか確認'
 				},
 				{
 					title: 'その他の問題',
-					content: '上記で解決しない場合は、GitHubのIssuesから\nお気軽にお問い合わせください。\n可能な限りサポートいたします。'
+					content:
+						'上記で解決しない場合は、GitHubのIssuesから\nお気軽にお問い合わせください。\n可能な限りサポートいたします。'
 				}
 			]
 		}
@@ -201,9 +225,7 @@
 <div class="help-container">
 	<!-- ヘッダー -->
 	<div class="help-header">
-		<button class="back-btn btn" onclick={goHome}>
-			← ホームに戻る
-		</button>
+		<button class="back-btn btn" onclick={goHome}> ← ホームに戻る </button>
 		<h1>📖 ヘルプ・使い方ガイド</h1>
 		<p class="help-subtitle">事実確認チェックシートの使い方を詳しく説明します</p>
 	</div>
@@ -236,7 +258,8 @@
 					<div class="content-section">
 						<div class="section-header">
 							<h2 class="section-title">
-								{section.emoji} {section.title}
+								{section.emoji}
+								{section.title}
 							</h2>
 							<p class="section-description">{section.description}</p>
 						</div>
@@ -279,13 +302,13 @@
 		text-align: center;
 		margin-bottom: var(--spacing-xl);
 		padding: var(--spacing-xl);
-		
+
 		/* 背景色を明確に設定 */
 		background: linear-gradient(135deg, #2c3e50, #34495e);
 		color: white;
 		border-radius: var(--border-radius);
 		box-shadow: var(--shadow-hover);
-		
+
 		/* 境界線で分離 */
 		border: 2px solid var(--border-color);
 		position: relative;
@@ -333,13 +356,13 @@
 	.help-nav {
 		position: sticky;
 		top: var(--spacing-lg);
-		
+
 		/* 背景を明確に分離 */
 		background: var(--surface-color);
 		border: 2px solid var(--border-color);
 		border-radius: var(--border-radius);
 		box-shadow: var(--shadow);
-		
+
 		/* 追加の視覚的分離 */
 		background: linear-gradient(135deg, #f8f9fa, #ffffff);
 		border-left: 6px solid var(--secondary-color);
@@ -384,7 +407,7 @@
 		text-align: left;
 		cursor: pointer;
 		transition: all 0.3s ease;
-		
+
 		/* テキストの視認性向上 */
 		color: #2c3e50;
 		font-weight: 500;
@@ -419,7 +442,7 @@
 		border: 2px solid var(--border-color);
 		border-radius: var(--border-radius);
 		box-shadow: var(--shadow-hover);
-		
+
 		/* 追加の視覚的分離 */
 		background: linear-gradient(135deg, #ffffff, #f8f9fa);
 		border-left: 6px solid var(--success-color);
@@ -439,7 +462,7 @@
 		margin: 0 0 var(--spacing-md) 0;
 		font-size: 2em;
 		font-weight: 400;
-		
+
 		/* タイトルの視認性向上 */
 		color: var(--text-color);
 		text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -449,7 +472,7 @@
 		margin: 0;
 		font-size: 1.1em;
 		line-height: 1.5;
-		
+
 		/* 説明文の視認性向上 */
 		color: #34495e;
 		font-weight: 500;
@@ -464,7 +487,7 @@
 	.main-content-text {
 		font-size: 1.05em;
 		line-height: 1.6;
-		
+
 		/* メインテキストの視認性向上 */
 		color: var(--text-color);
 		background: rgba(255, 255, 255, 0.8);
@@ -484,7 +507,7 @@
 		border: 1px solid var(--border-color);
 		border-radius: var(--border-radius-sm);
 		padding: var(--spacing-lg);
-		
+
 		/* サブセクションの視認性向上 */
 		background: linear-gradient(135deg, #f0f7ff, #e8f4fd);
 		border-left: 4px solid var(--secondary-color);
@@ -495,7 +518,7 @@
 		margin: 0 0 var(--spacing-md) 0;
 		font-size: 1.3em;
 		font-weight: 600;
-		
+
 		/* サブタイトルの視認性向上 */
 		color: var(--text-color);
 		border-bottom: 2px solid var(--border-color);
@@ -504,7 +527,7 @@
 
 	.sub-section-content {
 		line-height: 1.6;
-		
+
 		/* サブコンテンツの視認性向上 */
 		color: #2c3e50;
 		font-weight: 400;

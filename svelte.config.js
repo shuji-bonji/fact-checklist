@@ -30,7 +30,8 @@ const config = {
 		prerender: {
 			handleHttpError: 'warn',
 			handleMissingId: 'warn',
-			entries: ['/'],
+			// 新しく追加したページを明示的にエントリに追加
+			entries: ['/', '/about', '/help', '/privacy'],
 			crawl: true
 		},
 
