@@ -4,6 +4,7 @@
 
 [![Build and Deploy](https://github.com/shuji-bonji/fact-checklist/actions/workflows/deploy.yml/badge.svg)](https://github.com/shuji-bonji/fact-checklist/actions/workflows/deploy.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Claude](https://img.shields.io/badge/Generated_by-Claude-ff8c00)](https://claude.ai)
 [![TypeScript](https://img.shields.io/badge/-TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Svelte](https://img.shields.io/badge/-Svelte-FF3E00?logo=svelte&logoColor=white)](https://svelte.dev/)
 [![PWA](https://img.shields.io/badge/-PWA-5A0FC8?logo=pwa&logoColor=white)](https://web.dev/progressive-web-apps/)

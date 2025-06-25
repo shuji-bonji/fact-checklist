@@ -57,9 +57,8 @@
 	<meta property="og:locale" content="ja_JP" />
 
 	<!-- アイコン -->
-	<link rel="icon" href="/favicon.png" />
-	<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-	<!-- VitePWAが自動でmanifestリンクを挿入するため、手動linkは削除 -->
+	<link rel="icon" href="{base}/favicon.png" />
+	<link rel="apple-touch-icon" href="{base}/apple-touch-icon.png" />
 
 	<title>実用的事実確認チェックシート</title>
 </svelte:head>
@@ -81,10 +80,11 @@
 	:global(body) {
 		margin: 0;
 		padding: 0;
+		/* 背景を統一 - グラデーションをメインに */
 		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		background-attachment: fixed;
 		min-height: 100vh;
 		color: var(--text-color);
-		background-color: var(--bg-color);
 	}
 
 	:global(*) {
@@ -98,8 +98,8 @@
 		--accent-color: #e74c3c;
 		--warning-color: #f39c12;
 		--success-color: #27ae60;
-		--bg-color: #ffffff;
-		--surface-color: #f8f9fa;
+		--bg-color: rgba(255, 255, 255, 0.95);
+		--surface-color: rgba(248, 249, 250, 0.9);
 		--text-color: #2c3e50;
 		--text-muted: #7f8c8d;
 		--border-color: #e9ecef;
@@ -116,8 +116,8 @@
 
 	/* ダークモード */
 	:global(:root.dark) {
-		--bg-color: #1a202c;
-		--surface-color: #2d3748;
+		--bg-color: rgba(26, 32, 44, 0.95);
+		--surface-color: rgba(45, 55, 72, 0.9);
 		--text-color: #f7fafc;
 		--text-muted: #a0aec0;
 		--border-color: #4a5568;
@@ -167,6 +167,7 @@
 		transition: all 0.3s ease;
 		font-size: 1rem;
 		min-height: 44px; /* アクセシビリティ: タッチターゲットサイズ */
+		backdrop-filter: blur(10px);
 	}
 
 	:global(.btn:hover:not(:disabled)) {
@@ -201,9 +202,10 @@
 	}
 
 	:global(.btn-outline) {
-		background: transparent;
+		background: rgba(255, 255, 255, 0.1);
 		border: 2px solid var(--border-color);
 		color: var(--text-color);
+		backdrop-filter: blur(10px);
 	}
 
 	:global(.btn-outline:hover) {
@@ -219,6 +221,7 @@
 		box-shadow: var(--shadow);
 		border: 1px solid var(--border-color);
 		transition: all 0.3s ease;
+		backdrop-filter: blur(10px);
 	}
 
 	:global(.card:hover) {
@@ -247,6 +250,7 @@
 		background: var(--bg-color);
 		color: var(--text-color);
 		transition: border-color 0.3s ease;
+		backdrop-filter: blur(10px);
 	}
 
 	:global(.form-input:focus) {
@@ -303,6 +307,10 @@
 		:global(.container) {
 			padding: 0 var(--spacing-sm);
 		}
+
+		:global(.btn) {
+			min-height: 48px; /* モバイルでのタッチターゲット */
+		}
 	}
 
 	/* ユーティリティクラス */
@@ -353,14 +361,52 @@
 		width: 100%;
 	}
 
+	/* アニメーション */
+	:global(.fade-in) {
+		animation: fadeIn 0.3s ease-in-out;
+	}
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+			transform: translateY(10px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
 	.app {
 		min-height: 100vh;
 		display: flex;
 		flex-direction: column;
+		position: relative;
 	}
 
 	main {
 		flex: 1;
 		width: 100%;
+		position: relative;
+		z-index: 1;
+	}
+
+	/* スクロールバーのスタイリング */
+	:global(::-webkit-scrollbar) {
+		width: 8px;
+	}
+
+	:global(::-webkit-scrollbar-track) {
+		background: rgba(0, 0, 0, 0.1);
+		border-radius: 4px;
+	}
+
+	:global(::-webkit-scrollbar-thumb) {
+		background: rgba(0, 0, 0, 0.3);
+		border-radius: 4px;
+	}
+
+	:global(::-webkit-scrollbar-thumb:hover) {
+		background: rgba(0, 0, 0, 0.5);
 	}
 </style>
