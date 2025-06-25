@@ -5,6 +5,18 @@
 	import { onMount } from 'svelte';
 	import { dev, browser } from '$app/environment';
 	import { base } from '$app/paths';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
+
+	// ナビゲーションメニューの状態
+	let isMenuOpen = $state(false);
+
+	// 現在のページを判定
+	const currentPath = $derived($page.url.pathname);
+	const isHomePage = $derived(currentPath === '/' || currentPath === base);
+	const isAboutPage = $derived(currentPath.includes('/about'));
+	const isHelpPage = $derived(currentPath.includes('/help'));
+	const isPrivacyPage = $derived(currentPath.includes('/privacy'));
 
 	onMount(async () => {
 		// ローディング画面を確実に非表示にする（ブラウザ環境でのみ）
@@ -32,6 +44,39 @@
 			}
 		}
 	});
+
+	// ナビゲーション関数
+	function goToHome() {
+		goto(base || '/');
+		isMenuOpen = false;
+	}
+
+	function goToAbout() {
+		goto(`${base}/about`);
+		isMenuOpen = false;
+	}
+
+	function goToHelp() {
+		goto(`${base}/help`);
+		isMenuOpen = false;
+	}
+
+	function goToPrivacy() {
+		goto(`${base}/privacy`);
+		isMenuOpen = false;
+	}
+
+	function toggleMenu() {
+		isMenuOpen = !isMenuOpen;
+	}
+
+	// メニュー外クリックで閉じる
+	function handleClickOutside(event: MouseEvent) {
+		const target = event.target as HTMLElement;
+		if (!target.closest('.global-nav') && isMenuOpen) {
+			isMenuOpen = false;
+		}
+	}
 </script>
 
 <svelte:head>
@@ -57,13 +102,70 @@
 	<meta property="og:locale" content="ja_JP" />
 
 	<!-- アイコン -->
-	<link rel="icon" href="{base}/favicon.png" />
-	<link rel="apple-touch-icon" href="{base}/apple-touch-icon.png" />
+	<link rel="icon" href="/favicon.png" />
+	<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+	<!-- Vite PWAが自動でmanifestリンクを挿入するため、手動linkは削除 -->
 
 	<title>実用的事実確認チェックシート</title>
 </svelte:head>
 
+<svelte:window onclick={handleClickOutside} />
+
 <div class="app">
+	<!-- グローバルナビゲーション -->
+	<nav class="global-nav">
+		<div class="nav-content">
+			<button class="nav-brand" onclick={goToHome}>
+				<span class="nav-icon">🔍</span>
+				<div class="brand-text">
+					<span class="brand-title">事実確認チェックシート</span>
+					<span class="brand-subtitle">情報の信頼性を科学的評価</span>
+				</div>
+			</button>
+
+			<!-- デスクトップメニュー -->
+			<div class="nav-menu desktop-menu">
+				<button class="nav-link {isHomePage ? 'active' : ''}" onclick={goToHome}>
+					🏠 ホーム
+				</button>
+				<button class="nav-link {isAboutPage ? 'active' : ''}" onclick={goToAbout}>
+					📖 アプリについて
+				</button>
+				<button class="nav-link {isHelpPage ? 'active' : ''}" onclick={goToHelp}>
+					❓ ヘルプ・使い方
+				</button>
+				<button class="nav-link {isPrivacyPage ? 'active' : ''}" onclick={goToPrivacy}>
+					🔐 プライバシー
+				</button>
+			</div>
+
+			<!-- モバイルメニューボタン -->
+			<button class="mobile-menu-toggle" onclick={toggleMenu} aria-label="メニューを開閉">
+				<span class="hamburger-line"></span>
+				<span class="hamburger-line"></span>
+				<span class="hamburger-line"></span>
+			</button>
+		</div>
+
+		<!-- モバイルメニュー -->
+		{#if isMenuOpen}
+			<div class="mobile-menu">
+				<button class="mobile-nav-link {isHomePage ? 'active' : ''}" onclick={goToHome}>
+					🏠 ホーム
+				</button>
+				<button class="mobile-nav-link {isAboutPage ? 'active' : ''}" onclick={goToAbout}>
+					📖 アプリについて
+				</button>
+				<button class="mobile-nav-link {isHelpPage ? 'active' : ''}" onclick={goToHelp}>
+					❓ ヘルプ・使い方
+				</button>
+				<button class="mobile-nav-link {isPrivacyPage ? 'active' : ''}" onclick={goToPrivacy}>
+					🔐 プライバシー
+				</button>
+			</div>
+		{/if}
+	</nav>
+
 	<main>
 		<slot />
 	</main>
@@ -80,11 +182,10 @@
 	:global(body) {
 		margin: 0;
 		padding: 0;
-		/* 背景を統一 - グラデーションをメインに */
 		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-		background-attachment: fixed;
 		min-height: 100vh;
 		color: var(--text-color);
+		background-color: var(--bg-color);
 	}
 
 	:global(*) {
@@ -98,8 +199,8 @@
 		--accent-color: #e74c3c;
 		--warning-color: #f39c12;
 		--success-color: #27ae60;
-		--bg-color: rgba(255, 255, 255, 0.95);
-		--surface-color: rgba(248, 249, 250, 0.9);
+		--bg-color: #ffffff;
+		--surface-color: #f8f9fa;
 		--text-color: #2c3e50;
 		--text-muted: #7f8c8d;
 		--border-color: #e9ecef;
@@ -116,8 +217,8 @@
 
 	/* ダークモード */
 	:global(:root.dark) {
-		--bg-color: rgba(26, 32, 44, 0.95);
-		--surface-color: rgba(45, 55, 72, 0.9);
+		--bg-color: #1a202c;
+		--surface-color: #2d3748;
 		--text-color: #f7fafc;
 		--text-muted: #a0aec0;
 		--border-color: #4a5568;
@@ -167,7 +268,6 @@
 		transition: all 0.3s ease;
 		font-size: 1rem;
 		min-height: 44px; /* アクセシビリティ: タッチターゲットサイズ */
-		backdrop-filter: blur(10px);
 	}
 
 	:global(.btn:hover:not(:disabled)) {
@@ -202,10 +302,9 @@
 	}
 
 	:global(.btn-outline) {
-		background: rgba(255, 255, 255, 0.1);
+		background: transparent;
 		border: 2px solid var(--border-color);
 		color: var(--text-color);
-		backdrop-filter: blur(10px);
 	}
 
 	:global(.btn-outline:hover) {
@@ -221,7 +320,6 @@
 		box-shadow: var(--shadow);
 		border: 1px solid var(--border-color);
 		transition: all 0.3s ease;
-		backdrop-filter: blur(10px);
 	}
 
 	:global(.card:hover) {
@@ -250,7 +348,6 @@
 		background: var(--bg-color);
 		color: var(--text-color);
 		transition: border-color 0.3s ease;
-		backdrop-filter: blur(10px);
 	}
 
 	:global(.form-input:focus) {
@@ -307,10 +404,6 @@
 		:global(.container) {
 			padding: 0 var(--spacing-sm);
 		}
-
-		:global(.btn) {
-			min-height: 48px; /* モバイルでのタッチターゲット */
-		}
 	}
 
 	/* ユーティリティクラス */
@@ -361,52 +454,253 @@
 		width: 100%;
 	}
 
-	/* アニメーション */
-	:global(.fade-in) {
-		animation: fadeIn 0.3s ease-in-out;
-	}
-
-	@keyframes fadeIn {
-		from {
-			opacity: 0;
-			transform: translateY(10px);
-		}
-		to {
-			opacity: 1;
-			transform: translateY(0);
-		}
-	}
-
 	.app {
 		min-height: 100vh;
 		display: flex;
 		flex-direction: column;
-		position: relative;
 	}
 
 	main {
 		flex: 1;
 		width: 100%;
-		position: relative;
-		z-index: 1;
 	}
 
-	/* スクロールバーのスタイリング */
-	:global(::-webkit-scrollbar) {
-		width: 8px;
+	/* グローバルナビゲーションスタイル */
+	.global-nav {
+		background: linear-gradient(135deg, #e8f4fd, #d1ecf1);
+		border-bottom: 2px solid var(--border-color);
+		border-bottom-color: var(--secondary-color);
+		box-shadow: var(--shadow);
+		position: sticky;
+		top: 0;
+		z-index: 1000;
 	}
 
-	:global(::-webkit-scrollbar-track) {
-		background: rgba(0, 0, 0, 0.1);
-		border-radius: 4px;
+	.nav-content {
+		max-width: 1400px;
+		margin: 0 auto;
+		padding: var(--spacing-sm) var(--spacing-md);
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 	}
 
-	:global(::-webkit-scrollbar-thumb) {
-		background: rgba(0, 0, 0, 0.3);
-		border-radius: 4px;
+	.nav-brand {
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-sm);
+		background: none;
+		border: none;
+		cursor: pointer;
+		padding: var(--spacing-xs);
+		border-radius: var(--border-radius-sm);
+		transition: all 0.3s ease;
 	}
 
-	:global(::-webkit-scrollbar-thumb:hover) {
-		background: rgba(0, 0, 0, 0.5);
+	.nav-brand:hover {
+		background: rgba(52, 152, 219, 0.1);
+		transform: translateY(-1px);
+	}
+
+	.nav-icon {
+		font-size: 2em;
+	}
+
+	.brand-text {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.brand-title {
+		font-weight: 600;
+		font-size: 1.2em;
+		color: #2c3e50;
+		line-height: 1.2;
+	}
+
+	.brand-subtitle {
+		font-size: 0.8em;
+		color: #34495e;
+		line-height: 1.2;
+	}
+
+	.desktop-menu {
+		display: flex;
+		gap: var(--spacing-sm);
+	}
+
+	.nav-link {
+		background: none;
+		border: 2px solid transparent;
+		padding: var(--spacing-xs) var(--spacing-sm);
+		border-radius: var(--border-radius-sm);
+		color: #2c3e50;
+		font-weight: 500;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		font-size: 0.9em;
+		white-space: nowrap;
+	}
+
+	.nav-link:hover {
+		background: var(--secondary-color);
+		color: white;
+		border-color: var(--secondary-color);
+		transform: translateY(-1px);
+	}
+
+	.nav-link.active {
+		background: var(--secondary-color);
+		color: white;
+		border-color: var(--secondary-color);
+		box-shadow: 0 2px 4px rgba(52, 152, 219, 0.3);
+	}
+
+	.mobile-menu-toggle {
+		display: none;
+		flex-direction: column;
+		gap: 4px;
+		background: none;
+		border: none;
+		padding: var(--spacing-xs);
+		cursor: pointer;
+	}
+
+	.hamburger-line {
+		width: 25px;
+		height: 3px;
+		background: #2c3e50;
+		border-radius: 2px;
+		transition: all 0.3s ease;
+	}
+
+	.mobile-menu {
+		background: var(--bg-color);
+		border-top: 1px solid var(--border-color);
+		padding: var(--spacing-md);
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-xs);
+		box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+	}
+
+	.mobile-nav-link {
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-xs);
+		padding: var(--spacing-sm);
+		background: none;
+		border: 2px solid transparent;
+		border-radius: var(--border-radius-sm);
+		color: var(--text-color);
+		font-weight: 500;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		text-align: left;
+	}
+
+	.mobile-nav-link:hover {
+		background: var(--surface-color);
+		border-color: var(--secondary-color);
+	}
+
+	.mobile-nav-link.active {
+		background: var(--secondary-color);
+		color: white;
+		border-color: var(--secondary-color);
+	}
+
+	/* ダークモード対応 */
+	:global(.dark) .global-nav {
+		background: linear-gradient(135deg, #2d3748, #374151);
+		border-bottom-color: #4a5568;
+	}
+
+	:global(.dark) .brand-title {
+		color: #f7fafc;
+	}
+
+	:global(.dark) .brand-subtitle {
+		color: #e2e8f0;
+	}
+
+	:global(.dark) .nav-link {
+		color: #f7fafc;
+	}
+
+	:global(.dark) .nav-link:hover,
+	:global(.dark) .nav-link.active {
+		background: var(--secondary-color);
+		color: white;
+	}
+
+	:global(.dark) .hamburger-line {
+		background: #f7fafc;
+	}
+
+	:global(.dark) .mobile-menu {
+		background: #2d3748;
+		border-top-color: #4a5568;
+	}
+
+	:global(.dark) .mobile-nav-link {
+		color: #f7fafc;
+	}
+
+	:global(.dark) .mobile-nav-link:hover {
+		background: #374151;
+		border-color: var(--secondary-color);
+	}
+
+	:global(.dark) .mobile-nav-link.active {
+		background: var(--secondary-color);
+		color: white;
+	}
+
+	/* レスポンシブ対応 */
+	@media (max-width: 768px) {
+		.desktop-menu {
+			display: none;
+		}
+
+		.mobile-menu-toggle {
+			display: flex;
+		}
+
+		.nav-content {
+			padding: var(--spacing-xs) var(--spacing-md);
+		}
+
+		.brand-title {
+			font-size: 1em;
+		}
+
+		.brand-subtitle {
+			font-size: 0.7em;
+		}
+
+		.nav-icon {
+			font-size: 1.5em;
+		}
+	}
+
+	/* アクセシビリティ向上 */
+	@media (prefers-reduced-motion: reduce) {
+		.nav-brand,
+		.nav-link,
+		.mobile-nav-link,
+		.hamburger-line {
+			transition: none;
+		}
+	}
+
+	/* フォーカス時の視認性向上 */
+	.nav-brand:focus,
+	.nav-link:focus,
+	.mobile-nav-link:focus,
+	.mobile-menu-toggle:focus {
+		outline: 3px solid var(--secondary-color);
+		outline-offset: 2px;
 	}
 </style>

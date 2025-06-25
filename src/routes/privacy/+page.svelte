@@ -86,14 +86,15 @@
 
 <svelte:head>
 	<title>プライバシーポリシー - 実用的事実確認チェックシート</title>
-	<meta name="description" content="実用的事実確認チェックシートのプライバシーポリシー。データの取り扱いと保護について説明します。" />
+	<meta
+		name="description"
+		content="実用的事実確認チェックシートのプライバシーポリシー。データの取り扱いと保護について説明します。"
+	/>
 </svelte:head>
 
 <div class="privacy-container">
 	<div class="privacy-header">
-		<button class="back-btn btn" onclick={goHome}>
-			← ホームに戻る
-		</button>
+		<button class="back-btn btn" onclick={goHome}> ← ホームに戻る </button>
 		<h1>🔐 プライバシーポリシー</h1>
 		<p class="last-updated">最終更新: 2025年6月25日</p>
 	</div>
@@ -132,7 +133,11 @@
 			<h2>📞 お問い合わせ</h2>
 			<p>
 				プライバシーポリシーに関するご質問やご不明な点がございましたら、
-				<a href="https://github.com/shuji-bonji/fact-checklist/issues" target="_blank" rel="noopener noreferrer">
+				<a
+					href="https://github.com/shuji-bonji/fact-checklist/issues"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
 					GitHubのIssues
 				</a>
 				からお気軽にお問い合わせください。
@@ -225,13 +230,13 @@
 		padding: var(--spacing-lg);
 		box-shadow: var(--shadow);
 		transition: all 0.3s ease;
-		
+
 		/* 背景色を明確に分離 */
 		background: linear-gradient(135deg, #f8f9fa, #ffffff);
-		
+
 		/* より強いボーダーで視認性向上 */
 		border-left: 6px solid var(--secondary-color);
-		
+
 		/* 文字のコントラストを強化 */
 		color: #2c3e50;
 	}
@@ -240,7 +245,7 @@
 		transform: translateY(-3px);
 		box-shadow: var(--shadow-hover);
 		border-color: var(--secondary-color);
-		
+
 		/* ホバー時の背景変更で視認性向上 */
 		background: linear-gradient(135deg, #ffffff, #f0f7ff);
 	}
@@ -254,7 +259,7 @@
 		margin: 0;
 		font-size: 1.25em;
 		font-weight: 600;
-		
+
 		/* タイトルの視認性向上 */
 		color: #2c3e50;
 		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
@@ -271,7 +276,7 @@
 		line-height: 1.6;
 		margin: 0;
 		font-size: 1.05em;
-		
+
 		/* 説明文の視認性向上 */
 		color: #34495e;
 		font-weight: 500;
@@ -287,7 +292,7 @@
 		color: var(--text-color);
 		line-height: 1.5;
 		margin-bottom: var(--spacing-xs);
-		
+
 		/* リスト項目の視認性向上 */
 		color: #5a6c7d;
 		font-weight: 400;

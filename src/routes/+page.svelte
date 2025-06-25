@@ -119,18 +119,10 @@
 </svelte:head>
 
 <div class="container">
-	<!-- ヘッダー -->
-	<header class="header">
-		<div class="header-content">
-			<h1>🔍 実用的事実確認チェックシート</h1>
-			<p>情報の信頼性を科学的・体系的に評価するための統合システム</p>
-		</div>
-
-		<div class="header-actions">
-			<button class="btn btn-secondary" onclick={() => toggleGuideMode()}>
-				{showGuideMode ? '📝 通常モード' : '📖 詳細ガイドモード'}
-			</button>
-		</div>
+	<!-- ページヘッダー -->
+	<header class="page-header">
+		<h1>🔍 実用的事実確認チェックシート</h1>
+		<p class="page-subtitle">情報の信頼性を科学的・体系的に評価するための統合システム</p>
 	</header>
 
 	<!-- メインコンテンツ -->
@@ -196,6 +188,13 @@
 
 		<!-- サイドバー -->
 		<div class="sidebar">
+			<!-- ガイドモード切り替えボタン -->
+			<div class="guide-toggle-section card">
+				<button class="btn btn-secondary w-full" onclick={() => toggleGuideMode()}>
+					{showGuideMode ? '📝 通常モード' : '📖 詳細ガイドモード'}
+				</button>
+			</div>
+
 			<!-- スコア表示 -->
 			<ScoreDisplay
 				{score}
@@ -243,32 +242,33 @@
 		padding: 20px;
 	}
 
-	.header {
-		background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-		color: white;
-		padding: 30px;
-		border-radius: var(--border-radius);
-		margin-bottom: var(--spacing-lg);
+	/* ページヘッダー */
+	.page-header {
 		text-align: center;
-		position: relative;
+		margin-bottom: var(--spacing-xl);
+		padding: var(--spacing-lg);
+
+		/* プライバシーページと統一したスタイル */
+		background: linear-gradient(135deg, #e8f4fd, #d1ecf1);
+		border: 2px solid var(--border-color);
+		border-left: 6px solid var(--secondary-color);
+		border-radius: var(--border-radius);
+		box-shadow: var(--shadow);
 	}
 
-	.header-content h1 {
-		margin: 0;
+	.page-header h1 {
+		color: #2c3e50;
+		margin: 0 0 var(--spacing-sm) 0;
 		font-size: 2.5em;
 		font-weight: 300;
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 	}
 
-	.header-content p {
-		margin: 10px 0 0 0;
-		opacity: 0.9;
+	.page-subtitle {
+		color: #34495e;
+		margin: 0;
 		font-size: 1.1em;
-	}
-
-	.header-actions {
-		position: absolute;
-		top: 20px;
-		right: 20px;
+		font-weight: 500;
 	}
 
 	.main-content {
@@ -296,6 +296,11 @@
 	/*スクロールバー非表示（Chrome・Safari）*/
 	.sidebar::-webkit-scrollbar {
 		display: none;
+	}
+
+	.guide-toggle-section {
+		text-align: center;
+		padding: var(--spacing-sm);
 	}
 
 	.quick-start {
@@ -326,6 +331,21 @@
 		margin-bottom: var(--spacing-sm);
 	}
 
+	/* ダークモード対応 */
+	:global(.dark) .page-header {
+		background: linear-gradient(135deg, #2d3748, #374151);
+		border-color: #4a5568;
+	}
+
+	:global(.dark) .page-header h1 {
+		color: #f7fafc;
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+	}
+
+	:global(.dark) .page-subtitle {
+		color: #e2e8f0;
+	}
+
 	/* レスポンシブ対応 */
 	@media (max-width: 1024px) {
 		.main-content {
@@ -335,12 +355,6 @@
 		.sidebar {
 			position: static;
 			max-height: none;
-			/* order: -1; */
-		}
-
-		.header-actions {
-			position: static;
-			margin-top: var(--spacing-md);
 		}
 	}
 
@@ -349,11 +363,11 @@
 			padding: 10px;
 		}
 
-		.header {
-			padding: 20px 15px;
+		.page-header {
+			padding: var(--spacing-md);
 		}
 
-		.header-content h1 {
+		.page-header h1 {
 			font-size: 2em;
 		}
 	}
