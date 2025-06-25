@@ -215,6 +215,15 @@
 	function setActiveSection(sectionId: string) {
 		activeSection = sectionId;
 	}
+
+	function sanitizeHtml(content: string): string {
+		return content
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/"/g, '&quot;')
+			.replace(/'/g, '&#x27;')
+			.replace(/\n/g, '<br>');
+	}
 </script>
 
 <svelte:head>
@@ -240,7 +249,8 @@
 				{#each helpSections as section (section.id)}
 					<li class="nav-item">
 						<button
-							class="nav-link {activeSection === section.id ? 'active' : ''}"
+							class="nav-link"
+							class:active={activeSection === section.id}
 							onclick={() => setActiveSection(section.id)}
 						>
 							<span class="nav-emoji">{section.emoji}</span>
@@ -266,7 +276,7 @@
 
 						<div class="section-content">
 							<div class="main-content-text">
-								{@html section.content.replace(/\n/g, '<br>')}
+								{@html sanitizeHtml(section.content)}
 							</div>
 
 							{#if section.subSections}
@@ -275,7 +285,7 @@
 										<div class="sub-section">
 											<h3 class="sub-section-title">{subSection.title}</h3>
 											<div class="sub-section-content">
-												{@html subSection.content.replace(/\n/g, '<br>')}
+												{@html sanitizeHtml(subSection.content)}
 											</div>
 										</div>
 									{/each}

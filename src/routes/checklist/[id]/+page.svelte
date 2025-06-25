@@ -74,6 +74,15 @@
 	function getItemDelay(index: number): string {
 		return `${index * 0.1}s`;
 	}
+
+	function sanitizeHtml(content: string): string {
+		return content
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/"/g, '&quot;')
+			.replace(/'/g, '&#x27;')
+			.replace(/\n/g, '<br>');
+	}
 </script>
 
 <svelte:head>
@@ -184,7 +193,7 @@
 							<div class="confidence-meter">
 								<div
 									class="confidence-bar {getConfidenceClass(checklist.confidenceLevel)}"
-									style="width: {checklist.confidenceLevel}%"
+									style:width="{checklist.confidenceLevel}%"
 								></div>
 							</div>
 							<div class="confidence-text">
@@ -228,7 +237,7 @@
 								{#each categoryItems as item, index (item.id)}
 									<div
 										class="item-row {item.checked ? 'checked' : 'unchecked'}"
-										style="animation-delay: {getItemDelay(index)}"
+										style:animation-delay={getItemDelay(index)}
 									>
 										<div class="item-status">
 											{item.checked ? '✅' : '❌'}
@@ -249,7 +258,7 @@
 					<div class="notes-display card">
 						<h2>📝 評価メモ</h2>
 						<div class="notes-content">
-							{@html checklist.notes.replace(/\n/g, '<br>')}
+							{@html sanitizeHtml(checklist.notes)}
 						</div>
 					</div>
 				{/if}

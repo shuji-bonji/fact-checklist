@@ -322,7 +322,7 @@
 		</div>
 		<div class="categories-grid">
 			{#each categories as category (category.id)}
-				<div class="category-card" style="--category-color: {category.color}">
+				<div class="category-card" style:--category-color={category.color}>
 					<div class="category-icon">{category.emoji}</div>
 					<div class="category-content">
 						<h3 class="category-title">{category.name}</h3>

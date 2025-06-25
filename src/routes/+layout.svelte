@@ -125,16 +125,14 @@
 
 			<!-- デスクトップメニュー -->
 			<div class="nav-menu desktop-menu">
-				<button class="nav-link {isHomePage ? 'active' : ''}" onclick={goToHome}>
-					🏠 ホーム
-				</button>
-				<button class="nav-link {isAboutPage ? 'active' : ''}" onclick={goToAbout}>
+				<button class="nav-link" class:active={isHomePage} onclick={goToHome}> 🏠 ホーム </button>
+				<button class="nav-link" class:active={isAboutPage} onclick={goToAbout}>
 					📖 アプリについて
 				</button>
-				<button class="nav-link {isHelpPage ? 'active' : ''}" onclick={goToHelp}>
+				<button class="nav-link" class:active={isHelpPage} onclick={goToHelp}>
 					❓ ヘルプ・使い方
 				</button>
-				<button class="nav-link {isPrivacyPage ? 'active' : ''}" onclick={goToPrivacy}>
+				<button class="nav-link" class:active={isPrivacyPage} onclick={goToPrivacy}>
 					🔐 プライバシー
 				</button>
 			</div>
@@ -150,16 +148,16 @@
 		<!-- モバイルメニュー -->
 		{#if isMenuOpen}
 			<div class="mobile-menu">
-				<button class="mobile-nav-link {isHomePage ? 'active' : ''}" onclick={goToHome}>
+				<button class="mobile-nav-link" class:active={isHomePage} onclick={goToHome}>
 					🏠 ホーム
 				</button>
-				<button class="mobile-nav-link {isAboutPage ? 'active' : ''}" onclick={goToAbout}>
+				<button class="mobile-nav-link" class:active={isAboutPage} onclick={goToAbout}>
 					📖 アプリについて
 				</button>
-				<button class="mobile-nav-link {isHelpPage ? 'active' : ''}" onclick={goToHelp}>
+				<button class="mobile-nav-link" class:active={isHelpPage} onclick={goToHelp}>
 					❓ ヘルプ・使い方
 				</button>
-				<button class="mobile-nav-link {isPrivacyPage ? 'active' : ''}" onclick={goToPrivacy}>
+				<button class="mobile-nav-link" class:active={isPrivacyPage} onclick={goToPrivacy}>
 					🔐 プライバシー
 				</button>
 			</div>
