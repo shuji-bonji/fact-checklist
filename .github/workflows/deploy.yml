@@ -1,3 +1,4 @@
+# .github/workflows/deploy.yml
 name: Build and Deploy to GitHub Pages
 
 on:
@@ -5,23 +6,23 @@ on:
     branches: ['main']
   pull_request:
     branches: ['main']
+  schedule:
+    - cron: '0 9 * * 1' # 毎週月曜日9時（JST 18時）にLighthouse実行
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
+  pull-requests: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: 'pages'
   cancel-in-progress: false
 
 jobs:
-  # Build job
-  build:
+  # 品質チェック（必須ゲート）
+  quality-gate:
     runs-on: ubuntu-latest
 
     strategy:
@@ -41,7 +42,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Generate .svelte-kit (for lint)
+      - name: Generate .svelte-kit
         run: npm exec svelte-kit sync
 
       - name: Run linting
@@ -59,18 +60,49 @@ jobs:
           NODE_ENV: production
 
       - name: Upload build artifacts
-        if: matrix.node-version == 20 # Only upload from one Node.js version
+        if: matrix.node-version == 20
         uses: actions/upload-artifact@v4
         with:
           name: build-files
           path: build/
           retention-days: 1
 
-  # Lighthouse CI job
-  lighthouse:
+  # セキュリティ監査
+  security-audit:
     runs-on: ubuntu-latest
-    needs: build
-    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Security audit
+        run: |
+          echo "🔒 Running security audit..."
+          npm audit --audit-level=moderate
+
+          # 高危険度の脆弱性チェック
+          HIGH_VULNS=$(npm audit --audit-level=high --json 2>/dev/null | jq '.metadata.vulnerabilities.high // 0' 2>/dev/null || echo "0")
+          if [ "$HIGH_VULNS" -gt 0 ]; then
+            echo "❌ High severity vulnerabilities found: $HIGH_VULNS"
+            echo "Please run 'npm audit fix' to resolve"
+            exit 1
+          fi
+          echo "✅ No high severity vulnerabilities found"
+
+  # Lighthouse監査（PR時 + 週次）
+  lighthouse-audit:
+    runs-on: ubuntu-latest
+    needs: quality-gate
+    if: github.event_name == 'pull_request' || github.event_name == 'schedule'
 
     steps:
       - name: Checkout
@@ -95,48 +127,25 @@ jobs:
         run: |
           echo "Build directory contents:"
           ls -la build/
-          echo "Looking for index.html or fallback files..."
           find build/ -name "*.html" -type f
 
       - name: Run Lighthouse CI
         run: |
           npm install -g @lhci/cli@0.12.x
-          lhci autorun
+          lhci autorun --upload.target=temporary-public-storage
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
-
-  # Security audit job (non-blocking)
-  security:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Security audit report
-        run: |
-          echo "🔒 Running security audit (informational only)..."
-          npm audit || echo "Vulnerabilities detected - see report above"
-          echo "✅ Security audit completed (non-blocking)"
         continue-on-error: true
 
-  # Deployment job
+  # デプロイ（mainブランチのみ）
   deploy:
-    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: [quality-gate, security-audit]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: [build, security]
 
     steps:
       - name: Checkout
@@ -169,41 +178,99 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-  # Performance monitoring job (simplified)
-  performance:
-    runs-on: ubuntu-latest
-    needs: deploy
-    if: github.ref == 'refs/heads/main'
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Wait for deployment
-        run: sleep 30
-
-      - name: Basic connectivity test
-        run: |
-          echo "🌐 Testing site connectivity..."
-          curl -f -s -o /dev/null https://shuji-bonji.github.io/fact-checklist/ || echo "Site may not be ready yet"
-          echo "✅ Basic connectivity test completed"
-        continue-on-error: true
-
-  # Notify deployment status
-  notify:
-    runs-on: ubuntu-latest
-    needs: [deploy, performance]
-    if: always() && github.ref == 'refs/heads/main'
-
-    steps:
-      - name: Notify deployment success
-        if: needs.deploy.result == 'success' && needs.performance.result == 'success'
+      - name: Deployment notification
         run: |
           echo "✅ Deployment successful!"
-          echo "🌐 Site URL: https://shuji-bonji.github.io/fact-checklist/"
+          echo "🌐 Live at: https://shuji-bonji.github.io/fact-checklist/"
+          echo "📊 Commit: ${{ github.sha }}"
 
-      - name: Notify deployment failure
-        if: needs.deploy.result == 'failure' || needs.performance.result == 'failure'
-        run: |
-          echo "❌ Deployment or performance check failed"
-          exit 1
+  # PR品質レポート（PR時のみ）
+  pr-feedback:
+    runs-on: ubuntu-latest
+    needs: [quality-gate, security-audit, lighthouse-audit]
+    if: always() && github.event_name == 'pull_request'
+
+    steps:
+      - name: Generate PR report
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const qualityStatus = '${{ needs.quality-gate.result }}';
+            const securityStatus = '${{ needs.security-audit.result }}';
+            const lighthouseStatus = '${{ needs.lighthouse-audit.result }}';
+
+            const statusEmoji = {
+              'success': '✅',
+              'failure': '❌',
+              'cancelled': '⚠️',
+              'skipped': '⏭️'
+            };
+
+            const comment = `## 🚀 PR品質チェック結果
+
+            | チェック項目 | 結果 |
+            |-------------|------|
+            | 品質チェック（Lint/Type/Build） | ${statusEmoji[qualityStatus] || '❓'} ${qualityStatus} |
+            | セキュリティ監査 | ${statusEmoji[securityStatus] || '❓'} ${securityStatus} |
+            | Lighthouse | ${statusEmoji[lighthouseStatus] || '❓'} ${lighthouseStatus} |
+
+            ${qualityStatus === 'success' && securityStatus === 'success' 
+              ? '✅ **必須チェックが通過しました！マージ可能です。**' 
+              : '❌ **必須チェックが失敗しています。修正後に再度お試しください。**'
+            }
+
+            ${lighthouseStatus === 'failure' ? 
+              '\n⚠️ Lighthouseで改善点が見つかりましたが、マージは可能です。' : 
+              ''
+            }
+            `;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: comment
+            });
+
+  # 週次Lighthouseレポート
+  lighthouse-report:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+
+    steps:
+      - name: Create weekly report issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const date = new Date().toISOString().split('T')[0];
+            const title = `📊 週次パフォーマンスレポート (${date})`;
+
+            const body = `## 📊 週次パフォーマンス監査結果
+
+            この issue は自動生成されました。
+
+            ### Lighthouseスコア
+            - Actions タブの Lighthouse 結果を確認してください
+            - 前回との比較で大きな変化があれば対応を検討
+
+            ### チェックポイント
+            - [ ] Performance スコアの確認
+            - [ ] Accessibility スコアの確認  
+            - [ ] Best Practices スコアの確認
+            - [ ] SEO スコアの確認
+
+            ### 改善が必要な場合
+            1. パフォーマンス劣化の原因調査
+            2. 改善施策の検討・実装
+            3. 次回監査での確認
+
+            *このレポートは毎週月曜日に自動生成されます。*
+            `;
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['lighthouse', 'performance', 'weekly-report']
+            });
