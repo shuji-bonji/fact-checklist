@@ -24,13 +24,13 @@
 		isCompleted = completedParam === 'true';
 	});
 
-	function loadChecklist() {
+	async function loadChecklist() {
 		if (!checklistId) {
 			goto(base || '/');
 			return;
 		}
 
-		const loaded = checklistStore.loadChecklist(checklistId);
+		const loaded = await checklistStore.loadChecklist(checklistId);
 		if (loaded) {
 			checklist = checklistStore.currentChecklist;
 		} else {

@@ -17,10 +17,10 @@
 		goto(`${base}/checklist/${item.id}`);
 	}
 
-	function deleteHistoryItem(item: ChecklistHistoryItem, event: Event) {
+	async function deleteHistoryItem(item: ChecklistHistoryItem, event: Event) {
 		event.stopPropagation(); // 親要素のクリックイベントを防ぐ
 		if (confirm(`「${item.title}」を履歴から削除しますか？`)) {
-			checklistStore.deleteFromHistory(item.id);
+			await checklistStore.deleteFromHistory(item.id);
 		}
 	}
 
