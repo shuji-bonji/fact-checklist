@@ -42,18 +42,25 @@
 
 		// URLパラメータから既存のチェックリストIDを確認
 		const checklistId = $page.url.searchParams.get('id');
+		console.log('checklistId from URL:', checklistId);
 
 		if (checklistId) {
-			// 既存のチェックリストを読み込み
-			const loaded = checklistStore.loadChecklist(checklistId);
-			if (loaded && currentChecklist) {
-				title = currentChecklist.title;
-				description = currentChecklist.description;
-				notes = currentChecklist.notes;
-				currentJudgment = currentChecklist.judgment;
-			}
+			// 既存のチェックリストを読み込み（非同期）
+			console.log('Loading existing checklist...');
+			checklistStore.loadChecklist(checklistId).then(loaded => {
+				console.log('loadChecklist result:', loaded);
+				console.log('currentChecklist after load:', currentChecklist);
+				if (loaded && currentChecklist) {
+					title = currentChecklist.title;
+					description = currentChecklist.description;
+					notes = currentChecklist.notes;
+					currentJudgment = currentChecklist.judgment;
+					console.log('Loaded checklist data successfully');
+				}
+			});
 		} else {
 			// 新しいチェックリストを作成
+			console.log('Creating new checklist...');
 			startNewChecklist();
 		}
 
@@ -66,11 +73,16 @@
 	});
 
 	function startNewChecklist() {
+		console.log('startNewChecklist called');
 		const id = checklistStore.createNewChecklist();
+		console.log('Created new checklist with id:', id);
+		console.log('currentChecklist after create:', currentChecklist);
+
 		// URLを更新（履歴に追加せず）
 		const url = new URL(window.location.href);
 		url.searchParams.set('id', id);
 		history.replaceState(null, '', url.toString());
+		console.log('URL updated to:', url.toString());
 	}
 
 	function handleCheckItem(itemId: string, checked: boolean) {
@@ -94,10 +106,30 @@
 		showGuideMode = !showGuideMode;
 	}
 
-	function completeChecklist() {
-		if (checklistStore.completeChecklist()) {
-			// 完了ページにリダイレクト
-			goto(`${base}/checklist/${currentChecklist?.id}?completed=true`);
+	async function completeChecklist() {
+		console.log('completeChecklist called');
+		console.log('[snapshot] currentChecklist:', $state.snapshot(currentChecklist));
+
+		if (!currentChecklist) {
+			console.error('currentChecklist is null or undefined');
+			return;
+		}
+
+		console.log('About to call checklistStore.completeChecklist()');
+
+		try {
+			const success = await checklistStore.completeChecklist();
+			console.log('completeChecklist result:', success);
+
+			if (success) {
+				console.log('Redirecting to:', `${base}/checklist/${currentChecklist.id}?completed=true`);
+				// 完了ページにリダイレクト
+				goto(`${base}/checklist/${currentChecklist.id}?completed=true`);
+			} else {
+				console.error('completeChecklist returned false');
+			}
+		} catch (error) {
+			console.error('Error in completeChecklist:', error);
 		}
 	}
 
