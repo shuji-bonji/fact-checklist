@@ -8,6 +8,12 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 
+	interface Props {
+		children: import('svelte').Snippet;
+	}
+
+	const { children }: Props = $props();
+
 	// ナビゲーションメニューの状態
 	let isMenuOpen = $state(false);
 
@@ -165,7 +171,7 @@
 	</nav>
 
 	<main>
-		<slot />
+		{@render children()}
 	</main>
 </div>
 
