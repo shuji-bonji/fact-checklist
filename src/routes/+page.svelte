@@ -89,6 +89,14 @@
 		checklistStore.updateCheckItem(itemId, checked);
 	}
 
+	function handleTitleChange() {
+		checklistStore.updateTitle(title);
+	}
+
+	function handleDescriptionChange() {
+		checklistStore.updateDescription(description);
+	}
+
 	function handleNotesChange() {
 		checklistStore.updateNotes(notes);
 	}
@@ -171,6 +179,7 @@
 						type="text"
 						class="form-input"
 						bind:value={title}
+						oninput={handleTitleChange}
 						placeholder="例: 新型コロナワクチンの効果に関する記事"
 					/>
 				</div>
@@ -181,6 +190,7 @@
 						id="description"
 						class="form-input form-textarea"
 						bind:value={description}
+						oninput={handleDescriptionChange}
 						placeholder="評価対象となる情報の詳細を記入してください..."
 					></textarea>
 				</div>

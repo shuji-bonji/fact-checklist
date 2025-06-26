@@ -249,6 +249,24 @@ class ChecklistStore {
 		}
 	}
 
+	// タイトルを更新
+	updateTitle(title: string): void {
+		if (!this._currentChecklist) return;
+
+		this._currentChecklist.title = title;
+		this._currentChecklist.updatedAt = new Date();
+		this.saveToStorage(); // 非同期だが待機しない
+	}
+
+	// 説明を更新
+	updateDescription(description: string): void {
+		if (!this._currentChecklist) return;
+
+		this._currentChecklist.description = description;
+		this._currentChecklist.updatedAt = new Date();
+		this.saveToStorage(); // 非同期だが待機しない
+	}
+
 	// メモを更新
 	updateNotes(notes: string): void {
 		if (!this._currentChecklist) return;
