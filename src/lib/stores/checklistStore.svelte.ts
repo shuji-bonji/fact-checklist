@@ -23,6 +23,7 @@ class ChecklistStore {
 	private _isLoading = $state(false);
 	private storage: StorageInterface | null = null;
 	private storageInitialized = false;
+	private initializationInProgress = false;
 
 	constructor() {
 		if (isBrowser) {
@@ -32,12 +33,28 @@ class ChecklistStore {
 
 	// ストレージの初期化とマイグレーション
 	private async initializeStorage(): Promise<void> {
-		console.log('initializeStorage: start, storageInitialized =', this.storageInitialized);
+		console.log(
+			'initializeStorage: start, storageInitialized =',
+			this.storageInitialized,
+			'inProgress =',
+			this.initializationInProgress
+		);
 
 		if (this.storageInitialized) {
 			console.log('initializeStorage: already initialized, returning');
 			return;
 		}
+
+		if (this.initializationInProgress) {
+			console.log('initializeStorage: initialization in progress, waiting...');
+			// 初期化完了まで待機
+			while (this.initializationInProgress && !this.storageInitialized) {
+				await new Promise(resolve => setTimeout(resolve, 50));
+			}
+			return;
+		}
+
+		this.initializationInProgress = true;
 
 		try {
 			console.log('initializeStorage: creating storage with fallback...');
@@ -55,10 +72,12 @@ class ChecklistStore {
 			console.log('initializeStorage: load completed');
 
 			this.storageInitialized = true;
+			this.initializationInProgress = false;
 			console.log('initializeStorage: initialization completed successfully');
 		} catch (error) {
 			console.error('ストレージの初期化に失敗しました:', error);
 			this.storageInitialized = false; // エラー時は再試行可能にする
+			this.initializationInProgress = false;
 		}
 	}
 
@@ -363,10 +382,15 @@ class ChecklistStore {
 			return;
 		}
 
-		// initializeStorageを呼ばない（既に初期化済みのはず）
+		// ストレージが初期化されるまで待機
 		if (!this.storage) {
-			console.error('saveToStorage: storage not available');
-			return;
+			console.log('saveToStorage: storage not available, waiting for initialization...');
+			await this.initializeStorage();
+
+			if (!this.storage) {
+				console.error('saveToStorage: storage initialization failed');
+				return;
+			}
 		}
 
 		try {

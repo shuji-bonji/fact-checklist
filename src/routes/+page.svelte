@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { goto } from '$app/navigation';
+	import { onMount, tick } from 'svelte';
+	import { goto, replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
 	import { base } from '$app/paths';
@@ -72,17 +72,28 @@
 		});
 	});
 
-	function startNewChecklist() {
+	async function startNewChecklist() {
 		console.log('startNewChecklist called');
 		const id = checklistStore.createNewChecklist();
 		console.log('Created new checklist with id:', id);
-		console.log('currentChecklist after create:', currentChecklist);
+		console.log('[snapshot] currentChecklist after create:', $state.snapshot(currentChecklist));
+
+		// SvelteKitルーターの初期化を待つ
+		await tick();
 
 		// URLを更新（履歴に追加せず）
-		const url = new URL(window.location.href);
-		url.searchParams.set('id', id);
-		history.replaceState(null, '', url.toString());
-		console.log('URL updated to:', url.toString());
+		try {
+			const url = new URL(window.location.href);
+			url.searchParams.set('id', id);
+			replaceState(url.pathname + url.search, {});
+			console.log('URL updated to:', url.toString());
+		} catch (error) {
+			console.warn('Failed to update URL:', error);
+			// フォールバック: 通常のhistory API
+			const url = new URL(window.location.href);
+			url.searchParams.set('id', id);
+			history.replaceState(null, '', url.toString());
+		}
 	}
 
 	function handleCheckItem(itemId: string, checked: boolean) {
