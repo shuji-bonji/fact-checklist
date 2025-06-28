@@ -2,6 +2,12 @@
 <script lang="ts">
 	import type { ChecklistResult, CheckItem } from '$lib/types/checklist.js';
 	import { CATEGORIES } from '$lib/data/checklist-items.js';
+	import { PWAAwarePDFExporter } from '$lib/utils/pwaAwarePDFExporter.js';
+	import {
+		ReliablePDFGenerator,
+		type ReliablePDFOptions
+	} from '$lib/utils/reliablePDFGenerator.js';
+	import { platformStore } from '$lib/stores/platformStore.svelte.js';
 
 	interface Props {
 		checklist: ChecklistResult | null;
@@ -14,6 +20,9 @@
 		includeNotes: boolean;
 		includeSummary: boolean;
 		sectionBreaks: boolean; // セクションごとのページブレイク
+		textMode: boolean; // PDF生成モード: true=テキストベース, false=画像ベース
+		advancedMode: boolean; // 高度なPDF機能を使用するか
+		reliableMode: boolean; // 確実な日本語フォント対応
 	}
 
 	const { checklist, onClose }: Props = $props();
@@ -21,12 +30,20 @@
 	let modalElement: HTMLDivElement;
 	let isExporting = $state(false);
 
+	// PWA対応PDF生成器
+	const pdfExporter = new PWAAwarePDFExporter();
+	const reliablePDFGenerator = new ReliablePDFGenerator();
+	const supportedFeatures = $derived(pdfExporter.getSupportedFeatures());
+
 	// エクスポートオプション（個別の状態として管理）
 	let format = $state<'pdf' | 'html' | 'json' | 'markdown'>('pdf');
 	let includeGuides = $state(true);
 	let includeNotes = $state(true);
 	let includeSummary = $state(true);
 	let sectionBreaks = $state(true);
+	let textMode = $state(true); // デフォルトはテキストベース
+	let advancedMode = $state(false); // 高度なモード
+	let reliableMode = $state(true); // デフォルトで確実モードを有効
 
 	// リアクティブなエクスポートオプション
 	const exportOptions = $derived<ExportOptions>({
@@ -34,7 +51,10 @@
 		includeGuides,
 		includeNotes,
 		includeSummary,
-		sectionBreaks
+		sectionBreaks,
+		textMode,
+		advancedMode,
+		reliableMode
 	});
 
 	function updateExportOption<K extends keyof ExportOptions>(key: K, value: ExportOptions[K]) {
@@ -53,6 +73,15 @@
 				break;
 			case 'sectionBreaks':
 				sectionBreaks = value as boolean;
+				break;
+			case 'textMode':
+				textMode = value as boolean;
+				break;
+			case 'advancedMode':
+				advancedMode = value as boolean;
+				break;
+			case 'reliableMode':
+				reliableMode = value as boolean;
 				break;
 		}
 	}
@@ -196,153 +225,72 @@
 	}
 
 	async function exportToPDF() {
+		if (!checklist) return;
+
 		try {
-			// html2canvasとjsPDFを動的インポート
-			const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
-				import('html2canvas'),
-				import('jspdf')
-			]);
+			console.log('🚀 Starting PDF export with reliable font support');
 
-			// PDF用のHTMLコンテンツを生成（セクション分割対応）
-			const htmlContent = generateSectionedHTMLContent();
+			if (exportOptions.reliableMode) {
+				// 確実な日本語フォント対応PDF生成
+				console.log('📝 Using ReliablePDFGenerator for Japanese font support');
 
-			// 一時的なコンテナを作成
-			const tempContainer = document.createElement('div');
-			tempContainer.innerHTML = htmlContent;
-			tempContainer.style.position = 'absolute';
-			tempContainer.style.left = '-9999px';
-			tempContainer.style.top = '0';
-			tempContainer.style.width = '210mm'; // A4幅
-			tempContainer.style.backgroundColor = 'white';
-			tempContainer.style.padding = '20px';
-			tempContainer.style.boxSizing = 'border-box';
+				const reliableOptions: ReliablePDFOptions = {
+					includeGuides: exportOptions.includeGuides,
+					includeNotes: exportOptions.includeNotes,
+					includeSummary: exportOptions.includeSummary,
+					sectionBreaks: exportOptions.sectionBreaks,
+					useLocalFonts: true, // 静的フォント使用
+					optimizeForMobile:
+						platformStore.capabilities.platform === 'ios' ||
+						platformStore.capabilities.platform === 'android'
+				};
 
-			document.body.appendChild(tempContainer);
+				const pdf = await reliablePDFGenerator.generateFromChecklist(checklist, reliableOptions);
 
-			try {
-				// PDFを作成
-				const pdf = new jsPDF('p', 'mm', 'a4');
-				const pageWidth = pdf.internal.pageSize.getWidth();
-				const pageHeight = pdf.internal.pageSize.getHeight();
+				// ファイル名生成
+				const timestamp = new Date().toISOString().slice(0, 10);
+				const sanitizedTitle = checklist.title.replace(
+					/[^\\w\\s\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FAF]/gi,
+					''
+				);
+				const filename = `事実確認チェックシート_${sanitizedTitle}_${timestamp}.pdf`;
 
-				if (exportOptions.sectionBreaks) {
-					// セクションごとにページを分割
-					await renderSectionedPDF(pdf, tempContainer, pageWidth, pageHeight, html2canvas);
-				} else {
-					// 通常のレンダリング
-					await renderContinuousPDF(pdf, tempContainer, pageWidth, pageHeight, html2canvas);
-				}
-
-				// ダウンロード
-				const filename = `事実確認チェックシート_${checklist!.title.replace(/[^\w\s]/gi, '')}_${new Date().toISOString().slice(0, 10)}.pdf`;
+				// ダウンロード実行
 				pdf.save(filename);
-			} finally {
-				document.body.removeChild(tempContainer);
+				console.log('✅ PDF generated successfully with reliable font support');
+			} else {
+				// 従来のPWA対応エクスポーター使用
+				console.log('🔄 Using PWA-aware PDF exporter (legacy mode)');
+				await pdfExporter.exportPDF(checklist, {
+					textMode: exportOptions.textMode,
+					includeGuides: exportOptions.includeGuides,
+					includeNotes: exportOptions.includeNotes,
+					includeSummary: exportOptions.includeSummary,
+					sectionBreaks: exportOptions.sectionBreaks,
+					showSaveDialog: supportedFeatures.canSave,
+					enableSharing: supportedFeatures.canShare,
+					useNativeFeatures: exportOptions.advancedMode,
+					optimizeForMobile:
+						platformStore.capabilities.platform === 'ios' ||
+						platformStore.capabilities.platform === 'android'
+				});
 			}
 		} catch (error) {
 			console.error('PDF生成エラー:', error);
-			throw error;
-		}
-	}
 
-	async function renderSectionedPDF(
-		pdf: any,
-		container: HTMLElement,
-		pageWidth: number,
-		pageHeight: number,
-		html2canvas: any
-	) {
-		// ヘッダーとサマリーを最初のページに
-		const headerSection = container.querySelector('.header-section') as HTMLElement;
-		if (headerSection) {
-			await addSectionToPDF(pdf, headerSection, pageWidth, pageHeight, false, html2canvas);
-		}
-
-		// 各セクションを個別ページに
-		const sections = container.querySelectorAll('.category-section');
-		for (let i = 0; i < sections.length; i++) {
-			if (i > 0 || headerSection) {
-				pdf.addPage();
+			// エラー時のフォールバック提案
+			if (exportOptions.reliableMode) {
+				alert(
+					'確実モードでの生成に失敗しました。従来モードを試すか、ブラウザを再読み込みしてください。'
+				);
+			} else if (exportOptions.textMode) {
+				alert(
+					'テキストモードでの生成に失敗しました。確実モードまたは従来の画像モードを試してください。'
+				);
+			} else {
+				alert('PDF生成に失敗しました。確実モードを有効にして再試行してください。');
 			}
-			await addSectionToPDF(
-				pdf,
-				sections[i] as HTMLElement,
-				pageWidth,
-				pageHeight,
-				true,
-				html2canvas
-			);
-		}
-
-		// ノートセクション
-		const notesSection = container.querySelector('.notes-section') as HTMLElement;
-		if (notesSection) {
-			pdf.addPage();
-			await addSectionToPDF(pdf, notesSection, pageWidth, pageHeight, true, html2canvas);
-		}
-	}
-
-	async function addSectionToPDF(
-		pdf: any,
-		element: HTMLElement,
-		pageWidth: number,
-		pageHeight: number,
-		fitToPage: boolean,
-		html2canvas: any
-	) {
-		const canvas = await html2canvas(element, {
-			scale: 2,
-			useCORS: true,
-			allowTaint: true,
-			backgroundColor: 'white'
-		});
-
-		const imgData = canvas.toDataURL('image/png');
-		const imgWidth = pageWidth - 20; // 両側10mmのマージン
-		const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-		if (fitToPage && imgHeight > pageHeight - 40) {
-			// ページに収まるようにスケール調整
-			const scaleFactor = (pageHeight - 40) / imgHeight;
-			const scaledWidth = imgWidth * scaleFactor;
-			const scaledHeight = imgHeight * scaleFactor;
-			pdf.addImage(imgData, 'PNG', 10, 20, scaledWidth, scaledHeight);
-		} else {
-			pdf.addImage(imgData, 'PNG', 10, 20, imgWidth, imgHeight);
-		}
-	}
-
-	async function renderContinuousPDF(
-		pdf: any,
-		container: HTMLElement,
-		pageWidth: number,
-		pageHeight: number,
-		html2canvas: any
-	) {
-		const canvas = await html2canvas(container, {
-			scale: 2,
-			useCORS: true,
-			allowTaint: true,
-			backgroundColor: 'white',
-			width: container.scrollWidth,
-			height: container.scrollHeight
-		});
-
-		const imgData = canvas.toDataURL('image/png');
-		const imgWidth = pageWidth - 20;
-		const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-		let heightLeft = imgHeight;
-		let position = 10;
-
-		pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-		heightLeft -= pageHeight - 20;
-
-		while (heightLeft >= 0) {
-			position = heightLeft - imgHeight + 10;
-			pdf.addPage();
-			pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-			heightLeft -= pageHeight - 20;
+			throw error;
 		}
 	}
 
@@ -999,6 +947,65 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
 							>
 						</label>
 					{/if}
+
+					{#if exportOptions.format === 'pdf'}
+						<label class="checkbox-option">
+							<input
+								type="checkbox"
+								checked={exportOptions.reliableMode}
+								onchange={e =>
+									updateExportOption('reliableMode', (e.target as HTMLInputElement).checked)}
+							/>
+							<span>🔥 確実な日本語フォント対応</span>
+							<small>文字化け防止・CSP対応 (推奨)</small>
+						</label>
+
+						<label class="checkbox-option">
+							<input
+								type="checkbox"
+								checked={exportOptions.textMode}
+								onchange={e =>
+									updateExportOption('textMode', (e.target as HTMLInputElement).checked)}
+							/>
+							<span>🔤 テキストベースPDF</span>
+							<small>文字検索・コピー可能 (レガシーモード)</small>
+						</label>
+
+						<label class="checkbox-option">
+							<input
+								type="checkbox"
+								checked={exportOptions.advancedMode}
+								onchange={e =>
+									updateExportOption('advancedMode', (e.target as HTMLInputElement).checked)}
+							/>
+							<span>⚡ 高度なPWA機能</span>
+							<small>プラットフォーム固有の最適化を使用</small>
+						</label>
+
+						<!-- プラットフォーム機能表示 -->
+						{#if platformStore.capabilities.isNativeApp || supportedFeatures.hasNativeFeatures}
+							<div class="platform-info">
+								<div class="platform-badge">
+									{#if platformStore.capabilities.isNativeApp}
+										📱 ネイティブアプリ機能
+									{:else}
+										🌐 拡張機能
+									{/if}
+								</div>
+								<div class="feature-list">
+									{#if supportedFeatures.canSave}
+										<span class="feature-item">💾 直接保存</span>
+									{/if}
+									{#if supportedFeatures.canShare}
+										<span class="feature-item">📤 ネイティブ共有</span>
+									{/if}
+									{#if supportedFeatures.qualityLevel === 'high'}
+										<span class="feature-item">✨ 高品質</span>
+									{/if}
+								</div>
+							</div>
+						{/if}
+					{/if}
 				</div>
 			</div>
 		</div>
@@ -1244,5 +1251,36 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
 	.btn:focus {
 		outline: 2px solid #3498db;
 		outline-offset: 2px;
+	}
+
+	/* プラットフォーム情報スタイル */
+	.platform-info {
+		margin-top: 10px;
+		padding: 12px;
+		background: linear-gradient(135deg, #e8f4fd, #d1ecf1);
+		border-radius: 8px;
+		border-left: 3px solid #3498db;
+	}
+
+	.platform-badge {
+		font-weight: 600;
+		color: #2c3e50;
+		margin-bottom: 8px;
+		font-size: 13px;
+	}
+
+	.feature-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	.feature-item {
+		background: rgba(255, 255, 255, 0.8);
+		padding: 4px 8px;
+		border-radius: 12px;
+		font-size: 11px;
+		color: #2c3e50;
+		border: 1px solid rgba(52, 152, 219, 0.3);
 	}
 </style>

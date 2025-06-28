@@ -167,3 +167,167 @@ src/lib/components/
 - **Local Storage**: Uses localStorage + IndexedDB for persistence
 - **No Analytics**: No tracking or data collection implemented
 - **Content Security Policy**: Configured for XSS protection
+
+## Svelte 5 Specification Requirements
+
+### **CRITICAL: Always Use Latest Svelte 5 Specification**
+
+Before coding any Svelte components, **always reference the latest Svelte 5
+documentation**:
+
+- 📖 **Primary Reference**: https://svelte.dev/docs/llms
+- 📄 **Full Specification**: https://svelte.dev/llms-full.txt
+- 📄 **Medium Guide**: https://svelte.dev/llms-medium.txt
+- 📄 **Quick Reference**: https://svelte.dev/llms-small.txt
+
+### **Mandatory Svelte 5 Patterns**
+
+#### **1. Use Runes Instead of Legacy Reactive Syntax**
+
+```svelte
+<!-- ❌ LEGACY (Svelte 3/4) - DO NOT USE -->
+<script>
+  export let count = 0;
+  $: doubled = count * 2;
+
+  let items = [];
+  $: filteredItems = items.filter(item => item.active);
+</script>
+
+<!-- ✅ SVELTE 5 RUNES - ALWAYS USE THIS -->
+<script>
+  let { count = $bindable(0) } = $props();
+  let doubled = $derived(count * 2);
+
+  let items = $state([]);
+  let filteredItems = $derived(items.filter(item => item.active));
+</script>
+```
+
+#### **2. State Management with Runes**
+
+```svelte
+<!-- ✅ CORRECT: Use $state for local reactive state -->
+<script>
+  let user = $state({ name: '', email: '' });
+  let isLoading = $state(false);
+  let errors = $state([]);
+</script>
+
+<!-- ❌ INCORRECT: Don't use legacy let declarations for reactive state -->
+<script>
+  let user = { name: '', email: '' }; // This won't be reactive in Svelte 5
+</script>
+```
+
+#### **3. Props with $props() and $bindable()**
+
+```svelte
+<!-- ✅ CORRECT: Svelte 5 props pattern -->
+<script>
+  let {
+    title,
+    count = $bindable(0),
+    items = [],
+    onUpdate = () => {}
+  } = $props();
+</script>
+
+<!-- ❌ INCORRECT: Legacy export syntax -->
+<script>
+  export let title;
+  export let count = 0;
+  export let items = [];
+</script>
+```
+
+#### **4. Effects with $effect()**
+
+```svelte
+<!-- ✅ CORRECT: Use $effect for side effects -->
+<script>
+  let count = $state(0);
+
+  $effect(() => {
+    console.log('Count changed:', count);
+    document.title = `Count: ${count}`;
+  });
+
+  // Cleanup effects
+  $effect(() => {
+    const timer = setInterval(() => count++, 1000);
+    return () => clearInterval(timer);
+  });
+</script>
+
+<!-- ❌ INCORRECT: Legacy reactive statements -->
+<script>
+  $: console.log('Count changed:', count); // Don't use this pattern
+</script>
+```
+
+#### **5. Derived State with $derived()**
+
+```svelte
+<script>
+  let items = $state([]);
+  let filter = $state('');
+
+  // ✅ CORRECT: Use $derived for computed values
+  let filteredItems = $derived(
+    items.filter(item => item.name.toLowerCase().includes(filter.toLowerCase()))
+  );
+
+  let itemCount = $derived(filteredItems.length);
+  let isEmpty = $derived(itemCount === 0);
+</script>
+```
+
+### **WebSocket Integration with Svelte 5 Runes**
+
+#### **WebSocket Store Pattern (Svelte 5)**
+
+```typescript
+// ✅ CORRECT: src/lib/stores/websocket.svelte.ts
+export function createWebSocketStore(url: string) {
+  let socket = $state<WebSocket | null>(null);
+  let connected = $state(false);
+  let messages = $state<string[]>([]);
+  let error = $state<string | null>(null);
+
+  const connect = () => {
+    socket = new WebSocket(url);
+
+    socket.onopen = () => {
+      connected = true;
+      error = null;
+    };
+
+    socket.onmessage = event => {
+      messages.push(event.data);
+    };
+
+    socket.onclose = () => {
+      connected = false;
+    };
+
+    socket.onerror = () => {
+      error = 'Connection failed';
+    };
+  };
+
+  return {
+    get connected() {
+      return connected;
+    },
+    get messages() {
+      return messages;
+    },
+    get error() {
+      return error;
+    },
+    connect,
+    send: (message: string) => socket?.send(message)
+  };
+}
+```
