@@ -7,7 +7,8 @@
 import type jsPDF from 'jspdf';
 import type { ChecklistResult, CheckItem } from '$lib/types/checklist.js';
 import { CATEGORIES } from '$lib/data/checklist-items.js';
-import { registerJapaneseFonts } from './fontToBase64.js';
+// Font registration is now handled internally with caching
+// import { registerJapaneseFonts } from './fontToBase64.js';
 
 export interface ReliablePDFOptions {
 	includeGuides: boolean;
@@ -17,6 +18,14 @@ export interface ReliablePDFOptions {
 	fontFamily?: string;
 	optimizeForMobile?: boolean;
 	useLocalFonts?: boolean; // 静的フォント使用フラグ
+	// Phase 3: 高度なPDF機能
+	addWatermark?: boolean; // 透かし追加
+	includeTableOfContents?: boolean; // 目次追加
+	addMetadata?: boolean; // PDFメタデータ追加
+	watermarkText?: string; // カスタム透かしテキスト
+	documentTitle?: string; // カスタムドキュメントタイトル
+	documentAuthor?: string; // 文書作成者
+	documentSubject?: string; // 文書の件名
 }
 
 export class ReliablePDFGenerator {
@@ -29,6 +38,15 @@ export class ReliablePDFGenerator {
 	private readonly maxLineWidth: number;
 	private fontLoaded: boolean = false;
 	private useFallbackFont: boolean = false;
+
+	// Phase 3: 高度なPDF機能用プロパティ
+	private tableOfContents: Array<{ title: string; page: number; level: number }> = [];
+	private options: ReliablePDFOptions = {} as ReliablePDFOptions;
+
+	// パフォーマンス最適化: フォントキャッシュ
+	private static fontCache: Map<string, string> = new Map();
+	private static fontLoading: Promise<void> | null = null;
+	private static initializationPromise: Promise<boolean> | null = null;
 
 	constructor() {
 		this.pdf = {} as jsPDF; // 一時的な初期化
@@ -43,7 +61,16 @@ export class ReliablePDFGenerator {
 		const { default: jsPDF } = await import('jspdf');
 		this.pdf = new jsPDF('p', 'mm', 'a4');
 
-		console.log('🔥 Starting reliable PDF generation with Japanese font support...');
+		// オプションを保存
+		this.options = options;
+		this.tableOfContents = [];
+
+		console.log('🔥 Starting reliable PDF generation with advanced features...');
+
+		// Phase 3: PDFメタデータの設定
+		if (options.addMetadata !== false) {
+			this.addPDFMetadata(checklist);
+		}
 
 		// 利用可能なフォントの確認
 		console.log('📝 Available fonts in jsPDF:', this.pdf.getFontList());
@@ -64,9 +91,19 @@ export class ReliablePDFGenerator {
 			this.addNotes(checklist.notes);
 		}
 
+		// Phase 3: 目次の追加（最初のページに挿入）
+		if (options.includeTableOfContents && this.tableOfContents.length > 0) {
+			this.insertTableOfContents();
+		}
+
+		// Phase 3: 透かしの追加
+		if (options.addWatermark) {
+			this.addWatermarkToAllPages(options.watermarkText);
+		}
+
 		this.addFooter();
 
-		console.log('✅ Reliable PDF generation completed successfully');
+		console.log('✅ Reliable PDF generation with advanced features completed successfully');
 		return this.pdf;
 	}
 
@@ -98,13 +135,13 @@ export class ReliablePDFGenerator {
 
 	private async tryLoadStaticFont(): Promise<void> {
 		try {
-			console.log('🔤 Attempting to load static Noto Sans JP font...');
+			console.log('🔤 Attempting to load static Noto Sans JP font with caching...');
 
-			// jsPDFに日本語フォントを登録
-			const fontRegistered = await registerJapaneseFonts(this.pdf);
+			// jsPDFに日本語フォントを登録（キャッシュ付き）
+			const fontRegistered = await ReliablePDFGenerator.registerJapaneseFontsWithCache(this.pdf);
 
 			if (fontRegistered) {
-				console.log('✅ Japanese fonts successfully registered with jsPDF');
+				console.log('✅ Japanese fonts successfully registered with jsPDF (cached)');
 				this.fontLoaded = true;
 				this.useFallbackFont = false;
 
@@ -149,20 +186,33 @@ export class ReliablePDFGenerator {
 		this.useFallbackFont = true;
 	}
 
+	// Phase 3: TOCエントリ追加用ヘルパー
+	private addToTableOfContents(title: string, level: number = 1): void {
+		if (this.options.includeTableOfContents) {
+			this.tableOfContents.push({
+				title,
+				page: this.pdf.getNumberOfPages(),
+				level
+			});
+		}
+	}
+
 	private addHeader(checklist: ChecklistResult): void {
 		this.pdf.setFontSize(16);
 		this.setFontWeight('bold');
 
 		// タイトルを文字化けしにくい形式で表示
-		if (this.useFallbackFont) {
-			this.addText('========================================');
-			this.addText('📋 Fact Checking Checklist');
-			this.addText('========================================');
-		} else {
-			this.addText('========================================');
-			this.addText('📋 事実確認チェックシート');
-			this.addText('========================================');
-		}
+		const mainTitle = this.useFallbackFont
+			? '📋 Fact Checking Checklist'
+			: '📋 事実確認チェックシート';
+
+		this.addText('========================================');
+		this.addText(mainTitle);
+		this.addText('========================================');
+
+		// Phase 3: TOCエントリー追加
+		this.addToTableOfContents(mainTitle, 1);
+
 		this.currentY += 3;
 
 		this.pdf.setFontSize(12);
@@ -215,6 +265,10 @@ export class ReliablePDFGenerator {
 		const summaryTitle = this.useFallbackFont ? '📊 Evaluation Summary' : '📊 評価結果サマリー';
 		this.addText(summaryTitle);
 		this.addText('----------------------------------------');
+
+		// Phase 3: TOCエントリー追加
+		this.addToTableOfContents(summaryTitle, 1);
+
 		this.currentY += 2;
 
 		this.pdf.setFontSize(11);
@@ -298,6 +352,10 @@ export class ReliablePDFGenerator {
 			: `${section.category.emoji} ${section.category.name}`;
 		this.addText(sectionTitle);
 		this.addText('========================================');
+
+		// Phase 3: TOCエントリー追加
+		this.addToTableOfContents(sectionTitle, 2);
+
 		this.currentY += 1;
 
 		this.pdf.setFontSize(10);
@@ -409,6 +467,10 @@ export class ReliablePDFGenerator {
 		const notesTitle = this.useFallbackFont ? '📝 Evaluation Notes' : '📝 評価メモ';
 		this.addText(notesTitle);
 		this.addText('========================================');
+
+		// Phase 3: TOCエントリー追加
+		this.addToTableOfContents(notesTitle, 1);
+
 		this.currentY += 3;
 
 		this.pdf.setFontSize(11);
@@ -572,6 +634,282 @@ export class ReliablePDFGenerator {
 				return 'Contextual factors and bias analysis';
 			default:
 				return 'General verification items';
+		}
+	}
+
+	// パフォーマンス最適化: キャッシュ付きフォント登録
+	private static async registerJapaneseFontsWithCache(
+		pdf: import('jspdf').jsPDF
+	): Promise<boolean> {
+		try {
+			// 既に初期化済みの場合はキャッシュされたフォントを使用
+			if (ReliablePDFGenerator.initializationPromise) {
+				const isInitialized = await ReliablePDFGenerator.initializationPromise;
+				if (isInitialized) {
+					ReliablePDFGenerator.applyFontsFromCache(pdf);
+					return true;
+				}
+			}
+
+			// 初回ロード
+			ReliablePDFGenerator.initializationPromise = ReliablePDFGenerator.loadAndCacheFonts();
+			const isSuccess = await ReliablePDFGenerator.initializationPromise;
+
+			if (isSuccess) {
+				ReliablePDFGenerator.applyFontsFromCache(pdf);
+				return true;
+			}
+
+			return false;
+		} catch (error) {
+			console.error('❌ Failed to register Japanese fonts with cache:', error);
+			return false;
+		}
+	}
+
+	private static async loadAndCacheFonts(): Promise<boolean> {
+		try {
+			console.log('📦 Loading and caching fonts for the first time...');
+
+			// キャッシュチェック
+			if (
+				ReliablePDFGenerator.fontCache.has('NotoSansJP-Regular') &&
+				ReliablePDFGenerator.fontCache.has('NotoSansJP-Bold')
+			) {
+				console.log('✅ Fonts already cached, skipping load');
+				return true;
+			}
+
+			// 並列でフォントをロード
+			const [regularBase64, boldBase64] = await Promise.all([
+				ReliablePDFGenerator.loadFontAsBase64('/fonts/NotoSansJP-Regular.ttf'),
+				ReliablePDFGenerator.loadFontAsBase64('/fonts/NotoSansJP-Bold.ttf')
+			]);
+
+			// キャッシュに保存
+			if (regularBase64) {
+				ReliablePDFGenerator.fontCache.set('NotoSansJP-Regular', regularBase64);
+				console.log('📦 Cached NotoSansJP-Regular font');
+			}
+
+			if (boldBase64) {
+				ReliablePDFGenerator.fontCache.set('NotoSansJP-Bold', boldBase64);
+				console.log('📦 Cached NotoSansJP-Bold font');
+			}
+
+			return !!(regularBase64 && boldBase64);
+		} catch (error) {
+			console.error('❌ Failed to load and cache fonts:', error);
+			return false;
+		}
+	}
+
+	private static applyFontsFromCache(pdf: import('jspdf').jsPDF): void {
+		try {
+			const regularFont = ReliablePDFGenerator.fontCache.get('NotoSansJP-Regular');
+			const boldFont = ReliablePDFGenerator.fontCache.get('NotoSansJP-Bold');
+
+			if (regularFont) {
+				pdf.addFileToVFS('NotoSansJP-Regular.ttf', regularFont);
+				pdf.addFont('NotoSansJP-Regular.ttf', 'NotoSansJP', 'normal');
+				console.log('⚡ Applied cached NotoSansJP-Regular font');
+			}
+
+			if (boldFont) {
+				pdf.addFileToVFS('NotoSansJP-Bold.ttf', boldFont);
+				pdf.addFont('NotoSansJP-Bold.ttf', 'NotoSansJP', 'bold');
+				console.log('⚡ Applied cached NotoSansJP-Bold font');
+			}
+		} catch (error) {
+			console.error('❌ Failed to apply fonts from cache:', error);
+		}
+	}
+
+	private static async loadFontAsBase64(fontUrl: string): Promise<string | null> {
+		try {
+			console.log(`🔤 Loading font file: ${fontUrl}`);
+
+			const response = await fetch(fontUrl);
+			if (!response.ok) {
+				throw new Error(`Font file not found: ${fontUrl}`);
+			}
+
+			const arrayBuffer = await response.arrayBuffer();
+			const uint8Array = new Uint8Array(arrayBuffer);
+
+			// ArrayBufferをBase64に変換
+			let binary = '';
+			for (let i = 0; i < uint8Array.byteLength; i++) {
+				const byte = uint8Array[i];
+				if (byte !== undefined) {
+					binary += String.fromCharCode(byte);
+				}
+			}
+
+			const base64 = btoa(binary);
+			console.log(`✅ Font converted to Base64, size: ${Math.round(base64.length / 1024)}KB`);
+
+			return base64;
+		} catch (error) {
+			console.warn(`⚠️ Failed to load font: ${fontUrl}`, error);
+			return null;
+		}
+	}
+
+	// キャッシュクリア（メモリ管理用）
+	public static clearFontCache(): void {
+		ReliablePDFGenerator.fontCache.clear();
+		ReliablePDFGenerator.initializationPromise = null;
+		console.log('🗑️ Font cache cleared');
+	}
+
+	// キャッシュサイズ取得（デバッグ用）
+	public static getFontCacheSize(): number {
+		let totalSize = 0;
+		for (const font of ReliablePDFGenerator.fontCache.values()) {
+			totalSize += font.length;
+		}
+		return Math.round(totalSize / 1024); // KB単位
+	}
+
+	// Phase 3: 高度なPDF機能実装
+
+	// PDFメタデータの設定
+	private addPDFMetadata(checklist: ChecklistResult): void {
+		try {
+			const title = this.options.documentTitle ?? `事実確認チェックシート - ${checklist.title}`;
+			const author = this.options.documentAuthor ?? 'Fact Checklist Generator';
+			const subject =
+				this.options.documentSubject ??
+				'情報の信頼性を科学的・体系的に評価するための実用的事実確認チェックシート';
+
+			// jsPDFのメタデータ設定
+			this.pdf.setProperties({
+				title,
+				author,
+				subject,
+				keywords: 'fact-check, evaluation, reliability, information, 事実確認, 情報検証',
+				creator: 'Fact Checklist PWA'
+			});
+
+			console.log('📋 PDF metadata configured:', { title, author, subject });
+		} catch (error) {
+			console.warn('⚠️ Failed to set PDF metadata:', error);
+		}
+	}
+
+	// 透かしをすべてのページに追加
+	private addWatermarkToAllPages(customText?: string): void {
+		try {
+			const pageCount = this.pdf.getNumberOfPages();
+			const watermarkText = customText ?? 'FACT CHECK EVALUATION';
+
+			for (let i = 1; i <= pageCount; i++) {
+				this.pdf.setPage(i);
+				this.addWatermarkToCurrentPage(watermarkText);
+			}
+
+			console.log(`✨ Watermark added to ${pageCount} pages`);
+		} catch (error) {
+			console.warn('⚠️ Failed to add watermark:', error);
+		}
+	}
+
+	// 現在のページに透かし追加
+	private addWatermarkToCurrentPage(text: string): void {
+		try {
+			// 現在の設定を保存
+			const originalSize = this.pdf.getFontSize();
+
+			// 透かし設定
+			this.pdf.saveGraphicsState();
+			this.pdf.setGState(this.pdf.GState({ opacity: 0.1 }));
+			this.pdf.setFontSize(48);
+			this.pdf.setTextColor(128, 128, 128);
+
+			// ページ中央に斜め45度で配置
+			const pageWidth = this.pdf.internal.pageSize.getWidth();
+			const pageHeight = this.pdf.internal.pageSize.getHeight();
+			const centerX = pageWidth / 2;
+			const centerY = pageHeight / 2;
+
+			// テキスト幅を計算
+			const textWidth = this.pdf.getTextWidth(text);
+
+			// 透かしテキストを回転して描画
+			this.pdf.text(text, centerX - textWidth / 2, centerY, {
+				angle: 45
+			});
+
+			// 設定を復元
+			this.pdf.restoreGraphicsState();
+			this.pdf.setFontSize(originalSize);
+		} catch (error) {
+			console.warn('⚠️ Failed to add watermark to current page:', error);
+		}
+	}
+
+	// 目次をドキュメントの先頭に挿入
+	private insertTableOfContents(): void {
+		try {
+			if (this.tableOfContents.length === 0) return;
+
+			// 新しいページを先頭に挿入
+			this.pdf.insertPage(1);
+			this.pdf.setPage(1);
+
+			// 目次ヘッダー
+			this.currentY = this.margin + 10;
+			this.pdf.setFontSize(18);
+			this.setFontWeight('bold');
+
+			const tocTitle = this.useFallbackFont ? 'Table of Contents' : '目次';
+			this.addText(tocTitle);
+			this.addText('========================================');
+			this.currentY += 5;
+
+			// 目次エントリ
+			this.pdf.setFontSize(11);
+			this.setFontWeight('normal');
+
+			this.tableOfContents.forEach(entry => {
+				this.checkPageBreak(10);
+
+				// インデント（レベルに応じて）
+				const indent = (entry.level - 1) * 10;
+				const titleText =
+					entry.title.length > 60 ? `${entry.title.substring(0, 57)}...` : entry.title;
+
+				// ドット付きリーダー線
+				const dotsNeeded = Math.max(
+					3,
+					Math.floor((this.maxLineWidth - indent - this.pdf.getTextWidth(titleText) - 20) / 3)
+				);
+				const dots = '.'.repeat(dotsNeeded);
+
+				// 目次行を描画
+				const tocLine = `${' '.repeat(indent / 2)}${titleText} ${dots} ${entry.page + 1}`;
+				this.addText(tocLine);
+			});
+
+			// ページ番号を更新（目次追加により全ページが1つずつずれる）
+			this.updatePageNumbersAfterTOC();
+
+			console.log(`📚 Table of contents inserted with ${this.tableOfContents.length} entries`);
+		} catch (error) {
+			console.warn('⚠️ Failed to insert table of contents:', error);
+		}
+	}
+
+	// 目次挿入後のページ番号更新
+	private updatePageNumbersAfterTOC(): void {
+		try {
+			// すべての目次エントリのページ番号を1つずつ増加
+			this.tableOfContents.forEach(entry => {
+				entry.page += 1;
+			});
+		} catch (error) {
+			console.warn('⚠️ Failed to update page numbers after TOC:', error);
 		}
 	}
 

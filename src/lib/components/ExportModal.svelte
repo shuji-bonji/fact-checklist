@@ -29,6 +29,14 @@
 
 	let modalElement: HTMLDivElement;
 	let isExporting = $state(false);
+	const exportProgress = $state<{
+		current: number;
+		total: number;
+		stage: string;
+		message: string;
+	}>({ current: 0, total: 100, stage: '', message: '' });
+	let exportError = $state<string | null>(null);
+	let exportSuccess = $state<boolean>(false);
 
 	// PWA対応PDF生成器
 	const pdfExporter = new PWAAwarePDFExporter();
@@ -197,11 +205,45 @@
 		`;
 	}
 
+	// 進捗更新ユーティリティ
+	function updateProgress(current: number, total: number, stage: string, message: string) {
+		exportProgress.current = current;
+		exportProgress.total = total;
+		exportProgress.stage = stage;
+		exportProgress.message = message;
+	}
+
+	// エラーリセット
+	function resetExportState() {
+		exportError = null;
+		exportSuccess = false;
+		updateProgress(0, 100, '', '');
+	}
+
+	// ユーザーフレンドリーエラーメッセージ
+	function getErrorMessage(error: unknown, context: string): string {
+		const errorStr = error instanceof Error ? error.message : String(error);
+
+		if (errorStr.includes('fetch')) {
+			return 'フォントファイルの読み込みに失敗しました。インターネット接続を確認してください。';
+		} else if (errorStr.includes('memory') || errorStr.includes('size')) {
+			return 'メモリ不足のため処理できません。ブラウザを再起動してから再度お試しください。';
+		} else if (errorStr.includes('permission') || errorStr.includes('access')) {
+			return 'ファイルへのアクセスが拒否されました。ブラウザのダウンロード設定を確認してください。';
+		} else {
+			return `${context}中にエラーが発生しました: ${errorStr.substring(0, 100)}`;
+		}
+	}
+
 	async function handleExport() {
 		if (!checklist) return;
 
+		resetExportState();
 		isExporting = true;
+
 		try {
+			updateProgress(10, 100, '初期化', 'エクスポートを開始しています...');
+
 			switch (exportOptions.format) {
 				case 'pdf':
 					await exportToPDF();
@@ -216,9 +258,18 @@
 					await exportToMarkdown();
 					break;
 			}
+
+			updateProgress(100, 100, '完了', 'エクスポートが成功しました！');
+			exportSuccess = true;
+
+			// 成功メッセージを短時間表示後にモーダルを閉じる
+			setTimeout(() => {
+				onClose();
+			}, 2000);
 		} catch (error) {
 			console.error('エクスポートエラー:', error);
-			alert('エクスポートに失敗しました');
+			exportError = getErrorMessage(error, `${exportOptions.format.toUpperCase()}エクスポート`);
+			updateProgress(0, 100, 'エラー', exportError);
 		} finally {
 			isExporting = false;
 		}
@@ -228,10 +279,12 @@
 		if (!checklist) return;
 
 		try {
+			updateProgress(20, 100, 'PDF生成準備', 'PDFエクスポートを開始しています...');
 			console.log('🚀 Starting PDF export with reliable font support');
 
 			if (exportOptions.reliableMode) {
 				// 確実な日本語フォント対応PDF生成
+				updateProgress(30, 100, 'フォント読み込み', '日本語フォントを読み込んでいます...');
 				console.log('📝 Using ReliablePDFGenerator for Japanese font support');
 
 				const reliableOptions: ReliablePDFOptions = {
@@ -242,10 +295,22 @@
 					useLocalFonts: true, // 静的フォント使用
 					optimizeForMobile:
 						platformStore.capabilities.platform === 'ios' ||
-						platformStore.capabilities.platform === 'android'
+						platformStore.capabilities.platform === 'android',
+					// Phase 3: 高度なPDF機能
+					addWatermark: exportOptions.advancedMode,
+					includeTableOfContents: exportOptions.advancedMode,
+					addMetadata: true,
+					watermarkText: 'FACT CHECK EVALUATION',
+					documentTitle: `事実確認チェックシート - ${checklist.title}`,
+					documentAuthor: 'Fact Checklist Generator',
+					documentSubject:
+						'情報の信頼性を科学的・体系的に評価するための実用的事実確認チェックシート'
 				};
 
+				updateProgress(50, 100, 'PDFドキュメント作成', 'PDFドキュメントを作成しています...');
 				const pdf = await reliablePDFGenerator.generateFromChecklist(checklist, reliableOptions);
+
+				updateProgress(80, 100, 'ファイル生成', 'ファイルを保存しています...');
 
 				// ファイル名生成
 				const timestamp = new Date().toISOString().slice(0, 10);
@@ -260,6 +325,7 @@
 				console.log('✅ PDF generated successfully with reliable font support');
 			} else {
 				// 従来のPWA対応エクスポーター使用
+				updateProgress(40, 100, 'PWAモード', '従来のPDFエクスポートを実行中...');
 				console.log('🔄 Using PWA-aware PDF exporter (legacy mode)');
 				await pdfExporter.exportPDF(checklist, {
 					textMode: exportOptions.textMode,
@@ -277,31 +343,21 @@
 			}
 		} catch (error) {
 			console.error('PDF生成エラー:', error);
-
-			// エラー時のフォールバック提案
-			if (exportOptions.reliableMode) {
-				alert(
-					'確実モードでの生成に失敗しました。従来モードを試すか、ブラウザを再読み込みしてください。'
-				);
-			} else if (exportOptions.textMode) {
-				alert(
-					'テキストモードでの生成に失敗しました。確実モードまたは従来の画像モードを試してください。'
-				);
-			} else {
-				alert('PDF生成に失敗しました。確実モードを有効にして再試行してください。');
-			}
-			throw error;
+			throw error; // エラーは上位でハンドリング
 		}
 	}
 
 	async function exportToHTML() {
+		updateProgress(30, 100, 'HTML生成', 'HTMLコンテンツを生成しています...');
 		const htmlContent = generateSectionedHTMLContent();
+		updateProgress(70, 100, 'ファイル作成', 'HTMLファイルを作成しています...');
 		const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
 		const filename = `事実確認チェックシート_${checklist!.title}_${new Date().toISOString().slice(0, 10)}.html`;
 		downloadBlob(blob, filename);
 	}
 
 	async function exportToJSON() {
+		updateProgress(30, 100, 'データ整理', 'エクスポートデータを整理しています...');
 		const exportData = {
 			title: checklist!.title,
 			notes: checklist!.notes,
@@ -318,6 +374,7 @@
 			version: '1.0'
 		};
 
+		updateProgress(70, 100, 'JSON生成', 'JSONファイルを生成しています...');
 		const jsonString = JSON.stringify(exportData, null, 2);
 		const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8' });
 		const filename = `事実確認チェックシート_${checklist!.title}_${new Date().toISOString().slice(0, 10)}.json`;
@@ -325,7 +382,9 @@
 	}
 
 	async function exportToMarkdown() {
+		updateProgress(30, 100, 'Markdown生成', 'Markdownコンテンツを生成しています...');
 		const markdownContent = generateMarkdownContent();
+		updateProgress(70, 100, 'ファイル作成', 'Markdownファイルを作成しています...');
 		const blob = new Blob([markdownContent], { type: 'text/markdown;charset=utf-8' });
 		const filename = `事実確認チェックシート_${checklist!.title}_${new Date().toISOString().slice(0, 10)}.md`;
 		downloadBlob(blob, filename);
@@ -1011,8 +1070,56 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
 		</div>
 
 		<div class="modal-footer">
+			<!-- 進捗インジケータ -->
+			{#if isExporting}
+				<div class="progress-container">
+					<div class="progress-header">
+						<span class="progress-stage">{exportProgress.stage}</span>
+						<span class="progress-percentage">{Math.round(exportProgress.current)}%</span>
+					</div>
+					<div class="progress-bar">
+						<div
+							class="progress-fill"
+							style:width="{(exportProgress.current / exportProgress.total) * 100}%"
+						></div>
+					</div>
+					<div class="progress-message">{exportProgress.message}</div>
+				</div>
+			{/if}
+
+			<!-- エラー表示 -->
+			{#if exportError}
+				<div class="error-container">
+					<div class="error-header">
+						<span class="error-icon">⚠️</span>
+						<span class="error-title">エクスポートエラー</span>
+					</div>
+					<div class="error-message">{exportError}</div>
+					<div class="error-actions">
+						<button class="btn btn-secondary btn-small" onclick={resetExportState}>
+							🔄 再試行
+						</button>
+					</div>
+				</div>
+			{/if}
+
+			<!-- 成功表示 -->
+			{#if exportSuccess}
+				<div class="success-container">
+					<div class="success-header">
+						<span class="success-icon">✅</span>
+						<span class="success-title">エクスポート完了</span>
+					</div>
+					<div class="success-message">ファイルが正常にダウンロードされました！</div>
+				</div>
+			{/if}
+
 			<div class="action-buttons">
-				<button class="btn btn-secondary" onclick={copyToClipboard} disabled={!checklist}>
+				<button
+					class="btn btn-secondary"
+					onclick={copyToClipboard}
+					disabled={!checklist || isExporting}
+				>
 					📋 コピー
 				</button>
 
@@ -1282,5 +1389,166 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
 		font-size: 11px;
 		color: #2c3e50;
 		border: 1px solid rgba(52, 152, 219, 0.3);
+	}
+
+	/* 進捗インジケータスタイル */
+	.progress-container {
+		margin-bottom: 20px;
+		padding: 16px;
+		background: linear-gradient(135deg, #e8f4fd, #d1ecf1);
+		border-radius: 12px;
+		border-left: 4px solid #3498db;
+	}
+
+	.progress-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 8px;
+	}
+
+	.progress-stage {
+		font-weight: 600;
+		color: #2c3e50;
+		font-size: 14px;
+	}
+
+	.progress-percentage {
+		font-weight: 700;
+		color: #3498db;
+		font-size: 14px;
+	}
+
+	.progress-bar {
+		height: 8px;
+		background: rgba(52, 152, 219, 0.2);
+		border-radius: 4px;
+		overflow: hidden;
+		margin-bottom: 8px;
+	}
+
+	.progress-fill {
+		height: 100%;
+		background: linear-gradient(90deg, #3498db, #2980b9);
+		border-radius: 4px;
+		transition: width 0.3s ease;
+		position: relative;
+	}
+
+	.progress-fill::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+		animation: shimmer 2s infinite;
+	}
+
+	@keyframes shimmer {
+		0% {
+			transform: translateX(-100%);
+		}
+		100% {
+			transform: translateX(100%);
+		}
+	}
+
+	.progress-message {
+		font-size: 13px;
+		color: #5a6c7d;
+		font-style: italic;
+	}
+
+	/* エラー表示スタイル */
+	.error-container {
+		margin-bottom: 20px;
+		padding: 16px;
+		background: linear-gradient(135deg, #fdebeb, #f1d4d4);
+		border-radius: 12px;
+		border-left: 4px solid #e74c3c;
+	}
+
+	.error-header {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin-bottom: 8px;
+	}
+
+	.error-icon {
+		font-size: 16px;
+	}
+
+	.error-title {
+		font-weight: 600;
+		color: #c0392b;
+		font-size: 14px;
+	}
+
+	.error-message {
+		color: #721c24;
+		font-size: 13px;
+		line-height: 1.4;
+		margin-bottom: 12px;
+	}
+
+	.error-actions {
+		display: flex;
+		gap: 8px;
+	}
+
+	.btn-small {
+		padding: 6px 12px;
+		font-size: 12px;
+	}
+
+	/* 成功表示スタイル */
+	.success-container {
+		margin-bottom: 20px;
+		padding: 16px;
+		background: linear-gradient(135deg, #ebf7eb, #d4f1d4);
+		border-radius: 12px;
+		border-left: 4px solid #27ae60;
+	}
+
+	.success-header {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin-bottom: 8px;
+	}
+
+	.success-icon {
+		font-size: 16px;
+	}
+
+	.success-title {
+		font-weight: 600;
+		color: #1e8449;
+		font-size: 14px;
+	}
+
+	.success-message {
+		color: #145a32;
+		font-size: 13px;
+		line-height: 1.4;
+	}
+
+	/* レスポンシブ対応 */
+	@media (max-width: 480px) {
+		.progress-header {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 4px;
+		}
+
+		.error-header,
+		.success-header {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 4px;
+		}
 	}
 </style>

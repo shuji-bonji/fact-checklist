@@ -1,6 +1,6 @@
 # 🔍 実用的事実確認チェックシート
 
-> 情報の信頼性を科学的・体系的に評価するためのPWA（Progressive Web App）
+> 情報の信頼性を科学的・体系的に評価するための高度PWA（Progressive Web App）
 
 [![Build and Deploy](https://github.com/shuji-bonji/fact-checklist/actions/workflows/deploy.yml/badge.svg)](https://github.com/shuji-bonji/fact-checklist/actions/workflows/deploy.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -11,21 +11,22 @@
 
 ## 🌟 概要
 
-実用的事実確認チェックシートは、インターネット上の情報の信頼性を科学的・体系的に評価するためのウェブアプリケーションです。偽情報やミスリーディングな情報が氾濫する現代において、情報リテラシーの向上を支援します。
+実用的事実確認チェックシートは、インターネット上の情報の信頼性を科学的・体系的に評価するための**企業レベル高度PWA**です。偽情報やミスリーディングな情報が氾濫する現代において、情報リテラシーの向上を支援します。
 
 > [!IMPORTANT]
 > この「実用的事実確認チェックシート」プロジェクト(Github)は、人間のエンジニア（@shuji-bonji）と生成AI（Claude）との協働によって作成されています。
 
 ### 🎯 主な特徴
 
-- **📱 PWA対応**: オフラインでも利用可能、モバイルアプリのような体験
+- **📱 高度PWA対応**: プラットフォーム適応型機能・完全オフライン動作
 - **🔐 完全プライベート**: すべてのデータは端末内に保存、サーバーへの送信なし
 - **📊 科学的評価**: 4カテゴリ20項目の包括的チェック
 - **🎨 レスポンシブデザイン**: デスクトップ・モバイル両対応
 - **🌙 ダークモード**: システム設定に連動
-- **📄 多形式エクスポート**: PDF・HTML・JSON・Markdown形式で結果出力
+- **📄 高度PDF生成**: 日本語フォント・透かし・目次・メタデータ対応
 - **🔄 履歴管理**: 過去の評価結果を保存・参照
 - **♿ アクセシビリティ**: WCAG準拠のユニバーサルデザイン
+- **⚡ パフォーマンス最適化**: フォントキャッシュ・進捗表示・エラーハンドリング
 
 ## 🚀 クイックスタート
 
@@ -107,12 +108,12 @@ npm run dev
 - **[GitHub Pages](https://pages.github.com/)** - ホスティング
 - **[GitHub Actions](https://github.com/features/actions)** - CI/CD
 
-### エクスポート機能
+### 高度機能
 
-- **[jsPDF](https://github.com/parallax/jsPDF)** - PDF生成
+- **[jsPDF](https://github.com/parallax/jsPDF)** - 企業レベルPDF生成（日本語フォント・透かし・目次）
 - **[html2canvas](https://html2canvas.hertzen.com/)** - HTML→画像変換
-- **[Markdown](https://daringfireball.net/projects/markdown/)** - テキストベース出力
-- **JSON** - データ形式出力
+- **フォントキャッシュシステム** - パフォーマンス最適化
+- **プラットフォーム適応** - デバイス別最適化
 
 ### 開発ツール
 
@@ -130,10 +131,15 @@ fact-checklist/
 │   │   │   ├── CheckSection.svelte     # カテゴリセクション
 │   │   │   ├── CheckItem.svelte        # チェック項目
 │   │   │   ├── ScoreDisplay.svelte     # スコア表示
-│   │   │   ├── ExportModal.svelte      # エクスポート機能
+│   │   │   ├── ExportModal.svelte      # 高度エクスポート機能
 │   │   │   └── HistorySidebar.svelte   # 履歴サイドバー
 │   │   ├── stores/             # 状態管理
-│   │   │   └── checklistStore.svelte.ts
+│   │   │   ├── checklistStore.svelte.ts
+│   │   │   └── platformStore.svelte.ts
+│   │   ├── utils/              # ユーティリティ
+│   │   │   ├── reliablePDFGenerator.ts # 高度PDF生成器
+│   │   │   ├── fontToBase64.ts         # フォント処理
+│   │   │   └── indexedDBStorage.ts     # データ永続化
 │   │   ├── types/              # TypeScript型定義
 │   │   │   └── checklist.ts
 │   │   └── data/               # チェックリストデータ
@@ -141,11 +147,17 @@ fact-checklist/
 │   ├── routes/                 # SvelteKitルーティング
 │   │   ├── +layout.svelte      # 共通レイアウト
 │   │   ├── +page.svelte        # メインページ
+│   │   ├── about/              # アプリについて
+│   │   ├── help/               # ヘルプ・使い方
+│   │   ├── privacy/            # プライバシーポリシー
 │   │   └── checklist/[id]/     # 結果表示ページ
 │   ├── app.html                # HTMLテンプレート
 │   └── service-worker.js       # サービスワーカー
 ├── static/                     # 静的ファイル
-├── tests/                      # テストファイル
+│   ├── fonts/                  # 日本語フォント
+│   │   ├── NotoSansJP-Regular.ttf
+│   │   └── NotoSansJP-Bold.ttf
+│   └── icons/                  # PWAアイコン
 └── docs/                       # ドキュメント
 ```
 
@@ -160,12 +172,22 @@ fact-checklist/
 5. **結果保存**: 自動的に履歴に保存
 6. **エクスポート**: 必要に応じて各種形式で出力
 
-### 2. エクスポート機能
+### 2. 高度エクスポート機能
 
-- **📄 PDF**: 印刷・共有に最適（セクション分割対応）
-- **🌐 HTML**: ブラウザで表示可能（セクション構造化）
-- **📊 JSON**: データ形式（プログラム処理用）
-- **📝 Markdown**: テキスト形式（GitHub/エディタで表示可能）
+#### 📄 PDF（企業レベル品質）
+
+- **日本語フォント**: Base64埋め込みで確実な表示
+- **透かし機能**: セキュリティ強化
+- **目次自動生成**: 階層化された目次
+- **メタデータ**: 検索可能で管理しやすい
+- **進捗表示**: リアルタイム生成進捗
+- **エラーハンドリング**: ユーザーフレンドリーな対応
+
+#### 🌐 その他形式
+
+- **HTML**: ブラウザで表示可能（セクション構造化）
+- **JSON**: データ形式（プログラム処理用）
+- **Markdown**: テキスト形式（GitHub/エディタで表示可能）
 
 ### 3. 判定基準
 
@@ -251,6 +273,27 @@ npm run test:coverage
 - **First Contentful Paint**: < 1.2s
 - **Time to Interactive**: < 2.5s
 - **オフライン対応**: 完全対応
+- **フォントキャッシュ**: 初回読み込み後は瞬時
+
+## ⚡ 高度PWA機能
+
+### プラットフォーム適応型機能
+
+- **ネイティブアプリ検出**: スタンドアロンモード・TWA対応
+- **OS別最適化**: iOS・Android・Windows・macOS・Linux
+- **能力ベース機能切り替え**: デバイス性能に応じた最適化
+
+### ファイルシステム統合
+
+- **File System Access API**: ネイティブファイル保存
+- **Web Share API**: ファイル共有機能
+- **Canvas-to-Blob**: 画像・PDF生成
+
+### オフライン・キャッシュ戦略
+
+- **Service Worker**: 完全オフライン動作
+- **フォントキャッシュ**: メモリベース高速化
+- **静的リソース**: 効率的キャッシュ管理
 
 ## 🔐 プライバシー・セキュリティ
 
@@ -281,8 +324,8 @@ npm run test:coverage
 
 - **インストール**: Chrome, Edge, Safari (iOS/macOS)
 - **オフライン**: 全対応ブラウザ
-- **プッシュ通知**: Chrome, Firefox, Edge
-- **バックグラウンド同期**: Chrome, Edge
+- **ファイルシステム**: Chrome, Edge
+- **Web Share**: Chrome, Safari, Edge
 
 ## 🤝 コントリビューション
 
@@ -316,6 +359,7 @@ npm run test:coverage
 - **[Svelte Team](https://svelte.dev/)** - 素晴らしいフレームワークの提供
 - **[TypeScript Team](https://www.typescriptlang.org/)** - 型安全な開発環境
 - **[Vite Team](https://vitejs.dev/)** - 高速なビルドツール
+- **[jsPDF Team](https://github.com/parallax/jsPDF)** - 高機能PDF生成ライブラリ
 - **[Open Source Community](https://opensource.org/)** - 多くのライブラリとツール
 
 ## 📞 サポート・フィードバック
@@ -324,7 +368,6 @@ npm run test:coverage
   [バグ報告・機能要望](https://github.com/shuji-bonji/fact-checklist/issues)
 - **Discussions**:
   [質問・議論](https://github.com/shuji-bonji/fact-checklist/discussions)
-- **Email**: [開発者への連絡](mailto:your-email@example.com)
 
 ---
 
