@@ -337,7 +337,6 @@
 	<div class="error-container">
 		<h1>❌ チェックリストが見つかりません</h1>
 		<p>指定されたチェックリストは存在しないか、削除された可能性があります。</p>
-		<button class="btn btn-primary" onclick={() => goto(base || '/')}> 🏠 ホームに戻る </button>
 	</div>
 {/if}
 
@@ -345,7 +344,7 @@
 	.container {
 		max-width: 1400px;
 		margin: 0 auto;
-		padding: 20px;
+		padding: var(--spacing-6);
 	}
 
 	.loading-container,
@@ -452,39 +451,68 @@
 
 	/* メインコンテンツ */
 	.main-content {
-		gap: var(--spacing-lg);
+		gap: var(--spacing-6);
 		align-items: start;
 	}
 
 	.card {
-		background: var(--bg-color);
-		border-radius: var(--border-radius);
-		box-shadow: var(--shadow);
-		padding: var(--spacing-lg);
-		margin-bottom: var(--spacing-md);
+		background: rgba(255, 255, 255, 0.75);
+		border: 1px solid rgba(255, 255, 255, 0.4);
+		border-radius: var(--radius-xl);
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+		backdrop-filter: blur(16px);
+		-webkit-backdrop-filter: blur(16px);
+		padding: var(--spacing-6);
+		margin-bottom: var(--spacing-4);
+		position: relative;
+		overflow: hidden;
+	}
+
+	.card::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: var(--gradient-mesh);
+		opacity: 0.02;
+		pointer-events: none;
 	}
 
 	.card h2,
 	.card h3 {
-		margin: 0 0 var(--spacing-md) 0;
+		margin: 0 0 var(--spacing-4) 0;
 		color: var(--text-color);
+		font-family: var(--font-family-heading);
+		font-weight: var(--font-weight-semibold);
+		position: relative;
+		z-index: 1;
 	}
 
-	/* スコアサマリー */
+	/* スコアサマリー - モダンデザイン */
 	.score-grid {
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
-		gap: var(--spacing-sm);
-		margin-bottom: var(--spacing-md);
+		gap: var(--spacing-3);
+		margin-bottom: var(--spacing-4);
 	}
 
 	.score-card {
 		display: flex;
 		align-items: center;
-		gap: var(--spacing-sm);
-		padding: var(--spacing-sm);
-		border-radius: var(--border-radius-sm);
+		gap: var(--spacing-3);
+		padding: var(--spacing-3);
+		border-radius: var(--radius-lg);
 		border-left: 4px solid;
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
+		transition: all var(--transition-base) var(--ease-out);
+	}
+
+	.score-card:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 	}
 
 	.score-card.critical {
@@ -520,43 +548,69 @@
 	}
 
 	.total-score-display {
-		background: var(--surface-color);
-		padding: var(--spacing-md);
-		border-radius: var(--border-radius-sm);
-		margin-bottom: var(--spacing-md);
+		background: rgba(255, 255, 255, 0.6);
+		border: 1px solid rgba(255, 255, 255, 0.5);
+		padding: var(--spacing-4);
+		border-radius: var(--radius-lg);
+		margin-bottom: var(--spacing-4);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 	}
 
 	.total-score {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		margin-bottom: var(--spacing-sm);
+		margin-bottom: var(--spacing-3);
 	}
 
 	.total-label {
-		font-size: 1.1em;
-		font-weight: 600;
+		font-size: var(--font-size-lg);
+		font-weight: var(--font-weight-semibold);
 		color: var(--text-color);
+		font-family: var(--font-family-heading);
 	}
 
 	.total-value {
-		font-size: 1.3em;
-		font-weight: bold;
+		font-size: var(--font-size-xl);
+		font-weight: var(--font-weight-bold);
 		color: var(--text-color);
+		font-family: var(--font-family-heading);
 	}
 
 	.confidence-meter {
 		width: 100%;
 		height: 8px;
-		background: var(--border-color);
-		border-radius: 4px;
+		background: var(--border-color-subtle);
+		border-radius: var(--radius-full);
 		overflow: hidden;
-		margin-bottom: var(--spacing-xs);
+		margin-bottom: var(--spacing-2);
+		box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 	}
 
 	.confidence-bar {
 		height: 100%;
-		transition: width 0.5s ease;
+		transition: width 0.8s var(--ease-out);
+		border-radius: var(--radius-full);
+		position: relative;
+		overflow: hidden;
+	}
+
+	.confidence-bar::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: linear-gradient(
+			90deg,
+			transparent 0%,
+			rgba(255, 255, 255, 0.3) 50%,
+			transparent 100%
+		);
+		animation: shimmer 2s infinite;
 	}
 
 	.confidence-bar.high {
@@ -574,8 +628,9 @@
 
 	.confidence-text {
 		text-align: center;
-		font-size: 0.9em;
-		color: var(--text-muted);
+		font-size: var(--font-size-sm);
+		color: var(--text-color-secondary);
+		font-weight: var(--font-weight-medium);
 	}
 
 	.final-judgment {
@@ -679,16 +734,31 @@
 	/* サイドバー */
 	.sidebar {
 		position: sticky;
-		top: 20px;
+		top: var(--spacing-6);
 	}
 
 	.advice-content {
-		padding: var(--spacing-sm);
-		background: var(--surface-color);
-		border-radius: var(--border-radius-sm);
-		border-left: 4px solid var(--secondary-color);
+		padding: var(--spacing-3);
+		background: rgba(255, 255, 255, 0.6);
+		border: 1px solid rgba(255, 255, 255, 0.5);
+		border-radius: var(--radius-lg);
 		color: var(--text-color);
-		line-height: 1.5;
+		line-height: var(--line-height-relaxed);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+		position: relative;
+		overflow: hidden;
+	}
+
+	.advice-content::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 4px;
+		height: 100%;
+		background: var(--gradient-primary);
 	}
 
 	.improvement-tips {
@@ -750,32 +820,40 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		gap: var(--spacing-xs);
-		padding: var(--spacing-sm) var(--spacing-md);
+		gap: var(--spacing-2);
+		padding: var(--spacing-3) var(--spacing-4);
 		border: none;
-		border-radius: 25px;
-		font-weight: 600;
+		border-radius: var(--radius-full);
+		font-weight: var(--font-weight-semibold);
+		font-size: var(--font-size-sm);
 		cursor: pointer;
-		transition: all 0.3s ease;
+		transition: all var(--transition-base) var(--ease-out);
 		text-decoration: none;
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
+		position: relative;
+		overflow: hidden;
 	}
 
 	.btn:hover {
-		transform: translateY(-2px);
-		box-shadow: var(--shadow-hover);
+		transform: translateY(-3px);
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
 	}
 
 	.btn-primary {
-		background: linear-gradient(135deg, var(--primary-color), #34495e);
+		background: var(--gradient-primary);
 		color: white;
+		box-shadow: var(--shadow-primary);
 	}
 	.btn-secondary {
-		background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+		background: var(--gradient-secondary);
 		color: white;
+		box-shadow: var(--shadow-secondary);
 	}
 	.btn-success {
-		background: linear-gradient(135deg, var(--success-color), #229954);
+		background: var(--gradient-accent);
 		color: white;
+		box-shadow: var(--shadow-accent);
 	}
 
 	.w-full {
@@ -794,9 +872,18 @@
 		}
 	}
 
+	@keyframes shimmer {
+		0% {
+			transform: translateX(-100%);
+		}
+		100% {
+			transform: translateX(100%);
+		}
+	}
+
 	@media (max-width: 768px) {
 		.container {
-			padding: 10px;
+			padding: var(--spacing-4);
 		}
 
 		.detail-header {

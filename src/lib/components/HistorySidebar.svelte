@@ -69,7 +69,7 @@
 <div class="history-sidebar">
 	<!-- 新規作成ボタン -->
 	<div class="new-checklist card">
-		<button class="btn btn-primary w-full" onclick={createNewChecklist}>
+		<button class="btn btn-ghost w-full new-checklist-btn" onclick={createNewChecklist}>
 			➕ 新しいチェックリスト
 		</button>
 	</div>
@@ -191,6 +191,22 @@
 
 	.w-full {
 		width: 100%;
+	}
+
+	/* 新しいチェックリストボタンを控えめに */
+	.new-checklist-btn {
+		font-size: var(--font-size-sm);
+		padding: var(--spacing-3) var(--spacing-4);
+		opacity: 0.8;
+		background: var(--surface-color);
+		border: 1px solid var(--border-color);
+	}
+
+	.new-checklist-btn:hover {
+		opacity: 1;
+		background: var(--surface-elevated);
+		transform: none;
+		box-shadow: var(--shadow-sm);
 	}
 
 	/* 履歴セクション */

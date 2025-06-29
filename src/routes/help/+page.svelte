@@ -1,7 +1,4 @@
 <script lang="ts">
-	import { base } from '$app/paths';
-	import { goto } from '$app/navigation';
-
 	// ヘルプセクション
 	interface HelpSection {
 		id: string;
@@ -208,10 +205,6 @@
 		}
 	];
 
-	function goHome() {
-		goto(base || '/');
-	}
-
 	function setActiveSection(sectionId: string) {
 		activeSection = sectionId;
 	}
@@ -231,10 +224,9 @@
 	<meta name="description" content="実用的事実確認チェックシートの詳細な使い方ガイドとヘルプ情報" />
 </svelte:head>
 
-<div class="help-container">
+<div class="container">
 	<!-- ヘッダー -->
 	<div class="help-header">
-		<button class="back-btn btn" onclick={goHome}> ← ホームに戻る </button>
 		<h1>📖 ヘルプ・使い方ガイド</h1>
 		<p class="help-subtitle">事実確認チェックシートの使い方を詳しく説明します</p>
 	</div>
@@ -300,96 +292,107 @@
 </div>
 
 <style>
-	.help-container {
-		max-width: 1200px;
+	.container {
+		max-width: 1400px;
 		margin: 0 auto;
-		padding: var(--spacing-lg);
+		padding: var(--spacing-6);
 		min-height: 100vh;
 	}
 
-	/* ヘッダーの視認性改善 */
+	/* ページヘッダー - モダンデザイン */
 	.help-header {
 		text-align: center;
-		margin-bottom: var(--spacing-xl);
-		padding: var(--spacing-xl);
-
-		/* 背景色を明確に設定 */
-		background: linear-gradient(135deg, #2c3e50, #34495e);
-		color: white;
-		border-radius: var(--border-radius);
-		box-shadow: var(--shadow-hover);
-
-		/* 境界線で分離 */
-		border: 2px solid var(--border-color);
+		margin-bottom: var(--spacing-8);
+		padding: var(--spacing-8);
+		background: rgba(255, 255, 255, 0.75);
+		border: 1px solid rgba(255, 255, 255, 0.4);
+		border-radius: var(--radius-2xl);
+		box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+		backdrop-filter: blur(16px);
+		-webkit-backdrop-filter: blur(16px);
 		position: relative;
+		overflow: hidden;
 	}
 
-	.back-btn {
+	.help-header::before {
+		content: '';
 		position: absolute;
-		top: var(--spacing-md);
-		left: var(--spacing-md);
-		background: var(--secondary-color);
-		color: white;
-		text-decoration: none;
-		transition: all 0.3s ease;
-		border: 2px solid transparent;
-	}
-
-	.back-btn:hover {
-		background: #2980b9;
-		transform: translateY(-2px);
-		border-color: rgba(255, 255, 255, 0.3);
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: var(--gradient-primary);
+		opacity: 0.03;
+		pointer-events: none;
 	}
 
 	.help-header h1 {
-		margin: 0 0 var(--spacing-sm) 0;
-		font-size: 2.5em;
-		font-weight: 300;
-		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+		margin: 0 0 var(--spacing-4) 0;
+		font-size: var(--font-size-5xl);
+		font-weight: var(--font-weight-light);
+		font-family: var(--font-family-heading);
+		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		color: var(--text-color);
+		position: relative;
+		z-index: 1;
 	}
 
 	.help-subtitle {
 		margin: 0;
-		opacity: 0.9;
-		font-size: 1.1em;
-		color: rgba(255, 255, 255, 0.9);
+		font-size: var(--font-size-lg);
+		color: var(--text-color-secondary);
+		font-weight: var(--font-weight-medium);
+		position: relative;
+		z-index: 1;
 	}
 
 	.help-main {
 		display: grid;
 		grid-template-columns: 280px 1fr;
-		gap: var(--spacing-xl);
+		gap: var(--spacing-8);
 		align-items: start;
 	}
 
-	/* ナビゲーションの視認性改善 */
+	/* ナビゲーション - モダンデザイン */
 	.help-nav {
 		position: sticky;
-		top: var(--spacing-lg);
+		top: var(--spacing-6);
+		background: rgba(255, 255, 255, 0.75);
+		border: 1px solid rgba(255, 255, 255, 0.4);
+		border-radius: var(--radius-xl);
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+		backdrop-filter: blur(16px);
+		-webkit-backdrop-filter: blur(16px);
+		position: relative;
+		overflow: hidden;
+	}
 
-		/* 背景を明確に分離 */
-		background: var(--surface-color);
-		border: 2px solid var(--border-color);
-		border-radius: var(--border-radius);
-		box-shadow: var(--shadow);
-
-		/* 追加の視覚的分離 */
-		background: linear-gradient(135deg, #f8f9fa, #ffffff);
-		border-left: 6px solid var(--secondary-color);
+	.help-nav::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: var(--gradient-primary);
+		opacity: 0.02;
+		pointer-events: none;
 	}
 
 	.nav-header {
-		padding: var(--spacing-md);
-		border-bottom: 2px solid var(--border-color);
-		background: linear-gradient(135deg, #e8f4fd, #d1ecf1);
+		padding: var(--spacing-4);
+		border-bottom: 1px solid var(--border-color-subtle);
+		background: rgba(var(--primary-rgb), 0.05);
+		position: relative;
+		z-index: 1;
 	}
 
 	.nav-header h2 {
 		margin: 0;
-		font-size: 1.2em;
+		font-size: var(--font-size-lg);
 		color: var(--text-color);
-		font-weight: 600;
-		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+		font-weight: var(--font-weight-semibold);
+		font-family: var(--font-family-heading);
 	}
 
 	.nav-list {
@@ -399,7 +402,7 @@
 	}
 
 	.nav-item {
-		border-bottom: 1px solid var(--border-color);
+		border-bottom: 1px solid var(--border-color-subtle);
 	}
 
 	.nav-item:last-child {
@@ -409,141 +412,186 @@
 	.nav-link {
 		display: flex;
 		align-items: center;
-		gap: var(--spacing-sm);
-		padding: var(--spacing-md);
+		gap: var(--spacing-3);
+		padding: var(--spacing-4);
 		width: 100%;
 		background: none;
 		border: none;
 		text-align: left;
 		cursor: pointer;
-		transition: all 0.3s ease;
+		transition: all var(--transition-base) var(--ease-out);
+		color: var(--text-color);
+		font-weight: var(--font-weight-medium);
+		position: relative;
+		z-index: 1;
+		border-radius: var(--radius-md);
+		margin: var(--spacing-1);
+	}
 
-		/* テキストの視認性向上 */
-		color: #2c3e50;
-		font-weight: 500;
+	.nav-link::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: var(--gradient-primary);
+		opacity: 0;
+		transition: opacity var(--transition-base) var(--ease-out);
+		border-radius: var(--radius-md);
+	}
+
+	.nav-link:hover::before {
+		opacity: 0.1;
 	}
 
 	.nav-link:hover {
-		background: linear-gradient(135deg, #e8f4fd, #d1ecf1);
 		transform: translateX(4px);
-		border-left: 3px solid var(--secondary-color);
+		color: white;
 	}
 
 	.nav-link.active {
-		background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+		background: var(--gradient-primary);
 		color: white;
-		font-weight: 600;
-		box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+		font-weight: var(--font-weight-semibold);
+		box-shadow: var(--shadow-md);
+	}
+
+	.nav-link.active::before {
+		opacity: 0;
 	}
 
 	.nav-emoji {
-		font-size: 1.2em;
+		font-size: var(--font-size-lg);
+		position: relative;
+		z-index: 1;
 	}
 
 	.nav-title {
-		font-size: 0.95em;
-		line-height: 1.3;
+		font-size: var(--font-size-sm);
+		line-height: var(--line-height-tight);
+		position: relative;
+		z-index: 1;
 	}
 
-	/* コンテンツエリアの視認性改善 */
+	/* コンテンツエリア - モダンデザイン */
 	.help-content {
-		/* 背景を明確に分離 */
-		background: var(--bg-color);
-		border: 2px solid var(--border-color);
-		border-radius: var(--border-radius);
-		box-shadow: var(--shadow-hover);
+		background: rgba(255, 255, 255, 0.75);
+		border: 1px solid rgba(255, 255, 255, 0.4);
+		border-radius: var(--radius-xl);
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+		backdrop-filter: blur(16px);
+		-webkit-backdrop-filter: blur(16px);
+		position: relative;
+		overflow: hidden;
+	}
 
-		/* 追加の視覚的分離 */
-		background: linear-gradient(135deg, #ffffff, #f8f9fa);
-		border-left: 6px solid var(--success-color);
+	.help-content::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: var(--gradient-accent);
+		opacity: 0.02;
+		pointer-events: none;
 	}
 
 	.content-section {
-		padding: var(--spacing-xl);
+		padding: var(--spacing-8);
+		position: relative;
+		z-index: 1;
 	}
 
 	.section-header {
-		margin-bottom: var(--spacing-xl);
-		padding-bottom: var(--spacing-lg);
-		border-bottom: 3px solid var(--border-color);
+		margin-bottom: var(--spacing-8);
+		padding-bottom: var(--spacing-6);
+		border-bottom: 2px solid var(--border-color-subtle);
 	}
 
 	.section-title {
-		margin: 0 0 var(--spacing-md) 0;
-		font-size: 2em;
-		font-weight: 400;
-
-		/* タイトルの視認性向上 */
+		margin: 0 0 var(--spacing-4) 0;
+		font-size: var(--font-size-4xl);
+		font-weight: var(--font-weight-light);
 		color: var(--text-color);
-		text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+		font-family: var(--font-family-heading);
+		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	}
 
 	.section-description {
 		margin: 0;
-		font-size: 1.1em;
-		line-height: 1.5;
-
-		/* 説明文の視認性向上 */
-		color: #34495e;
-		font-weight: 500;
+		font-size: var(--font-size-lg);
+		line-height: var(--line-height-relaxed);
+		color: var(--text-color-secondary);
+		font-weight: var(--font-weight-medium);
 	}
 
 	.section-content {
 		display: flex;
 		flex-direction: column;
-		gap: var(--spacing-lg);
+		gap: var(--spacing-6);
 	}
 
 	.main-content-text {
-		font-size: 1.05em;
-		line-height: 1.6;
-
-		/* メインテキストの視認性向上 */
+		font-size: var(--font-size-base);
+		line-height: var(--line-height-relaxed);
 		color: var(--text-color);
-		background: rgba(255, 255, 255, 0.8);
-		padding: var(--spacing-md);
-		border-radius: var(--border-radius-sm);
-		border: 1px solid var(--border-color);
+		background: rgba(255, 255, 255, 0.5);
+		padding: var(--spacing-4);
+		border-radius: var(--radius-md);
+		border: 1px solid var(--border-color-subtle);
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
 	}
 
 	.sub-sections {
 		display: flex;
 		flex-direction: column;
-		gap: var(--spacing-lg);
+		gap: var(--spacing-6);
 	}
 
 	.sub-section {
-		background: var(--surface-color);
-		border: 1px solid var(--border-color);
-		border-radius: var(--border-radius-sm);
-		padding: var(--spacing-lg);
+		background: rgba(255, 255, 255, 0.6);
+		border: 1px solid rgba(255, 255, 255, 0.5);
+		border-radius: var(--radius-lg);
+		padding: var(--spacing-6);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		position: relative;
+		overflow: hidden;
+	}
 
-		/* サブセクションの視認性向上 */
-		background: linear-gradient(135deg, #f0f7ff, #e8f4fd);
-		border-left: 4px solid var(--secondary-color);
-		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+	.sub-section::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 4px;
+		height: 100%;
+		background: var(--gradient-primary);
 	}
 
 	.sub-section-title {
-		margin: 0 0 var(--spacing-md) 0;
-		font-size: 1.3em;
-		font-weight: 600;
-
-		/* サブタイトルの視認性向上 */
+		margin: 0 0 var(--spacing-4) 0;
+		font-size: var(--font-size-xl);
+		font-weight: var(--font-weight-semibold);
 		color: var(--text-color);
-		border-bottom: 2px solid var(--border-color);
-		padding-bottom: var(--spacing-xs);
+		font-family: var(--font-family-heading);
+		border-bottom: 1px solid var(--border-color-subtle);
+		padding-bottom: var(--spacing-2);
 	}
 
 	.sub-section-content {
-		line-height: 1.6;
-
-		/* サブコンテンツの視認性向上 */
-		color: #2c3e50;
-		font-weight: 400;
-		background: rgba(255, 255, 255, 0.7);
-		padding: var(--spacing-sm);
-		border-radius: var(--border-radius-sm);
+		line-height: var(--line-height-relaxed);
+		color: var(--text-color);
+		font-weight: var(--font-weight-normal);
+		background: rgba(255, 255, 255, 0.4);
+		padding: var(--spacing-3);
+		border-radius: var(--radius-md);
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
 	}
 
 	/* ダークモード対応の強化 */
@@ -609,19 +657,12 @@
 	}
 
 	@media (max-width: 768px) {
-		.help-container {
-			padding: var(--spacing-md);
+		.container {
+			padding: var(--spacing-4);
 		}
 
 		.help-header {
 			padding: var(--spacing-md);
-		}
-
-		.back-btn {
-			position: relative;
-			top: auto;
-			left: auto;
-			margin-bottom: var(--spacing-md);
 		}
 
 		.help-header h1 {
@@ -643,16 +684,8 @@
 
 	/* アクセシビリティ向上 */
 	@media (prefers-reduced-motion: reduce) {
-		.nav-link,
-		.back-btn {
-			transition: none;
+		* {
+			transition: none !important;
 		}
-	}
-
-	/* フォーカス時の視認性向上 */
-	.nav-link:focus,
-	.back-btn:focus {
-		outline: 3px solid var(--secondary-color);
-		outline-offset: 3px;
 	}
 </style>
