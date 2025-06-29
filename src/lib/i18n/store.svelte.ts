@@ -154,15 +154,35 @@ class I18nStore {
 		try {
 			// 動的インポートで翻訳ファイルを読み込み
 			const translationModule = await import(`./translations/${language}.ts`);
-			const translations: TranslationKeys =
+			const baseTranslations: TranslationKeys =
 				translationModule.default ?? translationModule.translations;
 
-			if (!translations) {
+			if (!baseTranslations) {
 				throw new Error(`No translations found for language: ${language}`);
 			}
 
+			// checklistItemsなどの追加データを統合
+			const mergedTranslations: TranslationKeys & Record<string, unknown> = {
+				...baseTranslations
+			};
+			if (translationModule.checklistItems) {
+				(mergedTranslations as Record<string, unknown>).checklistItems =
+					translationModule.checklistItems;
+			}
+			if (translationModule.confidenceTexts) {
+				(mergedTranslations as Record<string, unknown>).confidenceTexts =
+					translationModule.confidenceTexts;
+			}
+			if (translationModule.judgmentAdvices) {
+				(mergedTranslations as Record<string, unknown>).judgmentAdvices =
+					translationModule.judgmentAdvices;
+			}
+			if (translationModule.uiTexts) {
+				(mergedTranslations as Record<string, unknown>).uiTexts = translationModule.uiTexts;
+			}
+
 			// 翻訳データを保存
-			this._translations[language] = translations;
+			this._translations[language] = mergedTranslations;
 
 			console.log(`✅ Translations loaded for: ${language}`);
 		} catch (error) {

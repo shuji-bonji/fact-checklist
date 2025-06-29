@@ -284,6 +284,68 @@ export const factChecklistI18n = {
 		return safeTranslator(`categories.${categoryId}.emoji`);
 	},
 
+	// チェックリスト項目の翻訳
+	getCheckItemTitle: (itemId: string) => {
+		const translations = i18nStore.translations;
+		const safeTranslator = createSafeTranslator(translations as unknown as NestedRecord);
+		return safeTranslator(`checklistItems.${itemId}.title`);
+	},
+	getCheckItemDescription: (itemId: string) => {
+		const translations = i18nStore.translations;
+		const safeTranslator = createSafeTranslator(translations as unknown as NestedRecord);
+		return safeTranslator(`checklistItems.${itemId}.description`);
+	},
+	getCheckItemGuideTitle: (itemId: string) => {
+		const translations = i18nStore.translations;
+		const safeTranslator = createSafeTranslator(translations as unknown as NestedRecord);
+		return safeTranslator(`checklistItems.${itemId}.guideTitle`);
+	},
+	getCheckItemGuideContent: (itemId: string) => {
+		const translations = i18nStore.translations;
+		const safeTranslator = createSafeTranslator(translations as unknown as NestedRecord);
+		return safeTranslator(`checklistItems.${itemId}.guideContent`);
+	},
+	getCheckItemExamplesGood: (itemId: string): string[] => {
+		try {
+			const translations = i18nStore.translations;
+			const safeTranslator = createSafeTranslator(translations as unknown as NestedRecord);
+			// 配列の各要素を取得
+			const examples: string[] = [];
+			for (let i = 0; i < 10; i++) {
+				// 最大10個まで
+				const example = safeTranslator(`checklistItems.${itemId}.examplesGood.${i}`);
+				if (example && example !== `checklistItems.${itemId}.examplesGood.${i}`) {
+					examples.push(example);
+				} else {
+					break;
+				}
+			}
+			return examples;
+		} catch {
+			return [];
+		}
+	},
+	getCheckItemExamplesBad: (itemId: string): string[] => {
+		try {
+			const translations = i18nStore.translations;
+			const safeTranslator = createSafeTranslator(translations as unknown as NestedRecord);
+			// 配列の各要素を取得
+			const examples: string[] = [];
+			for (let i = 0; i < 10; i++) {
+				// 最大10個まで
+				const example = safeTranslator(`checklistItems.${itemId}.examplesBad.${i}`);
+				if (example && example !== `checklistItems.${itemId}.examplesBad.${i}`) {
+					examples.push(example);
+				} else {
+					break;
+				}
+			}
+			return examples;
+		} catch {
+			return [];
+		}
+	},
+
 	getJudgmentText: (judgment: string) => {
 		const translations = i18nStore.translations;
 		const safeTranslator = createSafeTranslator(translations as unknown as NestedRecord);

@@ -5,7 +5,7 @@
 	import { browser } from '$app/environment';
 	import { base } from '$app/paths';
 	import { checklistStore } from '$lib/stores/checklistStore.svelte.js';
-	import { CATEGORIES } from '$lib/data/checklist-items.js';
+	import { getCategories } from '$lib/data/checklist-items.js';
 	import type { JudgmentType } from '$lib/types/checklist.js';
 
 	import CheckSection from '$lib/components/CheckSection.svelte';
@@ -23,6 +23,7 @@
 	const collapsedSections = $state<Record<string, boolean>>({});
 
 	// Derived state
+	const categories = $derived(getCategories());
 	const currentChecklist = $derived(checklistStore.currentChecklist);
 	const score = $derived(checklistStore.score);
 	const confidenceLevel = $derived(checklistStore.confidenceLevel);
@@ -65,7 +66,7 @@
 		}
 
 		// デフォルトで「クリティカル評価」以外を折りたたみ
-		CATEGORIES.forEach((category, index) => {
+		categories.forEach((category, index) => {
 			if (index > 0) {
 				collapsedSections[category.id] = true;
 			}
@@ -216,7 +217,7 @@
 			</div>
 
 			<!-- チェックセクション -->
-			{#each CATEGORIES as category (category.id)}
+			{#each categories as category (category.id)}
 				<CheckSection
 					{category}
 					items={currentChecklist?.items.filter(item => item.category.id === category.id) || []}

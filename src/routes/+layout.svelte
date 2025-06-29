@@ -8,6 +8,10 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 
+	// i18n
+	import { initializeI18n, t } from '$lib/i18n/index.js';
+	import LanguageSwitcher from '$lib/components/LanguageSwitcher.svelte';
+
 	interface Props {
 		children: import('svelte').Snippet;
 	}
@@ -25,6 +29,14 @@
 	const isPrivacyPage = $derived(currentPath.includes('/privacy'));
 
 	onMount(async () => {
+		// i18n初期化
+		try {
+			await initializeI18n();
+			console.log('✅ i18n initialized in layout');
+		} catch (error) {
+			console.error('❌ Failed to initialize i18n:', error);
+		}
+
 		// ローディング画面を確実に非表示にする（ブラウザ環境でのみ）
 		if (browser) {
 			document.body.classList.add('app-loaded');
@@ -88,23 +100,20 @@
 <svelte:head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<meta
-		name="description"
-		content="情報の信頼性を科学的・体系的に評価するための実用的事実確認チェックシート"
-	/>
-	<meta name="keywords" content="事実確認,ファクトチェック,情報検証,信頼性評価,PWA" />
-	<meta name="author" content="Fact Checklist Team" />
+	<meta name="description" content={t('app.description')} />
+	<!-- キーワードは各言語で適切に設定 -->
+	<meta name="author" content={t('app.author')} />
 
 	<!-- PWA用メタタグ -->
 	<meta name="theme-color" content="#2c3e50" />
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta name="apple-mobile-web-app-status-bar-style" content="default" />
-	<meta name="apple-mobile-web-app-title" content="事実確認チェックシート" />
+	<meta name="apple-mobile-web-app-title" content={t('app.title')} />
 
 	<!-- Open Graph -->
 	<meta property="og:type" content="website" />
-	<meta property="og:title" content="実用的事実確認チェックシート" />
-	<meta property="og:description" content="情報の信頼性を科学的・体系的に評価するためのPWA" />
+	<meta property="og:title" content={t('app.title')} />
+	<meta property="og:description" content={t('app.description')} />
 	<meta property="og:locale" content="ja_JP" />
 
 	<!-- アイコン -->
@@ -112,7 +121,7 @@
 	<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 	<!-- Vite PWAが自動でmanifestリンクを挿入するため、手動linkは削除 -->
 
-	<title>実用的事実確認チェックシート</title>
+	<title>{t('app.title')}</title>
 </svelte:head>
 
 <svelte:window onclick={handleClickOutside} />
@@ -133,15 +142,17 @@
 			</div>
 			<div class="nav-bottom">
 				<div class="nav-menu desktop-menu">
-					<button class="nav-link" class:active={isHomePage} onclick={goToHome}> 🏠 ホーム </button>
+					<button class="nav-link" class:active={isHomePage} onclick={goToHome}>
+						🏠 {t('navigation.home')}
+					</button>
 					<button class="nav-link" class:active={isAboutPage} onclick={goToAbout}>
-						📖 アプリについて
+						📖 {t('navigation.about')}
 					</button>
 					<button class="nav-link" class:active={isHelpPage} onclick={goToHelp}>
-						❓ ヘルプ・使い方
+						❓ {t('navigation.help')}
 					</button>
 					<button class="nav-link" class:active={isPrivacyPage} onclick={goToPrivacy}>
-						🔐 プライバシー
+						🔐 {t('navigation.privacy')}
 					</button>
 				</div>
 			</div>
@@ -152,48 +163,60 @@
 			<button class="nav-brand" onclick={goToHome}>
 				<span class="nav-icon">🔍</span>
 				<div class="brand-text">
-					<span class="brand-title">事実確認チェックシート</span>
-					<span class="brand-subtitle">情報の信頼性を科学的評価</span>
+					<span class="brand-title">{t('app.title')}</span>
+					<span class="brand-subtitle">{t('app.subtitle')}</span>
 				</div>
 			</button>
 
 			<!-- デスクトップメニュー -->
 			<div class="nav-menu desktop-menu">
-				<button class="nav-link" class:active={isHomePage} onclick={goToHome}> 🏠 ホーム </button>
+				<button class="nav-link" class:active={isHomePage} onclick={goToHome}>
+					🏠 {t('navigation.home')}
+				</button>
 				<button class="nav-link" class:active={isAboutPage} onclick={goToAbout}>
-					📖 アプリについて
+					📖 {t('navigation.about')}
 				</button>
 				<button class="nav-link" class:active={isHelpPage} onclick={goToHelp}>
-					❓ ヘルプ・使い方
+					❓ {t('navigation.help')}
 				</button>
 				<button class="nav-link" class:active={isPrivacyPage} onclick={goToPrivacy}>
-					🔐 プライバシー
+					🔐 {t('navigation.privacy')}
 				</button>
 			</div>
 
 			<!-- モバイルメニューボタン -->
-			<button class="mobile-menu-toggle" onclick={toggleMenu} aria-label="メニューを開閉">
+			<button
+				class="mobile-menu-toggle"
+				onclick={toggleMenu}
+				aria-label={t('accessibility.openMenu')}
+			>
 				<span class="hamburger-line"></span>
 				<span class="hamburger-line"></span>
 				<span class="hamburger-line"></span>
 			</button>
+			<!-- 言語切り替え -->
+			<LanguageSwitcher />
 		</div>
 
 		<!-- モバイルメニュー -->
 		{#if isMenuOpen}
 			<div class="mobile-menu">
 				<button class="mobile-nav-link" class:active={isHomePage} onclick={goToHome}>
-					🏠 ホーム
+					🏠 {t('navigation.home')}
 				</button>
 				<button class="mobile-nav-link" class:active={isAboutPage} onclick={goToAbout}>
-					📖 アプリについて
+					📖 {t('navigation.about')}
 				</button>
 				<button class="mobile-nav-link" class:active={isHelpPage} onclick={goToHelp}>
-					❓ ヘルプ・使い方
+					❓ {t('navigation.help')}
 				</button>
 				<button class="mobile-nav-link" class:active={isPrivacyPage} onclick={goToPrivacy}>
-					🔐 プライバシー
+					🔐 {t('navigation.privacy')}
 				</button>
+				<!-- モバイル用言語切り替え -->
+				<div class="mobile-language-switcher">
+					<LanguageSwitcher />
+				</div>
 			</div>
 		{/if}
 	</nav>
@@ -442,6 +465,15 @@
 
 	.mobile-nav-link.active::before {
 		opacity: 0;
+	}
+
+	/* 言語切り替えスタイル */
+	.mobile-language-switcher {
+		padding: var(--spacing-4) 0;
+		border-top: 1px solid var(--border-color);
+		margin-top: var(--spacing-4);
+		display: flex;
+		justify-content: center;
 	}
 
 	/* ダークモード対応は CSS変数で自動対応 */

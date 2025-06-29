@@ -5,7 +5,7 @@ import type {
 	JudgmentType,
 	ChecklistHistoryItem
 } from '../types/checklist.js';
-import { CHECKLIST_ITEMS } from '../data/checklist-items.js';
+import { getChecklistItems } from '../data/checklist-items.js';
 import { v4 as uuidv4 } from 'uuid';
 import {
 	createStorageWithFallback,
@@ -192,7 +192,7 @@ class ChecklistStore {
 		const now = new Date();
 
 		// チェックアイテムのコピーを作成（チェック状態をリセット）
-		const items: CheckItem[] = CHECKLIST_ITEMS.map(item => ({
+		const items: CheckItem[] = getChecklistItems().map(item => ({
 			...item,
 			checked: false
 		}));
