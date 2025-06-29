@@ -7,6 +7,8 @@
 		ReliablePDFGenerator,
 		type ReliablePDFOptions
 	} from '$lib/utils/reliablePDFGenerator.js';
+	// import { HTMLToPDFGenerator, type HTMLToPDFOptions } from '$lib/utils/htmlToPDFGenerator.js';
+	import { SimplePDFGenerator } from '$lib/utils/simplePDFGenerator.js';
 	import { platformStore } from '$lib/stores/platformStore.svelte.js';
 
 	interface Props {
@@ -23,6 +25,7 @@
 		textMode: boolean; // PDF生成モード: true=テキストベース, false=画像ベース
 		advancedMode: boolean; // 高度なPDF機能を使用するか
 		reliableMode: boolean; // 確実な日本語フォント対応
+		pixelPerfectMode: boolean; // HTML→Canvas→PDF（ブラウザ表示と完全一致）
 	}
 
 	const { checklist, onClose }: Props = $props();
@@ -49,9 +52,10 @@
 	let includeNotes = $state(true);
 	let includeSummary = $state(true);
 	let sectionBreaks = $state(true);
-	let textMode = $state(true); // デフォルトはテキストベース
+	let textMode = $state(false); // テキストベースPDF（レガシー）
 	let advancedMode = $state(false); // 高度なモード
-	let reliableMode = $state(true); // デフォルトで確実モードを有効
+	let reliableMode = $state(false); // 確実な日本語フォント対応
+	let pixelPerfectMode = $state(true); // HTML→印刷→PDF（デフォルト）
 
 	// リアクティブなエクスポートオプション
 	const exportOptions = $derived<ExportOptions>({
@@ -62,7 +66,8 @@
 		sectionBreaks,
 		textMode,
 		advancedMode,
-		reliableMode
+		reliableMode,
+		pixelPerfectMode
 	});
 
 	function updateExportOption<K extends keyof ExportOptions>(key: K, value: ExportOptions[K]) {
@@ -84,12 +89,30 @@
 				break;
 			case 'textMode':
 				textMode = value as boolean;
+				// テキストモードを有効にしたら他のPDFモードを無効化
+				if (textMode) {
+					pixelPerfectMode = false;
+					reliableMode = false;
+				}
 				break;
 			case 'advancedMode':
 				advancedMode = value as boolean;
 				break;
 			case 'reliableMode':
 				reliableMode = value as boolean;
+				// 確実モードを有効にしたら他のPDFモードを無効化
+				if (reliableMode) {
+					pixelPerfectMode = false;
+					textMode = false;
+				}
+				break;
+			case 'pixelPerfectMode':
+				pixelPerfectMode = value as boolean;
+				// ピクセルパーフェクトモードを有効にしたら他のPDFモードを無効化
+				if (pixelPerfectMode) {
+					reliableMode = false;
+					textMode = false;
+				}
 				break;
 		}
 	}
@@ -282,7 +305,55 @@
 			updateProgress(20, 100, 'PDF生成準備', 'PDFエクスポートを開始しています...');
 			console.log('🚀 Starting PDF export with reliable font support');
 
-			if (exportOptions.reliableMode) {
+			if (exportOptions.pixelPerfectMode) {
+				// HTML→印刷→PDF（ピクセルパーフェクト）
+				updateProgress(30, 100, 'HTML生成', 'ブラウザ表示と同じHTMLを生成しています...');
+				console.log('🎨 Using SimplePDFGenerator for pixel-perfect output');
+
+				// HTMLコンテンツを生成
+				const htmlContent = generateSectionedHTMLContent();
+
+				updateProgress(50, 100, 'PDF準備', '印刷用ビューを準備しています...');
+
+				const simplePdfGenerator = new SimplePDFGenerator();
+
+				// ファイル名生成
+				const timestamp = new Date().toISOString().slice(0, 10);
+				const sanitizedTitle = checklist.title.replace(
+					/[^\w\s\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/gi,
+					''
+				);
+				const filename = `事実確認チェックシート_${sanitizedTitle}_${timestamp}.pdf`;
+
+				try {
+					// 印刷ダイアログを開く方式
+					updateProgress(70, 100, '印刷ビュー', '印刷プレビューを開いています...');
+					await simplePdfGenerator.generateFromHTML(htmlContent, filename);
+
+					updateProgress(100, 100, '完了', 'PDFの保存画面が開きました');
+					console.log('✅ Print dialog opened successfully');
+				} catch (printError) {
+					// フォールバック: 直接PDF生成
+					console.warn('⚠️ Print dialog failed, using direct PDF generation:', printError);
+					updateProgress(70, 100, 'PDF生成', '直接PDF生成に切り替えています...');
+
+					const pdfBlob = await simplePdfGenerator.generateDirectPDF(htmlContent, checklist);
+
+					updateProgress(80, 100, 'ファイル生成', 'ファイルを保存しています...');
+
+					// ダウンロード実行
+					const url = URL.createObjectURL(pdfBlob);
+					const a = document.createElement('a');
+					a.href = url;
+					a.download = filename;
+					document.body.appendChild(a);
+					a.click();
+					document.body.removeChild(a);
+					URL.revokeObjectURL(url);
+				}
+
+				console.log('✅ Pixel-perfect PDF generated successfully');
+			} else if (exportOptions.reliableMode) {
 				// 確実な日本語フォント対応PDF生成
 				updateProgress(30, 100, 'フォント読み込み', '日本語フォントを読み込んでいます...');
 				console.log('📝 Using ReliablePDFGenerator for Japanese font support');
@@ -1008,27 +1079,42 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
 					{/if}
 
 					{#if exportOptions.format === 'pdf'}
-						<label class="checkbox-option">
-							<input
-								type="checkbox"
-								checked={exportOptions.reliableMode}
-								onchange={e =>
-									updateExportOption('reliableMode', (e.target as HTMLInputElement).checked)}
-							/>
-							<span>🔥 確実な日本語フォント対応</span>
-							<small>文字化け防止・CSP対応 (推奨)</small>
-						</label>
+						<div class="pdf-mode-section">
+							<div class="section-label">PDF生成モード（いずれか1つを選択）</div>
 
-						<label class="checkbox-option">
-							<input
-								type="checkbox"
-								checked={exportOptions.textMode}
-								onchange={e =>
-									updateExportOption('textMode', (e.target as HTMLInputElement).checked)}
-							/>
-							<span>🔤 テキストベースPDF</span>
-							<small>文字検索・コピー可能 (レガシーモード)</small>
-						</label>
+							<label class="checkbox-option">
+								<input
+									type="checkbox"
+									checked={exportOptions.pixelPerfectMode}
+									onchange={e =>
+										updateExportOption('pixelPerfectMode', (e.target as HTMLInputElement).checked)}
+								/>
+								<span>🎨 ピクセルパーフェクト PDF</span>
+								<small>ブラウザ表示と完全一致（印刷プレビュー使用・推奨）</small>
+							</label>
+
+							<label class="checkbox-option">
+								<input
+									type="checkbox"
+									checked={exportOptions.reliableMode}
+									onchange={e =>
+										updateExportOption('reliableMode', (e.target as HTMLInputElement).checked)}
+								/>
+								<span>🔥 確実な日本語フォント対応</span>
+								<small>文字化け防止・CSP対応（プログラムで生成）</small>
+							</label>
+
+							<label class="checkbox-option">
+								<input
+									type="checkbox"
+									checked={exportOptions.textMode}
+									onchange={e =>
+										updateExportOption('textMode', (e.target as HTMLInputElement).checked)}
+								/>
+								<span>🔤 テキストベースPDF</span>
+								<small>文字検索・コピー可能（レガシーモード）</small>
+							</label>
+						</div>
 
 						<label class="checkbox-option">
 							<input
@@ -1358,6 +1444,32 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
 	.btn:focus {
 		outline: 2px solid #3498db;
 		outline-offset: 2px;
+	}
+
+	/* PDFモードセクション */
+	.pdf-mode-section {
+		margin-top: 10px;
+		padding: 15px;
+		background: rgba(52, 152, 219, 0.05);
+		border: 1px solid rgba(52, 152, 219, 0.2);
+		border-radius: 8px;
+	}
+
+	.section-label {
+		font-size: 12px;
+		font-weight: 600;
+		color: #2c3e50;
+		margin-bottom: 10px;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+	}
+
+	.pdf-mode-section .checkbox-option {
+		margin-bottom: 8px;
+	}
+
+	.pdf-mode-section .checkbox-option:last-child {
+		margin-bottom: 0;
 	}
 
 	/* プラットフォーム情報スタイル */
