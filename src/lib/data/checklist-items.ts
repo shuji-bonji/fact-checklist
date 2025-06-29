@@ -1,36 +1,36 @@
 import type { CheckItem, CheckCategory } from '../types/checklist.js';
-import { factChecklistI18n } from '../i18n/index.js';
+import { factChecklistI18n, t } from '../i18n/index.js';
 
 // カテゴリ情報の取得関数（i18n対応）
 export function getCategories(): CheckCategory[] {
 	return [
 		{
 			id: 'critical',
-			name: factChecklistI18n.getCategoryName('critical'),
-			description: factChecklistI18n.getCategoryDescription('critical'),
+			name: t('categories.critical.name'),
+			description: t('categories.critical.description'),
 			color: '#e74c3c',
-			emoji: factChecklistI18n.getCategoryEmoji('critical')
+			emoji: t('categories.critical.emoji')
 		},
 		{
 			id: 'detailed',
-			name: factChecklistI18n.getCategoryName('detailed'),
-			description: factChecklistI18n.getCategoryDescription('detailed'),
+			name: t('categories.detailed.name'),
+			description: t('categories.detailed.description'),
 			color: '#f39c12',
-			emoji: factChecklistI18n.getCategoryEmoji('detailed')
+			emoji: t('categories.detailed.emoji')
 		},
 		{
 			id: 'verification',
-			name: factChecklistI18n.getCategoryName('verification'),
-			description: factChecklistI18n.getCategoryDescription('verification'),
+			name: t('categories.verification.name'),
+			description: t('categories.verification.description'),
 			color: '#3498db',
-			emoji: factChecklistI18n.getCategoryEmoji('verification')
+			emoji: t('categories.verification.emoji')
 		},
 		{
 			id: 'context',
-			name: factChecklistI18n.getCategoryName('context'),
-			description: factChecklistI18n.getCategoryDescription('context'),
+			name: t('categories.context.name'),
+			description: t('categories.context.description'),
 			color: '#9b59b6',
-			emoji: factChecklistI18n.getCategoryEmoji('context')
+			emoji: t('categories.context.emoji')
 		}
 	];
 }

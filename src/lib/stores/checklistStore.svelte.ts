@@ -13,6 +13,7 @@ import {
 	type StorageInterface
 } from '../config/storage.js';
 import { StorageMigration } from '../utils/indexedDBStorage.js';
+import { t } from '../i18n/index.js';
 
 // ブラウザ環境でのみストレージを使用
 const isBrowser = typeof window !== 'undefined';
@@ -172,18 +173,18 @@ class ChecklistStore {
 
 	get confidenceText(): string {
 		const confidence = this.confidenceLevel;
-		if (confidence >= 80) return '高い信頼性';
-		if (confidence >= 60) return '中程度の信頼性';
-		if (confidence >= 40) return '低い信頼性';
-		return '信頼性に問題';
+		if (confidence >= 80) return t('checklist.confidence.high');
+		if (confidence >= 60) return t('checklist.confidence.medium');
+		if (confidence >= 40) return t('checklist.confidence.low');
+		return t('checklist.confidence.poor');
 	}
 
 	get judgmentAdvice(): string {
 		const confidence = this.confidenceLevel;
-		if (confidence >= 80) return '採用を推奨します。十分な検証が行われています。';
-		if (confidence >= 60) return '追加確認を推奨します。重要な決定には慎重に。';
-		if (confidence >= 40) return '要注意です。さらなる検証が必要です。';
-		return '不採用を推奨します。信頼できる情報源を探しましょう。';
+		if (confidence >= 80) return t('checklist.advice.high');
+		if (confidence >= 60) return t('checklist.advice.medium');
+		if (confidence >= 40) return t('checklist.advice.low');
+		return t('checklist.advice.poor');
 	}
 
 	// 新しいチェックリストを作成

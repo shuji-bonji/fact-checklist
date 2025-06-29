@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { ChecklistScore, JudgmentType } from '$lib/types/checklist.js';
+	import { t } from '$lib/i18n/index.js';
 
 	interface Props {
 		score: ChecklistScore;
@@ -44,30 +45,38 @@
 <div class="score-container">
 	<!-- スコア表示 -->
 	<div class="score-display card">
-		<h3>📊 評価スコア</h3>
+		<h3>📊 {t('checklist.score')}</h3>
 
 		<div class="score-breakdown">
 			<div class="score-item">
-				<span class="score-label">🚨 クリティカル</span>
+				<span class="score-label"
+					>{t('categories.critical.emoji')} {t('categories.critical.name')}</span
+				>
 				<span class="score-value">{score.critical}/6</span>
 			</div>
 			<div class="score-item">
-				<span class="score-label">📝 詳細評価</span>
+				<span class="score-label"
+					>{t('categories.detailed.emoji')} {t('categories.detailed.name')}</span
+				>
 				<span class="score-value">{score.detailed}/6</span>
 			</div>
 			<div class="score-item">
-				<span class="score-label">🔍 検証・照合</span>
+				<span class="score-label"
+					>{t('categories.verification.emoji')} {t('categories.verification.name')}</span
+				>
 				<span class="score-value">{score.verification}/4</span>
 			</div>
 			<div class="score-item">
-				<span class="score-label">🌐 文脈・バイアス</span>
+				<span class="score-label"
+					>{t('categories.context.emoji')} {t('categories.context.name')}</span
+				>
 				<span class="score-value">{score.context}/4</span>
 			</div>
 		</div>
 
 		<div class="total-score">
 			<div class="score-item total">
-				<strong class="score-label">総合スコア</strong>
+				<strong class="score-label">{t('units.total')} {t('units.score')}</strong>
 				<strong class="score-value">{score.total}/{score.maxScore}</strong>
 			</div>
 		</div>
@@ -75,7 +84,7 @@
 
 	<!-- 信頼度メーター -->
 	<div class="confidence-meter card">
-		<h3>🎯 信頼度</h3>
+		<h3>🎯 {t('checklist.confidenceLevel')}</h3>
 		<div class="confidence-bar-container">
 			<div class="confidence-bar">
 				<div
@@ -91,28 +100,28 @@
 
 	<!-- 最終判定 -->
 	<div class="final-judgment card">
-		<h3>⚖️ 最終判定</h3>
+		<h3>⚖️ {t('checklist.finalJudgment')}</h3>
 		<div class="judgment-buttons">
 			<button
 				class={getJudgmentButtonClass('accept')}
 				onclick={() => setJudgment('accept')}
 				aria-pressed={currentJudgment === 'accept'}
 			>
-				✅ 採用
+				✅ {t('checklist.judgment.accept')}
 			</button>
 			<button
 				class={getJudgmentButtonClass('caution')}
 				onclick={() => setJudgment('caution')}
 				aria-pressed={currentJudgment === 'caution'}
 			>
-				⚠️ 要注意
+				⚠️ {t('checklist.judgment.caution')}
 			</button>
 			<button
 				class={getJudgmentButtonClass('reject')}
 				onclick={() => setJudgment('reject')}
 				aria-pressed={currentJudgment === 'reject'}
 			>
-				❌ 不採用
+				❌ {t('checklist.judgment.reject')}
 			</button>
 		</div>
 

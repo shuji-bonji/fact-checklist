@@ -7,6 +7,7 @@
 	import { checklistStore } from '$lib/stores/checklistStore.svelte.js';
 	import { getCategories } from '$lib/data/checklist-items.js';
 	import type { JudgmentType } from '$lib/types/checklist.js';
+	import { t } from '$lib/i18n/index.js';
 
 	import CheckSection from '$lib/components/CheckSection.svelte';
 	import ScoreDisplay from '$lib/components/ScoreDisplay.svelte';
@@ -166,15 +167,15 @@
 </script>
 
 <svelte:head>
-	<title>実用的事実確認チェックシート</title>
-	<meta name="description" content="情報の信頼性を科学的・体系的に評価するためのチェックシート" />
+	<title>{t('app.title')}</title>
+	<meta name="description" content={t('app.description')} />
 </svelte:head>
 
 <div class="container">
 	<!-- ページヘッダー -->
 	<header class="page-header">
-		<h1>🔍 実用的事実確認チェックシート</h1>
-		<p class="page-subtitle">情報の信頼性を科学的・体系的に評価するための統合システム</p>
+		<h1>🔍 {t('app.title')}</h1>
+		<p class="page-subtitle">{t('app.subtitle')}</p>
 	</header>
 
 	<!-- メインコンテンツ -->
@@ -183,37 +184,34 @@
 		<div class="evaluation-area">
 			<!-- チェックリスト情報入力 -->
 			<div class="card">
-				<h2>📋 チェックリスト情報</h2>
+				<h2>📋 {t('checklist.title')}</h2>
 				<div class="form-group">
-					<label for="title" class="form-label">タイトル</label>
+					<label for="title" class="form-label">{t('forms.titleLabel')}</label>
 					<input
 						id="title"
 						type="text"
 						class="form-input"
 						bind:value={title}
 						oninput={handleTitleChange}
-						placeholder="例: 新型コロナワクチンの効果に関する記事"
+						placeholder={t('forms.titlePlaceholder')}
 					/>
 				</div>
 
 				<div class="form-group mb-0">
-					<label for="description" class="form-label">対象情報の概要</label>
+					<label for="description" class="form-label">{t('forms.descriptionLabel')}</label>
 					<textarea
 						id="description"
 						class="form-input form-textarea"
 						bind:value={description}
 						oninput={handleDescriptionChange}
-						placeholder="評価対象となる情報の詳細を記入してください..."
+						placeholder={t('forms.descriptionPlaceholder')}
 					></textarea>
 				</div>
 			</div>
 
 			<!-- クイックスタートガイド -->
 			<div class="quick-start card">
-				<p>
-					まず「クリティカル評価」から始めて、基本的な信頼性を確認しましょう。<br
-					/>各項目をチェックすると、右側のスコアがリアルタイムで更新されます。
-				</p>
+				<p>{t('ui.quickStartGuide')}</p>
 			</div>
 
 			<!-- チェックセクション -->
@@ -230,12 +228,12 @@
 
 			<!-- 評価メモ -->
 			<div class="notes-area card">
-				<h3>📝 評価メモ・追加確認事項</h3>
+				<h3>📝 {t('forms.notesLabel')}</h3>
 				<textarea
 					class="form-input form-textarea"
 					bind:value={notes}
 					oninput={handleNotesChange}
-					placeholder="疑問点、追加で確認したい事項、総合的な印象など、自由に記録してください..."
+					placeholder={t('forms.notesPlaceholder')}
 				></textarea>
 			</div>
 		</div>
@@ -245,7 +243,7 @@
 			<!-- ガイドモード切り替えボタン -->
 			<div class="guide-toggle-section card">
 				<button class="btn btn-secondary w-full" onclick={() => toggleGuideMode()}>
-					{showGuideMode ? '📝 通常モード' : '📖 詳細ガイドモード'}
+					{showGuideMode ? t('ui.guideModeNormal') : t('ui.guideModeDetailed')}
 				</button>
 			</div>
 
@@ -266,11 +264,11 @@
 					onclick={completeChecklist}
 					disabled={!currentChecklist}
 				>
-					✅ 評価を完了
+					{t('ui.completeEvaluation')}
 				</button>
 
 				<button class="btn btn-ghost w-full" onclick={exportChecklist} disabled={!currentChecklist}>
-					📄 エクスポート
+					📄 {t('common.export')}
 				</button>
 			</div>
 
