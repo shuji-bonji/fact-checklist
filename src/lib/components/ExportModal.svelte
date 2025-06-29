@@ -429,21 +429,46 @@
 
 	async function exportToJSON() {
 		updateProgress(30, 100, 'データ整理', 'エクスポートデータを整理しています...');
+
+		// アイテムデータをオプションに応じて調整
+		const processedItems = checklist!.items.map(item => {
+			const processedItem = { ...item };
+
+			// ガイド内容を含めない場合は削除
+			if (!exportOptions.includeGuides) {
+				delete processedItem.guideContent;
+			}
+
+			return processedItem;
+		});
+
 		const exportData = {
 			title: checklist!.title,
-			notes: checklist!.notes,
+			notes: exportOptions.includeNotes ? checklist!.notes : undefined,
 			createdAt: checklist!.createdAt.toISOString(),
 			completedAt: checklist!.completedAt?.toISOString(),
-			score: checklist!.score,
-			judgment: checklist!.judgment,
-			judgmentAdvice: checklist!.judgmentAdvice,
-			confidenceLevel: checklist!.confidenceLevel,
-			confidenceText: checklist!.confidenceText,
-			items: checklist!.items,
-			sections: groupItemsByCategory(),
+			score: exportOptions.includeSummary ? checklist!.score : undefined,
+			judgment: exportOptions.includeSummary ? checklist!.judgment : undefined,
+			judgmentAdvice: exportOptions.includeSummary ? checklist!.judgmentAdvice : undefined,
+			confidenceLevel: exportOptions.includeSummary ? checklist!.confidenceLevel : undefined,
+			confidenceText: exportOptions.includeSummary ? checklist!.confidenceText : undefined,
+			items: processedItems,
+			sections: exportOptions.includeSummary ? groupItemsByCategory() : undefined,
 			exportedAt: new Date().toISOString(),
-			version: '1.0'
+			version: '1.0',
+			exportOptions: {
+				includeGuides: exportOptions.includeGuides,
+				includeNotes: exportOptions.includeNotes,
+				includeSummary: exportOptions.includeSummary
+			}
 		};
+
+		// undefinedのプロパティを削除
+		Object.keys(exportData).forEach(key => {
+			if (exportData[key as keyof typeof exportData] === undefined) {
+				delete exportData[key as keyof typeof exportData];
+			}
+		});
 
 		updateProgress(70, 100, 'JSON生成', 'JSONファイルを生成しています...');
 		const jsonString = JSON.stringify(exportData, null, 2);
