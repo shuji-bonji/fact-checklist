@@ -23,7 +23,8 @@
 - **📊 科学的評価**: 4カテゴリ20項目の包括的チェック
 - **🎨 レスポンシブデザイン**: デスクトップ・モバイル両対応
 - **🌙 ダークモード**: システム設定に連動
-- **📄 高度PDF生成**: 日本語フォント・透かし・目次・メタデータ対応
+- **📄 高度PDF生成**:
+  3つのモード（ピクセルパーフェクト/日本語フォント埋め込み/テキストベース）
 - **🔄 履歴管理**: 過去の評価結果を保存・参照
 - **♿ アクセシビリティ**: WCAG準拠のユニバーサルデザイン
 - **⚡ パフォーマンス最適化**: フォントキャッシュ・進捗表示・エラーハンドリング
@@ -110,9 +111,10 @@ npm run dev
 
 ### 高度機能
 
-- **[jsPDF](https://github.com/parallax/jsPDF)** - 企業レベルPDF生成（日本語フォント・透かし・目次）
-- **[html2canvas](https://html2canvas.hertzen.com/)** - HTML→画像変換
-- **フォントキャッシュシステム** - パフォーマンス最適化
+- **[jsPDF](https://github.com/parallax/jsPDF)** - PDF生成ライブラリ
+- **[html2canvas](https://html2canvas.hertzen.com/)** -
+  HTML→Canvas変換（未使用）
+- **デバッグモード** - URLパラメータ`?debug=true`で本番環境でもログ表示
 - **プラットフォーム適応** - デバイス別最適化
 
 ### 開発ツール
@@ -137,8 +139,10 @@ fact-checklist/
 │   │   │   ├── checklistStore.svelte.ts
 │   │   │   └── platformStore.svelte.ts
 │   │   ├── utils/              # ユーティリティ
-│   │   │   ├── reliablePDFGenerator.ts # 高度PDF生成器
-│   │   │   ├── fontToBase64.ts         # フォント処理
+│   │   │   ├── reliablePDFGenerator.ts # 日本語フォント対応PDF生成
+│   │   │   ├── simplePDFGenerator.ts   # ピクセルパーフェクトPDF生成
+│   │   │   ├── htmlToPDFGenerator.ts   # HTML→PDF変換
+│   │   │   ├── pwaAwarePDFExporter.ts  # PWA対応PDFエクスポート
 │   │   │   └── indexedDBStorage.ts     # データ永続化
 │   │   ├── types/              # TypeScript型定義
 │   │   │   └── checklist.ts
@@ -174,20 +178,17 @@ fact-checklist/
 
 ### 2. 高度エクスポート機能
 
-#### 📄 PDF（企業レベル品質）
+#### 📄 PDF生成（3つのモード - 排他選択）
 
-- **日本語フォント**: Base64埋め込みで確実な表示
-- **透かし機能**: セキュリティ強化
-- **目次自動生成**: 階層化された目次
-- **メタデータ**: 検索可能で管理しやすい
-- **進捗表示**: リアルタイム生成進捗
-- **エラーハンドリング**: ユーザーフレンドリーな対応
+- **🎨 ピクセルパーフェクト（デフォルト）**: ブラウザ印刷機能でHTML表示と完全一致
+- **🔥 確実な日本語対応**: jsPDFで日本語フォント埋め込み、透かし・メタデータ対応
+- **🔤 テキストベース**: PWA機能を活用した軽量PDF、文字検索・コピー可能
 
 #### 🌐 その他形式
 
-- **HTML**: ブラウザで表示可能（セクション構造化）
-- **JSON**: データ形式（プログラム処理用）
-- **Markdown**: テキスト形式（GitHub/エディタで表示可能）
+- **HTML**: ブラウザで表示可能（スタイル埋め込み済み）
+- **JSON**: 構造化データ（エクスポートオプション反映）
+- **Markdown**: テキスト形式（テーブル・詳細タグ使用）
 
 ### 3. 判定基準
 
@@ -244,18 +245,22 @@ npm run lighthouse        # Lighthouse監査
 npm run lighthouse:ci     # CI用Lighthouse
 ```
 
-## 🧪 テスト
+## 🐛 デバッグモード
+
+### 本番環境でのログ表示
 
 ```bash
-# 単体テスト
-npm run test
+# URLパラメータで有効化
+https://example.com?debug=true
 
-# E2Eテスト
-npm run test:e2e
+# ブラウザコンソールで有効化
+enableDebugMode()
 
-# カバレッジ
-npm run test:coverage
+# デバッグモード無効化
+disableDebugMode()
 ```
+
+デバッグモードの状態は`localStorage`に保存されます。
 
 ## 📊 パフォーマンス
 
@@ -273,7 +278,6 @@ npm run test:coverage
 - **First Contentful Paint**: < 1.2s
 - **Time to Interactive**: < 2.5s
 - **オフライン対応**: 完全対応
-- **フォントキャッシュ**: 初回読み込み後は瞬時
 
 ## ⚡ 高度PWA機能
 
@@ -292,7 +296,7 @@ npm run test:coverage
 ### オフライン・キャッシュ戦略
 
 - **Service Worker**: 完全オフライン動作
-- **フォントキャッシュ**: メモリベース高速化
+- **IndexedDB/LocalStorage**: データの永続化とフォールバック
 - **静的リソース**: 効率的キャッシュ管理
 
 ## 🔐 プライバシー・セキュリティ
