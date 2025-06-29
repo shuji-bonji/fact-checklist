@@ -5,11 +5,26 @@ code in this repository.
 
 ## Project Overview
 
-This is **Fact Checklist** (実用的事実確認チェックシート), a Japanese PWA for
-systematically evaluating information reliability. It's built with Svelte 5,
-TypeScript, and deployed to GitHub Pages. The application helps users assess the
-credibility of information through a structured 20-item checklist across 4
-categories.
+This is **Fact Checklist** (実用的事実確認チェックシート), an internationalized
+PWA for systematically evaluating information reliability with full support for
+12 languages. Built with Svelte 5, TypeScript, and deployed to GitHub Pages, the
+application helps users assess the credibility of information through a
+structured 20-item checklist across 4 categories.
+
+### Supported Languages
+
+- Japanese (ja) - CJK script
+- English (en) - Latin script
+- French (fr) - Latin script
+- Traditional Chinese (zh-TW) - CJK script
+- Spanish (es) - Latin script
+- Portuguese (pt) - Latin script
+- Hindi (hi) - Devanagari script
+- German (de) - Latin script
+- Italian (it) - Latin script
+- Arabic (ar) - Arabic script (RTL)
+- Indonesian (id) - Latin script
+- Korean (ko) - CJK script
 
 ## Development Commands
 
@@ -54,7 +69,8 @@ npm run test:coverage    # Generate coverage reports
 - **Build**: Vite with PWA plugin
 - **Styling**: Custom CSS with CSS custom properties for theming
 - **State**: Local-first with localStorage/IndexedDB persistence
-- **Export**: jsPDF, html2canvas for multi-format export capabilities
+- **Export**: jsPDF with international font support for multi-format export
+- **i18n**: Custom type-safe internationalization system with Svelte 5 runes
 
 ### Key Architectural Patterns
 
@@ -80,8 +96,9 @@ src/lib/components/
 ├── CheckSection.svelte     # Category-based sections
 ├── CheckItem.svelte        # Individual checklist items
 ├── ScoreDisplay.svelte     # Real-time score visualization
-├── ExportModal.svelte      # Multi-format export dialog
-└── HistorySidebar.svelte   # Evaluation history management
+├── ExportModal.svelte      # Multi-format export dialog with i18n
+├── HistorySidebar.svelte   # Evaluation history management
+└── LanguageSwitcher.svelte # Language selection UI
 ```
 
 #### Routing Structure
@@ -145,9 +162,18 @@ src/lib/components/
 
 ### Core Logic
 
-- `/src/lib/stores/checklistStore.svelte.ts` - Main application state
-- `/src/lib/data/checklist-items.ts` - Checklist data and categories
+- `/src/lib/stores/checklistStore.svelte.ts` - Main application state with i18n
+  support
+- `/src/lib/data/checklist-items.ts` - Checklist data with translation keys
 - `/src/lib/types/checklist.ts` - TypeScript type definitions
+
+### Internationalization
+
+- `/src/lib/i18n/index.ts` - i18n initialization and exports
+- `/src/lib/i18n/store.svelte.ts` - Language state management with runes
+- `/src/lib/i18n/types.ts` - Type-safe translation system
+- `/src/lib/i18n/translations/` - Translation files for 12 languages
+- `/src/lib/i18n/fonts.ts` - International font management for PDF generation
 
 ### Configuration
 
@@ -157,9 +183,12 @@ src/lib/components/
 
 ### Routing & Pages
 
-- `/src/routes/+page.svelte` - Main application interface
-- `/src/routes/+layout.svelte` - Common page layout
-- `/src/routes/checklist/[id]/` - Dynamic result pages
+- `/src/routes/+page.svelte` - Main application interface with i18n
+- `/src/routes/+layout.svelte` - Common page layout with language switcher
+- `/src/routes/checklist/[id]/` - Dynamic result pages with multilingual support
+- `/src/routes/about/` - About page (internationalized)
+- `/src/routes/help/` - Help page (internationalized)
+- `/src/routes/privacy/` - Privacy policy (internationalized)
 
 ## Privacy & Security Notes
 
@@ -331,3 +360,124 @@ export function createWebSocketStore(url: string) {
   };
 }
 ```
+
+## 🌍 Internationalization Architecture
+
+### i18n System Overview
+
+The application uses a custom internationalization system built with Svelte 5
+runes:
+
+- **Language Store**: `/src/lib/i18n/store.svelte.ts` manages current language
+  state
+- **Type-safe Translations**: All translation keys are type-checked at compile
+  time
+- **Dynamic Loading**: Translation files are loaded on-demand for performance
+- **Browser Detection**: Automatically detects and uses browser language on
+  first visit
+- **RTL Support**: Full support for right-to-left languages (Arabic)
+
+### Translation Key Structure
+
+```typescript
+// Example translation key structure
+interface TranslationKeys {
+  app: {
+    title: string;
+    description: string;
+  };
+  nav: {
+    home: string;
+    about: string;
+    help: string;
+    privacy: string;
+  };
+  checklist: {
+    title: string;
+    // ... nested structure
+  };
+}
+```
+
+### Font Management for PDF Export
+
+The application includes an advanced font management system for international
+PDF generation:
+
+- **Latin Script**: Roboto font for Western languages
+- **CJK Script**: Noto Sans CJK for Japanese, Korean, and Chinese
+- **Devanagari Script**: Noto Sans Devanagari for Hindi
+- **Arabic Script**: Noto Sans Arabic with RTL rendering
+
+### Adding New Languages
+
+To add a new language:
+
+1. Create translation file in `/src/lib/i18n/translations/[lang].ts`
+2. Add language to `SUPPORTED_LANGUAGES` in `/src/lib/i18n/types.ts`
+3. Update font configuration if needed in `/src/lib/i18n/fonts.ts`
+4. Test all features including PDF export
+
+## 🛠️ Maintenance Guidelines
+
+### Code Quality Standards
+
+- **Type Safety**: All code must pass `npm run check` with no errors
+- **ESLint Compliance**: Use `npm run lint` before committing
+- **Formatting**: Apply `npm run format` to maintain consistency
+- **Performance**: Maintain Lighthouse score of 95+ for performance
+
+### i18n Best Practices
+
+1. **Translation Keys**: Use descriptive, hierarchical keys
+2. **Fallbacks**: Always provide fallback text for missing translations
+3. **Context**: Include context comments for translators
+4. **Testing**: Test all languages, especially RTL layouts
+5. **Cultural Sensitivity**: Review translations for cultural appropriateness
+
+### Component Development Rules
+
+1. **Always use Svelte 5 runes** - No legacy reactive syntax
+2. **Import translations** - Use `import { t } from '$lib/i18n'` in components
+3. **Dynamic text** - Never hardcode user-facing text
+4. **ARIA labels** - Ensure all interactive elements have translated labels
+5. **Date/Time formats** - Use locale-appropriate formatting
+
+### PDF Export Considerations
+
+- Test PDF generation for all languages before release
+- Verify font embedding works correctly
+- Check RTL text rendering in Arabic PDFs
+- Ensure metadata is properly internationalized
+
+### Performance Optimization
+
+- Lazy load translation files
+- Cache fonts for PDF generation
+- Use dynamic imports for language-specific features
+- Monitor bundle size impact when adding languages
+
+## ⚠️ Critical Constraints
+
+### Must Maintain
+
+1. **PWA Functionality**: All features must work offline
+2. **Type Safety**: No `any` types in TypeScript code
+3. **Accessibility**: WCAG 2.1 AA compliance required
+4. **Privacy**: No external API calls or tracking
+5. **Performance**: Bundle size under 200KB gzipped
+
+### Security Requirements
+
+- All data stored locally only
+- No external font loading (fonts bundled)
+- CSP headers properly configured
+- Input sanitization for all user inputs
+
+### Browser Support
+
+- Chrome 90+
+- Firefox 88+
+- Safari 14+
+- Edge 90+
+- Must gracefully degrade for older browsers

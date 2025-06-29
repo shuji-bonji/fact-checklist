@@ -1,452 +1,466 @@
 <script lang="ts">
-	// プライバシーポリシーのデータ項目
-	interface DataItem {
-		id: string;
-		title: string;
-		description: string;
-		details?: string[];
-	}
+  import { t, tArray, i18nStore } from '$lib/i18n/index.js';
 
-	const privacyData: DataItem[] = [
-		{
-			id: 'data-collection',
-			title: '📊 データ収集について',
-			description: '当アプリケーションはユーザーのプライバシーを最優先に考慮しています。',
-			details: [
-				'すべてのチェックリストデータは、お使いの端末内にのみ保存されます',
-				'サーバーへのデータ送信は一切行いません',
-				'第三者へのデータ提供は一切ありません',
-				'ログイン機能はなく、個人を特定する情報は収集しません'
-			]
-		},
-		{
-			id: 'local-storage',
-			title: '💾 ローカルストレージの使用',
-			description: 'データはブラウザのローカルストレージ技術を使用して保存されます。',
-			details: [
-				'IndexedDBを主に使用してデータを保存',
-				'保存されるデータは評価結果と設定情報のみ',
-				'フォントキャッシュも端末内のみに保存',
-				'ユーザーはいつでもデータを削除できます',
-				'ブラウザのデータ削除でも完全に削除されます'
-			]
-		},
-		{
-			id: 'offline-functionality',
-			title: '🔒 オフライン機能',
-			description: 'PWAとして完全オフラインで動作します。',
-			details: [
-				'インターネット接続なしでも全機能が利用可能',
-				'データの同期や送信は発生しません',
-				'外部APIへのアクセスは行いません',
-				'日本語フォントも端末内に安全に保存',
-				'完全にプライベートな環境で利用できます'
-			]
-		},
-		{
-			id: 'security-measures',
-			title: '⛅ セキュリティ対策',
-			description: 'アプリケーションのセキュリティについて。',
-			details: [
-				'Content Security Policy (CSP) の実装',
-				'HTTPS通信の強制',
-				'Same-Origin Policy の遵守',
-				'XSS攻撃の防止対策の実装',
-				'フォント読み込みもCSPに準拠'
-			]
-		},
-		{
-			id: 'data-retention',
-			title: '🗂️ データ保持期間',
-			description: 'データの保持とアクセスについて。',
-			details: [
-				'データは端末内に永続的に保存されます',
-				'ユーザーが明示的に削除するまで保持されます',
-				'フォントキャッシュも自動管理されます',
-				'アプリケーションの削除でデータも完全に削除されます',
-				'復旧機能はないため、重要なデータはエクスポートしてください'
-			]
-		},
-		{
-			id: 'policy-updates',
-			title: '📋 ポリシー更新',
-			description: 'プライバシーポリシーの変更について。',
-			details: [
-				'重要な変更がある場合は、アプリケーション内で通知します',
-				'軽微な修正は随時行われます',
-				'最新版は常にこのページで確認できます',
-				'ご不明な点がありましたら、GitHubのIssuesでお知らせください'
-			]
-		}
-	];
+  // Svelte 5 runesでi18n初期化状態を監視
+  const isInitialized = $derived(i18nStore.initialized && !!i18nStore.translations);
+
+  // 配列翻訳用のヘルパー関数
+  function getTranslationArray(key: string): string[] {
+    const result = tArray(key);
+    if (Array.isArray(result)) {
+      return result;
+    }
+    return typeof result === 'string' ? [result] : [];
+  }
 </script>
 
 <svelte:head>
-	<title>プライバシーポリシー - 実用的事実確認チェックシート</title>
-	<meta
-		name="description"
-		content="実用的事実確認チェックシートのプライバシーポリシー。データの取り扱いと保護について説明します。"
-	/>
+  <title
+    >{isInitialized
+      ? `${t('privacy.title')} - ${t('app.title')}`
+      : 'Privacy Policy - Fact Checklist'}</title
+  >
+  <meta
+    name="description"
+    content={isInitialized ? t('privacy.subtitle') : 'Privacy policy for Fact Checklist'}
+  />
 </svelte:head>
 
-<div class="container">
-	<div class="privacy-header">
-		<h1>🔐 プライバシーポリシー</h1>
-		<p class="last-updated">最終更新: 2025年6月28日</p>
-	</div>
+{#if isInitialized}
+  <div class="container">
+    <div class="privacy-header">
+      <h1>🔐 {t('privacy.title')}</h1>
+      <p class="last-updated">{t('privacy.lastUpdated')}</p>
+    </div>
 
-	<div class="privacy-content">
-		<div class="intro-section">
-			<h2>🛡️ プライバシー保護への取り組み</h2>
-			<p>
-				「実用的事実確認チェックシート」は、ユーザーのプライバシー保護を最重要課題として位置づけています。
-				このアプリケーションは<strong>完全にローカル環境で動作</strong>し、
-				<strong>サーバーへのデータ送信は一切行いません</strong>。
-			</p>
-		</div>
+    <div class="privacy-content">
+      <div class="intro-section">
+        <h2>{t('privacy.introduction.title')}</h2>
+        <p>{t('privacy.introduction.content')}</p>
+      </div>
 
-		<div class="data-items-section">
-			{#each privacyData as item (item.id)}
-				<div class="data-item" data-item-id={item.id}>
-					<div class="data-item-header">
-						<h3 class="data-item-title">{item.title}</h3>
-					</div>
-					<div class="data-item-content">
-						<p class="data-item-description">{item.description}</p>
-						{#if item.details}
-							<ul class="data-item-details">
-								{#each item.details as detail}
-									<li>{detail}</li>
-								{/each}
-							</ul>
-						{/if}
-					</div>
-				</div>
-			{/each}
-		</div>
+      <div class="data-items-section">
+        <!-- データ収集について -->
+        <div class="data-item" data-item-id="data-collection">
+          <div class="data-item-header">
+            <h3 class="data-item-title">{t('privacy.dataCollection.title')}</h3>
+          </div>
+          <div class="data-item-content">
+            <p class="data-item-description">{t('privacy.dataCollection.description')}</p>
+            <ul class="data-item-details">
+              {#each getTranslationArray('privacy.dataCollection.details') as detail}
+                <li>{detail}</li>
+              {/each}
+            </ul>
+          </div>
+        </div>
 
-		<div class="contact-section">
-			<h2>📞 お問い合わせ</h2>
-			<p>
-				プライバシーポリシーに関するご質問やご不明な点がございましたら、
-				<a
-					href="https://github.com/shuji-bonji/fact-checklist/issues"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					GitHubのIssues
-				</a>
-				からお気軽にお問い合わせください。
-			</p>
-		</div>
-	</div>
-</div>
+        <!-- ローカルストレージの使用 -->
+        <div class="data-item" data-item-id="local-storage">
+          <div class="data-item-header">
+            <h3 class="data-item-title">{t('privacy.localStorage.title')}</h3>
+          </div>
+          <div class="data-item-content">
+            <p class="data-item-description">{t('privacy.localStorage.description')}</p>
+            <ul class="data-item-details">
+              {#each getTranslationArray('privacy.localStorage.details') as detail}
+                <li>{detail}</li>
+              {/each}
+            </ul>
+          </div>
+        </div>
+
+        <!-- オフライン機能 -->
+        <div class="data-item" data-item-id="offline-functionality">
+          <div class="data-item-header">
+            <h3 class="data-item-title">{t('privacy.offlineFunctionality.title')}</h3>
+          </div>
+          <div class="data-item-content">
+            <p class="data-item-description">{t('privacy.offlineFunctionality.description')}</p>
+            <ul class="data-item-details">
+              {#each getTranslationArray('privacy.offlineFunctionality.details') as detail}
+                <li>{detail}</li>
+              {/each}
+            </ul>
+          </div>
+        </div>
+
+        <!-- セキュリティ対策 -->
+        <div class="data-item" data-item-id="security-measures">
+          <div class="data-item-header">
+            <h3 class="data-item-title">{t('privacy.securityMeasures.title')}</h3>
+          </div>
+          <div class="data-item-content">
+            <p class="data-item-description">{t('privacy.securityMeasures.description')}</p>
+            <ul class="data-item-details">
+              {#each getTranslationArray('privacy.securityMeasures.details') as detail}
+                <li>{detail}</li>
+              {/each}
+            </ul>
+          </div>
+        </div>
+
+        <!-- データ保持期間 -->
+        <div class="data-item" data-item-id="data-retention">
+          <div class="data-item-header">
+            <h3 class="data-item-title">{t('privacy.dataRetention.title')}</h3>
+          </div>
+          <div class="data-item-content">
+            <p class="data-item-description">{t('privacy.dataRetention.description')}</p>
+            <ul class="data-item-details">
+              {#each getTranslationArray('privacy.dataRetention.details') as detail}
+                <li>{detail}</li>
+              {/each}
+            </ul>
+          </div>
+        </div>
+
+        <!-- ポリシー更新 -->
+        <div class="data-item" data-item-id="policy-updates">
+          <div class="data-item-header">
+            <h3 class="data-item-title">{t('privacy.policyUpdates.title')}</h3>
+          </div>
+          <div class="data-item-content">
+            <p class="data-item-description">{t('privacy.policyUpdates.description')}</p>
+            <ul class="data-item-details">
+              {#each getTranslationArray('privacy.policyUpdates.details') as detail}
+                <li>{detail}</li>
+              {/each}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-section">
+        <h2>{t('privacy.contact.title')}</h2>
+        <p>
+          {t('privacy.contact.content')}
+          <a
+            href="https://github.com/shuji-bonji/fact-checklist/issues"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {t('privacy.contact.githubText')}
+          </a>
+          {t('privacy.contact.suffix')}
+        </p>
+      </div>
+    </div>
+  </div>
+{:else}
+  <div class="container">
+    <div class="privacy-header">
+      <h1>🔐 Loading...</h1>
+      <p class="last-updated">Initializing translations...</p>
+    </div>
+  </div>
+{/if}
 
 <style>
-	.container {
-		max-width: 1000px;
-		margin: 0 auto;
-		padding: var(--spacing-6);
-		min-height: 100vh;
-	}
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: var(--spacing-6);
+    min-height: 100vh;
+  }
 
-	/* ページヘッダー - モダンデザイン */
-	.privacy-header {
-		text-align: center;
-		margin-bottom: var(--spacing-8);
-		padding: var(--spacing-8);
-		background: rgba(255, 255, 255, 0.75);
-		border: 1px solid rgba(255, 255, 255, 0.4);
-		border-radius: var(--radius-2xl);
-		box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
-		backdrop-filter: blur(16px);
-		-webkit-backdrop-filter: blur(16px);
-		position: relative;
-		overflow: hidden;
-	}
+  /* ページヘッダー - モダンデザイン */
+  .privacy-header {
+    text-align: center;
+    margin-bottom: var(--spacing-8);
+    padding: var(--spacing-8);
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: var(--radius-2xl);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    position: relative;
+    overflow: hidden;
+  }
 
-	.privacy-header::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background: var(--gradient-primary);
-		opacity: 0.03;
-		pointer-events: none;
-	}
+  .privacy-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gradient-primary);
+    opacity: 0.03;
+    pointer-events: none;
+  }
 
-	.privacy-header h1 {
-		color: var(--text-color);
-		margin: var(--spacing-4) 0;
-		font-size: var(--font-size-5xl);
-		font-weight: var(--font-weight-light);
-		font-family: var(--font-family-heading);
-		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-		position: relative;
-		z-index: 1;
-	}
+  .privacy-header h1 {
+    color: var(--text-color);
+    margin: var(--spacing-4) 0;
+    font-size: var(--font-size-5xl);
+    font-weight: var(--font-weight-light);
+    font-family: var(--font-family-heading);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1;
+  }
 
-	.last-updated {
-		color: var(--text-color-secondary);
-		font-size: var(--font-size-sm);
-		margin: 0;
-		position: relative;
-		z-index: 1;
-	}
+  .last-updated {
+    color: var(--text-color-secondary);
+    font-size: var(--font-size-sm);
+    margin: 0;
+    position: relative;
+    z-index: 1;
+  }
 
-	.privacy-content {
-		display: flex;
-		flex-direction: column;
-		gap: var(--spacing-8);
-	}
+  .privacy-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-8);
+  }
 
-	/* イントロセクション - モダンデザイン */
-	.intro-section {
-		background: rgba(255, 255, 255, 0.75);
-		border: 1px solid rgba(255, 255, 255, 0.4);
-		border-radius: var(--radius-xl);
-		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-		backdrop-filter: blur(16px);
-		-webkit-backdrop-filter: blur(16px);
-		padding: var(--spacing-6);
-		position: relative;
-		overflow: hidden;
-	}
+  /* イントロセクション - モダンデザイン */
+  .intro-section {
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: var(--spacing-6);
+    position: relative;
+    overflow: hidden;
+  }
 
-	.intro-section::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 4px;
-		height: 100%;
-		background: var(--gradient-primary);
-	}
+  .intro-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--gradient-primary);
+  }
 
-	.intro-section h2 {
-		color: var(--text-color);
-		margin: 0 0 var(--spacing-4) 0;
-		font-size: var(--font-size-2xl);
-		font-family: var(--font-family-heading);
-		font-weight: var(--font-weight-semibold);
-		position: relative;
-		z-index: 1;
-	}
+  .intro-section h2 {
+    color: var(--text-color);
+    margin: 0 0 var(--spacing-4) 0;
+    font-size: var(--font-size-2xl);
+    font-family: var(--font-family-heading);
+    font-weight: var(--font-weight-semibold);
+    position: relative;
+    z-index: 1;
+  }
 
-	.intro-section p {
-		color: var(--text-color);
-		line-height: var(--line-height-relaxed);
-		margin: 0;
-		font-size: var(--font-size-base);
-		font-weight: var(--font-weight-medium);
-		position: relative;
-		z-index: 1;
-	}
+  .intro-section p {
+    color: var(--text-color);
+    line-height: var(--line-height-relaxed);
+    margin: 0;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    position: relative;
+    z-index: 1;
+  }
 
-	.data-items-section {
-		display: flex;
-		flex-direction: column;
-		gap: var(--spacing-6);
-	}
+  .data-items-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-6);
+  }
 
-	/* データアイテム - モダンデザイン */
-	.data-item {
-		background: rgba(255, 255, 255, 0.75);
-		border: 1px solid rgba(255, 255, 255, 0.4);
-		border-radius: var(--radius-xl);
-		padding: var(--spacing-6);
-		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-		backdrop-filter: blur(16px);
-		-webkit-backdrop-filter: blur(16px);
-		transition: all var(--transition-base) var(--ease-out);
-		position: relative;
-		overflow: hidden;
-	}
+  /* データアイテム - モダンデザイン */
+  .data-item {
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-6);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transition: all var(--transition-base) var(--ease-out);
+    position: relative;
+    overflow: hidden;
+  }
 
-	.data-item::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 4px;
-		height: 100%;
-		background: var(--gradient-primary);
-	}
+  .data-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--gradient-primary);
+  }
 
-	.data-item:hover {
-		transform: translateY(-8px);
-		box-shadow: 0 16px 64px rgba(0, 0, 0, 0.12);
-	}
+  .data-item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 64px rgba(0, 0, 0, 0.12);
+  }
 
-	.data-item-header {
-		margin-bottom: var(--spacing-4);
-		position: relative;
-		z-index: 1;
-	}
+  .data-item-header {
+    margin-bottom: var(--spacing-4);
+    position: relative;
+    z-index: 1;
+  }
 
-	.data-item-title {
-		color: var(--text-color);
-		margin: 0;
-		font-size: var(--font-size-xl);
-		font-weight: var(--font-weight-semibold);
-		font-family: var(--font-family-heading);
-		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-	}
+  .data-item-title {
+    color: var(--text-color);
+    margin: 0;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    font-family: var(--font-family-heading);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
 
-	.data-item-content {
-		display: flex;
-		flex-direction: column;
-		gap: var(--spacing-3);
-		position: relative;
-		z-index: 1;
-	}
+  .data-item-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    position: relative;
+    z-index: 1;
+  }
 
-	.data-item-description {
-		color: var(--text-color-secondary);
-		line-height: var(--line-height-relaxed);
-		margin: 0;
-		font-size: var(--font-size-base);
-		font-weight: var(--font-weight-medium);
-	}
+  .data-item-description {
+    color: var(--text-color-secondary);
+    line-height: var(--line-height-relaxed);
+    margin: 0;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+  }
 
-	.data-item-details {
-		margin: 0;
-		padding-left: var(--spacing-4);
-		list-style-type: disc;
-	}
+  .data-item-details {
+    margin: 0;
+    padding-left: var(--spacing-4);
+    list-style-type: disc;
+  }
 
-	.data-item-details li {
-		color: var(--text-color-muted);
-		line-height: var(--line-height-relaxed);
-		margin-bottom: var(--spacing-2);
-		font-weight: var(--font-weight-normal);
-		font-size: var(--font-size-sm);
-	}
+  .data-item-details li {
+    color: var(--text-color-muted);
+    line-height: var(--line-height-relaxed);
+    margin-bottom: var(--spacing-2);
+    font-weight: var(--font-weight-normal);
+    font-size: var(--font-size-sm);
+  }
 
-	.data-item-details li:last-child {
-		margin-bottom: 0;
-	}
+  .data-item-details li:last-child {
+    margin-bottom: 0;
+  }
 
-	/* コンタクトセクション - モダンデザイン */
-	.contact-section {
-		background: rgba(255, 255, 255, 0.75);
-		border: 1px solid rgba(255, 255, 255, 0.4);
-		border-radius: var(--radius-xl);
-		padding: var(--spacing-6);
-		text-align: center;
-		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-		backdrop-filter: blur(16px);
-		-webkit-backdrop-filter: blur(16px);
-		position: relative;
-		overflow: hidden;
-	}
+  /* コンタクトセクション - モダンデザイン */
+  .contact-section {
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-6);
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    position: relative;
+    overflow: hidden;
+  }
 
-	.contact-section::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 4px;
-		height: 100%;
-		background: var(--gradient-accent);
-	}
+  .contact-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--gradient-accent);
+  }
 
-	.contact-section h2 {
-		color: var(--text-color);
-		margin: 0 0 var(--spacing-4) 0;
-		font-size: var(--font-size-2xl);
-		font-family: var(--font-family-heading);
-		font-weight: var(--font-weight-semibold);
-		position: relative;
-		z-index: 1;
-	}
+  .contact-section h2 {
+    color: var(--text-color);
+    margin: 0 0 var(--spacing-4) 0;
+    font-size: var(--font-size-2xl);
+    font-family: var(--font-family-heading);
+    font-weight: var(--font-weight-semibold);
+    position: relative;
+    z-index: 1;
+  }
 
-	.contact-section p {
-		color: var(--text-color);
-		line-height: var(--line-height-relaxed);
-		margin: 0;
-		font-size: var(--font-size-base);
-		position: relative;
-		z-index: 1;
-	}
+  .contact-section p {
+    color: var(--text-color);
+    line-height: var(--line-height-relaxed);
+    margin: 0;
+    font-size: var(--font-size-base);
+    position: relative;
+    z-index: 1;
+  }
 
-	.contact-section a {
-		color: var(--primary-color);
-		text-decoration: none;
-		font-weight: var(--font-weight-semibold);
-		border-bottom: 2px solid transparent;
-		transition: all var(--transition-base) var(--ease-out);
-		position: relative;
-		z-index: 1;
-	}
+  .contact-section a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: var(--font-weight-semibold);
+    border-bottom: 2px solid transparent;
+    transition: all var(--transition-base) var(--ease-out);
+    position: relative;
+    z-index: 1;
+  }
 
-	.contact-section a:hover {
-		border-bottom-color: var(--primary-color);
-		color: var(--accent-color);
-		transform: translateY(-1px);
-	}
+  .contact-section a:hover {
+    border-bottom-color: var(--primary-color);
+    color: var(--accent-color);
+    transform: translateY(-1px);
+  }
 
-	/* ダークモード対応の強化 */
-	:global(.dark) .data-item {
-		background: linear-gradient(135deg, #2d3748, #374151);
-		border-color: #4a5568;
-		color: #f7fafc;
-	}
+  /* ダークモード対応の強化 */
+  :global(.dark) .data-item {
+    background: linear-gradient(135deg, #2d3748, #374151);
+    border-color: #4a5568;
+    color: #f7fafc;
+  }
 
-	:global(.dark) .data-item:hover {
-		background: linear-gradient(135deg, #374151, #4a5568);
-		border-color: #63b3ed;
-	}
+  :global(.dark) .data-item:hover {
+    background: linear-gradient(135deg, #374151, #4a5568);
+    border-color: #63b3ed;
+  }
 
-	:global(.dark) .data-item-title {
-		color: #f7fafc;
-		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-	}
+  :global(.dark) .data-item-title {
+    color: #f7fafc;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
 
-	:global(.dark) .data-item-description {
-		color: #e2e8f0;
-	}
+  :global(.dark) .data-item-description {
+    color: #e2e8f0;
+  }
 
-	:global(.dark) .data-item-details li {
-		color: #cbd5e0;
-	}
+  :global(.dark) .data-item-details li {
+    color: #cbd5e0;
+  }
 
-	/* レスポンシブ対応 */
-	@media (max-width: 768px) {
-		.container {
-			padding: var(--spacing-md);
-		}
+  /* レスポンシブ対応 */
+  @media (max-width: 768px) {
+    .container {
+      padding: var(--spacing-md);
+    }
 
-		.privacy-header h1 {
-			font-size: 2em;
-		}
+    .privacy-header h1 {
+      font-size: 2em;
+    }
 
-		.data-item {
-			padding: var(--spacing-md);
-		}
+    .data-item {
+      padding: var(--spacing-md);
+    }
 
-		.data-item-title {
-			font-size: 1.1em;
-		}
+    .data-item-title {
+      font-size: 1.1em;
+    }
 
-		.intro-section,
-		.contact-section {
-			padding: var(--spacing-md);
-		}
-	}
+    .intro-section,
+    .contact-section {
+      padding: var(--spacing-md);
+    }
+  }
 
-	/* アクセシビリティ向上 */
-	@media (prefers-reduced-motion: reduce) {
-		* {
-			transition: none !important;
-		}
-	}
+  /* アクセシビリティ向上 */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      transition: none !important;
+    }
+  }
 
-	/* フォーカス時の視認性向上 */
-	.data-item:focus-within {
-		outline: 3px solid var(--secondary-color);
-		outline-offset: 3px;
-	}
+  /* フォーカス時の視認性向上 */
+  .data-item:focus-within {
+    outline: 3px solid var(--secondary-color);
+    outline-offset: 3px;
+  }
 </style>

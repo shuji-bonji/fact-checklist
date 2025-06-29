@@ -1,547 +1,552 @@
 <script lang="ts">
-	import { onMount, tick } from 'svelte';
-	import { goto, replaceState } from '$app/navigation';
-	import { page } from '$app/stores';
-	import { browser } from '$app/environment';
-	import { base } from '$app/paths';
-	import { checklistStore } from '$lib/stores/checklistStore.svelte.js';
-	import { CATEGORIES } from '$lib/data/checklist-items.js';
-	import type { JudgmentType } from '$lib/types/checklist.js';
+  import { onMount, tick } from 'svelte';
+  import { goto, replaceState } from '$app/navigation';
+  import { page } from '$app/stores';
+  import { browser } from '$app/environment';
+  import { base } from '$app/paths';
+  import { checklistStore } from '$lib/stores/checklistStore.svelte.js';
+  import { getCategories } from '$lib/data/checklist-items.js';
+  import type { JudgmentType } from '$lib/types/checklist.js';
+  import { t, i18nStore } from '$lib/i18n/index.js';
 
-	import CheckSection from '$lib/components/CheckSection.svelte';
-	import ScoreDisplay from '$lib/components/ScoreDisplay.svelte';
-	import HistorySidebar from '$lib/components/HistorySidebar.svelte';
-	import ExportModal from '$lib/components/ExportModal.svelte';
+  // i18n初期化状態を監視
+  const isI18nReady = $derived(i18nStore.initialized && !!i18nStore.translations);
 
-	// State
-	let title = $state('');
-	let description = $state('');
-	let notes = $state('');
-	let currentJudgment = $state<JudgmentType>(null);
-	let showGuideMode = $state(false);
-	let showExportModal = $state(false);
-	const collapsedSections = $state<Record<string, boolean>>({});
+  import CheckSection from '$lib/components/CheckSection.svelte';
+  import ScoreDisplay from '$lib/components/ScoreDisplay.svelte';
+  import HistorySidebar from '$lib/components/HistorySidebar.svelte';
+  import ExportModal from '$lib/components/ExportModal.svelte';
 
-	// Derived state
-	const currentChecklist = $derived(checklistStore.currentChecklist);
-	const score = $derived(checklistStore.score);
-	const confidenceLevel = $derived(checklistStore.confidenceLevel);
-	const confidenceText = $derived(checklistStore.confidenceText);
-	const judgmentAdvice = $derived(checklistStore.judgmentAdvice);
+  // State
+  let title = $state('');
+  let description = $state('');
+  let notes = $state('');
+  let currentJudgment = $state<JudgmentType>(null);
+  let showGuideMode = $state(false);
+  let showExportModal = $state(false);
+  const collapsedSections = $state<Record<string, boolean>>({});
 
-	onMount(() => {
-		// ローディング画面を確実に非表示にする（ブラウザ環境でのみ）
-		if (browser) {
-			document.body.classList.add('app-loaded');
-			const loadingElement = document.querySelector('.app-loading') as HTMLElement;
-			if (loadingElement) {
-				loadingElement.style.display = 'none';
-				console.log('Loading screen hidden from main page');
-			}
-		}
+  // Derived state
+  const categories = $derived(getCategories());
+  const currentChecklist = $derived(checklistStore.currentChecklist);
+  const score = $derived(checklistStore.score);
+  const confidenceLevel = $derived(checklistStore.confidenceLevel);
+  const confidenceText = $derived(checklistStore.confidenceText);
+  const judgmentAdvice = $derived(checklistStore.judgmentAdvice);
 
-		// URLパラメータから既存のチェックリストIDを確認
-		const checklistId = $page.url.searchParams.get('id');
-		console.log('checklistId from URL:', checklistId);
+  onMount(() => {
+    // ローディング画面を確実に非表示にする（ブラウザ環境でのみ）
+    if (browser) {
+      document.body.classList.add('app-loaded');
+      const loadingElement = document.querySelector('.app-loading') as HTMLElement;
+      if (loadingElement) {
+        loadingElement.style.display = 'none';
+        console.log('Loading screen hidden from main page');
+      }
+    }
 
-		if (checklistId) {
-			// 既存のチェックリストを読み込み（非同期）
-			console.log('Loading existing checklist...');
-			checklistStore.loadChecklist(checklistId).then(loaded => {
-				console.log('loadChecklist result:', loaded);
-				console.log('currentChecklist after load:', currentChecklist);
-				if (loaded && currentChecklist) {
-					title = currentChecklist.title;
-					description = currentChecklist.description;
-					notes = currentChecklist.notes;
-					currentJudgment = currentChecklist.judgment;
-					console.log('Loaded checklist data successfully');
-				}
-			});
-		} else {
-			// 新しいチェックリストを作成
-			console.log('Creating new checklist...');
-			startNewChecklist();
-		}
+    // URLパラメータから既存のチェックリストIDを確認
+    const checklistId = $page.url.searchParams.get('id');
+    console.log('checklistId from URL:', checklistId);
 
-		// デフォルトで「クリティカル評価」以外を折りたたみ
-		CATEGORIES.forEach((category, index) => {
-			if (index > 0) {
-				collapsedSections[category.id] = true;
-			}
-		});
-	});
+    if (checklistId) {
+      // 既存のチェックリストを読み込み（非同期）
+      console.log('Loading existing checklist...');
+      checklistStore.loadChecklist(checklistId).then(loaded => {
+        console.log('loadChecklist result:', loaded);
+        console.log('[snapshot] currentChecklist after load:', $state.snapshot(currentChecklist));
+        if (loaded && currentChecklist) {
+          title = currentChecklist.title;
+          description = currentChecklist.description;
+          notes = currentChecklist.notes;
+          currentJudgment = currentChecklist.judgment;
+          console.log('Loaded checklist data successfully');
+        }
+      });
+    } else {
+      // 新しいチェックリストを作成
+      console.log('Creating new checklist...');
+      startNewChecklist();
+    }
 
-	async function startNewChecklist() {
-		console.log('startNewChecklist called');
-		const id = checklistStore.createNewChecklist();
-		console.log('Created new checklist with id:', id);
-		console.log('[snapshot] currentChecklist after create:', $state.snapshot(currentChecklist));
+    // デフォルトで「クリティカル評価」以外を折りたたみ
+    categories.forEach((category, index) => {
+      if (index > 0) {
+        collapsedSections[category.id] = true;
+      }
+    });
+  });
 
-		// SvelteKitルーターの初期化を待つ
-		await tick();
+  async function startNewChecklist() {
+    console.log('startNewChecklist called');
+    const id = checklistStore.createNewChecklist();
+    console.log('Created new checklist with id:', id);
+    console.log('[snapshot] currentChecklist after create:', $state.snapshot(currentChecklist));
 
-		// URLを更新（履歴に追加せず）
-		try {
-			const url = new URL(window.location.href);
-			url.searchParams.set('id', id);
-			replaceState(url.pathname + url.search, {});
-			console.log('URL updated to:', url.toString());
-		} catch (error) {
-			console.warn('Failed to update URL:', error);
-			// フォールバック: 通常のhistory API
-			const url = new URL(window.location.href);
-			url.searchParams.set('id', id);
-			history.replaceState(null, '', url.toString());
-		}
-	}
+    // SvelteKitルーターの初期化を待つ
+    await tick();
 
-	function handleCheckItem(itemId: string, checked: boolean) {
-		checklistStore.updateCheckItem(itemId, checked);
-	}
+    // URLを更新（履歴に追加せず）
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('id', id);
+      replaceState(url.pathname + url.search, {});
+      console.log('URL updated to:', url.toString());
+    } catch (error) {
+      console.warn('Failed to update URL:', error);
+      // フォールバック: 通常のhistory API
+      const url = new URL(window.location.href);
+      url.searchParams.set('id', id);
+      history.replaceState(null, '', url.toString());
+    }
+  }
 
-	function handleTitleChange() {
-		checklistStore.updateTitle(title);
-	}
+  function handleCheckItem(itemId: string, checked: boolean) {
+    checklistStore.updateCheckItem(itemId, checked);
+  }
 
-	function handleDescriptionChange() {
-		checklistStore.updateDescription(description);
-	}
+  function handleTitleChange() {
+    checklistStore.updateTitle(title);
+  }
 
-	function handleNotesChange() {
-		checklistStore.updateNotes(notes);
-	}
+  function handleDescriptionChange() {
+    checklistStore.updateDescription(description);
+  }
 
-	function handleJudgmentChange(judgment: JudgmentType) {
-		currentJudgment = judgment;
-		checklistStore.setJudgment(judgment);
-	}
+  function handleNotesChange() {
+    checklistStore.updateNotes(notes);
+  }
 
-	function toggleSection(categoryId: string) {
-		collapsedSections[categoryId] = !collapsedSections[categoryId];
-	}
+  function handleJudgmentChange(judgment: JudgmentType) {
+    currentJudgment = judgment;
+    checklistStore.setJudgment(judgment);
+  }
 
-	function toggleGuideMode() {
-		showGuideMode = !showGuideMode;
-	}
+  function toggleSection(categoryId: string) {
+    collapsedSections[categoryId] = !collapsedSections[categoryId];
+  }
 
-	async function completeChecklist() {
-		console.log('completeChecklist called');
-		console.log('[snapshot] currentChecklist:', $state.snapshot(currentChecklist));
+  function toggleGuideMode() {
+    showGuideMode = !showGuideMode;
+  }
 
-		if (!currentChecklist) {
-			console.error('currentChecklist is null or undefined');
-			return;
-		}
+  async function completeChecklist() {
+    console.log('completeChecklist called');
+    console.log('[snapshot] currentChecklist:', $state.snapshot(currentChecklist));
 
-		console.log('About to call checklistStore.completeChecklist()');
+    if (!currentChecklist) {
+      console.error('currentChecklist is null or undefined');
+      return;
+    }
 
-		try {
-			const success = await checklistStore.completeChecklist();
-			console.log('completeChecklist result:', success);
+    console.log('About to call checklistStore.completeChecklist()');
 
-			if (success) {
-				console.log('Redirecting to:', `${base}/checklist/${currentChecklist.id}?completed=true`);
-				// 完了ページにリダイレクト
-				goto(`${base}/checklist/${currentChecklist.id}?completed=true`);
-			} else {
-				console.error('completeChecklist returned false');
-			}
-		} catch (error) {
-			console.error('Error in completeChecklist:', error);
-		}
-	}
+    try {
+      const success = await checklistStore.completeChecklist();
+      console.log('completeChecklist result:', success);
 
-	function exportChecklist() {
-		showExportModal = true;
-	}
+      if (success) {
+        console.log('Redirecting to:', `${base}/checklist/${currentChecklist.id}?completed=true`);
+        // 完了ページにリダイレクト
+        goto(`${base}/checklist/${currentChecklist.id}?completed=true`);
+      } else {
+        console.error('completeChecklist returned false');
+      }
+    } catch (error) {
+      console.error('Error in completeChecklist:', error);
+    }
+  }
 
-	// 信頼度に基づく判定の自動提案
-	$effect(() => {
-		if (confidenceLevel >= 80 && currentJudgment !== 'accept') {
-			// 高信頼度の場合は採用を提案（ただし自動設定はしない）
-		}
-	});
+  function exportChecklist() {
+    showExportModal = true;
+  }
+
+  // 信頼度に基づく判定の自動提案
+  $effect(() => {
+    if (confidenceLevel >= 80 && currentJudgment !== 'accept') {
+      // 高信頼度の場合は採用を提案（ただし自動設定はしない）
+    }
+  });
 </script>
 
 <svelte:head>
-	<title>実用的事実確認チェックシート</title>
-	<meta name="description" content="情報の信頼性を科学的・体系的に評価するためのチェックシート" />
+  <title>{isI18nReady ? t('app.title') : 'Fact Checklist'}</title>
+  <meta
+    name="description"
+    content={isI18nReady ? t('app.description') : 'Information reliability evaluation checklist'}
+  />
 </svelte:head>
 
 <div class="container">
-	<!-- ページヘッダー -->
-	<header class="page-header">
-		<h1>🔍 実用的事実確認チェックシート</h1>
-		<p class="page-subtitle">情報の信頼性を科学的・体系的に評価するための統合システム</p>
-	</header>
+  <!-- ページヘッダー -->
+  <header class="page-header">
+    <h1>🔍 {t('app.title')}</h1>
+    <p class="page-subtitle">{t('app.subtitle')}</p>
+  </header>
 
-	<!-- メインコンテンツ -->
-	<div class="main-content">
-		<!-- 評価エリア -->
-		<div class="evaluation-area">
-			<!-- チェックリスト情報入力 -->
-			<div class="card">
-				<h2>📋 チェックリスト情報</h2>
-				<div class="form-group">
-					<label for="title" class="form-label">タイトル</label>
-					<input
-						id="title"
-						type="text"
-						class="form-input"
-						bind:value={title}
-						oninput={handleTitleChange}
-						placeholder="例: 新型コロナワクチンの効果に関する記事"
-					/>
-				</div>
+  <!-- メインコンテンツ -->
+  <div class="main-content">
+    <!-- 評価エリア -->
+    <div class="evaluation-area">
+      <!-- チェックリスト情報入力 -->
+      <div class="card">
+        <h2>📋 {t('checklist.title')}</h2>
+        <div class="form-group">
+          <label for="title" class="form-label">{t('forms.titleLabel')}</label>
+          <input
+            id="title"
+            type="text"
+            class="form-input"
+            bind:value={title}
+            oninput={handleTitleChange}
+            placeholder={t('forms.titlePlaceholder')}
+          />
+        </div>
 
-				<div class="form-group mb-0">
-					<label for="description" class="form-label">対象情報の概要</label>
-					<textarea
-						id="description"
-						class="form-input form-textarea"
-						bind:value={description}
-						oninput={handleDescriptionChange}
-						placeholder="評価対象となる情報の詳細を記入してください..."
-					></textarea>
-				</div>
-			</div>
+        <div class="form-group mb-0">
+          <label for="description" class="form-label">{t('forms.descriptionLabel')}</label>
+          <textarea
+            id="description"
+            class="form-input form-textarea"
+            bind:value={description}
+            oninput={handleDescriptionChange}
+            placeholder={t('forms.descriptionPlaceholder')}
+          ></textarea>
+        </div>
+      </div>
 
-			<!-- クイックスタートガイド -->
-			<div class="quick-start card">
-				<p>
-					まず「クリティカル評価」から始めて、基本的な信頼性を確認しましょう。<br
-					/>各項目をチェックすると、右側のスコアがリアルタイムで更新されます。
-				</p>
-			</div>
+      <!-- クイックスタートガイド -->
+      <div class="quick-start card">
+        <p>{t('ui.quickStartGuide')}</p>
+      </div>
 
-			<!-- チェックセクション -->
-			{#each CATEGORIES as category (category.id)}
-				<CheckSection
-					{category}
-					items={currentChecklist?.items.filter(item => item.category.id === category.id) || []}
-					collapsed={collapsedSections[category.id] || false}
-					{showGuideMode}
-					onToggle={() => toggleSection(category.id)}
-					onCheckItem={handleCheckItem}
-				/>
-			{/each}
+      <!-- チェックセクション -->
+      {#each categories as category (category.id)}
+        <CheckSection
+          {category}
+          items={currentChecklist?.items.filter(item => item.category.id === category.id) || []}
+          collapsed={collapsedSections[category.id] || false}
+          {showGuideMode}
+          onToggle={() => toggleSection(category.id)}
+          onCheckItem={handleCheckItem}
+        />
+      {/each}
 
-			<!-- 評価メモ -->
-			<div class="notes-area card">
-				<h3>📝 評価メモ・追加確認事項</h3>
-				<textarea
-					class="form-input form-textarea"
-					bind:value={notes}
-					oninput={handleNotesChange}
-					placeholder="疑問点、追加で確認したい事項、総合的な印象など、自由に記録してください..."
-				></textarea>
-			</div>
-		</div>
+      <!-- 評価メモ -->
+      <div class="notes-area card">
+        <h3>📝 {t('forms.notesLabel')}</h3>
+        <textarea
+          class="form-input form-textarea"
+          bind:value={notes}
+          oninput={handleNotesChange}
+          placeholder={t('forms.notesPlaceholder')}
+        ></textarea>
+      </div>
+    </div>
 
-		<!-- サイドバー -->
-		<div class="sidebar">
-			<!-- ガイドモード切り替えボタン -->
-			<div class="guide-toggle-section card">
-				<button class="btn btn-secondary w-full" onclick={() => toggleGuideMode()}>
-					{showGuideMode ? '📝 通常モード' : '📖 詳細ガイドモード'}
-				</button>
-			</div>
+    <!-- サイドバー -->
+    <div class="sidebar">
+      <!-- ガイドモード切り替えボタン -->
+      <div class="guide-toggle-section card">
+        <button class="btn btn-secondary w-full" onclick={() => toggleGuideMode()}>
+          {showGuideMode ? t('ui.guideModeNormal') : t('ui.guideModeDetailed')}
+        </button>
+      </div>
 
-			<!-- スコア表示 -->
-			<ScoreDisplay
-				{score}
-				{confidenceLevel}
-				{confidenceText}
-				{judgmentAdvice}
-				{currentJudgment}
-				onJudgmentChange={handleJudgmentChange}
-			/>
+      <!-- スコア表示 -->
+      <ScoreDisplay
+        {score}
+        {confidenceLevel}
+        {confidenceText}
+        {judgmentAdvice}
+        {currentJudgment}
+        onJudgmentChange={handleJudgmentChange}
+      />
 
-			<!-- アクションボタン -->
-			<div class="action-buttons card">
-				<button
-					class="btn btn-primary w-full mb-2 btn-complete"
-					onclick={completeChecklist}
-					disabled={!currentChecklist}
-				>
-					✅ 評価を完了
-				</button>
+      <!-- アクションボタン -->
+      <div class="action-buttons card">
+        <button
+          class="btn btn-primary w-full mb-2 btn-complete"
+          onclick={completeChecklist}
+          disabled={!currentChecklist}
+        >
+          {t('ui.completeEvaluation')}
+        </button>
 
-				<button class="btn btn-ghost w-full" onclick={exportChecklist} disabled={!currentChecklist}>
-					📄 エクスポート
-				</button>
-			</div>
+        <button class="btn btn-ghost w-full" onclick={exportChecklist} disabled={!currentChecklist}>
+          📄 {t('common.export')}
+        </button>
+      </div>
 
-			<!-- 履歴サイドバー -->
-			<HistorySidebar />
-		</div>
-	</div>
+      <!-- 履歴サイドバー -->
+      <HistorySidebar />
+    </div>
+  </div>
 </div>
 
 <!-- エクスポートモーダル -->
 {#if showExportModal}
-	<ExportModal checklist={currentChecklist} onClose={() => (showExportModal = false)} />
+  <ExportModal checklist={currentChecklist} onClose={() => (showExportModal = false)} />
 {/if}
 
 <style>
-	.container {
-		max-width: 1400px;
-		margin: 0 auto;
-		padding: var(--spacing-6);
-	}
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--spacing-6);
+  }
 
-	/* ページヘッダー - モダンデザイン */
-	.page-header {
-		text-align: center;
-		margin-bottom: var(--spacing-8);
-		padding: var(--spacing-8);
-		background: rgba(255, 255, 255, 0.75);
-		border: 1px solid rgba(255, 255, 255, 0.4);
-		border-radius: var(--radius-2xl);
-		box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
-		backdrop-filter: blur(16px);
-		-webkit-backdrop-filter: blur(16px);
-		position: relative;
-		overflow: hidden;
-	}
+  /* ページヘッダー - モダンデザイン */
+  .page-header {
+    text-align: center;
+    margin-bottom: var(--spacing-8);
+    padding: var(--spacing-8);
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: var(--radius-2xl);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    position: relative;
+    overflow: hidden;
+  }
 
-	.page-header::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background: var(--gradient-primary);
-		opacity: 0.03;
-		pointer-events: none;
-	}
+  .page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gradient-primary);
+    opacity: 0.03;
+    pointer-events: none;
+  }
 
-	.page-header h1 {
-		color: var(--text-color);
-		margin: 0 0 var(--spacing-4) 0;
-		font-family: var(--font-family-heading);
-		font-size: var(--font-size-5xl);
-		font-weight: var(--font-weight-light);
-		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-		position: relative;
-		z-index: 1;
-	}
+  .page-header h1 {
+    color: var(--text-color);
+    margin: 0 0 var(--spacing-4) 0;
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-5xl);
+    font-weight: var(--font-weight-light);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1;
+  }
 
-	.page-subtitle {
-		color: var(--text-color-secondary);
-		margin: 0;
-		font-size: var(--font-size-lg);
-		font-weight: var(--font-weight-medium);
-		position: relative;
-		z-index: 1;
-	}
+  .page-subtitle {
+    color: var(--text-color-secondary);
+    margin: 0;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+    position: relative;
+    z-index: 1;
+  }
 
-	/* 2カラムレイアウト - CSS Grid */
-	.main-content {
-		display: grid;
-		grid-template-columns: 1fr 400px;
-		gap: var(--spacing-8);
-		align-items: start;
-	}
+  /* 2カラムレイアウト - CSS Grid */
+  .main-content {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: var(--spacing-8);
+    align-items: start;
+  }
 
-	.evaluation-area {
-		min-height: 100vh;
-		display: flex;
-		flex-direction: column;
-		gap: var(--spacing-6);
-	}
+  .evaluation-area {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-6);
+  }
 
-	/* サイドバー - モダンデザイン */
-	.sidebar {
-		position: sticky;
-		top: var(--spacing-6);
-		max-height: calc(100vh - var(--spacing-12));
-		overflow-y: auto;
-		display: flex;
-		flex-direction: column;
-		gap: var(--spacing-4);
-		/* スクロールバーを非表示にする */
-		scrollbar-width: none; /* Firefox */
-		-ms-overflow-style: none; /* IE and Edge */
-	}
+  /* サイドバー - モダンデザイン */
+  .sidebar {
+    position: sticky;
+    top: var(--spacing-6);
+    max-height: calc(100vh - var(--spacing-12));
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+    /* スクロールバーを非表示にする */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
 
-	.sidebar::-webkit-scrollbar {
-		display: none; /* WebKit browsers (Chrome, Safari, etc.) */
-	}
+  .sidebar::-webkit-scrollbar {
+    display: none; /* WebKit browsers (Chrome, Safari, etc.) */
+  }
 
-	/* ガイドボタンセクション */
-	.guide-toggle-section {
-		text-align: center;
-		padding: var(--spacing-4);
-		background: var(--surface-elevated);
-		border-radius: var(--radius-xl);
-		border: 2px solid var(--border-color);
-		box-shadow: var(--shadow-sm);
-	}
+  /* ガイドボタンセクション */
+  .guide-toggle-section {
+    text-align: center;
+    padding: var(--spacing-4);
+    background: var(--surface-elevated);
+    border-radius: var(--radius-xl);
+    border: 2px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+  }
 
-	/* クイックスタートガイド */
-	.quick-start {
-		background: var(--gradient-accent);
-		color: white;
-		text-align: center;
-		border-radius: var(--radius-xl);
-		box-shadow: var(--shadow-accent);
-		position: relative;
-		overflow: hidden;
-	}
+  /* クイックスタートガイド */
+  .quick-start {
+    background: var(--gradient-accent);
+    color: white;
+    text-align: center;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-accent);
+    position: relative;
+    overflow: hidden;
+  }
 
-	.quick-start::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
-		pointer-events: none;
-	}
+  .quick-start::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+    pointer-events: none;
+  }
 
-	.quick-start p {
-		color: rgba(255, 255, 255, 0.95);
-		margin: 0;
-		position: relative;
-		z-index: 1;
-		font-weight: var(--font-weight-medium);
-		line-height: var(--line-height-relaxed);
-	}
+  .quick-start p {
+    color: rgba(255, 255, 255, 0.95);
+    margin: 0;
+    position: relative;
+    z-index: 1;
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-relaxed);
+  }
 
-	/* 評価メモエリア */
-	.notes-area h3 {
-		margin-bottom: var(--spacing-4);
-		color: var(--text-color);
-		font-family: var(--font-family-heading);
-		font-size: var(--font-size-xl);
-		font-weight: var(--font-weight-semibold);
-	}
+  /* 評価メモエリア */
+  .notes-area h3 {
+    margin-bottom: var(--spacing-4);
+    color: var(--text-color);
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+  }
 
-	/* アクションボタン */
-	.action-buttons {
-		text-align: center;
-		background: var(--surface-elevated);
-		border-radius: var(--radius-xl);
-		border: 2px solid var(--border-color);
-		padding: var(--spacing-6);
-		box-shadow: var(--shadow-sm);
-		position: relative;
-		overflow: visible;
-		z-index: 1;
-	}
+  /* アクションボタン */
+  .action-buttons {
+    text-align: center;
+    background: var(--surface-elevated);
+    border-radius: var(--radius-xl);
+    border: 2px solid var(--border-color);
+    padding: var(--spacing-6);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: visible;
+    z-index: 1;
+  }
 
-	.action-buttons::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background: var(--gradient-mesh);
-		opacity: 0.02;
-		pointer-events: none;
-	}
+  .action-buttons::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gradient-mesh);
+    opacity: 0.02;
+    pointer-events: none;
+  }
 
-	.w-full {
-		width: 100%;
-	}
+  .w-full {
+    width: 100%;
+  }
 
-	.mb-2 {
-		margin-bottom: var(--spacing-4);
-	}
+  .mb-2 {
+    margin-bottom: var(--spacing-4);
+  }
 
-	/* 評価完了ボタンの強調スタイル */
-	.action-buttons .btn-complete {
-		position: relative;
-		z-index: 2;
-		background: var(--gradient-success);
-		color: white;
-		font-weight: var(--font-weight-bold);
-		font-size: var(--font-size-lg);
-		padding: var(--spacing-4) var(--spacing-6);
-		box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
-		border: 2px solid var(--color-success-400);
-	}
+  /* 評価完了ボタンの強調スタイル */
+  .action-buttons .btn-complete {
+    position: relative;
+    z-index: 2;
+    background: var(--gradient-success);
+    color: white;
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-lg);
+    padding: var(--spacing-4) var(--spacing-6);
+    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+    border: 2px solid var(--color-success-400);
+  }
 
-	.action-buttons .btn-complete:hover {
-		transform: translateY(-4px);
-		box-shadow: 0 12px 35px rgba(76, 175, 80, 0.5);
-		background: linear-gradient(135deg, var(--color-success-500) 0%, var(--color-success-700) 100%);
-	}
+  .action-buttons .btn-complete:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 35px rgba(76, 175, 80, 0.5);
+    background: linear-gradient(135deg, var(--color-success-500) 0%, var(--color-success-700) 100%);
+  }
 
-	.action-buttons .btn-complete:disabled {
-		opacity: 0.6;
-		transform: none;
-		box-shadow: var(--shadow-sm);
-	}
+  .action-buttons .btn-complete:disabled {
+    opacity: 0.6;
+    transform: none;
+    box-shadow: var(--shadow-sm);
+  }
 
-	/* レスポンシブ対応 */
-	@media (max-width: 1200px) {
-		.main-content {
-			grid-template-columns: 1fr 350px;
-			gap: var(--spacing-6);
-		}
-	}
+  /* レスポンシブ対応 */
+  @media (max-width: 1200px) {
+    .main-content {
+      grid-template-columns: 1fr 350px;
+      gap: var(--spacing-6);
+    }
+  }
 
-	@media (max-width: 1024px) {
-		.main-content {
-			grid-template-columns: 1fr;
-			gap: var(--spacing-6);
-		}
+  @media (max-width: 1024px) {
+    .main-content {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-6);
+    }
 
-		.sidebar {
-			position: static;
-			max-height: none;
-			overflow-y: visible;
-		}
-	}
+    .sidebar {
+      position: static;
+      max-height: none;
+      overflow-y: visible;
+    }
+  }
 
-	@media (max-width: 768px) {
-		.container {
-			padding: var(--spacing-4);
-		}
+  @media (max-width: 768px) {
+    .container {
+      padding: var(--spacing-4);
+    }
 
-		.page-header {
-			padding: var(--spacing-6);
-			margin-bottom: var(--spacing-6);
-		}
+    .page-header {
+      padding: var(--spacing-6);
+      margin-bottom: var(--spacing-6);
+    }
 
-		.page-header h1 {
-			font-size: var(--font-size-4xl);
-		}
+    .page-header h1 {
+      font-size: var(--font-size-4xl);
+    }
 
-		.page-subtitle {
-			font-size: var(--font-size-base);
-		}
+    .page-subtitle {
+      font-size: var(--font-size-base);
+    }
 
-		.main-content {
-			gap: var(--spacing-4);
-		}
+    .main-content {
+      gap: var(--spacing-4);
+    }
 
-		.evaluation-area {
-			gap: var(--spacing-4);
-		}
+    .evaluation-area {
+      gap: var(--spacing-4);
+    }
 
-		.sidebar {
-			gap: var(--spacing-3);
-		}
+    .sidebar {
+      gap: var(--spacing-3);
+    }
 
-		.guide-toggle-section,
-		.action-buttons {
-			padding: var(--spacing-4);
-		}
-	}
+    .guide-toggle-section,
+    .action-buttons {
+      padding: var(--spacing-4);
+    }
+  }
 
-	/* アクセシビリティ向上 */
-	@media (prefers-reduced-motion: reduce) {
-		.page-header::before,
-		.quick-start::before,
-		.action-buttons::before {
-			transition: none !important;
-		}
-	}
+  /* アクセシビリティ向上 */
+  @media (prefers-reduced-motion: reduce) {
+    .page-header::before,
+    .quick-start::before,
+    .action-buttons::before {
+      transition: none !important;
+    }
+  }
 </style>
