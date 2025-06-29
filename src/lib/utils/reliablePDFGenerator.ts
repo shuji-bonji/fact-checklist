@@ -198,35 +198,47 @@ export class ReliablePDFGenerator {
 	}
 
 	private addHeader(checklist: ChecklistResult): void {
-		this.pdf.setFontSize(16);
+		// ヘッダーセクションの背景
+		this.addBackgroundBox(this.currentY, 35, [255, 255, 255], [248, 249, 250]);
+
+		// 下部ボーダー（HTML版のborder-bottom: 3px solid #2c3e50相当）
+		this.pdf.saveGraphicsState();
+		this.pdf.setFillColor(44, 62, 80); // #2c3e50
+		this.pdf.rect(this.margin, this.currentY + 35, this.maxLineWidth, 1, 'F');
+		this.pdf.restoreGraphicsState();
+
+		this.pdf.setFontSize(18);
 		this.setFontWeight('bold');
+		this.pdf.setTextColor(44, 62, 80); // #2c3e50
 
 		// タイトルを文字化けしにくい形式で表示
 		const mainTitle = this.useFallbackFont
 			? '📋 Fact Checking Checklist'
 			: '📋 事実確認チェックシート';
 
-		this.addText('========================================');
 		this.addText(mainTitle);
-		this.addText('========================================');
 
 		// Phase 3: TOCエントリー追加
 		this.addToTableOfContents(mainTitle, 1);
 
-		this.currentY += 3;
+		this.currentY += 5;
 
 		this.pdf.setFontSize(12);
-		this.setFontWeight('normal');
+		this.setFontWeight('bold');
+		this.pdf.setTextColor(44, 62, 80); // #2c3e50
 
 		// タイトル表示（エンコーディング考慮）
 		const displayTitle = this.useFallbackFont
 			? `Title: ${this.sanitizeText(checklist.title)}`
-			: `タイトル: ${checklist.title}`;
+			: checklist.title;
 		this.addText(displayTitle);
-		this.currentY += 2;
+		this.currentY += 5;
 
-		// 日付情報
+		// メタ情報（HTML版のmeta-infoスタイル相当）
 		this.pdf.setFontSize(10);
+		this.setFontWeight('normal');
+		this.pdf.setTextColor(102, 102, 102); // #666
+
 		const createdDate = checklist.createdAt.toLocaleDateString('ja-JP', {
 			year: 'numeric',
 			month: '2-digit',
@@ -253,76 +265,34 @@ export class ReliablePDFGenerator {
 		});
 		const outputLabel = this.useFallbackFont ? 'Generated' : '出力日';
 		this.addText(`${outputLabel}: ${outputDate}`);
-		this.currentY += 8;
+		this.currentY += 15;
 	}
 
 	private addSummary(checklist: ChecklistResult): void {
-		this.checkPageBreak(40);
+		this.checkPageBreak(60);
+
+		// サマリーセクション用の背景を作成（HTML版のlinear-gradient(135deg, #f8f9fa, #e9ecef)相当）
+		this.addBackgroundBox(this.currentY, 55, [248, 249, 250], [233, 236, 239]);
 
 		this.pdf.setFontSize(14);
 		this.setFontWeight('bold');
+		this.pdf.setTextColor(44, 62, 80); // #2c3e50
 
 		const summaryTitle = this.useFallbackFont ? '📊 Evaluation Summary' : '📊 評価結果サマリー';
 		this.addText(summaryTitle);
-		this.addText('----------------------------------------');
 
 		// Phase 3: TOCエントリー追加
 		this.addToTableOfContents(summaryTitle, 1);
 
-		this.currentY += 2;
+		this.currentY += 8;
 
 		this.pdf.setFontSize(11);
 		this.setFontWeight('normal');
 
-		// サマリーデータ（言語対応）
-		const summaryLabels = this.useFallbackFont
-			? {
-					totalScore: 'Total Score',
-					confidenceLevel: 'Confidence Level',
-					result: 'Evaluation Result',
-					judgment: 'Final Judgment',
-					advice: 'Recommended Action'
-				}
-			: {
-					totalScore: '総合スコア',
-					confidenceLevel: '信頼度レベル',
-					result: '評価結果',
-					judgment: '最終判定',
-					advice: '推奨アクション'
-				};
+		// スコアグリッドを作成（HTML版のscore-gridスタイル相当）
+		this.addScoreGrid(checklist);
 
-		const summaryData = [
-			`${summaryLabels.totalScore}: ${checklist.score.total}/${checklist.score.maxScore}`,
-			`${summaryLabels.confidenceLevel}: ${checklist.confidenceLevel}%`,
-			`${summaryLabels.result}: ${this.getLocalizedText(checklist.confidenceText)}`,
-			`${summaryLabels.judgment}: ${this.getJudgmentText(checklist.judgment)}`,
-			...(checklist.judgmentAdvice
-				? [`${summaryLabels.advice}: ${this.getLocalizedText(checklist.judgmentAdvice)}`]
-				: [])
-		];
-
-		summaryData.forEach(line => {
-			this.addText(`  ${line}`);
-			this.currentY += 1;
-		});
-
-		// セクション別達成率
-		this.currentY += 3;
-		this.setFontWeight('bold');
-		const sectionTitle = this.useFallbackFont ? 'Section Completion Rates:' : 'セクション別達成率:';
-		this.addText(sectionTitle);
-		this.setFontWeight('normal');
-
-		const sections = this.groupItemsByCategory(checklist.items);
-		sections.forEach(section => {
-			const sectionName = this.useFallbackFont
-				? this.getCategoryNameEn(section.category.id)
-				: section.category.name;
-			const completionText = `  ${section.category.emoji} ${sectionName}: ${section.completionRate}% (${section.checkedItems.length}/${section.items.length})`;
-			this.addText(completionText);
-		});
-
-		this.currentY += 8;
+		this.currentY += 15;
 	}
 
 	private addDetailedResults(checklist: ChecklistResult, options: ReliablePDFOptions): void {
@@ -341,37 +311,28 @@ export class ReliablePDFGenerator {
 	private addSection(section: SectionData, options: ReliablePDFOptions): void {
 		this.checkPageBreak(50);
 
-		// セクションヘッダー
-		this.pdf.setFontSize(14);
-		this.setFontWeight('bold');
-		this.addText('');
-		this.addText('========================================');
+		// セクションヘッダー（HTML版のsection-headerスタイル相当）
+		this.addSectionHeader(section);
 
+		// Phase 3: TOCエントリー追加
 		const sectionTitle = this.useFallbackFont
 			? `${section.category.emoji} ${this.getCategoryNameEn(section.category.id)}`
 			: `${section.category.emoji} ${section.category.name}`;
-		this.addText(sectionTitle);
-		this.addText('========================================');
-
-		// Phase 3: TOCエントリー追加
 		this.addToTableOfContents(sectionTitle, 2);
 
-		this.currentY += 1;
+		this.currentY += 5;
+
+		// セクションコンテンツ背景
+		const contentHeight = section.items.length * 25 + 15;
+		this.addBackgroundBox(this.currentY, contentHeight, [255, 255, 255], [250, 250, 250]);
 
 		this.pdf.setFontSize(10);
 		this.setFontWeight('italic');
+		this.pdf.setTextColor(85, 85, 85); // #555
 		const description = this.useFallbackFont
 			? this.getCategoryDescEn(section.category.id)
 			: section.category.description;
 		this.addWrappedText(description);
-		this.currentY += 2;
-
-		this.pdf.setFontSize(11);
-		this.setFontWeight('normal');
-		const statusLabel = this.useFallbackFont ? 'Completion Status' : '達成状況';
-		this.addText(
-			`${statusLabel}: ${section.completionRate}% (${section.checkedItems.length}/${section.items.length})`
-		);
 		this.currentY += 4;
 
 		// 各項目
@@ -379,38 +340,42 @@ export class ReliablePDFGenerator {
 			this.addCheckItem(item, index + 1, options);
 		});
 
-		this.currentY += 5;
+		this.currentY += 8;
 	}
 
 	private addCheckItem(item: CheckItem, itemNumber: number, options: ReliablePDFOptions): void {
 		this.checkPageBreak(25);
 
-		this.pdf.setFontSize(12);
-		this.setFontWeight('bold');
+		// チェック項目用の背景（HTML版のcheck-itemスタイル相当）
+		const bgColors = item.checked
+			? { start: [213, 244, 230], end: [168, 230, 207] } // green gradient
+			: { start: [255, 234, 167], end: [253, 203, 110] }; // yellow gradient
 
-		const statusText = this.useFallbackFont
-			? item.checked
-				? '✓ Completed'
-				: '✗ Incomplete'
-			: item.checked
-				? '✓ 完了'
-				: '✗ 未完了';
-		const riskIcon = this.getRiskIcon(item.category.id);
+		this.addBackgroundBox(this.currentY, 22, bgColors.start, bgColors.end);
 
-		this.addText(`${itemNumber}. ${statusText} ${riskIcon}`);
-		this.currentY += 1;
+		// 左側のボーダー色
+		const borderColor = item.checked ? [39, 174, 96] : [225, 112, 85]; // #27ae60 or #e17055
+		this.addLeftBorder(this.currentY, 22, borderColor);
 
+		this.pdf.setFontSize(24);
+		this.setFontWeight('normal');
+		this.pdf.setTextColor(44, 62, 80); // #2c3e50
+
+		// アイコンとステータス
+		const statusIcon = item.checked ? '✅' : '⚠️';
+		this.addText(`${statusIcon}`);
+
+		// タイトル
 		this.pdf.setFontSize(11);
 		this.setFontWeight('bold');
-		const titleLabel = this.useFallbackFont ? 'Item' : '題目';
-		this.addWrappedText(`   ${titleLabel}: ${this.getLocalizedText(item.title)}`);
-		this.currentY += 1;
+		this.addWrappedText(`   ${this.getLocalizedText(item.title)}`);
+		this.currentY += 2;
 
 		// 説明
 		this.pdf.setFontSize(10);
 		this.setFontWeight('normal');
-		const descLabel = this.useFallbackFont ? 'Description' : '説明';
-		this.addWrappedText(`   ${descLabel}: ${this.getLocalizedText(item.description)}`);
+		this.pdf.setTextColor(85, 85, 85); // #555
+		this.addWrappedText(`   ${this.getLocalizedText(item.description)}`);
 		this.currentY += 2;
 
 		// ガイド内容（オプション）
@@ -458,25 +423,36 @@ export class ReliablePDFGenerator {
 	}
 
 	private addNotes(notes: string): void {
-		this.checkPageBreak(30);
+		this.checkPageBreak(35);
+
+		// ノートセクションの背景（HTML版のlinear-gradient(135deg, #e8f4fd, #d1ecf1)相当）
+		const notesHeight = 30 + Math.ceil(notes.length / 80) * 7; // テキスト長に応じて高さ調整
+		this.addBackgroundBox(this.currentY, notesHeight, [232, 244, 253], [209, 236, 241]);
+
+		// 左ボーダー（ブルー）
+		this.addLeftBorder(this.currentY, notesHeight, [52, 152, 219]); // #3498db
 
 		this.pdf.setFontSize(14);
 		this.setFontWeight('bold');
-		this.addText('');
-		this.addText('========================================');
+		this.pdf.setTextColor(44, 62, 80); // #2c3e50
+
 		const notesTitle = this.useFallbackFont ? '📝 Evaluation Notes' : '📝 評価メモ';
 		this.addText(notesTitle);
-		this.addText('========================================');
 
 		// Phase 3: TOCエントリー追加
 		this.addToTableOfContents(notesTitle, 1);
 
-		this.currentY += 3;
+		this.currentY += 8;
+
+		// ノートコンテンツの背景（白）
+		const contentHeight = Math.ceil(notes.length / 80) * 7 + 10;
+		this.addBackgroundBox(this.currentY, contentHeight, [255, 255, 255], [255, 255, 255]);
 
 		this.pdf.setFontSize(11);
 		this.setFontWeight('normal');
+		this.pdf.setTextColor(51, 51, 51); // #333
 		this.addWrappedText(this.getLocalizedText(notes));
-		this.currentY += 5;
+		this.currentY += 10;
 	}
 
 	private addFooter(): void {
@@ -770,6 +746,170 @@ export class ReliablePDFGenerator {
 			totalSize += font.length;
 		}
 		return Math.round(totalSize / 1024); // KB単位
+	}
+
+	// HTML版に合わせたスタイリングメソッド
+
+	// 背景ボックスを描画（グラデーション風）
+	private addBackgroundBox(
+		y: number,
+		height: number,
+		startColor: number[],
+		endColor: number[]
+	): void {
+		try {
+			// 配列の長さチェック
+			if (startColor.length < 3 || endColor.length < 3) {
+				console.warn('⚠️ Invalid color arrays provided');
+				return;
+			}
+
+			this.pdf.saveGraphicsState();
+
+			// グラデーション効果のため複数の矩形を重ねる
+			const steps = 5;
+			for (let i = 0; i < steps; i++) {
+				const ratio = i / (steps - 1);
+				const r = Math.round(startColor[0]! + (endColor[0]! - startColor[0]!) * ratio);
+				const g = Math.round(startColor[1]! + (endColor[1]! - startColor[1]!) * ratio);
+				const b = Math.round(startColor[2]! + (endColor[2]! - startColor[2]!) * ratio);
+
+				this.pdf.setFillColor(r, g, b);
+				this.pdf.rect(
+					this.margin,
+					y + (i * height) / steps,
+					this.maxLineWidth,
+					height / steps,
+					'F'
+				);
+			}
+
+			this.pdf.restoreGraphicsState();
+		} catch (error) {
+			console.warn('⚠️ Failed to add background box:', error);
+		}
+	}
+
+	// 左側ボーダーを描画
+	private addLeftBorder(y: number, height: number, color: number[]): void {
+		try {
+			// 配列の長さチェック
+			if (color.length < 3) {
+				console.warn('⚠️ Invalid color array provided');
+				return;
+			}
+
+			this.pdf.saveGraphicsState();
+			this.pdf.setFillColor(color[0]!, color[1]!, color[2]!);
+			this.pdf.rect(this.margin, y, 2, height, 'F');
+			this.pdf.restoreGraphicsState();
+		} catch (error) {
+			console.warn('⚠️ Failed to add left border:', error);
+		}
+	}
+
+	// スコアグリッドを描画（HTML版のscore-gridスタイル相当）
+	private addScoreGrid(checklist: ChecklistResult): void {
+		const summaryLabels = this.useFallbackFont
+			? {
+					totalScore: 'Total Score',
+					confidenceLevel: 'Confidence Level',
+					result: 'Evaluation Result',
+					judgment: 'Final Judgment'
+				}
+			: {
+					totalScore: '総合スコア',
+					confidenceLevel: '信頼度レベル',
+					result: '評価結果',
+					judgment: '最終判定'
+				};
+
+		// スコアカードを2x2グリッドで配置
+		const cardWidth = (this.maxLineWidth - 10) / 2;
+		const cardHeight = 20;
+		const startX = this.margin;
+		const startY = this.currentY;
+
+		const scoreData = [
+			{
+				label: summaryLabels.totalScore,
+				value: `${checklist.score.total}/${checklist.score.maxScore}`
+			},
+			{ label: summaryLabels.confidenceLevel, value: `${checklist.confidenceLevel}%` },
+			{ label: summaryLabels.result, value: this.getLocalizedText(checklist.confidenceText) },
+			{ label: summaryLabels.judgment, value: this.getJudgmentText(checklist.judgment) }
+		];
+
+		scoreData.forEach((item, index) => {
+			const col = index % 2;
+			const row = Math.floor(index / 2);
+			const x = startX + col * (cardWidth + 5);
+			const y = startY + row * (cardHeight + 5);
+
+			// カード背景（白）
+			this.addBackgroundBox(y, cardHeight, [255, 255, 255], [248, 250, 252]);
+
+			// 左ボーダー（ブルー）
+			this.addLeftBorder(y, cardHeight, [52, 165, 245]); // #3498db
+
+			// テキスト
+			this.pdf.setFontSize(9);
+			this.setFontWeight('bold');
+			this.pdf.setTextColor(44, 62, 80); // #2c3e50
+			this.pdf.text(item.label, x + 5, y + 8);
+
+			this.pdf.setFontSize(8);
+			this.setFontWeight('normal');
+			this.pdf.text(item.value, x + 5, y + 16);
+		});
+
+		this.currentY += 45;
+	}
+
+	// セクションヘッダーを描画（HTML版のsection-headerスタイル相当）
+	private addSectionHeader(section: SectionData): void {
+		const headerHeight = 25;
+
+		// カテゴリー別の色設定（HTML版に合わせる）
+		const colors = this.getSectionColors(section.category.id);
+
+		// ヘッダー背景（グラデーション）
+		this.addBackgroundBox(this.currentY, headerHeight, colors.start, colors.end);
+
+		// ヘッダーテキスト
+		this.pdf.setFontSize(14);
+		this.setFontWeight('bold');
+		this.pdf.setTextColor(255, 255, 255); // 白文字
+
+		const sectionTitle = this.useFallbackFont
+			? `${section.category.emoji} ${this.getCategoryNameEn(section.category.id)}`
+			: `${section.category.emoji} ${section.category.name}`;
+
+		this.pdf.text(sectionTitle, this.margin + 10, this.currentY + 12);
+
+		// 右側に統計情報
+		const statsText = `${section.completionRate}% (${section.checkedItems.length}/${section.items.length})`;
+		const statsWidth = this.pdf.getTextWidth(statsText);
+		this.pdf.setFontSize(10);
+		this.pdf.text(statsText, this.pageWidth - this.margin - statsWidth - 10, this.currentY + 12);
+
+		this.currentY += headerHeight;
+	}
+
+	// セクション色を取得（HTML版のsection-header色に合わせる）
+	private getSectionColors(categoryId: string): { start: number[]; end: number[] } {
+		switch (categoryId) {
+			case 'critical':
+				return { start: [231, 76, 60], end: [192, 57, 43] }; // #e74c3c to #c0392b
+			case 'detailed':
+				return { start: [243, 156, 18], end: [230, 126, 34] }; // #f39c12 to #e67e22
+			case 'verification':
+				return { start: [52, 152, 219], end: [41, 128, 185] }; // #3498db to #2980b9
+			case 'context':
+				return { start: [155, 89, 182], end: [142, 68, 173] }; // #9b59b6 to #8e44ad
+			default:
+				return { start: [149, 165, 166], end: [127, 140, 141] }; // #95a5a6 to #7f8c8d
+		}
 	}
 
 	// Phase 3: 高度なPDF機能実装

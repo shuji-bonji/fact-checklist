@@ -6,9 +6,11 @@
 		emoji: string;
 		description: string;
 		content: string;
+		htmlContent?: string; // HTML形式のコンテンツ（表など）
 		subSections?: Array<{
 			title: string;
 			content: string;
+			htmlContent?: string;
 		}>;
 	}
 
@@ -135,8 +137,138 @@
 				},
 				{
 					title: 'エクスポート機能',
-					content:
-						'評価結果を4つの形式で出力可能:\n• PDF: 日本語フォント埋め込み・透かし・目次・メタデータ付き\n• HTML: ブラウザで表示可能\n• JSON: プログラム処理用\n• Markdown: テキストエディタで編集可能\n• 進捗表示とエラーハンドリング対応'
+					content: '評価結果を4つの形式で出力可能です。',
+					htmlContent: `
+						<div class="export-table-container">
+							<h4>出力形式一覧</h4>
+							<table class="export-format-table">
+								<thead>
+									<tr>
+										<th>形式</th>
+										<th>特徴</th>
+										<th>用途</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td><strong>PDF</strong></td>
+										<td>
+											• 印刷に最適<br>
+											• 日本語フォント対応<br>
+											• 3つのモードから選択可能
+										</td>
+										<td>報告書、アーカイブ、印刷配布</td>
+									</tr>
+									<tr>
+										<td><strong>HTML</strong></td>
+										<td>
+											• ブラウザで表示可能<br>
+											• CSSスタイル埋め込み済み<br>
+											• 単一ファイル
+										</td>
+										<td>Web共有、オンライン閲覧</td>
+									</tr>
+									<tr>
+										<td><strong>JSON</strong></td>
+										<td>
+											• 構造化データ<br>
+											• プログラム処理可能<br>
+											• 完全なデータ保持
+										</td>
+										<td>システム連携、データ分析</td>
+									</tr>
+									<tr>
+										<td><strong>Markdown</strong></td>
+										<td>
+											• テキストエディタで編集可<br>
+											• GitHub等で表示最適<br>
+											• シンプルな形式
+										</td>
+										<td>文書編集、バージョン管理</td>
+									</tr>
+								</tbody>
+							</table>
+
+							<h4>PDF生成モード（いずれか1つを選択）</h4>
+							<table class="pdf-mode-table">
+								<thead>
+									<tr>
+										<th>モード</th>
+										<th>説明</th>
+										<th>特徴</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td><strong>🎨 ピクセルパーフェクト</strong><br><small>（デフォルト・推奨）</small></td>
+										<td>ブラウザの印刷機能を使用して、画面表示と完全に同じ見た目のPDFを生成</td>
+										<td>
+											• グラデーション・色・レイアウト完全再現<br>
+											• 印刷プレビューで確認可能<br>
+											• 最高品質の出力
+										</td>
+									</tr>
+									<tr>
+										<td><strong>🔥 確実な日本語対応</strong></td>
+										<td>jsPDFライブラリで直接PDF生成し、日本語フォントを確実に埋め込み</td>
+										<td>
+											• 日本語フォント埋め込み保証<br>
+											• 文字化け完全防止<br>
+											• CSP準拠・セキュア<br>
+											• 透かし・目次等の高度機能
+										</td>
+									</tr>
+									<tr>
+										<td><strong>🔤 テキストベース</strong><br><small>（レガシー・PWA方式）</small></td>
+										<td>PWA機能を活用したテキスト中心のシンプルなPDF生成</td>
+										<td>
+											• PWAの保存・共有機能利用<br>
+											• 文字検索・コピー可能<br>
+											• ファイルサイズ最小<br>
+											• モバイル最適化
+										</td>
+									</tr>
+								</tbody>
+							</table>
+
+							<h4>共通エクスポートオプション</h4>
+							<table class="export-option-table">
+								<thead>
+									<tr>
+										<th>オプション</th>
+										<th>説明</th>
+										<th>対応形式</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td><strong>📊 評価サマリー</strong></td>
+										<td>スコア・判定結果・達成率の概要</td>
+										<td>全形式</td>
+									</tr>
+									<tr>
+										<td><strong>📚 ガイド内容</strong></td>
+										<td>各チェック項目の詳細説明と例</td>
+										<td>全形式</td>
+									</tr>
+									<tr>
+										<td><strong>📝 評価メモ</strong></td>
+										<td>追加したメモ・コメント</td>
+										<td>全形式</td>
+									</tr>
+									<tr>
+										<td><strong>📄 セクション区切り</strong></td>
+										<td>カテゴリごとの改ページ・区切り線</td>
+										<td>PDF、Markdown</td>
+									</tr>
+								</tbody>
+							</table>
+
+							<div class="export-note">
+								<strong>📌 注意:</strong> PDF生成モードは排他的です。3つのモードのうち、いずれか1つのみ選択できます。デフォルトでは最も高品質な「ピクセルパーフェクト」モードが選択されています。
+							</div>
+						</div>
+					`
 				},
 				{
 					title: '履歴管理',
@@ -277,7 +409,11 @@
 										<div class="sub-section">
 											<h3 class="sub-section-title">{subSection.title}</h3>
 											<div class="sub-section-content">
-												{@html sanitizeHtml(subSection.content)}
+												{#if subSection.htmlContent}
+													{@html subSection.htmlContent}
+												{:else}
+													{@html sanitizeHtml(subSection.content)}
+												{/if}
 											</div>
 										</div>
 									{/each}
@@ -680,6 +816,70 @@
 		.nav-list {
 			grid-template-columns: 1fr;
 		}
+	}
+
+	/* テーブルスタイル（HTMLコンテンツ用） */
+	.sub-section-content :global(table) {
+		width: 100%;
+		border-collapse: collapse;
+		margin: 20px 0;
+		background: white;
+		border-radius: var(--radius-md);
+		overflow: hidden;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	}
+
+	.sub-section-content :global(table thead) {
+		background: var(--gradient-primary);
+		color: white;
+	}
+
+	.sub-section-content :global(table th),
+	.sub-section-content :global(table td) {
+		padding: 12px 16px;
+		text-align: left;
+		border-bottom: 1px solid var(--border-color-subtle);
+		vertical-align: top;
+	}
+
+	.sub-section-content :global(table tbody tr:hover) {
+		background: rgba(var(--primary-rgb), 0.05);
+	}
+
+	.sub-section-content :global(table tbody tr:nth-child(even)) {
+		background: rgba(248, 249, 250, 0.5);
+	}
+
+	.sub-section-content :global(.export-table-container h4) {
+		margin: 30px 0 15px 0;
+		color: var(--text-color);
+		font-size: var(--font-size-lg);
+		font-weight: var(--font-weight-semibold);
+	}
+
+	.sub-section-content :global(.export-note) {
+		background: rgba(var(--primary-rgb), 0.1);
+		border: 1px solid rgba(var(--primary-rgb), 0.2);
+		border-radius: var(--radius-md);
+		padding: 15px;
+		margin: 20px 0;
+		color: var(--text-color);
+		border-left: 4px solid var(--primary-color);
+	}
+
+	/* ダークモード対応 */
+	:global(.dark) .sub-section-content :global(table) {
+		background: #2d3748;
+	}
+
+	:global(.dark) .sub-section-content :global(table tbody tr:nth-child(even)) {
+		background: rgba(255, 255, 255, 0.05);
+	}
+
+	:global(.dark) .sub-section-content :global(table th),
+	:global(.dark) .sub-section-content :global(table td) {
+		border-bottom-color: #4a5568;
+		color: #f7fafc;
 	}
 
 	/* アクセシビリティ向上 */
