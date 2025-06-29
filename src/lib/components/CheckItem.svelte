@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { CheckItem } from '$lib/types/checklist.js';
+	import { t, factChecklistI18n } from '$lib/i18n/index.js';
 
 	interface Props {
 		item: CheckItem;
@@ -10,6 +11,35 @@
 	const { item, showGuideMode = false, onCheckChange }: Props = $props();
 
 	let showGuide = $state(false);
+
+	// 動的翻訳：translationKeyがあれば使用、なければ既存のtitle/descriptionを使用
+	const displayTitle = $derived(() => {
+		if (item.translationKey) {
+			return factChecklistI18n.getCheckItemTitle(item.translationKey);
+		}
+		return item.title;
+	});
+
+	const displayDescription = $derived(() => {
+		if (item.translationKey) {
+			return factChecklistI18n.getCheckItemDescription(item.translationKey);
+		}
+		return item.description;
+	});
+
+	const displayGuideContent = $derived(() => {
+		if (item.translationKey && item.guideContent) {
+			return {
+				title: factChecklistI18n.getCheckItemGuideTitle(item.translationKey),
+				content: factChecklistI18n.getCheckItemGuideContent(item.translationKey),
+				examples: {
+					good: factChecklistI18n.getCheckItemExamplesGood(item.translationKey),
+					bad: factChecklistI18n.getCheckItemExamplesBad(item.translationKey)
+				}
+			};
+		}
+		return item.guideContent;
+	});
 
 	function toggleGuide() {
 		showGuide = !showGuide;
@@ -51,57 +81,58 @@
 
 		<div class="item-content">
 			<label for="check-{item.id}" class="item-title">
-				{item.title}
+				{displayTitle()}
 				<span class="risk-indicator {riskClasses[item.riskLevel]}">
 					{item.riskLevel === 'high'
-						? '高リスク'
+						? t('common.rip.high')
 						: item.riskLevel === 'medium'
-							? '中リスク'
-							: '低リスク'}
+							? t('common.rip.medium')
+							: t('common.rip.low')}
 				</span>
 
-				{#if item.guideContent && !showGuideMode}
+				{#if displayGuideContent() && !showGuideMode}
 					<button
 						class="guide-toggle"
 						onclick={toggleGuide}
 						aria-expanded={showGuide}
 						aria-controls="guide-{item.id}"
-						title="ガイドを表示"
+						title={t('common.showGuide')}
 					>
-						ガイド
+						{t('common.guide')}
 					</button>
 				{/if}
 			</label>
 
 			<div id="desc-{item.id}" class="item-description">
-				{item.description}
+				{displayDescription()}
 			</div>
 
-			{#if item.guideContent && showGuide}
+			{#if displayGuideContent() && showGuide}
 				<div id="guide-{item.id}" class="detailed-guide" class:show={showGuide}>
 					<div class="guide-section">
 						<div class="guide-title">
-							{item.guideContent.title}
+							{displayGuideContent()?.title}
 						</div>
 						<div class="guide-content">
-							{item.guideContent.content}
+							{displayGuideContent()?.content}
 						</div>
 
-						{#if item.guideContent.examples}
+						{#if displayGuideContent()?.examples}
+							{@const examples = displayGuideContent()?.examples}
 							<div class="guide-examples">
-								{#if item.guideContent.examples.good.length > 0}
+								{#if examples?.good && examples.good.length > 0}
 									<div class="examples-section">
 										<h5>✅ 良い例:</h5>
-										{#each item.guideContent.examples.good as example}
+										{#each examples.good as example}
 											<div class="example-item good">{example}</div>
 										{/each}
 									</div>
 								{/if}
 
-								{#if item.guideContent.examples.bad.length > 0}
+								{#if examples?.bad && examples.bad.length > 0}
 									<div class="examples-section">
 										<h5>❌ 悪い例:</h5>
-										{#each item.guideContent.examples.bad as example}
+										{#each examples.bad as example}
 											<div class="example-item bad">{example}</div>
 										{/each}
 									</div>

@@ -5,7 +5,7 @@ import type {
 	JudgmentType,
 	ChecklistHistoryItem
 } from '../types/checklist.js';
-import { CHECKLIST_ITEMS } from '../data/checklist-items.js';
+import { getChecklistItems } from '../data/checklist-items.js';
 import { v4 as uuidv4 } from 'uuid';
 import {
 	createStorageWithFallback,
@@ -13,6 +13,7 @@ import {
 	type StorageInterface
 } from '../config/storage.js';
 import { StorageMigration } from '../utils/indexedDBStorage.js';
+import { t } from '../i18n/index.js';
 
 // ブラウザ環境でのみストレージを使用
 const isBrowser = typeof window !== 'undefined';
@@ -172,18 +173,18 @@ class ChecklistStore {
 
 	get confidenceText(): string {
 		const confidence = this.confidenceLevel;
-		if (confidence >= 80) return '高い信頼性';
-		if (confidence >= 60) return '中程度の信頼性';
-		if (confidence >= 40) return '低い信頼性';
-		return '信頼性に問題';
+		if (confidence >= 80) return t('checklist.confidence.high');
+		if (confidence >= 60) return t('checklist.confidence.medium');
+		if (confidence >= 40) return t('checklist.confidence.low');
+		return t('checklist.confidence.poor');
 	}
 
 	get judgmentAdvice(): string {
 		const confidence = this.confidenceLevel;
-		if (confidence >= 80) return '採用を推奨します。十分な検証が行われています。';
-		if (confidence >= 60) return '追加確認を推奨します。重要な決定には慎重に。';
-		if (confidence >= 40) return '要注意です。さらなる検証が必要です。';
-		return '不採用を推奨します。信頼できる情報源を探しましょう。';
+		if (confidence >= 80) return t('checklist.advice.high');
+		if (confidence >= 60) return t('checklist.advice.medium');
+		if (confidence >= 40) return t('checklist.advice.low');
+		return t('checklist.advice.poor');
 	}
 
 	// 新しいチェックリストを作成
@@ -192,14 +193,14 @@ class ChecklistStore {
 		const now = new Date();
 
 		// チェックアイテムのコピーを作成（チェック状態をリセット）
-		const items: CheckItem[] = CHECKLIST_ITEMS.map(item => ({
+		const items: CheckItem[] = getChecklistItems().map(item => ({
 			...item,
 			checked: false
 		}));
 
 		const newChecklist: ChecklistResult = {
 			id,
-			title: title || `事実確認チェック_${now.toLocaleDateString('ja-JP')}`,
+			title: title || `${t('checklist.title')}_${now.toLocaleDateString()}`,
 			description,
 			createdAt: now,
 			updatedAt: now,
@@ -240,6 +241,10 @@ class ChecklistStore {
 				if (saved.completedAt) {
 					saved.completedAt = new Date(saved.completedAt);
 				}
+
+				// 国際化対応：既存データの翻訳キー補完
+				this.migrateChecklistItemsToI18n(saved);
+
 				this._currentChecklist = saved;
 				return true;
 			}
@@ -247,6 +252,14 @@ class ChecklistStore {
 			console.error('チェックリストの読み込みに失敗しました:', error);
 		}
 		return false;
+	}
+
+	// 既存のチェックリストアイテムに翻訳キーを追加するマイグレーション
+	private migrateChecklistItemsToI18n(checklist: ChecklistResult): void {
+		checklist.items.forEach(item => {
+			// translationKeyが存在しない場合、idをtranslationKeyとして使用
+			item.translationKey ??= item.id;
+		});
 	}
 
 	// チェックアイテムの状態を更新
@@ -466,8 +479,40 @@ class ChecklistStore {
 			} else {
 				console.log('loadFromStorage: no history found in storage');
 			}
+
+			// 保存されている全チェックリストの国際化マイグレーションを実行
+			await this.migrateAllStoredChecklistsToI18n();
 		} catch (error) {
 			console.error('履歴の読み込みに失敗しました:', error);
+		}
+	}
+
+	// 保存されている全チェックリストに翻訳キーを追加
+	private async migrateAllStoredChecklistsToI18n(): Promise<void> {
+		if (!this.storage) return;
+
+		try {
+			// 履歴からIDを取得して各チェックリストをマイグレーション
+			for (const historyItem of this._history) {
+				const key = `${STORAGE_KEYS.CHECKLIST_PREFIX}${historyItem.id}`;
+				const checklist = await this.storage.getItem<ChecklistResult>(key);
+				if (checklist) {
+					let needsUpdate = false;
+					checklist.items.forEach(item => {
+						if (!item.translationKey) {
+							item.translationKey ??= item.id;
+							needsUpdate = true;
+						}
+					});
+
+					if (needsUpdate) {
+						await this.storage.setItem(key, checklist);
+						console.log(`マイグレーション完了: ${historyItem.id}`);
+					}
+				}
+			}
+		} catch (error) {
+			console.error('チェックリストの国際化マイグレーションに失敗しました:', error);
 		}
 	}
 

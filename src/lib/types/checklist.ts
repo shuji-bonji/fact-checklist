@@ -10,6 +10,8 @@ export interface CheckItem {
 	category: CheckCategory;
 	guideContent?: GuideContent;
 	checked: boolean;
+	// 国際化対応：翻訳キーID（新規項目）
+	translationKey?: string;
 }
 
 export interface GuideContent {
