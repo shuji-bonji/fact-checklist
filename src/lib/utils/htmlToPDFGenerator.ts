@@ -8,85 +8,85 @@ import type { ChecklistResult, CheckItem } from '$lib/types/checklist.js';
 import { CATEGORIES } from '$lib/data/checklist-items.js';
 
 export interface HTMLToPDFOptions {
-	includeGuides: boolean;
-	includeNotes: boolean;
-	includeSummary: boolean;
-	sectionBreaks: boolean;
-	highQuality?: boolean; // 300DPI相当の高解像度
-	pageFormat?: 'A4' | 'Letter';
-	margins?: {
-		top: number;
-		right: number;
-		bottom: number;
-		left: number;
-	};
+  includeGuides: boolean;
+  includeNotes: boolean;
+  includeSummary: boolean;
+  sectionBreaks: boolean;
+  highQuality?: boolean; // 300DPI相当の高解像度
+  pageFormat?: 'A4' | 'Letter';
+  margins?: {
+    top: number;
+    right: number;
+    bottom: number;
+    left: number;
+  };
 }
 
 export class HTMLToPDFGenerator {
-	private checklist: ChecklistResult;
-	private options: HTMLToPDFOptions;
+  private checklist: ChecklistResult;
+  private options: HTMLToPDFOptions;
 
-	// A4サイズ定数（mm）
-	private static readonly A4_WIDTH_MM = 210;
-	private static readonly A4_HEIGHT_MM = 297;
+  // A4サイズ定数（mm）
+  private static readonly A4_WIDTH_MM = 210;
+  private static readonly A4_HEIGHT_MM = 297;
 
-	// 高解像度設定（300DPI相当）
-	private static readonly DPI_SCALE = 300 / 96; // 96DPI → 300DPI
-	private static readonly A4_WIDTH_PX = Math.round(HTMLToPDFGenerator.A4_WIDTH_MM * 11.81); // mm to px at 300DPI
-	private static readonly A4_HEIGHT_PX = Math.round(HTMLToPDFGenerator.A4_HEIGHT_MM * 11.81);
+  // 高解像度設定（300DPI相当）
+  private static readonly DPI_SCALE = 300 / 96; // 96DPI → 300DPI
+  private static readonly A4_WIDTH_PX = Math.round(HTMLToPDFGenerator.A4_WIDTH_MM * 11.81); // mm to px at 300DPI
+  private static readonly A4_HEIGHT_PX = Math.round(HTMLToPDFGenerator.A4_HEIGHT_MM * 11.81);
 
-	constructor(checklist: ChecklistResult, options: HTMLToPDFOptions) {
-		this.checklist = checklist;
-		this.options = options;
-	}
+  constructor(checklist: ChecklistResult, options: HTMLToPDFOptions) {
+    this.checklist = checklist;
+    this.options = options;
+  }
 
-	async generatePDF(): Promise<Blob> {
-		console.log('🎨 Starting HTML→Canvas→PDF generation...');
+  async generatePDF(): Promise<Blob> {
+    console.log('🎨 Starting HTML→Canvas→PDF generation...');
 
-		try {
-			// HTML生成（ExportModalと同じロジック）
-			console.log('📝 Generating HTML content...');
-			const htmlContent = this.generateStyledHTML();
-			console.log(`📏 HTML content length: ${htmlContent.length} characters`);
+    try {
+      // HTML生成（ExportModalと同じロジック）
+      console.log('📝 Generating HTML content...');
+      const htmlContent = this.generateStyledHTML();
+      console.log(`📏 HTML content length: ${htmlContent.length} characters`);
 
-			// DOM要素作成
-			console.log('🏗️ Creating DOM container...');
-			const container = await this.createDOMContainer(htmlContent);
-			console.log(
-				`📦 Container created: ${container.tagName}, children: ${container.children.length}`
-			);
+      // DOM要素作成
+      console.log('🏗️ Creating DOM container...');
+      const container = await this.createDOMContainer(htmlContent);
+      console.log(
+        `📦 Container created: ${container.tagName}, children: ${container.children.length}`
+      );
 
-			// Canvas生成（高解像度）
-			console.log('🖼️ Converting to Canvas...');
-			const canvas = await this.htmlToCanvas(container);
+      // Canvas生成（高解像度）
+      console.log('🖼️ Converting to Canvas...');
+      const canvas = await this.htmlToCanvas(container);
 
-			// PDF生成
-			console.log('📄 Generating PDF...');
-			const pdfBlob = await this.canvasToPDF(canvas);
+      // PDF生成
+      console.log('📄 Generating PDF...');
+      const pdfBlob = await this.canvasToPDF(canvas);
 
-			// クリーンアップ
-			console.log('🧹 Cleaning up...');
-			this.cleanup(container);
+      // クリーンアップ
+      console.log('🧹 Cleaning up...');
+      this.cleanup(container);
 
-			console.log('✅ HTML→Canvas→PDF generation completed successfully');
-			return pdfBlob;
-		} catch (error) {
-			console.error('❌ HTML→Canvas→PDF generation failed:', error);
-			if (error instanceof Error) {
-				console.error('📋 Error details:', {
-					name: error.name,
-					message: error.message,
-					stack: error.stack
-				});
-			}
-			throw error;
-		}
-	}
+      console.log('✅ HTML→Canvas→PDF generation completed successfully');
+      return pdfBlob;
+    } catch (error) {
+      console.error('❌ HTML→Canvas→PDF generation failed:', error);
+      if (error instanceof Error) {
+        console.error('📋 Error details:', {
+          name: error.name,
+          message: error.message,
+          stack: error.stack
+        });
+      }
+      throw error;
+    }
+  }
 
-	private generateStyledHTML(): string {
-		const sections = this.groupItemsByCategory();
+  private generateStyledHTML(): string {
+    const sections = this.groupItemsByCategory();
 
-		return `
+    return `
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -311,10 +311,10 @@ export class HTMLToPDFGenerator {
 </body>
 </html>
 		`.trim();
-	}
+  }
 
-	private generateSummaryHTML(sections: SectionData[]): string {
-		return `
+  private generateSummaryHTML(sections: SectionData[]): string {
+    return `
 	<!-- サマリーセクション -->
 	<div class="score-summary">
 		<h2>📊 評価結果サマリー</h2>
@@ -339,20 +339,20 @@ export class HTMLToPDFGenerator {
 		
 		<h3>セクション別達成率</h3>
 		${sections
-			.map(
-				section => `
+      .map(
+        section => `
 			<div style="margin: 5px 0;">
 				${section.category.emoji} ${section.category.name}: ${section.completionRate}% (${section.checkedItems.length}/${section.items.length})
 			</div>
 		`
-			)
-			.join('')}
+      )
+      .join('')}
 	</div>
 		`;
-	}
+  }
 
-	private generateSectionHTML(section: SectionData): string {
-		return `
+  private generateSectionHTML(section: SectionData): string {
+    return `
 	<div class="category-section">
 		<div class="section-header ${section.category.id}">
 			<div class="section-title">
@@ -371,10 +371,10 @@ export class HTMLToPDFGenerator {
 		</div>
 	</div>
 		`;
-	}
+  }
 
-	private generateCheckItemHTML(item: CheckItem): string {
-		return `
+  private generateCheckItemHTML(item: CheckItem): string {
+    return `
 	<div class="check-item ${item.checked ? 'checked' : 'unchecked'}">
 		<div class="check-item-header">
 			<div class="check-icon">${item.checked ? '✅' : '⚠️'}</div>
@@ -386,20 +386,20 @@ export class HTMLToPDFGenerator {
 		</div>
 	</div>
 		`;
-	}
+  }
 
-	private generateGuideHTML(guideContent: CheckItem['guideContent']): string {
-		if (!guideContent) {
-			return '';
-		}
+  private generateGuideHTML(guideContent: CheckItem['guideContent']): string {
+    if (!guideContent) {
+      return '';
+    }
 
-		return `
+    return `
 	<div class="check-item-guide">
 		<div class="guide-title">💡 ${guideContent.title}</div>
 		<div>${guideContent.content}</div>
 		${
-			guideContent.examples?.good?.length
-				? `
+      guideContent.examples?.good?.length
+        ? `
 			<div style="margin-top: 10px;">
 				<strong>✅ 良い例:</strong>
 				<ul style="margin: 5px 0 0 20px;">
@@ -407,11 +407,11 @@ export class HTMLToPDFGenerator {
 				</ul>
 			</div>
 		`
-				: ''
-		}
+        : ''
+    }
 		${
-			guideContent.examples?.bad?.length
-				? `
+      guideContent.examples?.bad?.length
+        ? `
 			<div style="margin-top: 10px;">
 				<strong>❌ 悪い例:</strong>
 				<ul style="margin: 5px 0 0 20px;">
@@ -419,14 +419,14 @@ export class HTMLToPDFGenerator {
 				</ul>
 			</div>
 		`
-				: ''
-		}
+        : ''
+    }
 	</div>
 		`;
-	}
+  }
 
-	private generateNotesHTML(): string {
-		return `
+  private generateNotesHTML(): string {
+    return `
 	<div class="notes-section">
 		<h2>📝 評価メモ</h2>
 		<div class="notes-content">
@@ -434,249 +434,249 @@ export class HTMLToPDFGenerator {
 		</div>
 	</div>
 		`;
-	}
+  }
 
-	private async createDOMContainer(htmlContent: string): Promise<HTMLElement> {
-		console.log('🏗️ Creating DOM container for Canvas generation...');
+  private async createDOMContainer(htmlContent: string): Promise<HTMLElement> {
+    console.log('🏗️ Creating DOM container for Canvas generation...');
 
-		// 新しいHTMLドキュメントを作成
-		const parser = new DOMParser();
-		const doc = parser.parseFromString(htmlContent, 'text/html');
+    // 新しいHTMLドキュメントを作成
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlContent, 'text/html');
 
-		// body要素を取得
-		const bodyElement = doc.body;
-		if (!bodyElement) {
-			throw new Error('Body element not found in parsed HTML');
-		}
+    // body要素を取得
+    const bodyElement = doc.body;
+    if (!bodyElement) {
+      throw new Error('Body element not found in parsed HTML');
+    }
 
-		// スタイル要素も取得してbodyに追加
-		const styleElements = doc.querySelectorAll('style');
-		styleElements.forEach(style => {
-			const clonedStyle = document.createElement('style');
-			clonedStyle.textContent = style.textContent;
-			bodyElement.insertBefore(clonedStyle, bodyElement.firstChild);
-		});
+    // スタイル要素も取得してbodyに追加
+    const styleElements = doc.querySelectorAll('style');
+    styleElements.forEach(style => {
+      const clonedStyle = document.createElement('style');
+      clonedStyle.textContent = style.textContent;
+      bodyElement.insertBefore(clonedStyle, bodyElement.firstChild);
+    });
 
-		// body要素のスタイル設定
-		bodyElement.style.position = 'fixed';
-		bodyElement.style.left = '-10000px'; // 画面外に配置
-		bodyElement.style.top = '0';
-		bodyElement.style.width = `${HTMLToPDFGenerator.A4_WIDTH_PX}px`;
-		bodyElement.style.minHeight = `${HTMLToPDFGenerator.A4_HEIGHT_PX}px`;
-		bodyElement.style.visibility = 'visible'; // html2canvasのために可視化
-		bodyElement.style.opacity = '1'; // 完全に不透明（html2canvasが描画できるように）
-		bodyElement.style.overflow = 'visible';
-		bodyElement.style.margin = '0';
-		bodyElement.style.padding = '20px';
-		bodyElement.style.background = '#ffffff';
-		bodyElement.style.zIndex = '999999'; // 前面に配置して確実に描画
+    // body要素のスタイル設定
+    bodyElement.style.position = 'fixed';
+    bodyElement.style.left = '-10000px'; // 画面外に配置
+    bodyElement.style.top = '0';
+    bodyElement.style.width = `${HTMLToPDFGenerator.A4_WIDTH_PX}px`;
+    bodyElement.style.minHeight = `${HTMLToPDFGenerator.A4_HEIGHT_PX}px`;
+    bodyElement.style.visibility = 'visible'; // html2canvasのために可視化
+    bodyElement.style.opacity = '1'; // 完全に不透明（html2canvasが描画できるように）
+    bodyElement.style.overflow = 'visible';
+    bodyElement.style.margin = '0';
+    bodyElement.style.padding = '20px';
+    bodyElement.style.background = '#ffffff';
+    bodyElement.style.zIndex = '999999'; // 前面に配置して確実に描画
 
-		// DOM に一時的に追加（フォント・レイアウト計算のため）
-		document.body.appendChild(bodyElement);
+    // DOM に一時的に追加（フォント・レイアウト計算のため）
+    document.body.appendChild(bodyElement);
 
-		// レイアウト安定化とフォント読み込みの待機
-		await new Promise(resolve => setTimeout(resolve, 500));
+    // レイアウト安定化とフォント読み込みの待機
+    await new Promise(resolve => setTimeout(resolve, 500));
 
-		// 強制的にレイアウトを再計算
-		bodyElement.offsetHeight; // reflow trigger
+    // 強制的にレイアウトを再計算
+    bodyElement.offsetHeight; // reflow trigger
 
-		// デバッグ: DOM要素の内容確認
-		console.log(`📋 Body element HTML preview: ${bodyElement.innerHTML.substring(0, 200)}...`);
-		console.log('📏 Body element dimensions:', {
-			width: bodyElement.offsetWidth,
-			height: bodyElement.offsetHeight,
-			scrollWidth: bodyElement.scrollWidth,
-			scrollHeight: bodyElement.scrollHeight
-		});
+    // デバッグ: DOM要素の内容確認
+    console.log(`📋 Body element HTML preview: ${bodyElement.innerHTML.substring(0, 200)}...`);
+    console.log('📏 Body element dimensions:', {
+      width: bodyElement.offsetWidth,
+      height: bodyElement.offsetHeight,
+      scrollWidth: bodyElement.scrollWidth,
+      scrollHeight: bodyElement.scrollHeight
+    });
 
-		return bodyElement;
-	}
+    return bodyElement;
+  }
 
-	private async htmlToCanvas(container: HTMLElement): Promise<HTMLCanvasElement> {
-		console.log('🖼️ Converting HTML to Canvas with high resolution...');
+  private async htmlToCanvas(container: HTMLElement): Promise<HTMLCanvasElement> {
+    console.log('🖼️ Converting HTML to Canvas with high resolution...');
 
-		// html2canvasを動的インポート
-		const { default: html2canvas } = await import('html2canvas');
+    // html2canvasを動的インポート
+    const { default: html2canvas } = await import('html2canvas');
 
-		// containerがbody要素そのもの
-		const bodyElement = container;
+    // containerがbody要素そのもの
+    const bodyElement = container;
 
-		// 高解像度Canvas生成
-		const canvas = await html2canvas(bodyElement, {
-			scale: this.options.highQuality ? 2 : 1, // 高品質の場合は2倍スケール
-			useCORS: true,
-			allowTaint: true,
-			backgroundColor: '#ffffff',
-			removeContainer: false,
-			logging: true, // デバッグのためログを有効化
-			imageTimeout: 15000, // 画像読み込みタイムアウトを延長
-			windowWidth: HTMLToPDFGenerator.A4_WIDTH_PX,
-			windowHeight: HTMLToPDFGenerator.A4_HEIGHT_PX,
-			ignoreElements: _element => {
-				// 非表示要素を無視しない
-				return false;
-			},
-			// フォント読み込み完了を待機
-			onclone: async (clonedDoc, _element) => {
-				// クローンされた要素のスタイルを確認
-				console.log('🔍 Cloned element:', _element);
-				console.log('📐 Element dimensions:', _element.offsetWidth, 'x', _element.offsetHeight);
+    // 高解像度Canvas生成
+    const canvas = await html2canvas(bodyElement, {
+      scale: this.options.highQuality ? 2 : 1, // 高品質の場合は2倍スケール
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#ffffff',
+      removeContainer: false,
+      logging: true, // デバッグのためログを有効化
+      imageTimeout: 15000, // 画像読み込みタイムアウトを延長
+      windowWidth: HTMLToPDFGenerator.A4_WIDTH_PX,
+      windowHeight: HTMLToPDFGenerator.A4_HEIGHT_PX,
+      ignoreElements: _element => {
+        // 非表示要素を無視しない
+        return false;
+      },
+      // フォント読み込み完了を待機
+      onclone: async (clonedDoc, _element) => {
+        // クローンされた要素のスタイルを確認
+        console.log('🔍 Cloned element:', _element);
+        console.log('📐 Element dimensions:', _element.offsetWidth, 'x', _element.offsetHeight);
 
-				// クローンされた要素も確実に表示状態にする
-				if (_element instanceof HTMLElement) {
-					_element.style.opacity = '1';
-					_element.style.visibility = 'visible';
-					_element.style.display = 'block';
-				}
+        // クローンされた要素も確実に表示状態にする
+        if (_element instanceof HTMLElement) {
+          _element.style.opacity = '1';
+          _element.style.visibility = 'visible';
+          _element.style.display = 'block';
+        }
 
-				// フォント読み込み待機
-				if (clonedDoc.fonts?.ready) {
-					await clonedDoc.fonts.ready;
-				} else {
-					await new Promise(resolve => setTimeout(resolve, 500));
-				}
-			}
-		});
+        // フォント読み込み待機
+        if (clonedDoc.fonts?.ready) {
+          await clonedDoc.fonts.ready;
+        } else {
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      }
+    });
 
-		console.log(`✅ Canvas generated: ${canvas.width}x${canvas.height}px`);
-		console.log(`📊 Canvas data URL length: ${canvas.toDataURL().length}`);
+    console.log(`✅ Canvas generated: ${canvas.width}x${canvas.height}px`);
+    console.log(`📊 Canvas data URL length: ${canvas.toDataURL().length}`);
 
-		// Canvas内容確認（デバッグ用）
-		const ctx = canvas.getContext('2d');
-		if (ctx) {
-			// より広い範囲をチェック
-			const checkWidth = Math.min(canvas.width, 500);
-			const checkHeight = Math.min(canvas.height, 500);
-			const imageData = ctx.getImageData(0, 0, checkWidth, checkHeight);
+    // Canvas内容確認（デバッグ用）
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      // より広い範囲をチェック
+      const checkWidth = Math.min(canvas.width, 500);
+      const checkHeight = Math.min(canvas.height, 500);
+      const imageData = ctx.getImageData(0, 0, checkWidth, checkHeight);
 
-			let nonWhitePixels = 0;
-			for (let i = 0; i < imageData.data.length; i += 4) {
-				const r = imageData.data[i] ?? 0;
-				const g = imageData.data[i + 1] ?? 0;
-				const b = imageData.data[i + 2] ?? 0;
-				const a = imageData.data[i + 3] ?? 0;
+      let nonWhitePixels = 0;
+      for (let i = 0; i < imageData.data.length; i += 4) {
+        const r = imageData.data[i] ?? 0;
+        const g = imageData.data[i + 1] ?? 0;
+        const b = imageData.data[i + 2] ?? 0;
+        const a = imageData.data[i + 3] ?? 0;
 
-				// 白以外のピクセルをカウント
-				if (a > 0 && (r !== 255 || g !== 255 || b !== 255)) {
-					nonWhitePixels++;
-				}
-			}
+        // 白以外のピクセルをカウント
+        if (a > 0 && (r !== 255 || g !== 255 || b !== 255)) {
+          nonWhitePixels++;
+        }
+      }
 
-			const hasContent = nonWhitePixels > 100; // 100ピクセル以上の非白ピクセルがあればコンテンツありと判定
-			console.log(`🖼️ Canvas has content: ${hasContent} (non-white pixels: ${nonWhitePixels})`);
-		}
+      const hasContent = nonWhitePixels > 100; // 100ピクセル以上の非白ピクセルがあればコンテンツありと判定
+      console.log(`🖼️ Canvas has content: ${hasContent} (non-white pixels: ${nonWhitePixels})`);
+    }
 
-		return canvas;
-	}
+    return canvas;
+  }
 
-	private async canvasToPDF(canvas: HTMLCanvasElement): Promise<Blob> {
-		console.log('📄 Converting Canvas to PDF...');
-		console.log(`📐 Canvas dimensions for PDF: ${canvas.width}x${canvas.height}`);
+  private async canvasToPDF(canvas: HTMLCanvasElement): Promise<Blob> {
+    console.log('📄 Converting Canvas to PDF...');
+    console.log(`📐 Canvas dimensions for PDF: ${canvas.width}x${canvas.height}`);
 
-		// jsPDFを動的インポート
-		const { default: jsPDF } = await import('jspdf');
+    // jsPDFを動的インポート
+    const { default: jsPDF } = await import('jspdf');
 
-		// A4サイズのPDF作成
-		const pdf = new jsPDF({
-			orientation: 'portrait',
-			unit: 'mm',
-			format: 'a4',
-			compress: true
-		});
+    // A4サイズのPDF作成
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4',
+      compress: true
+    });
 
-		// PDFページのサイズを取得
-		const pageWidth = pdf.internal.pageSize.getWidth();
-		const pageHeight = pdf.internal.pageSize.getHeight();
-		console.log(`📄 PDF page size: ${pageWidth}x${pageHeight}mm`);
+    // PDFページのサイズを取得
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    console.log(`📄 PDF page size: ${pageWidth}x${pageHeight}mm`);
 
-		// Canvas画像をPDFに追加（PNG形式で高品質）
-		const imgData = canvas.toDataURL('image/png');
-		console.log(`🖼️ Image data URL preview: ${imgData.substring(0, 100)}...`);
+    // Canvas画像をPDFに追加（PNG形式で高品質）
+    const imgData = canvas.toDataURL('image/png');
+    console.log(`🖼️ Image data URL preview: ${imgData.substring(0, 100)}...`);
 
-		// 画像のアスペクト比を維持しながらA4サイズに収める
-		const canvasAspectRatio = canvas.width / canvas.height;
-		const pageAspectRatio = pageWidth / pageHeight;
+    // 画像のアスペクト比を維持しながらA4サイズに収める
+    const canvasAspectRatio = canvas.width / canvas.height;
+    const pageAspectRatio = pageWidth / pageHeight;
 
-		let imgWidth = pageWidth;
-		let imgHeight = pageHeight;
+    let imgWidth = pageWidth;
+    let imgHeight = pageHeight;
 
-		if (canvasAspectRatio > pageAspectRatio) {
-			// 幅に合わせる
-			imgHeight = pageWidth / canvasAspectRatio;
-		} else {
-			// 高さに合わせる
-			imgWidth = pageHeight * canvasAspectRatio;
-		}
+    if (canvasAspectRatio > pageAspectRatio) {
+      // 幅に合わせる
+      imgHeight = pageWidth / canvasAspectRatio;
+    } else {
+      // 高さに合わせる
+      imgWidth = pageHeight * canvasAspectRatio;
+    }
 
-		// 中央配置のためのオフセット計算
-		const xOffset = (pageWidth - imgWidth) / 2;
-		const yOffset = (pageHeight - imgHeight) / 2;
+    // 中央配置のためのオフセット計算
+    const xOffset = (pageWidth - imgWidth) / 2;
+    const yOffset = (pageHeight - imgHeight) / 2;
 
-		pdf.addImage(imgData, 'PNG', xOffset, yOffset, imgWidth, imgHeight);
+    pdf.addImage(imgData, 'PNG', xOffset, yOffset, imgWidth, imgHeight);
 
-		// PDFメタデータ設定
-		pdf.setProperties({
-			title: `事実確認チェックシート - ${this.checklist.title}`,
-			author: 'Fact Checklist Generator',
-			subject: '情報の信頼性を科学的・体系的に評価するための実用的事実確認チェックシート',
-			keywords: 'fact-check, evaluation, reliability, information, 事実確認, 情報検証',
-			creator: 'Fact Checklist PWA'
-		});
+    // PDFメタデータ設定
+    pdf.setProperties({
+      title: `事実確認チェックシート - ${this.checklist.title}`,
+      author: 'Fact Checklist Generator',
+      subject: '情報の信頼性を科学的・体系的に評価するための実用的事実確認チェックシート',
+      keywords: 'fact-check, evaluation, reliability, information, 事実確認, 情報検証',
+      creator: 'Fact Checklist PWA'
+    });
 
-		// Blobとして返す
-		const pdfBlob = pdf.output('blob');
-		console.log(`✅ PDF generated: ${Math.round(pdfBlob.size / 1024)}KB`);
+    // Blobとして返す
+    const pdfBlob = pdf.output('blob');
+    console.log(`✅ PDF generated: ${Math.round(pdfBlob.size / 1024)}KB`);
 
-		return pdfBlob;
-	}
+    return pdfBlob;
+  }
 
-	private cleanup(container: HTMLElement): void {
-		try {
-			if (container?.parentNode) {
-				container.parentNode.removeChild(container);
-			}
-		} catch (error) {
-			console.warn('⚠️ Cleanup failed:', error);
-		}
-	}
+  private cleanup(container: HTMLElement): void {
+    try {
+      if (container?.parentNode) {
+        container.parentNode.removeChild(container);
+      }
+    } catch (error) {
+      console.warn('⚠️ Cleanup failed:', error);
+    }
+  }
 
-	private getJudgmentText(judgment: string | null): string {
-		switch (judgment) {
-			case 'accept':
-				return '✅ 採用推奨';
-			case 'caution':
-				return '⚠️ 要注意';
-			case 'reject':
-				return '❌ 不採用推奨';
-			default:
-				return '❓ 判定未実施';
-		}
-	}
+  private getJudgmentText(judgment: string | null): string {
+    switch (judgment) {
+      case 'accept':
+        return '✅ 採用推奨';
+      case 'caution':
+        return '⚠️ 要注意';
+      case 'reject':
+        return '❌ 不採用推奨';
+      default:
+        return '❓ 判定未実施';
+    }
+  }
 
-	private groupItemsByCategory(): SectionData[] {
-		return CATEGORIES.map(category => {
-			const categoryItems = this.checklist.items.filter(item => item.category.id === category.id);
-			const checkedItems = categoryItems.filter(item => item.checked);
+  private groupItemsByCategory(): SectionData[] {
+    return CATEGORIES.map(category => {
+      const categoryItems = this.checklist.items.filter(item => item.category.id === category.id);
+      const checkedItems = categoryItems.filter(item => item.checked);
 
-			return {
-				category,
-				items: categoryItems,
-				checkedItems,
-				uncheckedItems: categoryItems.filter(item => !item.checked),
-				completionRate:
-					categoryItems.length > 0
-						? Math.round((checkedItems.length / categoryItems.length) * 100)
-						: 0
-			};
-		});
-	}
+      return {
+        category,
+        items: categoryItems,
+        checkedItems,
+        uncheckedItems: categoryItems.filter(item => !item.checked),
+        completionRate:
+          categoryItems.length > 0
+            ? Math.round((checkedItems.length / categoryItems.length) * 100)
+            : 0
+      };
+    });
+  }
 }
 
 // 型定義
 interface SectionData {
-	category: (typeof CATEGORIES)[0];
-	items: CheckItem[];
-	checkedItems: CheckItem[];
-	uncheckedItems: CheckItem[];
-	completionRate: number;
+  category: (typeof CATEGORIES)[0];
+  items: CheckItem[];
+  checkedItems: CheckItem[];
+  uncheckedItems: CheckItem[];
+  completionRate: number;
 }

@@ -1,14 +1,14 @@
 <!doctype html>
 <html lang="ja">
-	<head>
-		<meta charset="utf-8" />
-		<!-- アクセシビリティ改善：user-scalable=noを削除、maximum-scale=5に設定 -->
-		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+  <head>
+    <meta charset="utf-8" />
+    <!-- アクセシビリティ改善：user-scalable=noを削除、maximum-scale=5に設定 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
 
-		<!-- Content Security Policy（セキュリティ強化） -->
-		<meta
-			http-equiv="Content-Security-Policy"
-			content="
+    <!-- Content Security Policy（セキュリティ強化） -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
 			default-src 'self';
 			script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://cdnjs.cloudflare.com;
 			style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
@@ -20,98 +20,98 @@
 			form-action 'self';
 			upgrade-insecure-requests;
 		"
-		/>
+    />
 
-		<meta
-			name="description"
-			content="情報の信頼性を科学的・体系的に評価するための実用的事実確認チェックシート。PWA対応でオフラインでも利用可能。"
-		/>
-		<meta name="keywords" content="事実確認,ファクトチェック,情報検証,信頼性評価,PWA,オフライン" />
-		<meta name="author" content="Fact Checklist Team" />
-		<meta name="robots" content="index, follow" />
+    <meta
+      name="description"
+      content="情報の信頼性を科学的・体系的に評価するための実用的事実確認チェックシート。PWA対応でオフラインでも利用可能。"
+    />
+    <meta name="keywords" content="事実確認,ファクトチェック,情報検証,信頼性評価,PWA,オフライン" />
+    <meta name="author" content="Fact Checklist Team" />
+    <meta name="robots" content="index, follow" />
 
-		<!-- PWA用メタタグ -->
-		<meta name="application-name" content="実用的事実確認チェックシート" />
-		<meta name="theme-color" content="#2c3e50" />
-		<meta name="apple-mobile-web-app-capable" content="yes" />
-		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
-		<meta name="apple-mobile-web-app-title" content="事実確認チェックシート" />
-		<meta name="mobile-web-app-capable" content="yes" />
-		<meta name="msapplication-TileColor" content="#2c3e50" />
-		<meta name="msapplication-tap-highlight" content="no" />
+    <!-- PWA用メタタグ -->
+    <meta name="application-name" content="実用的事実確認チェックシート" />
+    <meta name="theme-color" content="#2c3e50" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="事実確認チェックシート" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="msapplication-TileColor" content="#2c3e50" />
+    <meta name="msapplication-tap-highlight" content="no" />
 
-		<!-- Open Graph / Facebook -->
-		<meta property="og:type" content="website" />
-		<meta property="og:url" content="https://shuji-bonji.github.io/fact-checklist/" />
-		<meta property="og:title" content="実用的事実確認チェックシート" />
-		<meta property="og:description" content="情報の信頼性を科学的・体系的に評価するためのPWA" />
-		<meta property="og:image" content="https://shuji-bonji.github.io/fact-checklist/og-image.png" />
-		<meta property="og:locale" content="ja_JP" />
-		<meta property="og:site_name" content="実用的事実確認チェックシート" />
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://shuji-bonji.github.io/fact-checklist/" />
+    <meta property="og:title" content="実用的事実確認チェックシート" />
+    <meta property="og:description" content="情報の信頼性を科学的・体系的に評価するためのPWA" />
+    <meta property="og:image" content="https://shuji-bonji.github.io/fact-checklist/og-image.png" />
+    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:site_name" content="実用的事実確認チェックシート" />
 
-		<!-- Twitter -->
-		<meta property="twitter:card" content="summary_large_image" />
-		<meta property="twitter:url" content="https://shuji-bonji.github.io/fact-checklist/" />
-		<meta property="twitter:title" content="実用的事実確認チェックシート" />
-		<meta
-			property="twitter:description"
-			content="情報の信頼性を科学的・体系的に評価するためのPWA"
-		/>
-		<meta
-			property="twitter:image"
-			content="https://shuji-bonji.github.io/fact-checklist/og-image.png"
-		/>
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://shuji-bonji.github.io/fact-checklist/" />
+    <meta property="twitter:title" content="実用的事実確認チェックシート" />
+    <meta
+      property="twitter:description"
+      content="情報の信頼性を科学的・体系的に評価するためのPWA"
+    />
+    <meta
+      property="twitter:image"
+      content="https://shuji-bonji.github.io/fact-checklist/og-image.png"
+    />
 
-		<!-- アイコン -->
-		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
-		<link rel="icon" type="image/svg+xml" href="%sveltekit.assets%/icon.svg" />
-		<link rel="apple-touch-icon" href="%sveltekit.assets%/apple-touch-icon.png" />
+    <!-- アイコン -->
+    <link rel="icon" href="%sveltekit.assets%/favicon.png" />
+    <link rel="icon" type="image/svg+xml" href="%sveltekit.assets%/icon.svg" />
+    <link rel="apple-touch-icon" href="%sveltekit.assets%/apple-touch-icon.png" />
 
-		<!-- PWA Manifest -->
-		<!-- %sveltekit.assets%を使用して絶対パスで参照（GitHub Pages対応） -->
-		<link rel="manifest" href="%sveltekit.assets%/manifest.webmanifest" />
+    <!-- PWA Manifest -->
+    <!-- %sveltekit.assets%を使用して絶対パスで参照（GitHub Pages対応） -->
+    <link rel="manifest" href="%sveltekit.assets%/manifest.webmanifest" />
 
-		%sveltekit.head%
-	</head>
-	<body data-sveltekit-preload-data="hover">
-		<div style="display: contents">%sveltekit.body%</div>
-		<script>
-			// コンソールラッパーの初期設定（できるだけ早く実行）
-			(function () {
-				const isDebugMode = () => {
-					// 開発環境では常にtrue
-					if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
-						return true;
-					}
-					// URLパラメータまたはlocalStorageでデバッグモード判定
-					const urlParams = new URLSearchParams(window.location.search);
-					return urlParams.get('debug') === 'true' || localStorage.getItem('debugMode') === 'true';
-				};
+    %sveltekit.head%
+  </head>
+  <body data-sveltekit-preload-data="hover">
+    <div style="display: contents">%sveltekit.body%</div>
+    <script>
+      // コンソールラッパーの初期設定（できるだけ早く実行）
+      (function () {
+        const isDebugMode = () => {
+          // 開発環境では常にtrue
+          if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+            return true;
+          }
+          // URLパラメータまたはlocalStorageでデバッグモード判定
+          const urlParams = new URLSearchParams(window.location.search);
+          return urlParams.get('debug') === 'true' || localStorage.getItem('debugMode') === 'true';
+        };
 
-				if (!isDebugMode()) {
-					// 本番環境でログを無効化
-					const noop = () => {};
-					console.log = noop;
-					console.warn = noop;
-					console.info = noop;
-					console.debug = noop;
-					console.group = noop;
-					console.groupEnd = noop;
-					console.time = noop;
-					console.timeEnd = noop;
-					// console.errorは残す
-				}
+        if (!isDebugMode()) {
+          // 本番環境でログを無効化
+          const noop = () => {};
+          console.log = noop;
+          console.warn = noop;
+          console.info = noop;
+          console.debug = noop;
+          console.group = noop;
+          console.groupEnd = noop;
+          console.time = noop;
+          console.timeEnd = noop;
+          // console.errorは残す
+        }
 
-				// グローバル関数を追加
-				window.enableDebugMode = () => {
-					localStorage.setItem('debugMode', 'true');
-					window.location.reload();
-				};
-				window.disableDebugMode = () => {
-					localStorage.removeItem('debugMode');
-					window.location.reload();
-				};
-			})();
-		</script>
-	</body>
+        // グローバル関数を追加
+        window.enableDebugMode = () => {
+          localStorage.setItem('debugMode', 'true');
+          window.location.reload();
+        };
+        window.disableDebugMode = () => {
+          localStorage.removeItem('debugMode');
+          window.location.reload();
+        };
+      })();
+    </script>
+  </body>
 </html>

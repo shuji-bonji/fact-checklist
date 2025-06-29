@@ -1,6 +1,8 @@
-# 🔍 実用的事実確認チェックシート
+# 🔍 Practical Fact-Check Checklist / 実用的事実確認チェックシート
 
-> 情報の信頼性を科学的・体系的に評価するための高度PWA（Progressive Web App）
+> 🌍 **International 12-Language Support** | A sophisticated PWA (Progressive
+> Web App) for scientific and systematic evaluation of information reliability
+> with full internationalization
 
 [![Build and Deploy](https://github.com/shuji-bonji/fact-checklist/actions/workflows/deploy.yml/badge.svg)](https://github.com/shuji-bonji/fact-checklist/actions/workflows/deploy.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -9,25 +11,56 @@
 [![Svelte](https://img.shields.io/badge/-Svelte-FF3E00?logo=svelte&logoColor=white)](https://svelte.dev/)
 [![PWA](https://img.shields.io/badge/-PWA-5A0FC8?logo=pwa&logoColor=white)](https://web.dev/progressive-web-apps/)
 
-## 🌟 概要
+## 🌟 Overview / 概要
 
-実用的事実確認チェックシートは、インターネット上の情報の信頼性を科学的・体系的に評価するための**企業レベル高度PWA**です。偽情報やミスリーディングな情報が氾濫する現代において、情報リテラシーの向上を支援します。
+The Practical Fact-Check Checklist is an **enterprise-grade progressive web
+application** for scientifically and systematically evaluating the reliability
+of online information. In an era where misinformation and misleading content
+proliferate, this application supports the improvement of information literacy
+across **12 languages** with full internationalization support.
 
-> [!IMPORTANT]
-> この「実用的事実確認チェックシート」プロジェクト(Github)は、人間のエンジニア（@shuji-bonji）と生成AI（Claude）との協働によって作成されています。
+実用的事実確認チェックシートは、インターネット上の情報の信頼性を科学的・体系的に評価するための**企業レベル高度PWA**です。偽情報やミスリーディングな情報が氾濫する現代において、**12言語完全対応**の国際化機能で情報リテラシーの向上を支援します。
 
-### 🎯 主な特徴
+> [!IMPORTANT] This "Practical Fact-Check Checklist" project is created through
+> collaboration between a human engineer (@shuji-bonji) and AI
+> (Claude). この「実用的事実確認チェックシート」プロジェクト(Github)は、人間のエンジニア（@shuji-bonji）と生成AI（Claude）との協働によって作成されています。
 
-- **📱 高度PWA対応**: プラットフォーム適応型機能・完全オフライン動作
-- **🔐 完全プライベート**: すべてのデータは端末内に保存、サーバーへの送信なし
-- **📊 科学的評価**: 4カテゴリ20項目の包括的チェック
-- **🎨 レスポンシブデザイン**: デスクトップ・モバイル両対応
-- **🌙 ダークモード**: システム設定に連動
-- **📄 高度PDF生成**:
-  3つのモード（ピクセルパーフェクト/日本語フォント埋め込み/テキストベース）
-- **🔄 履歴管理**: 過去の評価結果を保存・参照
-- **♿ アクセシビリティ**: WCAG準拠のユニバーサルデザイン
-- **⚡ パフォーマンス最適化**: フォントキャッシュ・進捗表示・エラーハンドリング
+### 🎯 Key Features / 主な特徴
+
+- **🌍 Full Internationalization**: Complete support for 12 languages with RTL
+  text support
+- **📱 Advanced PWA**: Platform-adaptive features and complete offline
+  functionality
+- **🔐 Complete Privacy**: All data stored locally, no server communication
+- **📊 Scientific Evaluation**: Comprehensive 20-item checklist across 4
+  categories
+- **🎨 Responsive Design**: Desktop and mobile optimized with dark mode support
+- **📄 Advanced PDF Generation**: International font support for all 12
+  languages
+  - Multi-language font management (Latin, CJK, Devanagari, Arabic scripts)
+  - RTL text rendering for Arabic
+  - Three PDF modes (Pixel-perfect/Font-embedded/Text-based)
+- **🔄 History Management**: Save and reference past evaluation results
+- **♿ Accessibility**: WCAG-compliant universal design
+- **⚡ Performance Optimization**: Font caching, progress indicators, error
+  handling
+
+### 🌐 Supported Languages / 対応言語
+
+| Language                       | Code  | Script     | Status            |
+| ------------------------------ | ----- | ---------- | ----------------- |
+| 日本語 (Japanese)              | ja    | CJK        | ✅ Complete       |
+| English                        | en    | Latin      | ✅ Complete       |
+| Français (French)              | fr    | Latin      | ✅ Complete       |
+| 繁體中文 (Traditional Chinese) | zh-TW | CJK        | ✅ Complete       |
+| Español (Spanish)              | es    | Latin      | ✅ Complete       |
+| Português (Portuguese)         | pt    | Latin      | ✅ Complete       |
+| हिन्दी (Hindi)                 | hi    | Devanagari | ✅ Complete       |
+| Deutsch (German)               | de    | Latin      | ✅ Complete       |
+| Italiano (Italian)             | it    | Latin      | ✅ Complete       |
+| العربية (Arabic)               | ar    | Arabic     | ✅ Complete (RTL) |
+| Bahasa Indonesia               | id    | Latin      | ✅ Complete       |
+| 한국어 (Korean)                | ko    | CJK        | ✅ Complete       |
 
 ## 🚀 クイックスタート
 
@@ -94,34 +127,53 @@ npm run dev
 | 十分な背景情報       | 情報を理解するのに必要な背景や文脈が提供されている     |
 | 適用範囲の明確化     | 情報の適用可能な範囲や限界が明確に示されている         |
 
-## 🛠️ 技術スタック
+## 🛠️ Technology Stack / 技術スタック
 
-### フロントエンド
+### Frontend / フロントエンド
 
-- **[Svelte 5](https://svelte.dev/)** - 最新のrunesシステムによるリアクティブUI
-- **[SvelteKit](https://kit.svelte.dev/)** - フルスタックフレームワーク
-- **[TypeScript](https://www.typescriptlang.org/)** - 型安全な開発
-- **[Vite](https://vitejs.dev/)** - 高速ビルドツール
+- **[Svelte 5](https://svelte.dev/)** - Latest runes system for reactive UI
+  / 最新のrunesシステムによるリアクティブUI
+- **[SvelteKit](https://kit.svelte.dev/)** - Full-stack framework
+  / フルスタックフレームワーク
+- **[TypeScript](https://www.typescriptlang.org/)** - Type-safe development
+  / 型安全な開発
+- **[Vite](https://vitejs.dev/)** - Fast build tool / 高速ビルドツール
 
-### PWA・インフラ
+### Internationalization / 国際化
 
-- **[Vite PWA Plugin](https://vite-pwa-org.netlify.app/)** - PWA機能
-- **[GitHub Pages](https://pages.github.com/)** - ホスティング
-- **[GitHub Actions](https://github.com/features/actions)** - CI/CD
+- **Custom i18n System** - Type-safe translation system with 12 language support
+- **Svelte 5 Runes Store** - Reactive language switching with `$state` and
+  `$derived`
+- **Dynamic Font Loading** - Automatic font management for different scripts
+- **RTL Support** - Right-to-left text rendering for Arabic
+- **Browser Language Detection** - Automatic language detection with
+  localStorage persistence
 
-### 高度機能
+### PWA & Infrastructure / PWA・インフラ
 
-- **[jsPDF](https://github.com/parallax/jsPDF)** - PDF生成ライブラリ
-- **[html2canvas](https://html2canvas.hertzen.com/)** -
-  HTML→Canvas変換（未使用）
-- **デバッグモード** - URLパラメータ`?debug=true`で本番環境でもログ表示
-- **プラットフォーム適応** - デバイス別最適化
+- **[Vite PWA Plugin](https://vite-pwa-org.netlify.app/)** - PWA functionality /
+  PWA機能
+- **[GitHub Pages](https://pages.github.com/)** - Hosting / ホスティング
+- **[GitHub Actions](https://github.com/features/actions)** - CI/CD pipeline /
+  CI/CD
 
-### 開発ツール
+### Advanced Features / 高度機能
 
-- **[ESLint](https://eslint.org/)** - コード品質チェック
-- **[Prettier](https://prettier.io/)** - コードフォーマット
-- **[Lighthouse](https://developers.google.com/web/tools/lighthouse)** - パフォーマンス監視
+- **[jsPDF](https://github.com/parallax/jsPDF)** - International PDF generation
+  library / PDF生成ライブラリ
+- **International Font Manager** - Multi-script font support (Latin, CJK,
+  Devanagari, Arabic)
+- **Multi-format Export** - PDF, HTML, JSON, Markdown with full i18n support
+- **Debug Mode** - Production logging with `?debug=true` /
+  URLパラメータ`?debug=true`で本番環境でもログ表示
+- **Platform Adaptation** - Device-specific optimization / デバイス別最適化
+
+### Development Tools / 開発ツール
+
+- **[ESLint](https://eslint.org/)** - Code quality checks / コード品質チェック
+- **[Prettier](https://prettier.io/)** - Code formatting / コードフォーマット
+- **[Lighthouse](https://developers.google.com/web/tools/lighthouse)** -
+  Performance monitoring / パフォーマンス監視
 
 ## 📁 プロジェクト構造
 
@@ -129,40 +181,64 @@ npm run dev
 fact-checklist/
 ├── src/
 │   ├── lib/
-│   │   ├── components/          # Svelteコンポーネント
-│   │   │   ├── CheckSection.svelte     # カテゴリセクション
-│   │   │   ├── CheckItem.svelte        # チェック項目
-│   │   │   ├── ScoreDisplay.svelte     # スコア表示
-│   │   │   ├── ExportModal.svelte      # 高度エクスポート機能
-│   │   │   └── HistorySidebar.svelte   # 履歴サイドバー
-│   │   ├── stores/             # 状態管理
+│   │   ├── components/          # Svelte components / Svelteコンポーネント
+│   │   │   ├── CheckSection.svelte     # Category sections / カテゴリセクション
+│   │   │   ├── CheckItem.svelte        # Check items / チェック項目
+│   │   │   ├── ScoreDisplay.svelte     # Score display / スコア表示
+│   │   │   ├── ExportModal.svelte      # Advanced export / 高度エクスポート機能
+│   │   │   ├── HistorySidebar.svelte   # History sidebar / 履歴サイドバー
+│   │   │   └── LanguageSwitcher.svelte # Language switcher / 言語切り替え
+│   │   ├── stores/             # State management / 状態管理
 │   │   │   ├── checklistStore.svelte.ts
 │   │   │   └── platformStore.svelte.ts
-│   │   ├── utils/              # ユーティリティ
-│   │   │   ├── reliablePDFGenerator.ts # 日本語フォント対応PDF生成
-│   │   │   ├── simplePDFGenerator.ts   # ピクセルパーフェクトPDF生成
-│   │   │   ├── htmlToPDFGenerator.ts   # HTML→PDF変換
-│   │   │   ├── pwaAwarePDFExporter.ts  # PWA対応PDFエクスポート
-│   │   │   └── indexedDBStorage.ts     # データ永続化
-│   │   ├── types/              # TypeScript型定義
+│   │   ├── i18n/               # Internationalization / 国際化
+│   │   │   ├── index.ts        # i18n initialization / i18n初期化
+│   │   │   ├── types.ts        # TypeScript types / TypeScript型定義
+│   │   │   ├── store.svelte.ts # Language store / 言語ストア
+│   │   │   ├── fonts.ts        # International fonts / 国際化フォント
+│   │   │   └── translations/   # Translation files / 翻訳ファイル
+│   │   │       ├── ja.ts       # Japanese / 日本語
+│   │   │       ├── en.ts       # English / 英語
+│   │   │       ├── fr.ts       # French / フランス語
+│   │   │       ├── zh-TW.ts    # Traditional Chinese / 繁体中国語
+│   │   │       ├── es.ts       # Spanish / スペイン語
+│   │   │       ├── pt.ts       # Portuguese / ポルトガル語
+│   │   │       ├── hi.ts       # Hindi / ヒンディー語
+│   │   │       ├── de.ts       # German / ドイツ語
+│   │   │       ├── it.ts       # Italian / イタリア語
+│   │   │       ├── ar.ts       # Arabic / アラビア語 (RTL)
+│   │   │       ├── id.ts       # Indonesian / インドネシア語
+│   │   │       └── ko.ts       # Korean / 韓国語
+│   │   ├── utils/              # Utilities / ユーティリティ
+│   │   │   ├── reliablePDFGenerator.ts # International PDF generation
+│   │   │   ├── simplePDFGenerator.ts   # Pixel-perfect PDF
+│   │   │   ├── htmlToPDFGenerator.ts   # HTML→PDF conversion
+│   │   │   ├── pwaAwarePDFExporter.ts  # PWA-aware PDF export
+│   │   │   ├── indexedDBStorage.ts     # Data persistence
+│   │   │   └── fontToBase64.ts         # Font conversion utility
+│   │   ├── types/              # TypeScript type definitions
 │   │   │   └── checklist.ts
-│   │   └── data/               # チェックリストデータ
+│   │   └── data/               # Checklist data / チェックリストデータ
 │   │       └── checklist-items.ts
-│   ├── routes/                 # SvelteKitルーティング
-│   │   ├── +layout.svelte      # 共通レイアウト
-│   │   ├── +page.svelte        # メインページ
-│   │   ├── about/              # アプリについて
-│   │   ├── help/               # ヘルプ・使い方
-│   │   ├── privacy/            # プライバシーポリシー
-│   │   └── checklist/[id]/     # 結果表示ページ
-│   ├── app.html                # HTMLテンプレート
-│   └── service-worker.js       # サービスワーカー
-├── static/                     # 静的ファイル
-│   ├── fonts/                  # 日本語フォント
-│   │   ├── NotoSansJP-Regular.ttf
-│   │   └── NotoSansJP-Bold.ttf
-│   └── icons/                  # PWAアイコン
-└── docs/                       # ドキュメント
+│   ├── routes/                 # SvelteKit routing / SvelteKitルーティング
+│   │   ├── +layout.svelte      # Common layout / 共通レイアウト
+│   │   ├── +page.svelte        # Main page / メインページ
+│   │   ├── about/              # About page / アプリについて
+│   │   ├── help/               # Help page / ヘルプ・使い方
+│   │   ├── privacy/            # Privacy policy / プライバシーポリシー
+│   │   └── checklist/[id]/     # Results page / 結果表示ページ
+│   ├── app.html                # HTML template / HTMLテンプレート
+│   └── service-worker.js       # Service worker / サービスワーカー
+├── static/                     # Static files / 静的ファイル
+│   ├── fonts/                  # International fonts / 国際化フォント
+│   │   ├── NotoSansJP-Regular.ttf      # Japanese CJK
+│   │   ├── NotoSansJP-Bold.ttf         # Japanese CJK Bold
+│   │   ├── Roboto-Regular.ttf          # Latin script
+│   │   ├── NotoSansCJK-Regular.ttf     # CJK languages
+│   │   ├── NotoSansDevanagari-Regular.ttf # Hindi
+│   │   └── NotoSansArabic-Regular.ttf  # Arabic (RTL)
+│   └── icons/                  # PWA icons / PWAアイコン
+└── docs/                       # Documentation / ドキュメント
 ```
 
 ## 🎯 使い方
@@ -176,19 +252,40 @@ fact-checklist/
 5. **結果保存**: 自動的に履歴に保存
 6. **エクスポート**: 必要に応じて各種形式で出力
 
-### 2. 高度エクスポート機能
+### 2. Advanced Export Features / 高度エクスポート機能
 
-#### 📄 PDF生成（3つのモード - 排他選択）
+#### 📄 International PDF Generation / 国際化PDF生成（3つのモード - 排他選択）
 
-- **🎨 ピクセルパーフェクト（デフォルト）**: ブラウザ印刷機能でHTML表示と完全一致
-- **🔥 確実な日本語対応**: jsPDFで日本語フォント埋め込み、透かし・メタデータ対応
-- **🔤 テキストベース**: PWA機能を活用した軽量PDF、文字検索・コピー可能
+- **🎨 Pixel-Perfect (Default)**: Browser print function with HTML display
+  perfect
+  matchピクセルパーフェクト（デフォルト）: ブラウザ印刷機能でHTML表示と完全一致
+- **🔥 International Font Support**: jsPDF with embedded fonts for all 12
+  languages国際化フォント対応:
+  12言語すべてに対応したフォント埋め込み、透かし・メタデータ対応
+  - **Latin Script**: Roboto for English, French, Spanish, Portuguese, German,
+    Italian, Indonesian
+  - **CJK Script**: Noto Sans CJK for Japanese, Korean, Traditional Chinese
+  - **Devanagari Script**: Noto Sans Devanagari for Hindi
+  - **Arabic Script**: Noto Sans Arabic for Arabic with RTL support
+- **🔤 Text-Based**: Lightweight PDF utilizing PWA features, text searchable and
+  copyableテキストベース: PWA機能を活用した軽量PDF、文字検索・コピー可能
 
-#### 🌐 その他形式
+#### 🌐 Other Formats / その他形式
 
-- **HTML**: ブラウザで表示可能（スタイル埋め込み済み）
-- **JSON**: 構造化データ（エクスポートオプション反映）
-- **Markdown**: テキスト形式（テーブル・詳細タグ使用）
+- **HTML**: Browser-displayable with embedded styles and
+  internationalizationブラウザで表示可能（スタイル埋め込み済み・国際化対応）
+- **JSON**: Structured data with export options and language
+  context構造化データ（エクスポートオプション・言語情報反映）
+- **Markdown**: Text format with tables and details tags, fully
+  internationalizedテキスト形式（テーブル・詳細タグ使用・完全国際化対応）
+
+#### 🌍 Language-Specific Features / 言語固有機能
+
+- **Automatic Title Translation**: Dynamic title generation based on current
+  language
+- **RTL Text Support**: Proper right-to-left rendering for Arabic
+- **Cultural Adaptations**: Date formats and cultural conventions per language
+- **Font Optimization**: Automatic font selection based on language requirements
 
 ### 3. 判定基準
 
@@ -331,25 +428,48 @@ disableDebugMode()
 - **ファイルシステム**: Chrome, Edge
 - **Web Share**: Chrome, Safari, Edge
 
-## 🤝 コントリビューション
+## 🤝 Contributing / コントリビューション
 
-### 貢献方法
+### How to Contribute / 貢献方法
 
-1. **Fork** このリポジトリ
-2. **Feature branch** を作成 (`git checkout -b feature/amazing-feature`)
-3. **Changes** をコミット (`git commit -m 'Add some amazing feature'`)
-4. **Branch** にプッシュ (`git push origin feature/amazing-feature`)
-5. **Pull Request** を作成
+1. **Fork** this repository / このリポジトリをFork
+2. **Create feature branch** / Feature
+   branchを作成 (`git checkout -b feature/amazing-feature`)
+3. **Commit changes**
+   / 変更をコミット (`git commit -m 'Add some amazing feature'`)
+4. **Push to branch**
+   / ブランチにプッシュ (`git push origin feature/amazing-feature`)
+5. **Create Pull Request** / Pull Requestを作成
 
-### 開発ガイドライン
+### Development Guidelines / 開発ガイドライン
 
-- **型安全性**: TypeScriptを活用し、型エラーを回避
-- **コンポーネント設計**: 再利用可能な小さなコンポーネントを心がける
-- **アクセシビリティ**: ARIA属性とセマンティックHTMLを使用
-- **パフォーマンス**: バンドルサイズとランタイム性能を考慮
-- **テスト**: 新機能には適切なテストを追加
+- **Type Safety** / 型安全性: Leverage TypeScript to avoid type errors /
+  TypeScriptを活用し、型エラーを回避
+- **Component Design** / コンポーネント設計: Create reusable small components
+  / 再利用可能な小さなコンポーネントを心がける
+- **Accessibility** / アクセシビリティ: Use ARIA attributes and semantic HTML /
+  ARIA属性とセマンティックHTMLを使用
+- **Performance** / パフォーマンス: Consider bundle size and runtime performance
+  / バンドルサイズとランタイム性能を考慮
+- **Internationalization** / 国際化: Ensure all text is translatable and
+  culturally appropriate
+  / すべてのテキストが翻訳可能で文化的に適切であることを確認
+- **Testing** / テスト: Add appropriate tests for new features
+  / 新機能には適切なテストを追加
 
-### Issue報告
+### Translation Contributions / 翻訳への貢献
+
+We welcome contributions to improve translations for all 12 supported languages:
+
+- Review existing translations for accuracy and cultural appropriateness
+- Suggest improvements for better localization
+- Help maintain consistency across all language versions
+- Report issues with RTL layout or font rendering
+
+### Issue Reporting / Issue報告
+
+Please report bugs or feature requests at
+[Issues](https://github.com/shuji-bonji/fact-checklist/issues).
 
 バグ報告や機能要望は
 [Issues](https://github.com/shuji-bonji/fact-checklist/issues) でお願いします。
@@ -358,13 +478,20 @@ disableDebugMode()
 
 このプロジェクトは [MIT License](./LICENSE) の下で公開されています。
 
-## 🙏 謝辞
+## 🙏 Acknowledgments / 謝辞
 
-- **[Svelte Team](https://svelte.dev/)** - 素晴らしいフレームワークの提供
-- **[TypeScript Team](https://www.typescriptlang.org/)** - 型安全な開発環境
-- **[Vite Team](https://vitejs.dev/)** - 高速なビルドツール
-- **[jsPDF Team](https://github.com/parallax/jsPDF)** - 高機能PDF生成ライブラリ
-- **[Open Source Community](https://opensource.org/)** - 多くのライブラリとツール
+- **[Svelte Team](https://svelte.dev/)** - Amazing framework with cutting-edge
+  runes system / 素晴らしいフレームワークの提供
+- **[TypeScript Team](https://www.typescriptlang.org/)** - Type-safe development
+  environment / 型安全な開発環境
+- **[Vite Team](https://vitejs.dev/)** - Fast and efficient build tool
+  / 高速なビルドツール
+- **[jsPDF Team](https://github.com/parallax/jsPDF)** - Powerful PDF generation
+  library / 高機能PDF生成ライブラリ
+- **[Google Fonts](https://fonts.google.com/)** - Noto font family for
+  international typography / 国際的タイポグラフィのためのNotoフォントファミリー
+- **[Open Source Community](https://opensource.org/)** - Countless libraries and
+  tools / 多くのライブラリとツール
 
 ## 📞 サポート・フィードバック
 
@@ -377,9 +504,13 @@ disableDebugMode()
 
 <div align="center">
 
-**📋 情報の信頼性を、科学的に。**
+**📋 Scientific Information Reliability Assessment
+/ 情報の信頼性を、科学的に。**
 
-[🚀 今すぐ使ってみる](https://shuji-bonji.github.io/fact-checklist/) |
-[📖 ドキュメント](./docs) | [🤝 コントリビューション](#-コントリビューション)
+**🌍 Now Available in 12 Languages / 12言語対応**
+
+[🚀 Try It Now / 今すぐ使ってみる](https://shuji-bonji.github.io/fact-checklist/)
+| [📖 Documentation / ドキュメント](./docs) |
+[🤝 Contributing / コントリビューション](#-contributing--コントリビューション)
 
 </div>
