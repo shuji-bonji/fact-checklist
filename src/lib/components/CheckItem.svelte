@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { CheckItem } from '$lib/types/checklist.js';
+	import { t } from '$lib/i18n/index.js';
 
 	interface Props {
 		item: CheckItem;
@@ -54,10 +55,10 @@
 				{item.title}
 				<span class="risk-indicator {riskClasses[item.riskLevel]}">
 					{item.riskLevel === 'high'
-						? '高リスク'
+						? t('common.rip.high')
 						: item.riskLevel === 'medium'
-							? '中リスク'
-							: '低リスク'}
+							? t('common.rip.medium')
+							: t('common.rip.low')}
 				</span>
 
 				{#if item.guideContent && !showGuideMode}
@@ -66,9 +67,9 @@
 						onclick={toggleGuide}
 						aria-expanded={showGuide}
 						aria-controls="guide-{item.id}"
-						title="ガイドを表示"
+						title={t('common.showGuide')}
 					>
-						ガイド
+						{t('common.guide')}
 					</button>
 				{/if}
 			</label>

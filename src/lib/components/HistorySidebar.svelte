@@ -3,6 +3,7 @@
 	import { base } from '$app/paths';
 	import { checklistStore } from '$lib/stores/checklistStore.svelte.js';
 	import type { ChecklistHistoryItem, JudgmentType } from '$lib/types/checklist.js';
+	import { t } from '$lib/i18n/index.js';
 
 	// ストアから履歴を取得
 	const history = $derived(checklistStore.history);
@@ -19,7 +20,7 @@
 
 	async function deleteHistoryItem(item: ChecklistHistoryItem, event: Event) {
 		event.stopPropagation(); // 親要素のクリックイベントを防ぐ
-		if (confirm(`「${item.title}」を履歴から削除しますか？`)) {
+		if (confirm(`${t('confirmations.delete')}: ${item.title}`)) {
 			await checklistStore.deleteFromHistory(item.id);
 		}
 	}
@@ -37,13 +38,13 @@
 	function getJudgmentDisplay(judgment: JudgmentType) {
 		switch (judgment) {
 			case 'accept':
-				return { icon: '✅', text: '採用', class: 'accept' };
+				return { icon: '✅', text: t('checklist.judgment.accept'), class: 'accept' };
 			case 'caution':
-				return { icon: '⚠️', text: '要注意', class: 'caution' };
+				return { icon: '⚠️', text: t('checklist.judgment.caution'), class: 'caution' };
 			case 'reject':
-				return { icon: '❌', text: '不採用', class: 'reject' };
+				return { icon: '❌', text: t('checklist.judgment.reject'), class: 'reject' };
 			default:
-				return { icon: '❓', text: '未判定', class: 'unknown' };
+				return { icon: '❓', text: t('checklist.judgment.pending'), class: 'unknown' };
 		}
 	}
 
@@ -70,25 +71,25 @@
 	<!-- 新規作成ボタン -->
 	<div class="new-checklist card">
 		<button class="btn btn-ghost w-full new-checklist-btn" onclick={createNewChecklist}>
-			➕ 新しいチェックリスト
+			➕ {t('checklist.newChecklist')}
 		</button>
 	</div>
 
 	<!-- 履歴表示 -->
 	<div class="history-section card">
 		<div class="history-header">
-			<h3>📚 評価履歴</h3>
+			<h3>📚 {t('history.title')}</h3>
 			{#if history.length > 5}
 				<button class="toggle-view-btn" onclick={toggleHistoryView}>
-					{showAllHistory ? '最新5件' : '全て表示'}
+					{showAllHistory ? t('history.recent') : t('history.viewAll')}
 				</button>
 			{/if}
 		</div>
 
 		{#if displayedHistory.length === 0}
 			<div class="empty-state">
-				<p>まだ評価履歴がありません。</p>
-				<p class="text-muted">最初のチェックリストを作成しましょう！</p>
+				<p>{t('history.empty')}</p>
+				<p class="text-muted">{t('history.createFirst')}</p>
 			</div>
 		{:else}
 			<div class="history-list">

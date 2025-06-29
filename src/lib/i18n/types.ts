@@ -82,6 +82,13 @@ export interface TranslationKeys {
 		darkMode: string;
 		lightMode: string;
 		systemMode: string;
+		guide: string;
+		showGuide: string;
+		rip: {
+			high: string;
+			medium: string;
+			low: string;
+		};
 	};
 
 	// アプリケーション固有
@@ -134,6 +141,18 @@ export interface TranslationKeys {
 			accept: string;
 			caution: string;
 			reject: string;
+		};
+		confidence: {
+			high: string;
+			medium: string;
+			low: string;
+			poor: string;
+		};
+		advice: {
+			high: string;
+			medium: string;
+			low: string;
+			poor: string;
 		};
 	};
 
@@ -202,6 +221,8 @@ export interface TranslationKeys {
 		deleteHistory: string;
 		clearAll: string;
 		recent: string;
+		viewAll: string;
+		createFirst: string;
 	};
 
 	// エラーメッセージ
@@ -286,6 +307,36 @@ export interface TranslationKeys {
 		completed: string;
 		remaining: string;
 		of: string;
+	};
+
+	// フォーム関連
+	forms: {
+		titleLabel: string;
+		titlePlaceholder: string;
+		descriptionLabel: string;
+		descriptionPlaceholder: string;
+		notesLabel: string;
+		notesPlaceholder: string;
+	};
+
+	// UI テキスト
+	ui: {
+		quickStartGuide: string;
+		guideModeDetailed: string;
+		guideModeNormal: string;
+		completeEvaluation: string;
+	};
+
+	// チェックリスト項目
+	checklistItems: {
+		[itemId: string]: {
+			title: string;
+			description: string;
+			guideTitle: string;
+			guideContent: string;
+			examplesGood: string[];
+			examplesBad: string[];
+		};
 	};
 }
 
