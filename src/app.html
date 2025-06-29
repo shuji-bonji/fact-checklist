@@ -68,10 +68,8 @@
 		<link rel="apple-touch-icon" href="%sveltekit.assets%/apple-touch-icon.png" />
 
 		<!-- PWA Manifest -->
-		<!-- 相対パスで参照（GitHub Pages対応） -->
-		<link rel="manifest" href="./manifest.webmanifest" />
-		<!-- または%sveltekit.assets%を使用 -->
-		<!-- <link rel="manifest" href="%sveltekit.assets%/manifest.webmanifest" /> -->
+		<!-- %sveltekit.assets%を使用して絶対パスで参照（GitHub Pages対応） -->
+		<link rel="manifest" href="%sveltekit.assets%/manifest.webmanifest" />
 
 		%sveltekit.head%
 	</head>
