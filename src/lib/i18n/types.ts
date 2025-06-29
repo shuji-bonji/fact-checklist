@@ -5,7 +5,7 @@
 
 // サポート言語の定義
 export const SUPPORTED_LANGUAGES = {
-	ja: { name: '日本語', nativeName: '日本語', code: 'ja', dir: 'ltr', flag: '🇯🇵' },
+	ja: { name: 'Japanese', nativeName: '日本語', code: 'ja', dir: 'ltr', flag: '🇯🇵' },
 	en: { name: 'English', nativeName: 'English', code: 'en', dir: 'ltr', flag: '🇺🇸' },
 	fr: { name: 'French', nativeName: 'Français', code: 'fr', dir: 'ltr', flag: '🇫🇷' },
 	'zh-TW': {
