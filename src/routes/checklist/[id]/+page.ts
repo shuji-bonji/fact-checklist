@@ -4,7 +4,7 @@ export const prerender = false;
 export const ssr = false;
 
 export const load: PageLoad = ({ params }) => {
-	return {
-		id: params.id
-	};
+  return {
+    id: params.id
+  };
 };

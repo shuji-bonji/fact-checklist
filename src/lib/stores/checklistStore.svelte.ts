@@ -1,485 +1,550 @@
 import type {
-	ChecklistResult,
-	CheckItem,
-	ChecklistScore,
-	JudgmentType,
-	ChecklistHistoryItem
+  ChecklistResult,
+  CheckItem,
+  ChecklistScore,
+  JudgmentType,
+  ChecklistHistoryItem
 } from '../types/checklist.js';
-import { CHECKLIST_ITEMS } from '../data/checklist-items.js';
+import { getChecklistItems } from '../data/checklist-items.js';
 import { v4 as uuidv4 } from 'uuid';
 import {
-	createStorageWithFallback,
-	STORAGE_KEYS,
-	type StorageInterface
+  createStorageWithFallback,
+  STORAGE_KEYS,
+  type StorageInterface
 } from '../config/storage.js';
 import { StorageMigration } from '../utils/indexedDBStorage.js';
+import { t } from '../i18n/index.js';
 
 // ブラウザ環境でのみストレージを使用
 const isBrowser = typeof window !== 'undefined';
 
 class ChecklistStore {
-	private _currentChecklist = $state<ChecklistResult | null>(null);
-	private _history = $state<ChecklistHistoryItem[]>([]);
-	private _isLoading = $state(false);
-	private storage: StorageInterface | null = null;
-	private storageInitialized = false;
-	private initializationInProgress = false;
-
-	constructor() {
-		if (isBrowser) {
-			this.initializeStorage();
-		}
-	}
-
-	// ストレージの初期化とマイグレーション
-	private async initializeStorage(): Promise<void> {
-		console.log(
-			'initializeStorage: start, storageInitialized =',
-			this.storageInitialized,
-			'inProgress =',
-			this.initializationInProgress
-		);
-
-		if (this.storageInitialized) {
-			console.log('initializeStorage: already initialized, returning');
-			return;
-		}
-
-		if (this.initializationInProgress) {
-			console.log('initializeStorage: initialization in progress, waiting...');
-			// 初期化完了まで待機
-			while (this.initializationInProgress && !this.storageInitialized) {
-				await new Promise(resolve => setTimeout(resolve, 50));
-			}
-			return;
-		}
-
-		this.initializationInProgress = true;
-
-		try {
-			console.log('initializeStorage: creating storage with fallback...');
-			this.storage = await createStorageWithFallback();
-			console.log('initializeStorage: storage created successfully');
-
-			// データマイグレーション（localStorage → IndexedDB）
-			console.log('initializeStorage: starting migration...');
-			await this.migrateFromLocalStorage();
-			console.log('initializeStorage: migration completed');
-
-			// データを読み込み
-			console.log('initializeStorage: loading from storage...');
-			await this.loadFromStorage();
-			console.log('initializeStorage: load completed');
-
-			this.storageInitialized = true;
-			this.initializationInProgress = false;
-			console.log('initializeStorage: initialization completed successfully');
-		} catch (error) {
-			console.error('ストレージの初期化に失敗しました:', error);
-			this.storageInitialized = false; // エラー時は再試行可能にする
-			this.initializationInProgress = false;
-		}
-	}
-
-	// localStorage からのデータマイグレーション
-	private async migrateFromLocalStorage(): Promise<void> {
-		if (!this.storage || typeof window === 'undefined') return;
-
-		try {
-			// マイグレーション対象のキーパターン
-			const keyPatterns = [
-				STORAGE_KEYS.CHECKLIST_PREFIX, // checklist_ で始まるキー
-				STORAGE_KEYS.HISTORY // checklist_history
-			];
-
-			const result = await StorageMigration.migrateFromLocalStorage(
-				this.storage as unknown as import('../utils/indexedDBStorage.js').IndexedDBStorage,
-				keyPatterns
-			);
-
-			if (result.migrated > 0) {
-				console.log(`${result.migrated} 件のデータをIndexedDBに移行しました`);
-
-				// 移行完了後、localStorageのデータを削除
-				const clearResult = StorageMigration.clearLocalStorageKeys(keyPatterns);
-				if (clearResult.cleared > 0) {
-					console.log(`${clearResult.cleared} 件のlocalStorageデータを削除しました`);
-				}
-			}
-
-			if (result.errors.length > 0) {
-				console.warn('マイグレーション中にエラーが発生しました:', result.errors);
-			}
-		} catch (error) {
-			console.error('データマイグレーションに失敗しました:', error);
-		}
-	}
-
-	// ゲッター（読み取り専用）
-	get currentChecklist() {
-		return this._currentChecklist;
-	}
-
-	get history() {
-		return this._history;
-	}
-
-	get isLoading() {
-		return this._isLoading;
-	}
-
-	// スコア計算（derived state）
-	get score(): ChecklistScore {
-		if (!this._currentChecklist) {
-			return {
-				critical: 0,
-				detailed: 0,
-				verification: 0,
-				context: 0,
-				total: 0,
-				maxScore: 20,
-				percentage: 0
-			};
-		}
-
-		const items = this._currentChecklist.items;
-		const critical = items.filter(item => item.category.id === 'critical' && item.checked).length;
-		const detailed = items.filter(item => item.category.id === 'detailed' && item.checked).length;
-		const verification = items.filter(
-			item => item.category.id === 'verification' && item.checked
-		).length;
-		const context = items.filter(item => item.category.id === 'context' && item.checked).length;
-
-		const total = critical + detailed + verification + context;
-		const maxScore = 20;
-		const percentage = Math.round((total / maxScore) * 100);
-
-		return {
-			critical,
-			detailed,
-			verification,
-			context,
-			total,
-			maxScore,
-			percentage
-		};
-	}
-
-	// 信頼度レベル（derived state）
-	get confidenceLevel(): number {
-		return this.score.percentage;
-	}
-
-	get confidenceText(): string {
-		const confidence = this.confidenceLevel;
-		if (confidence >= 80) return '高い信頼性';
-		if (confidence >= 60) return '中程度の信頼性';
-		if (confidence >= 40) return '低い信頼性';
-		return '信頼性に問題';
-	}
-
-	get judgmentAdvice(): string {
-		const confidence = this.confidenceLevel;
-		if (confidence >= 80) return '採用を推奨します。十分な検証が行われています。';
-		if (confidence >= 60) return '追加確認を推奨します。重要な決定には慎重に。';
-		if (confidence >= 40) return '要注意です。さらなる検証が必要です。';
-		return '不採用を推奨します。信頼できる情報源を探しましょう。';
-	}
-
-	// 新しいチェックリストを作成
-	createNewChecklist(title: string = '', description: string = ''): string {
-		const id = uuidv4();
-		const now = new Date();
-
-		// チェックアイテムのコピーを作成（チェック状態をリセット）
-		const items: CheckItem[] = CHECKLIST_ITEMS.map(item => ({
-			...item,
-			checked: false
-		}));
-
-		const newChecklist: ChecklistResult = {
-			id,
-			title: title || `事実確認チェック_${now.toLocaleDateString('ja-JP')}`,
-			description,
-			createdAt: now,
-			updatedAt: now,
-			status: 'draft',
-			items,
-			score: this.score,
-			judgment: null,
-			notes: '',
-			confidenceLevel: 0,
-			confidenceText: this.confidenceText,
-			judgmentAdvice: this.judgmentAdvice
-		};
-
-		this._currentChecklist = newChecklist;
-		this.saveToStorage(); // 非同期だが待機しない（UIブロックを避ける）
-		return id;
-	}
-
-	// チェックリストを読み込み
-	async loadChecklist(id: string): Promise<boolean> {
-		if (!isBrowser) return false;
-
-		// ストレージが初期化されていない場合は初期化
-		if (!this.storageInitialized) {
-			await this.initializeStorage();
-		}
-
-		if (!this.storage) return false;
-
-		try {
-			const saved = await this.storage.getItem<ChecklistResult>(
-				`${STORAGE_KEYS.CHECKLIST_PREFIX}${id}`
-			);
-			if (saved) {
-				// 日付をDateオブジェクトに変換
-				saved.createdAt = new Date(saved.createdAt);
-				saved.updatedAt = new Date(saved.updatedAt);
-				if (saved.completedAt) {
-					saved.completedAt = new Date(saved.completedAt);
-				}
-				this._currentChecklist = saved;
-				return true;
-			}
-		} catch (error) {
-			console.error('チェックリストの読み込みに失敗しました:', error);
-		}
-		return false;
-	}
-
-	// チェックアイテムの状態を更新
-	updateCheckItem(itemId: string, checked: boolean): void {
-		if (!this._currentChecklist) return;
-
-		const item = this._currentChecklist.items.find(i => i.id === itemId);
-		if (item) {
-			item.checked = checked;
-			this._currentChecklist.updatedAt = new Date();
-
-			// スコアを更新
-			this._currentChecklist.score = this.score;
-			this._currentChecklist.confidenceLevel = this.confidenceLevel;
-			this._currentChecklist.confidenceText = this.confidenceText;
-			this._currentChecklist.judgmentAdvice = this.judgmentAdvice;
-
-			this.saveToStorage();
-		}
-	}
-
-	// タイトルを更新
-	updateTitle(title: string): void {
-		if (!this._currentChecklist) return;
-
-		this._currentChecklist.title = title;
-		this._currentChecklist.updatedAt = new Date();
-		this.saveToStorage(); // 非同期だが待機しない
-	}
-
-	// 説明を更新
-	updateDescription(description: string): void {
-		if (!this._currentChecklist) return;
-
-		this._currentChecklist.description = description;
-		this._currentChecklist.updatedAt = new Date();
-		this.saveToStorage(); // 非同期だが待機しない
-	}
-
-	// メモを更新
-	updateNotes(notes: string): void {
-		if (!this._currentChecklist) return;
-
-		this._currentChecklist.notes = notes;
-		this._currentChecklist.updatedAt = new Date();
-		this.saveToStorage(); // 非同期だが待機しない
-	}
-
-	// 判定を設定
-	setJudgment(judgment: JudgmentType): void {
-		if (!this._currentChecklist) return;
-
-		this._currentChecklist.judgment = judgment;
-		this._currentChecklist.updatedAt = new Date();
-		this.saveToStorage(); // 非同期だが待機しない
-	}
-
-	// チェックリストを完了状態にする
-	async completeChecklist(): Promise<boolean> {
-		console.log('checklistStore.completeChecklist called');
-
-		if (!this._currentChecklist) {
-			console.error('checklistStore: _currentChecklist is null');
-			return false;
-		}
-
-		console.log('Setting checklist status to completed');
-		const now = new Date();
-		this._currentChecklist.status = 'completed';
-		this._currentChecklist.completedAt = now;
-		this._currentChecklist.updatedAt = now;
-
-		// 履歴に追加
-		const historyItem: ChecklistHistoryItem = {
-			id: this._currentChecklist.id,
-			title: this._currentChecklist.title,
-			completedAt: now,
-			score: this.score,
-			judgment: this._currentChecklist.judgment,
-			confidenceLevel: this.confidenceLevel
-		};
-
-		console.log('Adding to history:', historyItem);
-
-		// 履歴に追加（重複チェック）
-		const existingIndex = this._history.findIndex(h => h.id === historyItem.id);
-		if (existingIndex >= 0) {
-			this._history[existingIndex] = historyItem;
-		} else {
-			this._history.unshift(historyItem);
-		}
-
-		// 履歴を最新5件に制限
-		if (this._history.length > 5) {
-			this._history = this._history.slice(0, 5);
-		}
-
-		console.log('About to save to storage...');
-
-		try {
-			// 保存処理を待機（確実に保存してから画面遷移）
-			await Promise.all([this.saveToStorage(), this.saveHistory()]);
-
-			console.log('Storage save completed successfully');
-			return true;
-		} catch (error) {
-			console.error('Error saving to storage:', error);
-			return false;
-		}
-	}
-
-	// 履歴を削除
-	async deleteFromHistory(id: string): Promise<void> {
-		this._history = this._history.filter(h => h.id !== id);
-		await this.saveHistory();
-
-		// ストレージからも削除
-		if (this.storage) {
-			try {
-				await this.storage.removeItem(`${STORAGE_KEYS.CHECKLIST_PREFIX}${id}`);
-			} catch (error) {
-				console.error('チェックリストの削除に失敗しました:', error);
-			}
-		}
-	}
-
-	// ストレージに保存
-	private async saveToStorage(): Promise<void> {
-		console.log('saveToStorage called');
-
-		if (!isBrowser || !this._currentChecklist) {
-			console.log('saveToStorage: browser or currentChecklist not available');
-			return;
-		}
-
-		// ストレージが初期化されるまで待機
-		if (!this.storage) {
-			console.log('saveToStorage: storage not available, waiting for initialization...');
-			await this.initializeStorage();
-
-			if (!this.storage) {
-				console.error('saveToStorage: storage initialization failed');
-				return;
-			}
-		}
-
-		try {
-			const key = `${STORAGE_KEYS.CHECKLIST_PREFIX}${this._currentChecklist.id}`;
-			console.log('Saving checklist with key:', key);
-
-			// Svelteプロキシをプレーンオブジェクトに変換
-			const plainChecklist = JSON.parse(JSON.stringify(this._currentChecklist));
-
-			await this.storage.setItem(key, plainChecklist);
-			console.log('Checklist saved successfully');
-		} catch (error) {
-			console.error('チェックリストの保存に失敗しました:', error);
-			throw error; // Re-throw to be caught by Promise.all
-		}
-	}
-
-	// 履歴をストレージに保存
-	private async saveHistory(): Promise<void> {
-		console.log('saveHistory called');
-
-		if (!isBrowser) {
-			console.log('saveHistory: not in browser environment');
-			return;
-		}
-
-		// initializeStorageを呼ばない（既に初期化済みのはず）
-		if (!this.storage) {
-			console.error('saveHistory: storage not available');
-			return;
-		}
-
-		try {
-			console.log('Saving history with', this._history.length, 'items');
-
-			// Svelteプロキシをプレーンオブジェクトに変換
-			const plainHistory = JSON.parse(JSON.stringify(this._history));
-
-			await this.storage.setItem(STORAGE_KEYS.HISTORY, plainHistory);
-			console.log('History saved successfully');
-		} catch (error) {
-			console.error('履歴の保存に失敗しました:', error);
-			throw error; // Re-throw to be caught by Promise.all
-		}
-	}
-
-	// ストレージから履歴を読み込み
-	private async loadFromStorage(): Promise<void> {
-		console.log('loadFromStorage called');
-
-		if (!isBrowser) {
-			console.log('loadFromStorage: not in browser environment');
-			return;
-		}
-
-		// initializeStorageを呼ばない（循環参照を回避）
-		if (!this.storage) {
-			console.log('loadFromStorage: storage not available');
-			return;
-		}
-
-		try {
-			console.log('loadFromStorage: loading history from storage');
-			const history = await this.storage.getItem<ChecklistHistoryItem[]>(STORAGE_KEYS.HISTORY);
-			if (history) {
-				console.log('loadFromStorage: found history with', history.length, 'items');
-				// 日付をDateオブジェクトに変換
-				history.forEach(item => {
-					item.completedAt = new Date(item.completedAt);
-				});
-				this._history = history;
-				console.log('loadFromStorage: history loaded successfully');
-			} else {
-				console.log('loadFromStorage: no history found in storage');
-			}
-		} catch (error) {
-			console.error('履歴の読み込みに失敗しました:', error);
-		}
-	}
-
-	// 全履歴を取得
-	getAllHistory(): ChecklistHistoryItem[] {
-		return this._history;
-	}
-
-	// エクスポート用データを生成
-	getExportData(): ChecklistResult | null {
-		return this._currentChecklist;
-	}
+  private _currentChecklist = $state<ChecklistResult | null>(null);
+  private _history = $state<ChecklistHistoryItem[]>([]);
+  private _isLoading = $state(false);
+  private storage: StorageInterface | null = null;
+  private storageInitialized = false;
+  private initializationInProgress = false;
+
+  constructor() {
+    if (isBrowser) {
+      this.initializeStorage();
+    }
+  }
+
+  // ストレージの初期化とマイグレーション
+  private async initializeStorage(): Promise<void> {
+    console.log(
+      'initializeStorage: start, storageInitialized =',
+      this.storageInitialized,
+      'inProgress =',
+      this.initializationInProgress
+    );
+
+    if (this.storageInitialized) {
+      console.log('initializeStorage: already initialized, returning');
+      return;
+    }
+
+    if (this.initializationInProgress) {
+      console.log('initializeStorage: initialization in progress, waiting...');
+      // 初期化完了まで待機
+      while (this.initializationInProgress && !this.storageInitialized) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+      }
+      return;
+    }
+
+    this.initializationInProgress = true;
+
+    try {
+      console.log('initializeStorage: creating storage with fallback...');
+      this.storage = await createStorageWithFallback();
+      console.log('initializeStorage: storage created successfully');
+
+      // データマイグレーション（localStorage → IndexedDB）
+      console.log('initializeStorage: starting migration...');
+      await this.migrateFromLocalStorage();
+      console.log('initializeStorage: migration completed');
+
+      // データを読み込み
+      console.log('initializeStorage: loading from storage...');
+      await this.loadFromStorage();
+      console.log('initializeStorage: load completed');
+
+      this.storageInitialized = true;
+      this.initializationInProgress = false;
+      console.log('initializeStorage: initialization completed successfully');
+    } catch (error) {
+      console.error('ストレージの初期化に失敗しました:', error);
+      this.storageInitialized = false; // エラー時は再試行可能にする
+      this.initializationInProgress = false;
+    }
+  }
+
+  // localStorage からのデータマイグレーション
+  private async migrateFromLocalStorage(): Promise<void> {
+    if (!this.storage || typeof window === 'undefined') return;
+
+    try {
+      // マイグレーション対象のキーパターン
+      const keyPatterns = [
+        STORAGE_KEYS.CHECKLIST_PREFIX, // checklist_ で始まるキー
+        STORAGE_KEYS.HISTORY // checklist_history
+      ];
+
+      const result = await StorageMigration.migrateFromLocalStorage(
+        this.storage as unknown as import('../utils/indexedDBStorage.js').IndexedDBStorage,
+        keyPatterns
+      );
+
+      if (result.migrated > 0) {
+        console.log(`${result.migrated} 件のデータをIndexedDBに移行しました`);
+
+        // 移行完了後、localStorageのデータを削除
+        const clearResult = StorageMigration.clearLocalStorageKeys(keyPatterns);
+        if (clearResult.cleared > 0) {
+          console.log(`${clearResult.cleared} 件のlocalStorageデータを削除しました`);
+        }
+      }
+
+      if (result.errors.length > 0) {
+        console.warn('マイグレーション中にエラーが発生しました:', result.errors);
+      }
+    } catch (error) {
+      console.error('データマイグレーションに失敗しました:', error);
+    }
+  }
+
+  // ゲッター（読み取り専用）
+  get currentChecklist() {
+    return this._currentChecklist;
+  }
+
+  get history() {
+    return this._history;
+  }
+
+  get isLoading() {
+    return this._isLoading;
+  }
+
+  // スコア計算（derived state）
+  get score(): ChecklistScore {
+    if (!this._currentChecklist) {
+      return {
+        critical: 0,
+        detailed: 0,
+        verification: 0,
+        context: 0,
+        total: 0,
+        maxScore: 20,
+        percentage: 0
+      };
+    }
+
+    const items = this._currentChecklist.items;
+    const critical = items.filter(item => item.category.id === 'critical' && item.checked).length;
+    const detailed = items.filter(item => item.category.id === 'detailed' && item.checked).length;
+    const verification = items.filter(
+      item => item.category.id === 'verification' && item.checked
+    ).length;
+    const context = items.filter(item => item.category.id === 'context' && item.checked).length;
+
+    const total = critical + detailed + verification + context;
+    const maxScore = 20;
+    const percentage = Math.round((total / maxScore) * 100);
+
+    return {
+      critical,
+      detailed,
+      verification,
+      context,
+      total,
+      maxScore,
+      percentage
+    };
+  }
+
+  // 信頼度レベル（derived state）
+  get confidenceLevel(): number {
+    return this.score.percentage;
+  }
+
+  get confidenceText(): string {
+    const confidence = this.confidenceLevel;
+    if (confidence >= 80) return t('checklist.confidence.high');
+    if (confidence >= 60) return t('checklist.confidence.medium');
+    if (confidence >= 40) return t('checklist.confidence.low');
+    return t('checklist.confidence.poor');
+  }
+
+  get judgmentAdvice(): string {
+    const confidence = this.confidenceLevel;
+    if (confidence >= 80) return t('checklist.advice.high');
+    if (confidence >= 60) return t('checklist.advice.medium');
+    if (confidence >= 40) return t('checklist.advice.low');
+    return t('checklist.advice.poor');
+  }
+
+  // 現在の言語に基づく効果的なタイトルを取得
+  get effectiveTitle(): string {
+    if (!this._currentChecklist) return '';
+
+    // 後方互換性: isUserSetTitleが未定義の場合は、既存のタイトルを使用
+    if (this._currentChecklist.isUserSetTitle === undefined) {
+      return this._currentChecklist.title;
+    }
+
+    // ユーザーが設定したタイトルの場合はそのまま返す
+    if (this._currentChecklist.isUserSetTitle) {
+      return this._currentChecklist.title;
+    }
+
+    // 自動生成タイトルの場合は現在の言語で生成
+    return `${t('checklist.title')}_${this._currentChecklist.createdAt.toLocaleDateString()}`;
+  }
+
+  // 新しいチェックリストを作成
+  createNewChecklist(title: string = '', description: string = ''): string {
+    const id = uuidv4();
+    const now = new Date();
+
+    // チェックアイテムのコピーを作成（チェック状態をリセット）
+    const items: CheckItem[] = getChecklistItems().map(item => ({
+      ...item,
+      checked: false
+    }));
+
+    const newChecklist: ChecklistResult = {
+      id,
+      title: title || `${t('checklist.title')}_${now.toLocaleDateString()}`,
+      description,
+      createdAt: now,
+      updatedAt: now,
+      status: 'draft',
+      items,
+      score: this.score,
+      judgment: null,
+      notes: '',
+      confidenceLevel: 0,
+      confidenceText: this.confidenceText,
+      judgmentAdvice: this.judgmentAdvice,
+      isUserSetTitle: !!title // true if user provided title, false if auto-generated
+    };
+
+    this._currentChecklist = newChecklist;
+    this.saveToStorage(); // 非同期だが待機しない（UIブロックを避ける）
+    return id;
+  }
+
+  // チェックリストを読み込み
+  async loadChecklist(id: string): Promise<boolean> {
+    if (!isBrowser) return false;
+
+    // ストレージが初期化されていない場合は初期化
+    if (!this.storageInitialized) {
+      await this.initializeStorage();
+    }
+
+    if (!this.storage) return false;
+
+    try {
+      const saved = await this.storage.getItem<ChecklistResult>(
+        `${STORAGE_KEYS.CHECKLIST_PREFIX}${id}`
+      );
+      if (saved) {
+        // 日付をDateオブジェクトに変換
+        saved.createdAt = new Date(saved.createdAt);
+        saved.updatedAt = new Date(saved.updatedAt);
+        if (saved.completedAt) {
+          saved.completedAt = new Date(saved.completedAt);
+        }
+
+        // 国際化対応：既存データの翻訳キー補完
+        this.migrateChecklistItemsToI18n(saved);
+
+        this._currentChecklist = saved;
+        return true;
+      }
+    } catch (error) {
+      console.error('チェックリストの読み込みに失敗しました:', error);
+    }
+    return false;
+  }
+
+  // 既存のチェックリストアイテムに翻訳キーを追加するマイグレーション
+  private migrateChecklistItemsToI18n(checklist: ChecklistResult): void {
+    checklist.items.forEach(item => {
+      // translationKeyが存在しない場合、idをtranslationKeyとして使用
+      item.translationKey ??= item.id;
+    });
+  }
+
+  // チェックアイテムの状態を更新
+  updateCheckItem(itemId: string, checked: boolean): void {
+    if (!this._currentChecklist) return;
+
+    const item = this._currentChecklist.items.find(i => i.id === itemId);
+    if (item) {
+      item.checked = checked;
+      this._currentChecklist.updatedAt = new Date();
+
+      // スコアを更新
+      this._currentChecklist.score = this.score;
+      this._currentChecklist.confidenceLevel = this.confidenceLevel;
+      this._currentChecklist.confidenceText = this.confidenceText;
+      this._currentChecklist.judgmentAdvice = this.judgmentAdvice;
+
+      this.saveToStorage();
+    }
+  }
+
+  // タイトルを更新
+  updateTitle(title: string): void {
+    if (!this._currentChecklist) return;
+
+    this._currentChecklist.title = title;
+    this._currentChecklist.isUserSetTitle = !!title; // true if title is non-empty
+    this._currentChecklist.updatedAt = new Date();
+    this.saveToStorage(); // 非同期だが待機しない
+  }
+
+  // 説明を更新
+  updateDescription(description: string): void {
+    if (!this._currentChecklist) return;
+
+    this._currentChecklist.description = description;
+    this._currentChecklist.updatedAt = new Date();
+    this.saveToStorage(); // 非同期だが待機しない
+  }
+
+  // メモを更新
+  updateNotes(notes: string): void {
+    if (!this._currentChecklist) return;
+
+    this._currentChecklist.notes = notes;
+    this._currentChecklist.updatedAt = new Date();
+    this.saveToStorage(); // 非同期だが待機しない
+  }
+
+  // 判定を設定
+  setJudgment(judgment: JudgmentType): void {
+    if (!this._currentChecklist) return;
+
+    this._currentChecklist.judgment = judgment;
+    this._currentChecklist.updatedAt = new Date();
+    this.saveToStorage(); // 非同期だが待機しない
+  }
+
+  // チェックリストを完了状態にする
+  async completeChecklist(): Promise<boolean> {
+    console.log('checklistStore.completeChecklist called');
+
+    if (!this._currentChecklist) {
+      console.error('checklistStore: _currentChecklist is null');
+      return false;
+    }
+
+    console.log('Setting checklist status to completed');
+    const now = new Date();
+    this._currentChecklist.status = 'completed';
+    this._currentChecklist.completedAt = now;
+    this._currentChecklist.updatedAt = now;
+
+    // 履歴に追加
+    const historyItem: ChecklistHistoryItem = {
+      id: this._currentChecklist.id,
+      title: this._currentChecklist.title,
+      completedAt: now,
+      score: this.score,
+      judgment: this._currentChecklist.judgment,
+      confidenceLevel: this.confidenceLevel
+    };
+
+    console.log('Adding to history:', historyItem);
+
+    // 履歴に追加（重複チェック）
+    const existingIndex = this._history.findIndex(h => h.id === historyItem.id);
+    if (existingIndex >= 0) {
+      this._history[existingIndex] = historyItem;
+    } else {
+      this._history.unshift(historyItem);
+    }
+
+    // 履歴を最新5件に制限
+    if (this._history.length > 5) {
+      this._history = this._history.slice(0, 5);
+    }
+
+    console.log('About to save to storage...');
+
+    try {
+      // 保存処理を待機（確実に保存してから画面遷移）
+      await Promise.all([this.saveToStorage(), this.saveHistory()]);
+
+      console.log('Storage save completed successfully');
+      return true;
+    } catch (error) {
+      console.error('Error saving to storage:', error);
+      return false;
+    }
+  }
+
+  // 履歴を削除
+  async deleteFromHistory(id: string): Promise<void> {
+    this._history = this._history.filter(h => h.id !== id);
+    await this.saveHistory();
+
+    // ストレージからも削除
+    if (this.storage) {
+      try {
+        await this.storage.removeItem(`${STORAGE_KEYS.CHECKLIST_PREFIX}${id}`);
+      } catch (error) {
+        console.error('チェックリストの削除に失敗しました:', error);
+      }
+    }
+  }
+
+  // ストレージに保存
+  private async saveToStorage(): Promise<void> {
+    console.log('saveToStorage called');
+
+    if (!isBrowser || !this._currentChecklist) {
+      console.log('saveToStorage: browser or currentChecklist not available');
+      return;
+    }
+
+    // ストレージが初期化されるまで待機
+    if (!this.storage) {
+      console.log('saveToStorage: storage not available, waiting for initialization...');
+      await this.initializeStorage();
+
+      if (!this.storage) {
+        console.error('saveToStorage: storage initialization failed');
+        return;
+      }
+    }
+
+    try {
+      const key = `${STORAGE_KEYS.CHECKLIST_PREFIX}${this._currentChecklist.id}`;
+      console.log('Saving checklist with key:', key);
+
+      // Svelteプロキシをプレーンオブジェクトに変換
+      const plainChecklist = JSON.parse(JSON.stringify(this._currentChecklist));
+
+      await this.storage.setItem(key, plainChecklist);
+      console.log('Checklist saved successfully');
+    } catch (error) {
+      console.error('チェックリストの保存に失敗しました:', error);
+      throw error; // Re-throw to be caught by Promise.all
+    }
+  }
+
+  // 履歴をストレージに保存
+  private async saveHistory(): Promise<void> {
+    console.log('saveHistory called');
+
+    if (!isBrowser) {
+      console.log('saveHistory: not in browser environment');
+      return;
+    }
+
+    // initializeStorageを呼ばない（既に初期化済みのはず）
+    if (!this.storage) {
+      console.error('saveHistory: storage not available');
+      return;
+    }
+
+    try {
+      console.log('Saving history with', this._history.length, 'items');
+
+      // Svelteプロキシをプレーンオブジェクトに変換
+      const plainHistory = JSON.parse(JSON.stringify(this._history));
+
+      await this.storage.setItem(STORAGE_KEYS.HISTORY, plainHistory);
+      console.log('History saved successfully');
+    } catch (error) {
+      console.error('履歴の保存に失敗しました:', error);
+      throw error; // Re-throw to be caught by Promise.all
+    }
+  }
+
+  // ストレージから履歴を読み込み
+  private async loadFromStorage(): Promise<void> {
+    console.log('loadFromStorage called');
+
+    if (!isBrowser) {
+      console.log('loadFromStorage: not in browser environment');
+      return;
+    }
+
+    // initializeStorageを呼ばない（循環参照を回避）
+    if (!this.storage) {
+      console.log('loadFromStorage: storage not available');
+      return;
+    }
+
+    try {
+      console.log('loadFromStorage: loading history from storage');
+      const history = await this.storage.getItem<ChecklistHistoryItem[]>(STORAGE_KEYS.HISTORY);
+      if (history) {
+        console.log('loadFromStorage: found history with', history.length, 'items');
+        // 日付をDateオブジェクトに変換
+        history.forEach(item => {
+          item.completedAt = new Date(item.completedAt);
+        });
+        this._history = history;
+        console.log('loadFromStorage: history loaded successfully');
+      } else {
+        console.log('loadFromStorage: no history found in storage');
+      }
+
+      // 保存されている全チェックリストの国際化マイグレーションを実行
+      await this.migrateAllStoredChecklistsToI18n();
+    } catch (error) {
+      console.error('履歴の読み込みに失敗しました:', error);
+    }
+  }
+
+  // 保存されている全チェックリストに翻訳キーを追加
+  private async migrateAllStoredChecklistsToI18n(): Promise<void> {
+    if (!this.storage) return;
+
+    try {
+      // 履歴からIDを取得して各チェックリストをマイグレーション
+      for (const historyItem of this._history) {
+        const key = `${STORAGE_KEYS.CHECKLIST_PREFIX}${historyItem.id}`;
+        const checklist = await this.storage.getItem<ChecklistResult>(key);
+        if (checklist) {
+          let needsUpdate = false;
+          checklist.items.forEach(item => {
+            if (!item.translationKey) {
+              item.translationKey ??= item.id;
+              needsUpdate = true;
+            }
+          });
+
+          if (needsUpdate) {
+            await this.storage.setItem(key, checklist);
+            console.log(`マイグレーション完了: ${historyItem.id}`);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('チェックリストの国際化マイグレーションに失敗しました:', error);
+    }
+  }
+
+  // 全履歴を取得
+  getAllHistory(): ChecklistHistoryItem[] {
+    return this._history;
+  }
+
+  // エクスポート用データを生成
+  getExportData(): ChecklistResult | null {
+    return this._currentChecklist;
+  }
 }
 
 // シングルトンインスタンス
