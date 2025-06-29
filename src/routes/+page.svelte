@@ -177,7 +177,7 @@
 	</header>
 
 	<!-- メインコンテンツ -->
-	<div class="main-content grid grid-2">
+	<div class="main-content">
 		<!-- 評価エリア -->
 		<div class="evaluation-area">
 			<!-- チェックリスト情報入力 -->
@@ -261,18 +261,14 @@
 			<!-- アクションボタン -->
 			<div class="action-buttons card">
 				<button
-					class="btn btn-success w-full mb-2"
+					class="btn btn-primary w-full mb-2 btn-complete"
 					onclick={completeChecklist}
 					disabled={!currentChecklist}
 				>
 					✅ 評価を完了
 				</button>
 
-				<button
-					class="btn btn-secondary w-full"
-					onclick={exportChecklist}
-					disabled={!currentChecklist}
-				>
+				<button class="btn btn-ghost w-full" onclick={exportChecklist} disabled={!currentChecklist}>
 					📄 エクスポート
 				</button>
 			</div>
@@ -292,88 +288,162 @@
 	.container {
 		max-width: 1400px;
 		margin: 0 auto;
-		padding: 20px;
+		padding: var(--spacing-6);
 	}
 
-	/* ページヘッダー */
+	/* ページヘッダー - モダンデザイン */
 	.page-header {
 		text-align: center;
-		margin-bottom: var(--spacing-xl);
-		padding: var(--spacing-lg);
+		margin-bottom: var(--spacing-8);
+		padding: var(--spacing-8);
+		background: rgba(255, 255, 255, 0.75);
+		border: 1px solid rgba(255, 255, 255, 0.4);
+		border-radius: var(--radius-2xl);
+		box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+		backdrop-filter: blur(16px);
+		-webkit-backdrop-filter: blur(16px);
+		position: relative;
+		overflow: hidden;
+	}
 
-		/* プライバシーページと統一したスタイル */
-		background: linear-gradient(135deg, #e8f4fd, #d1ecf1);
-		border: 2px solid var(--border-color);
-		border-left: 6px solid var(--secondary-color);
-		border-radius: var(--border-radius);
-		box-shadow: var(--shadow);
+	.page-header::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: var(--gradient-primary);
+		opacity: 0.03;
+		pointer-events: none;
 	}
 
 	.page-header h1 {
-		color: #2c3e50;
-		margin: 0 0 var(--spacing-sm) 0;
-		font-size: 2.5em;
-		font-weight: 300;
-		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+		color: var(--text-color);
+		margin: 0 0 var(--spacing-4) 0;
+		font-family: var(--font-family-heading);
+		font-size: var(--font-size-5xl);
+		font-weight: var(--font-weight-light);
+		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		position: relative;
+		z-index: 1;
 	}
 
 	.page-subtitle {
-		color: #34495e;
+		color: var(--text-color-secondary);
 		margin: 0;
-		font-size: 1.1em;
-		font-weight: 500;
+		font-size: var(--font-size-lg);
+		font-weight: var(--font-weight-medium);
+		position: relative;
+		z-index: 1;
 	}
 
+	/* 2カラムレイアウト - CSS Grid */
 	.main-content {
-		gap: var(--spacing-lg);
+		display: grid;
+		grid-template-columns: 1fr 400px;
+		gap: var(--spacing-8);
 		align-items: start;
 	}
 
 	.evaluation-area {
 		min-height: 100vh;
-	}
-
-	.sidebar {
-		position: sticky;
-		top: 20px;
-		max-height: calc(100vh - 40px);
-		overflow-y: scroll;
-		/*スクロールバー非表示（IE・Edge）*/
-		-ms-overflow-style: none;
-		/*スクロールバー非表示（Firefox）*/
-		scrollbar-width: none;
 		display: flex;
 		flex-direction: column;
-		gap: var(--spacing-md);
-	}
-	/*スクロールバー非表示（Chrome・Safari）*/
-	.sidebar::-webkit-scrollbar {
-		display: none;
+		gap: var(--spacing-6);
 	}
 
+	/* サイドバー - モダンデザイン */
+	.sidebar {
+		position: sticky;
+		top: var(--spacing-6);
+		max-height: calc(100vh - var(--spacing-12));
+		overflow-y: auto;
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-4);
+		/* スクロールバーを非表示にする */
+		scrollbar-width: none; /* Firefox */
+		-ms-overflow-style: none; /* IE and Edge */
+	}
+
+	.sidebar::-webkit-scrollbar {
+		display: none; /* WebKit browsers (Chrome, Safari, etc.) */
+	}
+
+	/* ガイドボタンセクション */
 	.guide-toggle-section {
 		text-align: center;
-		padding: var(--spacing-sm);
+		padding: var(--spacing-4);
+		background: var(--surface-elevated);
+		border-radius: var(--radius-xl);
+		border: 2px solid var(--border-color);
+		box-shadow: var(--shadow-sm);
 	}
 
+	/* クイックスタートガイド */
 	.quick-start {
-		background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%);
+		background: var(--gradient-accent);
 		color: white;
 		text-align: center;
+		border-radius: var(--radius-xl);
+		box-shadow: var(--shadow-accent);
+		position: relative;
+		overflow: hidden;
+	}
+
+	.quick-start::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+		pointer-events: none;
 	}
 
 	.quick-start p {
-		color: rgba(255, 255, 255, 0.9);
+		color: rgba(255, 255, 255, 0.95);
 		margin: 0;
+		position: relative;
+		z-index: 1;
+		font-weight: var(--font-weight-medium);
+		line-height: var(--line-height-relaxed);
 	}
 
+	/* 評価メモエリア */
 	.notes-area h3 {
-		margin-bottom: var(--spacing-md);
+		margin-bottom: var(--spacing-4);
 		color: var(--text-color);
+		font-family: var(--font-family-heading);
+		font-size: var(--font-size-xl);
+		font-weight: var(--font-weight-semibold);
 	}
 
+	/* アクションボタン */
 	.action-buttons {
 		text-align: center;
+		background: var(--surface-elevated);
+		border-radius: var(--radius-xl);
+		border: 2px solid var(--border-color);
+		padding: var(--spacing-6);
+		box-shadow: var(--shadow-sm);
+		position: relative;
+		overflow: visible;
+		z-index: 1;
+	}
+
+	.action-buttons::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: var(--gradient-mesh);
+		opacity: 0.02;
+		pointer-events: none;
 	}
 
 	.w-full {
@@ -381,47 +451,97 @@
 	}
 
 	.mb-2 {
-		margin-bottom: var(--spacing-sm);
+		margin-bottom: var(--spacing-4);
 	}
 
-	/* ダークモード対応 */
-	:global(.dark) .page-header {
-		background: linear-gradient(135deg, #2d3748, #374151);
-		border-color: #4a5568;
+	/* 評価完了ボタンの強調スタイル */
+	.action-buttons .btn-complete {
+		position: relative;
+		z-index: 2;
+		background: var(--gradient-success);
+		color: white;
+		font-weight: var(--font-weight-bold);
+		font-size: var(--font-size-lg);
+		padding: var(--spacing-4) var(--spacing-6);
+		box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+		border: 2px solid var(--color-success-400);
 	}
 
-	:global(.dark) .page-header h1 {
-		color: #f7fafc;
-		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+	.action-buttons .btn-complete:hover {
+		transform: translateY(-4px);
+		box-shadow: 0 12px 35px rgba(76, 175, 80, 0.5);
+		background: linear-gradient(135deg, var(--color-success-500) 0%, var(--color-success-700) 100%);
 	}
 
-	:global(.dark) .page-subtitle {
-		color: #e2e8f0;
+	.action-buttons .btn-complete:disabled {
+		opacity: 0.6;
+		transform: none;
+		box-shadow: var(--shadow-sm);
 	}
 
 	/* レスポンシブ対応 */
+	@media (max-width: 1200px) {
+		.main-content {
+			grid-template-columns: 1fr 350px;
+			gap: var(--spacing-6);
+		}
+	}
+
 	@media (max-width: 1024px) {
 		.main-content {
 			grid-template-columns: 1fr;
+			gap: var(--spacing-6);
 		}
 
 		.sidebar {
 			position: static;
 			max-height: none;
+			overflow-y: visible;
 		}
 	}
 
 	@media (max-width: 768px) {
 		.container {
-			padding: 10px;
+			padding: var(--spacing-4);
 		}
 
 		.page-header {
-			padding: var(--spacing-md);
+			padding: var(--spacing-6);
+			margin-bottom: var(--spacing-6);
 		}
 
 		.page-header h1 {
-			font-size: 2em;
+			font-size: var(--font-size-4xl);
+		}
+
+		.page-subtitle {
+			font-size: var(--font-size-base);
+		}
+
+		.main-content {
+			gap: var(--spacing-4);
+		}
+
+		.evaluation-area {
+			gap: var(--spacing-4);
+		}
+
+		.sidebar {
+			gap: var(--spacing-3);
+		}
+
+		.guide-toggle-section,
+		.action-buttons {
+			padding: var(--spacing-4);
+		}
+	}
+
+	/* アクセシビリティ向上 */
+	@media (prefers-reduced-motion: reduce) {
+		.page-header::before,
+		.quick-start::before,
+		.action-buttons::before {
+			transition: none !important;
 		}
 	}
 </style>
