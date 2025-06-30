@@ -46,12 +46,12 @@ export const translations: TranslationKeys = {
 		darkMode: 'Dunkler Modus',
 		lightMode: 'Heller Modus',
 		systemMode: 'System',
-		guide: 'Guide',
-		showGuide: 'Show Guide',
+		guide: 'Leitfaden',
+		showGuide: 'Leitfaden anzeigen',
 		rip: {
-			high: 'High Risk',
-			medium: 'Medium Risk',
-			low: 'Low Risk'
+			high: 'Hohes Risiko',
+			medium: 'Mittleres Risiko',
+			low: 'Niedriges Risiko'
 		}
 	},
 	app: {
@@ -105,16 +105,17 @@ export const translations: TranslationKeys = {
 			reject: 'Ablehnung empfohlen. Suchen Sie zuverlässigere Quellen.'
 		},
 		confidence: {
-			high: 'High Reliability',
-			medium: 'Moderate Reliability',
-			low: 'Low Reliability',
-			poor: 'Reliability Issues'
+			high: 'Hohe Zuverlässigkeit',
+			medium: 'Mittlere Zuverlässigkeit',
+			low: 'Niedrige Zuverlässigkeit',
+			poor: 'Zuverlässigkeitsprobleme'
 		},
 		advice: {
-			high: 'Adoption recommended. Sufficient verification has been conducted.',
-			medium: 'Additional confirmation recommended. Be cautious with important decisions.',
-			low: 'Caution required. Further verification is needed.',
-			poor: 'Rejection recommended. Look for reliable information sources.'
+			high: 'Annahme empfohlen. Ausreichende Verifizierung wurde durchgeführt.',
+			medium:
+				'Zusätzliche Bestätigung empfohlen. Seien Sie bei wichtigen Entscheidungen vorsichtig.',
+			low: 'Vorsicht erforderlich. Weitere Verifizierung ist nötig.',
+			poor: 'Ablehnung empfohlen. Suchen Sie nach zuverlässigen Informationsquellen.'
 		}
 	},
 	categories: {

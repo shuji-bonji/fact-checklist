@@ -46,12 +46,12 @@ export const translations: TranslationKeys = {
 		darkMode: '다크 모드',
 		lightMode: '라이트 모드',
 		systemMode: '시스템',
-		guide: 'Guide',
-		showGuide: 'Show Guide',
+		guide: '가이드',
+		showGuide: '가이드 보기',
 		rip: {
-			high: 'High Risk',
-			medium: 'Medium Risk',
-			low: 'Low Risk'
+			high: '높은 위험',
+			medium: '보통 위험',
+			low: '낮은 위험'
 		}
 	},
 	app: {

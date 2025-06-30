@@ -46,12 +46,12 @@ export const translations: TranslationKeys = {
 		darkMode: 'Mode Gelap',
 		lightMode: 'Mode Terang',
 		systemMode: 'Sistem',
-		guide: 'Guide',
-		showGuide: 'Show Guide',
+		guide: 'Panduan',
+		showGuide: 'Tampilkan Panduan',
 		rip: {
-			high: 'High Risk',
-			medium: 'Medium Risk',
-			low: 'Low Risk'
+			high: 'Risiko Tinggi',
+			medium: 'Risiko Sedang',
+			low: 'Risiko Rendah'
 		}
 	},
 	app: {

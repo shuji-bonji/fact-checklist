@@ -6,6 +6,13 @@
 	import { t, setLanguage, getCurrentLanguage, getIsRTL } from '$lib/i18n/index.js';
 	import { getLanguageOptions } from '$lib/i18n/utils.js';
 
+	// Props
+	interface Props {
+		mobileMode?: boolean;
+	}
+
+	const { mobileMode = false }: Props = $props();
+
 	// Svelte 5 runes
 	let isOpen = $state(false);
 	let currentLanguage = $state(getCurrentLanguage());
@@ -62,7 +69,7 @@
 <!-- 外部クリック検知のためのイベントリスナー -->
 <svelte:window on:click={handleClickOutside} />
 
-<div class="language-switcher" class:rtl={isRTL}>
+<div class="language-switcher" class:rtl={isRTL} class:mobile-mode={mobileMode}>
 	<!-- 言語選択ボタン -->
 	<button
 		class="language-button"
@@ -253,19 +260,41 @@
 		direction: rtl;
 	}
 
-	/* レスポンシブ対応 */
+	/* モバイルモード用スタイル */
+	.language-switcher.mobile-mode .language-button {
+		min-width: 140px;
+		font-size: 0.875rem;
+		padding: 0.75rem;
+		justify-content: center;
+	}
+
+	.language-switcher.mobile-mode .language-name {
+		display: block; /* モバイルメニュー内では言語名を表示 */
+	}
+
+	.language-switcher.mobile-mode .language-dropdown {
+		position: fixed;
+		top: auto;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		border-radius: 0.5rem 0.5rem 0 0;
+		max-height: 50vh;
+	}
+
+	/* レスポンシブ対応（通常モード） */
 	@media (max-width: 768px) {
-		.language-button {
+		.language-switcher:not(.mobile-mode) .language-button {
 			min-width: 100px;
 			font-size: 0.8rem;
 			padding: 0.4rem 0.6rem;
 		}
 
-		.language-name {
+		.language-switcher:not(.mobile-mode) .language-name {
 			display: none;
 		}
 
-		.language-dropdown {
+		.language-switcher:not(.mobile-mode) .language-dropdown {
 			position: fixed;
 			top: auto;
 			bottom: 0;

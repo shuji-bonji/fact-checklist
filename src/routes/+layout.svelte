@@ -154,6 +154,10 @@
 					<button class="nav-link" class:active={isPrivacyPage} onclick={goToPrivacy}>
 						🔐 {t('navigation.privacy')}
 					</button>
+					<!-- タブレット用言語切り替え -->
+					<div class="tablet-language-switcher">
+						<LanguageSwitcher />
+					</div>
 				</div>
 			</div>
 		</div>
@@ -163,8 +167,8 @@
 			<button class="nav-brand" onclick={goToHome}>
 				<span class="nav-icon">🔍</span>
 				<div class="brand-text">
-					<span class="brand-title">{t('app.title')}</span>
-					<span class="brand-subtitle">{t('app.subtitle')}</span>
+					<span class="brand-title">事実確認チェックシート</span>
+					<span class="brand-subtitle">情報の信頼性を科学的評価</span>
 				</div>
 			</button>
 
@@ -194,8 +198,10 @@
 				<span class="hamburger-line"></span>
 				<span class="hamburger-line"></span>
 			</button>
-			<!-- 言語切り替え -->
-			<LanguageSwitcher />
+			<!-- デスクトップ用言語切り替え -->
+			<div class="desktop-language-switcher">
+				<LanguageSwitcher />
+			</div>
 		</div>
 
 		<!-- モバイルメニュー -->
@@ -215,7 +221,7 @@
 				</button>
 				<!-- モバイル用言語切り替え -->
 				<div class="mobile-language-switcher">
-					<LanguageSwitcher />
+					<LanguageSwitcher mobileMode={true} />
 				</div>
 			</div>
 		{/if}
@@ -498,7 +504,15 @@
 	.tablet-layout .nav-bottom {
 		display: flex;
 		justify-content: center;
+		align-items: center;
 		padding: var(--spacing-2) 0;
+		gap: var(--spacing-4);
+	}
+
+	.tablet-layout .nav-menu {
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-2);
 	}
 
 	.tablet-layout .nav-brand {
@@ -517,6 +531,16 @@
 		font-size: 1.5em;
 	}
 
+	/* デスクトップ用言語切り替えの表示制御 */
+	.desktop-language-switcher {
+		display: block;
+	}
+
+	/* タブレット用言語切り替えの表示制御 */
+	.tablet-language-switcher {
+		display: none;
+	}
+
 	/* タブレット範囲でレイアウト切り替え */
 	@media (min-width: 769px) and (max-width: 1064px) {
 		.tablet-layout {
@@ -525,6 +549,16 @@
 
 		.desktop-layout {
 			display: none;
+		}
+
+		/* タブレット範囲では言語切り替えをタブレット用に切り替え */
+		.desktop-language-switcher {
+			display: none;
+		}
+
+		.tablet-language-switcher {
+			display: block;
+			margin-left: var(--spacing-4);
 		}
 	}
 
@@ -536,6 +570,11 @@
 
 		.mobile-menu-toggle {
 			display: flex;
+		}
+
+		/* モバイルでは言語切り替えを非表示 */
+		.desktop-language-switcher {
+			display: none;
 		}
 
 		.nav-content {
