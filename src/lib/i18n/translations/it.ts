@@ -113,7 +113,25 @@ export const translations: TranslationKeys = {
       medium: 'Si raccomanda ulteriore conferma. Sii cauto con decisioni importanti.',
       low: 'Cautela necessaria. È richiesta ulteriore verifica.',
       poor: 'Rifiuto raccomandato. Cerca fonti di informazione affidabili.'
-    }
+    },
+    evaluationCompleted: '✓ Valutazione Completata!',
+    evaluationCompletedDescription: 'Puoi rivedere i risultati della valutazione della checklist.',
+    evaluationResults: 'Risultati Valutazione',
+    totalScore: 'Punteggio Totale',
+    itemsDetail: 'Dettagli Elementi',
+    recommendedActions: 'Azioni Raccomandate',
+    improvementTips: "Per migliorare l'affidabilità",
+    checkUncheckedItems: 'Verifica elementi non controllati',
+    additionalSourceResearch: 'Ricerca fonti aggiuntive',
+    expertConsultation: 'Consultazione esperti',
+    factCheckOrganizations: 'Usa organizzazioni di fact-checking',
+    statistics: 'Statistiche',
+    checkedItems: 'Verificato',
+    uncheckedItems: 'Non verificato',
+    completionRate: 'Tasso di Completamento',
+    actions: 'Azioni',
+    exportShare: 'Esporta e Condividi',
+    reEdit: 'Ri-modifica'
   },
   categories: {
     critical: {

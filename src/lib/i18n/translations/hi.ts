@@ -113,7 +113,25 @@ export const translations: TranslationKeys = {
       medium: 'अतिरिक्त पुष्टि की सिफारिश की जाती है। महत्वपूर्ण निर्णयों में सावधानी बरतें।',
       low: 'सावधानी आवश्यक है। अधिक सत्यापन की आवश्यकता है।',
       poor: 'अस्वीकार करने की सिफारिश की जाती है। विश्वसनीय जानकारी स्रोत खोजें।'
-    }
+    },
+    evaluationCompleted: '✓ मूल्यांकन पूर्ण!',
+    evaluationCompletedDescription: 'आप चेकलिस्ट मूल्यांकन के परिणामों की समीक्षा कर सकते हैं।',
+    evaluationResults: 'मूल्यांकन परिणाम',
+    totalScore: 'कुल स्कोर',
+    itemsDetail: 'विस्तृत तत्व',
+    recommendedActions: 'सुझाई गई कार्रवाईयां',
+    improvementTips: 'विश्वसनीयता बढ़ाने के लिए',
+    checkUncheckedItems: 'अंचेकित तत्वों की जांच करें',
+    additionalSourceResearch: 'अतिरिक्त स्रोत अनुसंधान',
+    expertConsultation: 'विशेषज्ञ परामर्श',
+    factCheckOrganizations: 'तथ्य-जांच संगठनों का उपयोग',
+    statistics: 'आंकड़े',
+    checkedItems: 'जांचित',
+    uncheckedItems: 'असाख्यांकित',
+    completionRate: 'पूर्णता दर',
+    actions: 'कार्रवाईयां',
+    exportShare: 'निर्यात और साझा करें',
+    reEdit: 'पुन: संपादित करें'
   },
   categories: {
     critical: {

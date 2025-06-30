@@ -120,7 +120,26 @@ export const translations: TranslationKeys = {
       medium: 'Confirmación adicional recomendada. Sea cauteloso con decisiones importantes.',
       low: 'Precaución requerida. Se necesita verificación adicional.',
       poor: 'Rechazo recomendado. Busque fuentes de información fiables.'
-    }
+    },
+    evaluationCompleted: '✓ ¡Evaluación Completada!',
+    evaluationCompletedDescription:
+      'Puede revisar los resultados de la evaluación de la lista de verificación.',
+    evaluationResults: 'Resultados de Evaluación',
+    totalScore: 'Puntuación Total',
+    itemsDetail: 'Detalles de Elementos',
+    recommendedActions: 'Acciones Recomendadas',
+    improvementTips: 'Para mejorar la confiabilidad',
+    checkUncheckedItems: 'Verificar elementos no marcados',
+    additionalSourceResearch: 'Investigación de fuentes adicionales',
+    expertConsultation: 'Consulta de expertos',
+    factCheckOrganizations: 'Usar organizaciones de verificación',
+    statistics: 'Estadísticas',
+    checkedItems: 'Verificado',
+    uncheckedItems: 'No verificado',
+    completionRate: 'Tasa de Finalización',
+    actions: 'Acciones',
+    exportShare: 'Exportar y Compartir',
+    reEdit: 'Re-editar'
   },
 
   // Categorías de elementos de verificación

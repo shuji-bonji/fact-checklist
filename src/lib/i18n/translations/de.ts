@@ -116,7 +116,25 @@ export const translations: TranslationKeys = {
         'Zusätzliche Bestätigung empfohlen. Seien Sie bei wichtigen Entscheidungen vorsichtig.',
       low: 'Vorsicht erforderlich. Weitere Verifizierung ist nötig.',
       poor: 'Ablehnung empfohlen. Suchen Sie nach zuverlässigen Informationsquellen.'
-    }
+    },
+    evaluationCompleted: '✓ Bewertung Abgeschlossen!',
+    evaluationCompletedDescription: 'Sie können die Ergebnisse der Checklisten-Bewertung einsehen.',
+    evaluationResults: 'Bewertungsergebnisse',
+    totalScore: 'Gesamtpunktzahl',
+    itemsDetail: 'Detaillierte Elemente',
+    recommendedActions: 'Empfohlene Maßnahmen',
+    improvementTips: 'Zur Verbesserung der Zuverlässigkeit',
+    checkUncheckedItems: 'Ungeprüfte Elemente überprüfen',
+    additionalSourceResearch: 'Zusätzliche Quellenforschung',
+    expertConsultation: 'Expertenberatung',
+    factCheckOrganizations: 'Faktenprüfungsorganisationen nutzen',
+    statistics: 'Statistiken',
+    checkedItems: 'Geprüft',
+    uncheckedItems: 'Ungeprüft',
+    completionRate: 'Fertigstellungsgrad',
+    actions: 'Aktionen',
+    exportShare: 'Exportieren & Teilen',
+    reEdit: 'Neu bearbeiten'
   },
   categories: {
     critical: {

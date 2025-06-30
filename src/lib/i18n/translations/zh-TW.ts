@@ -118,7 +118,25 @@ export const translations: TranslationKeys = {
       medium: '建議額外確認。重要決定請謹慎。',
       low: '需要謹慎。需要進一步驗證。',
       poor: '建議拒絕。尋找可靠的資訊來源。'
-    }
+    },
+    evaluationCompleted: '✓ 評估完成！',
+    evaluationCompletedDescription: '您可以查看檢查列表評估的結果。',
+    evaluationResults: '評估結果',
+    totalScore: '總分',
+    itemsDetail: '項目詳情',
+    recommendedActions: '建議行動',
+    improvementTips: '提高可靠性的方法',
+    checkUncheckedItems: '檢查未勾選的項目',
+    additionalSourceResearch: '額外來源研究',
+    expertConsultation: '專家諾詢',
+    factCheckOrganizations: '使用事實查核組織',
+    statistics: '統計',
+    checkedItems: '已檢查',
+    uncheckedItems: '未檢查',
+    completionRate: '完成率',
+    actions: '行動',
+    exportShare: '匯出與分享',
+    reEdit: '重新編輯'
   },
 
   // 檢查項目類別

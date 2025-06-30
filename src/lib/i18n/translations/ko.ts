@@ -111,7 +111,25 @@ export const translations: TranslationKeys = {
       medium: 'Additional confirmation recommended. Be cautious with important decisions.',
       low: 'Caution required. Further verification is needed.',
       poor: 'Rejection recommended. Look for reliable information sources.'
-    }
+    },
+    evaluationCompleted: '✓ 평가 완료!',
+    evaluationCompletedDescription: '체크리스트 평가 결과를 확인할 수 있습니다.',
+    evaluationResults: '평가 결과',
+    totalScore: '총점',
+    itemsDetail: '항목 세부사항',
+    recommendedActions: '권장 조치',
+    improvementTips: '신뢰성 향상을 위해',
+    checkUncheckedItems: '미체크 항목 확인',
+    additionalSourceResearch: '추가 자료 연구',
+    expertConsultation: '전문가 상담',
+    factCheckOrganizations: '팩트체크 기관 활용',
+    statistics: '통계',
+    checkedItems: '체크됨',
+    uncheckedItems: '미체크',
+    completionRate: '완료율',
+    actions: '조치',
+    exportShare: '내보내기 및 공유',
+    reEdit: '재편집'
   },
   categories: {
     critical: {

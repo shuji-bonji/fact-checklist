@@ -120,7 +120,26 @@ export const translations: TranslationKeys = {
       medium: 'Additional confirmation recommended. Be cautious with important decisions.',
       low: 'Caution required. Further verification is needed.',
       poor: 'Rejection recommended. Look for reliable information sources.'
-    }
+    },
+    // New keys for detail page
+    evaluationCompleted: 'Evaluation Completed!',
+    evaluationCompletedDescription: 'You can review the checklist evaluation results.',
+    evaluationResults: 'Evaluation Results',
+    totalScore: 'Total Score',
+    itemsDetail: 'Check Items Detail',
+    recommendedActions: 'Recommended Actions',
+    improvementTips: 'To improve reliability',
+    checkUncheckedItems: 'Check unchecked items',
+    additionalSourceResearch: 'Additional source research',
+    expertConsultation: 'Expert consultation',
+    factCheckOrganizations: 'Use fact-checking organizations',
+    statistics: 'Statistics',
+    checkedItems: 'Checked',
+    uncheckedItems: 'Unchecked',
+    completionRate: 'Completion Rate',
+    actions: 'Actions',
+    exportShare: 'Export & Share',
+    reEdit: 'Re-edit'
   },
 
   // Check item categories

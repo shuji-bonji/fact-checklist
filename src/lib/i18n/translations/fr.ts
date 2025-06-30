@@ -122,7 +122,27 @@ export const translations: TranslationKeys = {
         'Confirmation supplémentaire recommandée. Soyez prudent avec les décisions importantes.',
       low: 'Prudence requise. Vérification supplémentaire nécessaire.',
       poor: "Rejet recommandé. Recherchez des sources d'information fiables."
-    }
+    },
+    // New keys for detail page
+    evaluationCompleted: 'Évaluation Terminée !',
+    evaluationCompletedDescription:
+      "Vous pouvez consulter les résultats de l'évaluation de la liste de vérification.",
+    evaluationResults: "Résultats de l'Évaluation",
+    totalScore: 'Score Total',
+    itemsDetail: 'Détails des Éléments',
+    recommendedActions: 'Actions Recommandées',
+    improvementTips: 'Pour améliorer la fiabilité',
+    checkUncheckedItems: 'Vérifier les éléments non cochés',
+    additionalSourceResearch: 'Recherche de sources supplémentaires',
+    expertConsultation: "Consultation d'experts",
+    factCheckOrganizations: 'Utiliser les organismes de vérification',
+    statistics: 'Statistiques',
+    checkedItems: 'Vérifié',
+    uncheckedItems: 'Non vérifié',
+    completionRate: "Taux d'Achèvement",
+    actions: 'Actions',
+    exportShare: 'Exporter et Partager',
+    reEdit: 'Ré-éditer'
   },
 
   // Catégories d'éléments de vérification

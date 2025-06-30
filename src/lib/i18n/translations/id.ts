@@ -112,7 +112,25 @@ export const translations: TranslationKeys = {
       medium: 'Additional confirmation recommended. Be cautious with important decisions.',
       low: 'Caution required. Further verification is needed.',
       poor: 'Rejection recommended. Look for reliable information sources.'
-    }
+    },
+    evaluationCompleted: '✓ Evaluasi Selesai!',
+    evaluationCompletedDescription: 'Anda dapat meninjau hasil evaluasi daftar periksa.',
+    evaluationResults: 'Hasil Evaluasi',
+    totalScore: 'Skor Total',
+    itemsDetail: 'Detail Item',
+    recommendedActions: 'Tindakan yang Disarankan',
+    improvementTips: 'Untuk meningkatkan keandalan',
+    checkUncheckedItems: 'Periksa item yang belum dicentang',
+    additionalSourceResearch: 'Penelitian sumber tambahan',
+    expertConsultation: 'Konsultasi ahli',
+    factCheckOrganizations: 'Gunakan organisasi pengecekan fakta',
+    statistics: 'Statistik',
+    checkedItems: 'Diperiksa',
+    uncheckedItems: 'Belum diperiksa',
+    completionRate: 'Tingkat Penyelesaian',
+    actions: 'Tindakan',
+    exportShare: 'Ekspor & Bagikan',
+    reEdit: 'Edit Ulang'
   },
   categories: {
     critical: {

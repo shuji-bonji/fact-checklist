@@ -111,7 +111,25 @@ export const translations: TranslationKeys = {
       medium: 'يُنصح بالتأكد الإضافي. كن حذراً في القرارات المهمة.',
       low: 'الحذر مطلوب. هناك حاجة لمزيد من التحقق.',
       poor: 'يُنصح بالرفض. ابحث عن مصادر معلومات موثوقة.'
-    }
+    },
+    evaluationCompleted: '✓ اكتمل التقييم!',
+    evaluationCompletedDescription: 'يمكنك مراجعة نتائج تقييم قائمة التحقق.',
+    evaluationResults: 'نتائج التقييم',
+    totalScore: 'النتيجة الإجمالية',
+    itemsDetail: 'تفاصيل العناصر',
+    recommendedActions: 'الإجراءات الموصى بها',
+    improvementTips: 'لتحسين الموثوقية',
+    checkUncheckedItems: 'فحص العناصر غير المحققة',
+    additionalSourceResearch: 'بحث مصادر إضافية',
+    expertConsultation: 'استشارة الخبراء',
+    factCheckOrganizations: 'استخدام منظمات التحقق من الحقائق',
+    statistics: 'الإحصائيات',
+    checkedItems: 'محقق',
+    uncheckedItems: 'غير محقق',
+    completionRate: 'معدل الإكمال',
+    actions: 'الإجراءات',
+    exportShare: 'تصدير ومشاركة',
+    reEdit: 'إعادة تحرير'
   },
   categories: {
     critical: {

@@ -119,7 +119,26 @@ export const translations: TranslationKeys = {
       medium: '追加確認を推奨します。重要な決定には慎重に。',
       low: '要注意です。さらなる検証が必要です。',
       poor: '不採用を推奨します。信頼できる情報源を探しましょう。'
-    }
+    },
+    // 詳細ページ用の新しいキー
+    evaluationCompleted: '評価が完了しました！',
+    evaluationCompletedDescription: 'チェックリストの評価結果を確認できます。',
+    evaluationResults: '評価結果',
+    totalScore: '総合スコア',
+    itemsDetail: 'チェック項目詳細',
+    recommendedActions: '推奨アクション',
+    improvementTips: '信頼性向上のために',
+    checkUncheckedItems: '未チェック項目の確認',
+    additionalSourceResearch: '追加の情報源調査',
+    expertConsultation: '専門家への確認',
+    factCheckOrganizations: 'ファクトチェック機関の活用',
+    statistics: '統計情報',
+    checkedItems: 'チェック済み',
+    uncheckedItems: '未チェック',
+    completionRate: '完了率',
+    actions: 'アクション',
+    exportShare: 'エクスポート・共有',
+    reEdit: '再編集'
   },
 
   // チェック項目カテゴリ

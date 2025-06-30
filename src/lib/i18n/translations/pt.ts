@@ -115,7 +115,26 @@ export const translations: TranslationKeys = {
       medium: 'Confirmação adicional recomendada. Seja cauteloso com decisões importantes.',
       low: 'Cautela necessária. Verificação adicional é necessária.',
       poor: 'Rejeição recomendada. Procure fontes de informação confiáveis.'
-    }
+    },
+    evaluationCompleted: '✓ Avaliação Concluída!',
+    evaluationCompletedDescription:
+      'Você pode revisar os resultados da avaliação da lista de verificação.',
+    evaluationResults: 'Resultados da Avaliação',
+    totalScore: 'Pontuação Total',
+    itemsDetail: 'Detalhes dos Itens',
+    recommendedActions: 'Ações Recomendadas',
+    improvementTips: 'Para melhorar a confiabilidade',
+    checkUncheckedItems: 'Verificar itens não marcados',
+    additionalSourceResearch: 'Pesquisa de fontes adicionais',
+    expertConsultation: 'Consulta a especialistas',
+    factCheckOrganizations: 'Usar organizações de checagem de fatos',
+    statistics: 'Estatísticas',
+    checkedItems: 'Verificado',
+    uncheckedItems: 'Não verificado',
+    completionRate: 'Taxa de Conclusão',
+    actions: 'Ações',
+    exportShare: 'Exportar e Compartilhar',
+    reEdit: 'Re-editar'
   },
   categories: {
     critical: {

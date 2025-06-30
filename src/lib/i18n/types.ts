@@ -167,6 +167,25 @@ export interface TranslationKeys {
       low: string;
       poor: string;
     };
+    // 詳細ページ用の新しいキー
+    evaluationCompleted: string;
+    evaluationCompletedDescription: string;
+    evaluationResults: string;
+    totalScore: string;
+    itemsDetail: string;
+    recommendedActions: string;
+    improvementTips: string;
+    checkUncheckedItems: string;
+    additionalSourceResearch: string;
+    expertConsultation: string;
+    factCheckOrganizations: string;
+    statistics: string;
+    checkedItems: string;
+    uncheckedItems: string;
+    completionRate: string;
+    actions: string;
+    exportShare: string;
+    reEdit: string;
   };
 
   // チェック項目カテゴリ

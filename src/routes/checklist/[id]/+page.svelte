@@ -4,10 +4,17 @@
   import { goto } from '$app/navigation';
   import { base } from '$app/paths';
   import { checklistStore } from '$lib/stores/checklistStore.svelte.js';
-  import { CATEGORIES } from '$lib/data/checklist-items.js';
+  import { getCategories } from '$lib/data/checklist-items.js';
   import type { ChecklistResult, JudgmentType } from '$lib/types/checklist.js';
+  import { t, i18nStore, factChecklistI18n } from '$lib/i18n/index.js';
 
   import ExportModal from '$lib/components/ExportModal.svelte';
+
+  // i18n初期化状態を監視
+  const isI18nReady = $derived(i18nStore.initialized && !!i18nStore.translations);
+
+  // カテゴリ情報をリアクティブに取得
+  const categories = $derived(isI18nReady ? getCategories() : []);
 
   // State
   let checklist = $state<ChecklistResult | null>(null);
@@ -53,13 +60,13 @@
   function getJudgmentDisplay(judgment: JudgmentType) {
     switch (judgment) {
       case 'accept':
-        return { icon: '✅', text: '採用', class: 'accept' };
+        return { icon: '✅', text: t('checklist.judgment.accept'), class: 'accept' };
       case 'caution':
-        return { icon: '⚠️', text: '要注意', class: 'caution' };
+        return { icon: '⚠️', text: t('checklist.judgment.caution'), class: 'caution' };
       case 'reject':
-        return { icon: '❌', text: '不採用', class: 'reject' };
+        return { icon: '❌', text: t('checklist.judgment.reject'), class: 'reject' };
       default:
-        return { icon: '❓', text: '未判定', class: 'unknown' };
+        return { icon: '❓', text: t('checklist.judgment.pending'), class: 'unknown' };
     }
   }
 
@@ -86,14 +93,21 @@
 </script>
 
 <svelte:head>
-  <title>{checklist?.title || 'チェックリスト詳細'} - 実用的事実確認チェックシート</title>
-  <meta name="description" content="事実確認チェックリストの評価結果" />
+  <title
+    >{checklist?.title || (isI18nReady ? t('checklist.title') : 'Checklist Details')} - {isI18nReady
+      ? t('app.title')
+      : 'Fact Checklist'}</title
+  >
+  <meta
+    name="description"
+    content={isI18nReady ? t('checklist.description') : 'Fact checklist evaluation results'}
+  />
 </svelte:head>
 
 {#if loading}
   <div class="loading-container">
     <div class="spinner"></div>
-    <p>読み込み中...</p>
+    <p>{isI18nReady ? t('common.loading') : 'Loading...'}</p>
   </div>
 {:else if checklist}
   <div class="container">
@@ -103,8 +117,8 @@
         <div class="banner-content">
           <span class="banner-icon">🎉</span>
           <div class="banner-text">
-            <h3>評価が完了しました！</h3>
-            <p>チェックリストの評価結果を確認できます。</p>
+            <h3>{t('checklist.evaluationCompleted')}</h3>
+            <p>{t('checklist.evaluationCompletedDescription')}</p>
           </div>
         </div>
       </div>
@@ -120,25 +134,27 @@
 
         <div class="meta-info">
           <span class="meta-item">
-            📅 作成: {checklist.createdAt.toLocaleDateString('ja-JP')}
+            📅 {t('datetime.createdAt')}: {checklist.createdAt.toLocaleDateString()}
           </span>
           {#if checklist.completedAt}
             <span class="meta-item">
-              ✅ 完了: {checklist.completedAt.toLocaleDateString('ja-JP')}
+              ✅ {t('datetime.completedAt')}: {checklist.completedAt.toLocaleDateString()}
             </span>
           {/if}
           <span class="meta-item">
-            🔄 更新: {checklist.updatedAt.toLocaleDateString('ja-JP')}
+            🔄 {t('datetime.updatedAt')}: {checklist.updatedAt.toLocaleDateString()}
           </span>
         </div>
       </div>
 
       <div class="header-actions">
-        <button class="btn btn-secondary" onclick={editChecklist}> ✏️ 編集 </button>
+        <button class="btn btn-secondary" onclick={editChecklist}> ✏️ {t('common.edit')} </button>
         <button class="btn btn-primary" onclick={() => (showExportModal = true)}>
-          📄 エクスポート
+          📄 {t('common.export')}
         </button>
-        <button class="btn btn-success" onclick={createNewChecklist}> ➕ 新規作成 </button>
+        <button class="btn btn-success" onclick={createNewChecklist}>
+          ➕ {t('checklist.newChecklist')}
+        </button>
       </div>
     </header>
 
@@ -147,13 +163,13 @@
       <div class="results-area">
         <!-- スコアサマリー -->
         <div class="score-summary card">
-          <h2>📊 評価結果</h2>
+          <h2>📊 {t('checklist.evaluationResults')}</h2>
 
           <div class="score-grid">
             <div class="score-card critical">
               <div class="score-icon">🚨</div>
               <div class="score-info">
-                <div class="score-label">クリティカル</div>
+                <div class="score-label">{t('categories.critical.name')}</div>
                 <div class="score-value">{checklist.score.critical}/6</div>
               </div>
             </div>
@@ -161,7 +177,7 @@
             <div class="score-card detailed">
               <div class="score-icon">📝</div>
               <div class="score-info">
-                <div class="score-label">詳細評価</div>
+                <div class="score-label">{t('categories.detailed.name')}</div>
                 <div class="score-value">{checklist.score.detailed}/6</div>
               </div>
             </div>
@@ -169,7 +185,7 @@
             <div class="score-card verification">
               <div class="score-icon">🔍</div>
               <div class="score-info">
-                <div class="score-label">検証・照合</div>
+                <div class="score-label">{t('categories.verification.name')}</div>
                 <div class="score-value">{checklist.score.verification}/4</div>
               </div>
             </div>
@@ -177,7 +193,7 @@
             <div class="score-card context">
               <div class="score-icon">🌐</div>
               <div class="score-info">
-                <div class="score-label">文脈・バイアス</div>
+                <div class="score-label">{t('categories.context.name')}</div>
                 <div class="score-value">{checklist.score.context}/4</div>
               </div>
             </div>
@@ -185,7 +201,7 @@
 
           <div class="total-score-display">
             <div class="total-score">
-              <span class="total-label">総合スコア</span>
+              <span class="total-label">{t('checklist.totalScore')}</span>
               <span class="total-value">{checklist.score.total}/{checklist.score.maxScore}</span>
             </div>
 
@@ -197,7 +213,7 @@
                 ></div>
               </div>
               <div class="confidence-text">
-                信頼度: {checklist.confidenceLevel}% ({checklist.confidenceText})
+                {t('checklist.confidenceLevel')}: {checklist.confidenceLevel}% ({checklist.confidenceText})
               </div>
             </div>
           </div>
@@ -206,7 +222,7 @@
             <div class="final-judgment {getJudgmentDisplay(checklist.judgment).class}">
               <span class="judgment-icon">{getJudgmentDisplay(checklist.judgment).icon}</span>
               <span class="judgment-text"
-                >最終判定: {getJudgmentDisplay(checklist.judgment).text}</span
+                >{t('checklist.finalJudgment')}: {getJudgmentDisplay(checklist.judgment).text}</span
               >
             </div>
           {/if}
@@ -214,9 +230,9 @@
 
         <!-- チェック項目詳細 -->
         <div class="items-detail card">
-          <h2>📋 チェック項目詳細</h2>
+          <h2>📋 {t('checklist.itemsDetail')}</h2>
 
-          {#each CATEGORIES as category (category.id)}
+          {#each categories as category (category.id)}
             {@const categoryItems = checklist.items.filter(
               item => item.category.id === category.id
             )}
@@ -243,8 +259,14 @@
                       {item.checked ? '✅' : '❌'}
                     </div>
                     <div class="item-content">
-                      <div class="item-title">{item.title}</div>
-                      <div class="item-description">{item.description}</div>
+                      <div class="item-title">
+                        {isI18nReady ? factChecklistI18n.getCheckItemTitle(item.id) : item.title}
+                      </div>
+                      <div class="item-description">
+                        {isI18nReady
+                          ? factChecklistI18n.getCheckItemDescription(item.id)
+                          : item.description}
+                      </div>
                     </div>
                   </div>
                 {/each}
@@ -256,7 +278,7 @@
         <!-- 評価メモ -->
         {#if checklist.notes}
           <div class="notes-display card">
-            <h2>📝 評価メモ</h2>
+            <h2>📝 {t('checklist.evaluationNotes')}</h2>
             <div class="notes-content">
               {@html sanitizeHtml(checklist.notes)}
             </div>
@@ -267,19 +289,19 @@
       <!-- 推奨アクション -->
       <div class="sidebar">
         <div class="recommendations card">
-          <h3>💡 推奨アクション</h3>
+          <h3>💡 {t('checklist.recommendedActions')}</h3>
           <div class="advice-content">
             {checklist.judgmentAdvice}
           </div>
 
           {#if checklist.confidenceLevel < 60}
             <div class="improvement-tips">
-              <h4>信頼性向上のために:</h4>
+              <h4>{t('checklist.improvementTips')}:</h4>
               <ul>
-                <li>未チェック項目の確認</li>
-                <li>追加の情報源調査</li>
-                <li>専門家への確認</li>
-                <li>ファクトチェック機関の活用</li>
+                <li>{t('checklist.checkUncheckedItems')}</li>
+                <li>{t('checklist.additionalSourceResearch')}</li>
+                <li>{t('checklist.expertConsultation')}</li>
+                <li>{t('checklist.factCheckOrganizations')}</li>
               </ul>
             </div>
           {/if}
@@ -287,22 +309,22 @@
 
         <!-- 統計情報 -->
         <div class="statistics card">
-          <h3>📈 統計情報</h3>
+          <h3>📈 {t('checklist.statistics')}</h3>
           <div class="stat-list">
             <div class="stat-item">
-              <span class="stat-label">チェック済み</span>
+              <span class="stat-label">{t('checklist.checkedItems')}</span>
               <span class="stat-value">
-                {checklist.items.filter(i => i.checked).length}項目
+                {checklist.items.filter(i => i.checked).length}{t('units.items')}
               </span>
             </div>
             <div class="stat-item">
-              <span class="stat-label">未チェック</span>
+              <span class="stat-label">{t('checklist.uncheckedItems')}</span>
               <span class="stat-value">
-                {checklist.items.filter(i => !i.checked).length}項目
+                {checklist.items.filter(i => !i.checked).length}{t('units.items')}
               </span>
             </div>
             <div class="stat-item">
-              <span class="stat-label">完了率</span>
+              <span class="stat-label">{t('checklist.completionRate')}</span>
               <span class="stat-value">
                 {Math.round(
                   (checklist.items.filter(i => i.checked).length / checklist.items.length) * 100
@@ -314,14 +336,16 @@
 
         <!-- アクションボタン -->
         <div class="action-panel card">
-          <h3>🔧 アクション</h3>
+          <h3>🔧 {t('checklist.actions')}</h3>
           <div class="action-buttons">
             <button class="btn btn-primary w-full" onclick={() => (showExportModal = true)}>
-              📄 エクスポート・共有
+              📄 {t('checklist.exportShare')}
             </button>
-            <button class="btn btn-secondary w-full" onclick={editChecklist}> ✏️ 再編集 </button>
+            <button class="btn btn-secondary w-full" onclick={editChecklist}>
+              ✏️ {t('checklist.reEdit')}
+            </button>
             <button class="btn btn-success w-full" onclick={createNewChecklist}>
-              ➕ 新しいチェックリスト
+              ➕ {t('checklist.newChecklist')}
             </button>
           </div>
         </div>
