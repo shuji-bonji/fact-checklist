@@ -10,6 +10,7 @@
   // import { HTMLToPDFGenerator, type HTMLToPDFOptions } from '$lib/utils/htmlToPDFGenerator.js';
   import { SimplePDFGenerator } from '$lib/utils/simplePDFGenerator.js';
   import { platformStore } from '$lib/stores/platformStore.svelte.js';
+  import { checklistStore } from '$lib/stores/checklistStore.svelte.js';
   import { t } from '$lib/i18n/index.js';
 
   interface Props {
@@ -165,56 +166,82 @@
   }
 
   // HTML生成用のヘルパー関数
-  function renderCheckItem(item: CheckItem): string {
+  function renderCheckItem(item: CheckItem, factChecklistI18n?: any): string {
     return `
 			<div class="check-item ${item.checked ? 'checked' : 'unchecked'}">
 				<div class="check-item-header">
 					<span class="check-icon">${item.checked ? '✅' : '❌'}</span>
 					<div style="flex: 1;">
-						<div class="check-item-title">${item.title}</div>
-						<div class="check-item-description">${item.description}</div>
+						<div class="check-item-title">${
+              factChecklistI18n && item.translationKey
+                ? factChecklistI18n.getCheckItemTitle(item.translationKey)
+                : item.title
+            }</div>
+						<div class="check-item-description">${
+              factChecklistI18n && item.translationKey
+                ? factChecklistI18n.getCheckItemDescription(item.translationKey)
+                : item.description
+            }</div>
 						${
               exportOptions.includeGuides && item.guideContent
                 ? `
 							<div class="check-item-guide">
-								<div class="guide-title">${item.guideContent.title}</div>
-								<div>${item.guideContent.content.replace(/\n/g, '<br>')}</div>
+								<div class="guide-title">${
+                  factChecklistI18n && item.translationKey
+                    ? factChecklistI18n.getCheckItemGuideTitle(item.translationKey)
+                    : item.guideContent.title
+                }</div>
+								<div>${
+                  factChecklistI18n && item.translationKey
+                    ? factChecklistI18n
+                        .getCheckItemGuideContent(item.translationKey)
+                        .replace(/\n/g, '<br>')
+                    : item.guideContent.content.replace(/\n/g, '<br>')
+                }</div>
 								${
-                  item.guideContent.examples
+                  (factChecklistI18n && item.translationKey) || item.guideContent.examples
                     ? `
 									<div style="margin-top: 10px;">
-										${
-                      item.guideContent.examples.good.length > 0
+										${(() => {
+                      const goodExamples =
+                        factChecklistI18n && item.translationKey
+                          ? factChecklistI18n.getCheckItemExamplesGood(item.translationKey)
+                          : item.guideContent.examples?.good || [];
+                      return goodExamples.length > 0
                         ? `
 											<div style="margin-bottom: 8px;">
-												<strong style="color: #27ae60;">✅ 良い例:</strong>
-												${item.guideContent.examples.good
+												<strong style="color: #27ae60;">✅ ${t('export.goodExamples')}:</strong>
+												${goodExamples
                           .map(
-                            ex => `
+                            (ex: string) => `
 													<div style="margin-left: 15px; margin-top: 5px;">• ${ex}</div>
 												`
                           )
                           .join('')}
 											</div>
 										`
-                        : ''
-                    }
-										${
-                      item.guideContent.examples.bad.length > 0
+                        : '';
+                    })()}
+										${(() => {
+                      const badExamples =
+                        factChecklistI18n && item.translationKey
+                          ? factChecklistI18n.getCheckItemExamplesBad(item.translationKey)
+                          : item.guideContent.examples?.bad || [];
+                      return badExamples.length > 0
                         ? `
 											<div>
-												<strong style="color: #e74c3c;">❌ 悪い例:</strong>
-												${item.guideContent.examples.bad
+												<strong style="color: #e74c3c;">❌ ${t('export.badExamples')}:</strong>
+												${badExamples
                           .map(
-                            ex => `
+                            (ex: string) => `
 													<div style="margin-left: 15px; margin-top: 5px;">• ${ex}</div>
 												`
                           )
                           .join('')}
 											</div>
 										`
-                        : ''
-                    }
+                        : '';
+                    })()}
 									</div>
 								`
                     : ''
@@ -314,8 +341,17 @@
         updateProgress(30, 100, t('export.progress.generating'), t('export.progress.processing'));
         console.log('🎨 Using SimplePDFGenerator for pixel-perfect output');
 
+        // Import i18n functions for multilingual data
+        const { factChecklistI18n, getCurrentLanguage, getSupportedLanguages } = await import(
+          '$lib/i18n/index.js'
+        );
+
         // HTMLコンテンツを生成
-        const htmlContent = generateSectionedHTMLContent();
+        const htmlContent = await generateSectionedHTMLContent(
+          factChecklistI18n,
+          getCurrentLanguage,
+          getSupportedLanguages
+        );
 
         updateProgress(50, 100, t('export.progress.processing'), t('export.progress.processing'));
 
@@ -323,7 +359,7 @@
 
         // ファイル名生成
         const timestamp = new Date().toISOString().slice(0, 10);
-        const sanitizedTitle = checklist.title.replace(
+        const sanitizedTitle = checklistStore.effectiveTitle.replace(
           /[^\w\s\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/gi,
           ''
         );
@@ -424,10 +460,20 @@
 
   async function exportToHTML() {
     updateProgress(30, 100, t('export.progress.generating'), t('export.progress.generating'));
-    const htmlContent = generateSectionedHTMLContent();
+
+    // Import i18n functions for multilingual data
+    const { factChecklistI18n, getCurrentLanguage, getSupportedLanguages } = await import(
+      '$lib/i18n/index.js'
+    );
+
+    const htmlContent = await generateSectionedHTMLContent(
+      factChecklistI18n,
+      getCurrentLanguage,
+      getSupportedLanguages
+    );
     updateProgress(70, 100, t('export.progress.finalizing'), t('export.progress.finalizing'));
     const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
-    const filename = `${t('app.title')}_${checklist!.title}_${new Date().toISOString().slice(0, 10)}.html`;
+    const filename = `${t('app.title')}_${checklistStore.effectiveTitle}_${new Date().toISOString().slice(0, 10)}.html`;
     downloadBlob(blob, filename);
   }
 
@@ -681,7 +727,7 @@
     updateProgress(70, 100, t('export.progress.generating'), t('export.progress.generating'));
     const jsonString = JSON.stringify(cleanedExportData, null, 2);
     const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8' });
-    const filename = `${t('app.title')}_${checklist!.title}_${new Date().toISOString().slice(0, 10)}.json`;
+    const filename = `${t('app.title')}_${checklistStore.effectiveTitle}_${new Date().toISOString().slice(0, 10)}.json`;
     downloadBlob(blob, filename);
   }
 
@@ -694,22 +740,30 @@
     const markdownContent = await generateMarkdownContent(factChecklistI18n);
     updateProgress(70, 100, t('export.progress.finalizing'), t('export.progress.finalizing'));
     const blob = new Blob([markdownContent], { type: 'text/markdown;charset=utf-8' });
-    const filename = `${t('app.title')}_${checklist!.title}_${new Date().toISOString().slice(0, 10)}.md`;
+    const filename = `${t('app.title')}_${checklistStore.effectiveTitle}_${new Date().toISOString().slice(0, 10)}.md`;
     downloadBlob(blob, filename);
   }
 
-  function generateSectionedHTMLContent(): string {
+  async function generateSectionedHTMLContent(
+    factChecklistI18n: any,
+    getCurrentLanguage: () => string,
+    getSupportedLanguages: () => any
+  ): Promise<string> {
     if (!checklist) return '';
 
     const sections = groupItemsByCategory();
 
+    // Get current language for HTML lang attribute
+    const currentLang = getCurrentLanguage();
+    const currentLanguageInfo = getSupportedLanguages()[currentLang];
+
     return `
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="${currentLang}" dir="${currentLanguageInfo?.dir || 'ltr'}">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>事実確認チェックシート - ${checklist.title}</title>
+	<title>${t('checklist.title')} - ${checklistStore.effectiveTitle}</title>
 	<style>
 		body { 
 			font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif; 
@@ -908,41 +962,76 @@
 	</style>
 </head>
 <body>
-	<!-- ヘッダーセクション -->
+	<!-- Header Section -->
 	<div class="header-section">
-		<h1>📋 ${checklist.title}</h1>
+		<h1>📋 ${checklistStore.effectiveTitle}</h1>
 		<div class="meta-info">
-			<p><strong>作成日:</strong> ${checklist.createdAt.toLocaleDateString('ja-JP')}</p>
-			${checklist.completedAt ? `<p><strong>評価完了日:</strong> ${checklist.completedAt.toLocaleDateString('ja-JP')}</p>` : ''}
-			<p><strong>出力日:</strong> ${new Date().toLocaleDateString('ja-JP')}</p>
+			<p><strong>${t('datetime.createdAt')}:</strong> ${factChecklistI18n.formatDate(checklist.createdAt)}</p>
+			${checklist.completedAt ? `<p><strong>${t('datetime.completedAt')}:</strong> ${factChecklistI18n.formatDate(checklist.completedAt)}</p>` : ''}
+			<p><strong>${t('export.generatedAt')}:</strong> ${factChecklistI18n.formatDate(new Date())}</p>
 		</div>
 		
 		${
       exportOptions.includeSummary
         ? `
 		<div class="score-summary">
-			<h2>📊 評価結果サマリー</h2>
+			<h2>📊 ${t('export.summaryTable.item')}</h2>
 			<div class="score-grid">
 				<div class="score-item">
-					<strong>総合スコア</strong>
+					<strong>${t('checklist.totalScore')}</strong>
 					${checklist.score.total}/${checklist.score.maxScore} (${checklist.confidenceLevel}%)
 				</div>
 				<div class="score-item">
-					<strong>信頼度</strong>
-					${checklist.confidenceText}
+					<strong>${t('checklist.confidenceLevel')}</strong>
+					${(() => {
+            try {
+              // Convert numeric confidence level to string key
+              const getConfidenceKey = (level: number): string => {
+                if (level >= 80) return 'high';
+                if (level >= 60) return 'medium';
+                if (level >= 40) return 'low';
+                return 'poor';
+              };
+              return factChecklistI18n.getConfidenceText(
+                getConfidenceKey(checklist.confidenceLevel)
+              );
+            } catch {
+              return checklist.confidenceText || `${checklist.confidenceLevel}%`;
+            }
+          })()}
 				</div>
 				<div class="score-item">
-					<strong>最終判定</strong>
+					<strong>${t('checklist.finalJudgment')}</strong>
 					<span style="color: ${getJudgmentColor(checklist.judgment)}; font-weight: bold;">
-						${getJudgmentText(checklist.judgment)}
+						${(() => {
+              try {
+                if (checklist.judgment) {
+                  return factChecklistI18n.getJudgmentText(checklist.judgment);
+                } else {
+                  return t('checklist.judgment.pending');
+                }
+              } catch {
+                return getJudgmentText(checklist.judgment);
+              }
+            })()}
 					</span>
 				</div>
 				${
-          checklist.judgmentAdvice
+          checklist.judgment
             ? `
 				<div class="score-item">
-					<strong>推奨</strong>
-					${checklist.judgmentAdvice}
+					<strong>${t('checklist.recommendedActions')}</strong>
+					${(() => {
+            try {
+              if (checklist.judgment) {
+                return factChecklistI18n.getJudgmentAdvice(checklist.judgment);
+              } else {
+                return '';
+              }
+            } catch {
+              return checklist.judgmentAdvice || '';
+            }
+          })()}
 				</div>
 				`
             : ''
@@ -954,41 +1043,59 @@
     }
 	</div>
 
-	<!-- カテゴリ別セクション -->
+	<!-- Category Sections -->
 	${sections
     .map(
       section => `
 		<div class="category-section">
 			<div class="section-header ${section.category.id}">
 				<div class="section-title">
-					<span>${section.category.emoji}</span>
+					<span>${(() => {
+            try {
+              return factChecklistI18n.getCategoryEmoji(section.category.id);
+            } catch {
+              return section.category.emoji;
+            }
+          })()}</span>
 					<div>
-						<div>${section.category.name}</div>
+						<div>${(() => {
+              try {
+                return factChecklistI18n.getCategoryName(section.category.id);
+              } catch {
+                return section.category.name;
+              }
+            })()}</div>
 						<div style="font-size: 14px; font-weight: normal; opacity: 0.9; margin-top: 5px;">
-							${section.category.description}
+							${(() => {
+                try {
+                  return factChecklistI18n.getCategoryDescription(section.category.id);
+                } catch {
+                  return section.category.description;
+                }
+              })()}
 						</div>
 					</div>
 				</div>
 				<div class="section-stats">
-					<div>${section.checkedItems.length}/${section.items.length} 完了</div>
+					<div>${section.checkedItems.length}/${section.items.length} ${t('checklist.completed')}</div>
 					<div>${section.completionRate}%</div>
 				</div>
 			</div>
 			
 			<div class="section-content">
-				${section.items.map(renderCheckItem).join('')}
+				${section.items.map(item => renderCheckItem(item, factChecklistI18n)).join('')}
 			</div>
 		</div>
 	`
     )
     .join('')}
 
-	<!-- ノートセクション -->
+	<!-- Notes Section -->
 	${
     exportOptions.includeNotes && checklist.notes
       ? `
 		<div class="notes-section">
-			<h2>📝 評価メモ</h2>
+			<h2>📝 ${t('checklist.evaluationNotes')}</h2>
 			<div class="notes-content">
 				${checklist.notes.replace(/\n/g, '<br>')}
 			</div>
@@ -997,10 +1104,10 @@
       : ''
   }
 
-	<!-- フッター -->
+	<!-- Footer -->
 	<div class="footer">
-		<p>実用的事実確認チェックシートによる評価結果</p>
-		<p>生成日時: ${new Date().toLocaleString('ja-JP')}</p>
+		<p>${t('app.title')} - ${t('checklist.evaluationResults')}</p>
+		<p>${t('export.generatedAt')}: ${factChecklistI18n.formatDate(new Date())}</p>
 	</div>
 </body>
 </html>
@@ -1013,7 +1120,7 @@
     const sections = groupItemsByCategory();
 
     // Markdown header with title
-    let markdown = `# 📋 ${checklist.title}\n\n`;
+    let markdown = `# 📋 ${checklistStore.effectiveTitle}\n\n`;
 
     // Meta information section
     markdown += `## 📄 ${t('checklist.title')}\n\n`;
@@ -1245,7 +1352,7 @@
     const text = `
 📋 事実確認評価結果
 
-タイトル: ${checklist.title}
+タイトル: ${checklistStore.effectiveTitle}
 作成日: ${checklist.createdAt.toLocaleDateString('ja-JP')}
 総合スコア: ${checklist.score.total}/${checklist.score.maxScore} (${checklist.confidenceLevel}%)
 信頼度: ${checklist.confidenceText}

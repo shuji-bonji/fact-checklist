@@ -187,6 +187,24 @@ class ChecklistStore {
     return t('checklist.advice.poor');
   }
 
+  // 現在の言語に基づく効果的なタイトルを取得
+  get effectiveTitle(): string {
+    if (!this._currentChecklist) return '';
+
+    // 後方互換性: isUserSetTitleが未定義の場合は、既存のタイトルを使用
+    if (this._currentChecklist.isUserSetTitle === undefined) {
+      return this._currentChecklist.title;
+    }
+
+    // ユーザーが設定したタイトルの場合はそのまま返す
+    if (this._currentChecklist.isUserSetTitle) {
+      return this._currentChecklist.title;
+    }
+
+    // 自動生成タイトルの場合は現在の言語で生成
+    return `${t('checklist.title')}_${this._currentChecklist.createdAt.toLocaleDateString()}`;
+  }
+
   // 新しいチェックリストを作成
   createNewChecklist(title: string = '', description: string = ''): string {
     const id = uuidv4();
@@ -211,7 +229,8 @@ class ChecklistStore {
       notes: '',
       confidenceLevel: 0,
       confidenceText: this.confidenceText,
-      judgmentAdvice: this.judgmentAdvice
+      judgmentAdvice: this.judgmentAdvice,
+      isUserSetTitle: !!title // true if user provided title, false if auto-generated
     };
 
     this._currentChecklist = newChecklist;
@@ -286,6 +305,7 @@ class ChecklistStore {
     if (!this._currentChecklist) return;
 
     this._currentChecklist.title = title;
+    this._currentChecklist.isUserSetTitle = !!title; // true if title is non-empty
     this._currentChecklist.updatedAt = new Date();
     this.saveToStorage(); // 非同期だが待機しない
   }

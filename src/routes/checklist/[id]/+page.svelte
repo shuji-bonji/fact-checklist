@@ -127,7 +127,7 @@
     <!-- ヘッダー -->
     <header class="detail-header">
       <div class="header-content">
-        <h1>{checklist.title}</h1>
+        <h1>{checklistStore.effectiveTitle}</h1>
         {#if checklist.description}
           <p class="description">{checklist.description}</p>
         {/if}

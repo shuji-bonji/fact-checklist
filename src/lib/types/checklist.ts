@@ -56,6 +56,8 @@ export interface ChecklistResult {
   confidenceLevel: number;
   confidenceText: string;
   judgmentAdvice: string;
+  // タイトルがユーザー設定かどうかを追跡
+  isUserSetTitle?: boolean;
 }
 
 export interface ChecklistHistoryItem {
