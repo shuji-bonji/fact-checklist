@@ -10,6 +10,7 @@
   // import { HTMLToPDFGenerator, type HTMLToPDFOptions } from '$lib/utils/htmlToPDFGenerator.js';
   import { SimplePDFGenerator } from '$lib/utils/simplePDFGenerator.js';
   import { platformStore } from '$lib/stores/platformStore.svelte.js';
+  import { t } from '$lib/i18n/index.js';
 
   interface Props {
     checklist: ChecklistResult | null;
@@ -248,13 +249,13 @@
     const errorStr = error instanceof Error ? error.message : String(error);
 
     if (errorStr.includes('fetch')) {
-      return 'フォントファイルの読み込みに失敗しました。インターネット接続を確認してください。';
+      return t('errors.network');
     } else if (errorStr.includes('memory') || errorStr.includes('size')) {
-      return 'メモリ不足のため処理できません。ブラウザを再起動してから再度お試しください。';
+      return t('errors.general');
     } else if (errorStr.includes('permission') || errorStr.includes('access')) {
-      return 'ファイルへのアクセスが拒否されました。ブラウザのダウンロード設定を確認してください。';
+      return t('errors.permissionDenied');
     } else {
-      return `${context}中にエラーが発生しました: ${errorStr.substring(0, 100)}`;
+      return `${context}: ${errorStr.substring(0, 100)}`;
     }
   }
 
@@ -265,7 +266,7 @@
     isExporting = true;
 
     try {
-      updateProgress(10, 100, '初期化', 'エクスポートを開始しています...');
+      updateProgress(10, 100, t('export.progress.initializing'), t('export.progress.initializing'));
 
       switch (exportOptions.format) {
         case 'pdf':
@@ -282,7 +283,7 @@
           break;
       }
 
-      updateProgress(100, 100, '完了', 'エクスポートが成功しました！');
+      updateProgress(100, 100, t('export.progress.completed'), t('export.progress.completed'));
       exportSuccess = true;
 
       // 成功メッセージを短時間表示後にモーダルを閉じる
@@ -291,8 +292,11 @@
       }, 2000);
     } catch (error) {
       console.error('エクスポートエラー:', error);
-      exportError = getErrorMessage(error, `${exportOptions.format.toUpperCase()}エクスポート`);
-      updateProgress(0, 100, 'エラー', exportError);
+      exportError = getErrorMessage(
+        error,
+        `${exportOptions.format.toUpperCase()} ${t('common.export')}`
+      );
+      updateProgress(0, 100, t('export.progress.failed'), exportError);
     } finally {
       isExporting = false;
     }
@@ -302,18 +306,18 @@
     if (!checklist) return;
 
     try {
-      updateProgress(20, 100, 'PDF生成準備', 'PDFエクスポートを開始しています...');
+      updateProgress(20, 100, t('export.progress.initializing'), t('export.progress.generating'));
       console.log('🚀 Starting PDF export with reliable font support');
 
       if (exportOptions.pixelPerfectMode) {
         // HTML→印刷→PDF（ピクセルパーフェクト）
-        updateProgress(30, 100, 'HTML生成', 'ブラウザ表示と同じHTMLを生成しています...');
+        updateProgress(30, 100, t('export.progress.generating'), t('export.progress.processing'));
         console.log('🎨 Using SimplePDFGenerator for pixel-perfect output');
 
         // HTMLコンテンツを生成
         const htmlContent = generateSectionedHTMLContent();
 
-        updateProgress(50, 100, 'PDF準備', '印刷用ビューを準備しています...');
+        updateProgress(50, 100, t('export.progress.processing'), t('export.progress.processing'));
 
         const simplePdfGenerator = new SimplePDFGenerator();
 
@@ -323,23 +327,23 @@
           /[^\w\s\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/gi,
           ''
         );
-        const filename = `事実確認チェックシート_${sanitizedTitle}_${timestamp}.pdf`;
+        const filename = `${t('app.title')}_${sanitizedTitle}_${timestamp}.pdf`;
 
         try {
           // 印刷ダイアログを開く方式
-          updateProgress(70, 100, '印刷ビュー', '印刷プレビューを開いています...');
+          updateProgress(70, 100, t('export.progress.processing'), t('export.progress.processing'));
           await simplePdfGenerator.generateFromHTML(htmlContent, filename);
 
-          updateProgress(100, 100, '完了', 'PDFの保存画面が開きました');
+          updateProgress(100, 100, t('export.progress.completed'), t('export.progress.completed'));
           console.log('✅ Print dialog opened successfully');
         } catch (printError) {
           // フォールバック: 直接PDF生成
           console.warn('⚠️ Print dialog failed, using direct PDF generation:', printError);
-          updateProgress(70, 100, 'PDF生成', '直接PDF生成に切り替えています...');
+          updateProgress(70, 100, t('export.progress.generating'), t('export.progress.generating'));
 
           const pdfBlob = await simplePdfGenerator.generateDirectPDF(htmlContent, checklist);
 
-          updateProgress(80, 100, 'ファイル生成', 'ファイルを保存しています...');
+          updateProgress(80, 100, t('export.progress.finalizing'), t('export.progress.finalizing'));
 
           // ダウンロード実行
           const url = URL.createObjectURL(pdfBlob);
@@ -355,7 +359,7 @@
         console.log('✅ Pixel-perfect PDF generated successfully');
       } else if (exportOptions.reliableMode) {
         // 確実な日本語フォント対応PDF生成
-        updateProgress(30, 100, 'フォント読み込み', '日本語フォントを読み込んでいます...');
+        updateProgress(30, 100, t('export.progress.processing'), t('export.progress.processing'));
         console.log('📝 Using ReliablePDFGenerator for Japanese font support');
 
         const reliableOptions: ReliablePDFOptions = {
@@ -378,10 +382,10 @@
             '情報の信頼性を科学的・体系的に評価するための実用的事実確認チェックシート'
         };
 
-        updateProgress(50, 100, 'PDFドキュメント作成', 'PDFドキュメントを作成しています...');
+        updateProgress(50, 100, t('export.progress.generating'), t('export.progress.generating'));
         const pdf = await reliablePDFGenerator.generateFromChecklist(checklist, reliableOptions);
 
-        updateProgress(80, 100, 'ファイル生成', 'ファイルを保存しています...');
+        updateProgress(80, 100, t('export.progress.finalizing'), t('export.progress.finalizing'));
 
         // ファイル名生成
         const timestamp = new Date().toISOString().slice(0, 10);
@@ -389,14 +393,14 @@
           /[^\\w\\s\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FAF]/gi,
           ''
         );
-        const filename = `事実確認チェックシート_${sanitizedTitle}_${timestamp}.pdf`;
+        const filename = `${t('app.title')}_${sanitizedTitle}_${timestamp}.pdf`;
 
         // ダウンロード実行
         pdf.save(filename);
         console.log('✅ PDF generated successfully with reliable font support');
       } else {
         // 従来のPWA対応エクスポーター使用
-        updateProgress(40, 100, 'PWAモード', '従来のPDFエクスポートを実行中...');
+        updateProgress(40, 100, t('export.progress.processing'), t('export.progress.processing'));
         console.log('🔄 Using PWA-aware PDF exporter (legacy mode)');
         await pdfExporter.exportPDF(checklist, {
           textMode: exportOptions.textMode,
@@ -419,70 +423,274 @@
   }
 
   async function exportToHTML() {
-    updateProgress(30, 100, 'HTML生成', 'HTMLコンテンツを生成しています...');
+    updateProgress(30, 100, t('export.progress.generating'), t('export.progress.generating'));
     const htmlContent = generateSectionedHTMLContent();
-    updateProgress(70, 100, 'ファイル作成', 'HTMLファイルを作成しています...');
+    updateProgress(70, 100, t('export.progress.finalizing'), t('export.progress.finalizing'));
     const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
-    const filename = `事実確認チェックシート_${checklist!.title}_${new Date().toISOString().slice(0, 10)}.html`;
+    const filename = `${t('app.title')}_${checklist!.title}_${new Date().toISOString().slice(0, 10)}.html`;
     downloadBlob(blob, filename);
   }
 
   async function exportToJSON() {
-    updateProgress(30, 100, 'データ整理', 'エクスポートデータを整理しています...');
+    updateProgress(30, 100, t('export.progress.processing'), t('export.progress.processing'));
 
-    // アイテムデータをオプションに応じて調整
+    // Import i18n functions for multilingual data
+    const { getCurrentLanguage, getSupportedLanguages } = await import('$lib/i18n/index.js');
+    const { factChecklistI18n } = await import('$lib/i18n/index.js');
+
+    const currentLang = getCurrentLanguage();
+    const supportedLangs = getSupportedLanguages();
+
+    // アイテムデータをオプションに応じて調整（多言語対応）
     const processedItems = checklist!.items.map(item => {
       const processedItem = { ...item };
 
-      // ガイド内容を含めない場合は削除
-      if (!exportOptions.includeGuides) {
+      // カテゴリ情報の翻訳
+      if (processedItem.category) {
+        try {
+          processedItem.category = {
+            ...processedItem.category,
+            name: factChecklistI18n.getCategoryName(processedItem.category.id),
+            description: factChecklistI18n.getCategoryDescription(processedItem.category.id)
+          };
+        } catch {
+          // フォールバック: 既存のカテゴリ情報を使用
+        }
+      }
+
+      // 基本項目情報の翻訳
+      if (item.translationKey) {
+        try {
+          processedItem.title = factChecklistI18n.getCheckItemTitle(item.translationKey);
+          processedItem.description = factChecklistI18n.getCheckItemDescription(
+            item.translationKey
+          );
+        } catch {
+          // フォールバック: 既存のタイトル・説明を使用
+        }
+      }
+
+      // 多言語対応: 現在の言語での翻訳テキストを追加
+      const multilingual: any = {
+        translationKey: item.translationKey || item.id,
+        currentLanguage: {
+          title: processedItem.title,
+          description: processedItem.description
+        }
+      };
+
+      // i18n領域用の翻訳情報（重複確認のため再取得）
+      if (item.translationKey) {
+        try {
+          multilingual.currentLanguage.title = factChecklistI18n.getCheckItemTitle(
+            item.translationKey
+          );
+          multilingual.currentLanguage.description = factChecklistI18n.getCheckItemDescription(
+            item.translationKey
+          );
+        } catch {
+          // フォールバック: 処理済みのタイトル・説明を使用
+          multilingual.currentLanguage.title = processedItem.title;
+          multilingual.currentLanguage.description = processedItem.description;
+        }
+      }
+
+      // ガイド内容の多言語対応
+      if (exportOptions.includeGuides && item.guideContent) {
+        const guideContent = { ...item.guideContent };
+
+        if (item.translationKey) {
+          try {
+            guideContent.title = factChecklistI18n.getCheckItemGuideTitle(item.translationKey);
+            guideContent.content = factChecklistI18n.getCheckItemGuideContent(item.translationKey);
+
+            // 例文の翻訳
+            const goodExamples = factChecklistI18n.getCheckItemExamplesGood(item.translationKey);
+            const badExamples = factChecklistI18n.getCheckItemExamplesBad(item.translationKey);
+
+            if (goodExamples.length > 0 || badExamples.length > 0) {
+              guideContent.examples = {
+                good: goodExamples,
+                bad: badExamples
+              };
+            }
+          } catch {
+            // フォールバック: 既存のガイド内容を使用
+          }
+        }
+
+        processedItem.guideContent = guideContent;
+        multilingual.currentLanguage.guideTitle = guideContent.title;
+        multilingual.currentLanguage.guideContent = guideContent.content;
+        multilingual.currentLanguage.examplesGood = guideContent.examples?.good || [];
+        multilingual.currentLanguage.examplesBad = guideContent.examples?.bad || [];
+      } else if (!exportOptions.includeGuides) {
         delete processedItem.guideContent;
       }
+
+      // 多言語情報をアイテムに追加（型安全のため any を使用）
+      (processedItem as any).i18n = multilingual;
 
       return processedItem;
     });
 
+    // セクション情報の多言語対応
+    const processedSections = exportOptions.includeSummary
+      ? groupItemsByCategory().map(section => ({
+          ...section,
+          i18n: {
+            translationKey: `categories.${section.category.id}`,
+            currentLanguage: {
+              name: factChecklistI18n.getCategoryName(section.category.id),
+              description: factChecklistI18n.getCategoryDescription(section.category.id),
+              emoji: factChecklistI18n.getCategoryEmoji(section.category.id)
+            }
+          }
+        }))
+      : undefined;
+
+    // 判定情報の多言語対応
+    const processedJudgment =
+      exportOptions.includeSummary && checklist!.judgment
+        ? {
+            value: checklist!.judgment,
+            i18n: {
+              currentLanguage: {
+                text: factChecklistI18n.getJudgmentText(checklist!.judgment),
+                advice: factChecklistI18n.getJudgmentAdvice(checklist!.judgment)
+              }
+            }
+          }
+        : checklist!.judgment;
+
     const exportData = {
-      title: checklist!.title,
-      notes: exportOptions.includeNotes ? checklist!.notes : undefined,
-      createdAt: checklist!.createdAt.toISOString(),
-      completedAt: checklist!.completedAt?.toISOString(),
-      score: exportOptions.includeSummary ? checklist!.score : undefined,
-      judgment: exportOptions.includeSummary ? checklist!.judgment : undefined,
-      judgmentAdvice: exportOptions.includeSummary ? checklist!.judgmentAdvice : undefined,
-      confidenceLevel: exportOptions.includeSummary ? checklist!.confidenceLevel : undefined,
-      confidenceText: exportOptions.includeSummary ? checklist!.confidenceText : undefined,
+      // メタデータ
+      metadata: {
+        version: '2.0',
+        format: 'json',
+        exportedAt: new Date().toISOString(),
+        language: {
+          current: currentLang,
+          available: Object.keys(supportedLangs),
+          info: supportedLangs[currentLang]
+        },
+        application: {
+          name: t('app.title'),
+          version: t('app.version'),
+          description: t('app.description')
+        }
+      },
+
+      // チェックリスト基本情報
+      checklist: {
+        id: checklist!.id,
+        title: checklist!.title,
+        description: checklist!.description,
+        status: checklist!.status,
+        createdAt: checklist!.createdAt.toISOString(),
+        updatedAt: checklist!.updatedAt.toISOString(),
+        completedAt: checklist!.completedAt?.toISOString(),
+        notes: exportOptions.includeNotes ? checklist!.notes : undefined
+      },
+
+      // 評価結果
+      evaluation: exportOptions.includeSummary
+        ? {
+            score: checklist!.score,
+            confidenceLevel: checklist!.confidenceLevel,
+            confidence: {
+              text: (() => {
+                const level =
+                  checklist!.confidenceLevel >= 80
+                    ? 'high'
+                    : checklist!.confidenceLevel >= 60
+                      ? 'medium'
+                      : checklist!.confidenceLevel >= 40
+                        ? 'low'
+                        : 'poor';
+                try {
+                  return factChecklistI18n.getConfidenceText(level);
+                } catch {
+                  return checklist!.confidenceText;
+                }
+              })(),
+              translationKey: `checklist.confidence.${checklist!.confidenceLevel >= 80 ? 'high' : checklist!.confidenceLevel >= 60 ? 'medium' : checklist!.confidenceLevel >= 40 ? 'low' : 'poor'}`
+            },
+            judgment: processedJudgment,
+            advice: {
+              text: (() => {
+                const level =
+                  checklist!.confidenceLevel >= 80
+                    ? 'high'
+                    : checklist!.confidenceLevel >= 60
+                      ? 'medium'
+                      : checklist!.confidenceLevel >= 40
+                        ? 'low'
+                        : 'poor';
+                try {
+                  return factChecklistI18n.getConfidenceLevelAdvice(level);
+                } catch {
+                  return checklist!.judgmentAdvice;
+                }
+              })(),
+              translationKey: `checklist.advice.${checklist!.confidenceLevel >= 80 ? 'high' : checklist!.confidenceLevel >= 60 ? 'medium' : checklist!.confidenceLevel >= 40 ? 'low' : 'poor'}`
+            }
+          }
+        : undefined,
+
+      // チェック項目
       items: processedItems,
-      sections: exportOptions.includeSummary ? groupItemsByCategory() : undefined,
-      exportedAt: new Date().toISOString(),
-      version: '1.0',
+
+      // セクション別統計
+      sections: processedSections,
+
+      // エクスポート設定
       exportOptions: {
         includeGuides: exportOptions.includeGuides,
         includeNotes: exportOptions.includeNotes,
-        includeSummary: exportOptions.includeSummary
+        includeSummary: exportOptions.includeSummary,
+        format: 'json',
+        language: currentLang
+      },
+
+      // 多言語サポート情報
+      i18n: {
+        supportedLanguages: supportedLangs,
+        currentLanguage: currentLang,
+        fallbackLanguage: 'ja',
+        note: 'This export includes internationalization data. The `i18n` fields contain translation keys and current language text.'
       }
     };
 
     // undefinedのプロパティを削除
-    Object.keys(exportData).forEach(key => {
-      if (exportData[key as keyof typeof exportData] === undefined) {
-        delete exportData[key as keyof typeof exportData];
-      }
-    });
+    const cleanObject = (obj: any): any => {
+      if (obj === null || typeof obj !== 'object') return obj;
+      if (Array.isArray(obj)) return obj.map(cleanObject);
 
-    updateProgress(70, 100, 'JSON生成', 'JSONファイルを生成しています...');
-    const jsonString = JSON.stringify(exportData, null, 2);
+      const cleaned: any = {};
+      for (const [key, value] of Object.entries(obj)) {
+        if (value !== undefined) {
+          cleaned[key] = cleanObject(value);
+        }
+      }
+      return cleaned;
+    };
+
+    const cleanedExportData = cleanObject(exportData);
+
+    updateProgress(70, 100, t('export.progress.generating'), t('export.progress.generating'));
+    const jsonString = JSON.stringify(cleanedExportData, null, 2);
     const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8' });
-    const filename = `事実確認チェックシート_${checklist!.title}_${new Date().toISOString().slice(0, 10)}.json`;
+    const filename = `${t('app.title')}_${checklist!.title}_${new Date().toISOString().slice(0, 10)}.json`;
     downloadBlob(blob, filename);
   }
 
   async function exportToMarkdown() {
-    updateProgress(30, 100, 'Markdown生成', 'Markdownコンテンツを生成しています...');
+    updateProgress(30, 100, t('export.progress.generating'), t('export.progress.generating'));
     const markdownContent = generateMarkdownContent();
-    updateProgress(70, 100, 'ファイル作成', 'Markdownファイルを作成しています...');
+    updateProgress(70, 100, t('export.progress.finalizing'), t('export.progress.finalizing'));
     const blob = new Blob([markdownContent], { type: 'text/markdown;charset=utf-8' });
-    const filename = `事実確認チェックシート_${checklist!.title}_${new Date().toISOString().slice(0, 10)}.md`;
+    const filename = `${t('app.title')}_${checklist!.title}_${new Date().toISOString().slice(0, 10)}.md`;
     downloadBlob(blob, filename);
   }
 
@@ -966,10 +1174,10 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
 
     try {
       await navigator.clipboard.writeText(text);
-      alert('📋 クリップボードにコピーしました');
+      alert(`📋 ${t('success.copied')}`);
     } catch (error) {
       console.error('コピーに失敗:', error);
-      alert('❌ コピーに失敗しました');
+      alert(`❌ ${t('errors.general')}`);
     }
   }
 </script>
@@ -990,14 +1198,14 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
 >
   <div class="modal-content">
     <div class="modal-header">
-      <h2 id="modal-title">📄 エクスポート・共有</h2>
-      <button class="close-btn" onclick={onClose} aria-label="閉じる"> ✕ </button>
+      <h2 id="modal-title">📄 {t('export.title')}</h2>
+      <button class="close-btn" onclick={onClose} aria-label={t('common.close')}> ✕ </button>
     </div>
 
     <div class="modal-body">
       <!-- フォーマット選択 -->
       <div class="option-group">
-        <h3>📋 出力形式</h3>
+        <h3>📋 {t('export.format')}</h3>
         <div class="format-options">
           <label class="radio-option">
             <input
@@ -1007,8 +1215,8 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
               checked={exportOptions.format === 'pdf'}
               onchange={() => updateExportOption('format', 'pdf')}
             />
-            <span>📄 PDF</span>
-            <small>印刷・共有に最適（セクション分割対応）</small>
+            <span>📄 {t('export.formats.pdf')}</span>
+            <small>{t('export.pdfModes.pixelPerfect')}</small>
           </label>
 
           <label class="radio-option">
@@ -1019,8 +1227,8 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
               checked={exportOptions.format === 'html'}
               onchange={() => updateExportOption('format', 'html')}
             />
-            <span>🌐 HTML</span>
-            <small>ブラウザで表示可能（セクション構造化）</small>
+            <span>🌐 {t('export.formats.html')}</span>
+            <small>{t('export.description')}</small>
           </label>
 
           <label class="radio-option">
@@ -1031,8 +1239,8 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
               checked={exportOptions.format === 'json'}
               onchange={() => updateExportOption('format', 'json')}
             />
-            <span>📊 JSON</span>
-            <small>データ形式（プログラム処理用）</small>
+            <span>📊 {t('export.formats.json')}</span>
+            <small>{t('export.description')}</small>
           </label>
 
           <label class="radio-option">
@@ -1043,15 +1251,15 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
               checked={exportOptions.format === 'markdown'}
               onchange={() => updateExportOption('format', 'markdown')}
             />
-            <span>📝 Markdown</span>
-            <small>テキスト形式（GitHub/エディタで表示可能）</small>
+            <span>📝 {t('export.formats.markdown')}</span>
+            <small>{t('export.description')}</small>
           </label>
         </div>
       </div>
 
       <!-- 内容オプション -->
       <div class="option-group">
-        <h3>📝 含める内容</h3>
+        <h3>📝 {t('export.options')}</h3>
         <div class="checkbox-options">
           <label class="checkbox-option">
             <input
@@ -1060,8 +1268,8 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
               onchange={e =>
                 updateExportOption('includeSummary', (e.target as HTMLInputElement).checked)}
             />
-            <span>📊 評価サマリー</span>
-            <small>スコア・判定結果の概要</small>
+            <span>📊 {t('export.includeSummary')}</span>
+            <small>{t('export.description')}</small>
           </label>
 
           <label class="checkbox-option">
@@ -1071,8 +1279,8 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
               onchange={e =>
                 updateExportOption('includeGuides', (e.target as HTMLInputElement).checked)}
             />
-            <span>📚 ガイド内容</span>
-            <small>各項目の詳細説明・例</small>
+            <span>📚 {t('export.includeGuides')}</span>
+            <small>{t('export.description')}</small>
           </label>
 
           <label class="checkbox-option">
@@ -1082,8 +1290,8 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
               onchange={e =>
                 updateExportOption('includeNotes', (e.target as HTMLInputElement).checked)}
             />
-            <span>📝 評価メモ</span>
-            <small>追加したメモ・コメント</small>
+            <span>📝 {t('export.includeNotes')}</span>
+            <small>{t('export.description')}</small>
           </label>
 
           {#if exportOptions.format === 'pdf' || exportOptions.format === 'markdown'}
@@ -1094,18 +1302,14 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
                 onchange={e =>
                   updateExportOption('sectionBreaks', (e.target as HTMLInputElement).checked)}
               />
-              <span>📄 セクション区切り</span>
-              <small
-                >{exportOptions.format === 'pdf'
-                  ? '各セクションを個別ページに分離'
-                  : 'セクション間に区切り線を追加'}</small
-              >
+              <span>📄 {t('export.sectionBreaks')}</span>
+              <small>{t('export.description')}</small>
             </label>
           {/if}
 
           {#if exportOptions.format === 'pdf'}
             <div class="pdf-mode-section">
-              <div class="section-label">PDF生成モード（いずれか1つを選択）</div>
+              <div class="section-label">{t('export.pdfModes.pixelPerfect')}</div>
 
               <label class="checkbox-option">
                 <input
@@ -1114,8 +1318,8 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
                   onchange={e =>
                     updateExportOption('pixelPerfectMode', (e.target as HTMLInputElement).checked)}
                 />
-                <span>🎨 ピクセルパーフェクト PDF</span>
-                <small>ブラウザ表示と完全一致（印刷プレビュー使用・推奨）</small>
+                <span>🎨 {t('export.pdfModes.pixelPerfect')}</span>
+                <small>{t('export.pdfModes.pixelPerfect')}</small>
               </label>
 
               <label class="checkbox-option">
@@ -1125,8 +1329,8 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
                   onchange={e =>
                     updateExportOption('reliableMode', (e.target as HTMLInputElement).checked)}
                 />
-                <span>🔥 確実な日本語フォント対応</span>
-                <small>文字化け防止・CSP対応（プログラムで生成）</small>
+                <span>🔥 {t('export.pdfModes.reliableFont')}</span>
+                <small>{t('export.pdfModes.reliableFont')}</small>
               </label>
 
               <label class="checkbox-option">
@@ -1136,8 +1340,8 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
                   onchange={e =>
                     updateExportOption('textMode', (e.target as HTMLInputElement).checked)}
                 />
-                <span>🔤 テキストベースPDF</span>
-                <small>文字検索・コピー可能（レガシーモード）</small>
+                <span>🔤 {t('export.pdfModes.textBased')}</span>
+                <small>{t('export.pdfModes.textBased')}</small>
               </label>
             </div>
 
@@ -1148,8 +1352,8 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
                 onchange={e =>
                   updateExportOption('advancedMode', (e.target as HTMLInputElement).checked)}
               />
-              <span>⚡ 高度なPWA機能</span>
-              <small>プラットフォーム固有の最適化を使用</small>
+              <span>⚡ {t('export.description')}</span>
+              <small>{t('export.description')}</small>
             </label>
 
             <!-- プラットフォーム機能表示 -->
@@ -1157,20 +1361,20 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
               <div class="platform-info">
                 <div class="platform-badge">
                   {#if platformStore.capabilities.isNativeApp}
-                    📱 ネイティブアプリ機能
+                    📱 {t('export.description')}
                   {:else}
-                    🌐 拡張機能
+                    🌐 {t('export.description')}
                   {/if}
                 </div>
                 <div class="feature-list">
                   {#if supportedFeatures.canSave}
-                    <span class="feature-item">💾 直接保存</span>
+                    <span class="feature-item">💾 {t('common.save')}</span>
                   {/if}
                   {#if supportedFeatures.canShare}
-                    <span class="feature-item">📤 ネイティブ共有</span>
+                    <span class="feature-item">📤 {t('common.share')}</span>
                   {/if}
                   {#if supportedFeatures.qualityLevel === 'high'}
-                    <span class="feature-item">✨ 高品質</span>
+                    <span class="feature-item">✨ {t('export.description')}</span>
                   {/if}
                 </div>
               </div>
@@ -1203,12 +1407,12 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
         <div class="error-container">
           <div class="error-header">
             <span class="error-icon">⚠️</span>
-            <span class="error-title">エクスポートエラー</span>
+            <span class="error-title">{t('errors.export')}</span>
           </div>
           <div class="error-message">{exportError}</div>
           <div class="error-actions">
             <button class="btn btn-secondary btn-small" onclick={resetExportState}>
-              🔄 再試行
+              🔄 {t('common.reset')}
             </button>
           </div>
         </div>
@@ -1219,9 +1423,9 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
         <div class="success-container">
           <div class="success-header">
             <span class="success-icon">✅</span>
-            <span class="success-title">エクスポート完了</span>
+            <span class="success-title">{t('export.progress.completed')}</span>
           </div>
-          <div class="success-message">ファイルが正常にダウンロードされました！</div>
+          <div class="success-message">{t('success.exported')}</div>
         </div>
       {/if}
 
@@ -1231,11 +1435,11 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
           onclick={copyToClipboard}
           disabled={!checklist || isExporting}
         >
-          📋 コピー
+          📋 {t('common.copy')}
         </button>
 
         <button class="btn btn-primary" onclick={handleExport} disabled={!checklist || isExporting}>
-          {isExporting ? '⏳ 出力中...' : '📤 エクスポート'}
+          {isExporting ? `⏳ ${t('export.progress.generating')}` : `📤 ${t('common.export')}`}
         </button>
       </div>
     </div>

@@ -310,11 +310,9 @@ export const factChecklistI18n = {
   getCheckItemExamplesGood: (itemId: string): string[] => {
     try {
       const translations = i18nStore.translations;
-      const currentLang = i18nStore.currentLanguage;
 
-      // 型安全な方法で配列を取得
-      const langTranslations = translations?.[currentLang as keyof typeof translations];
-      const examples = (langTranslations as unknown as TranslationKeys)?.checklistItems?.[itemId]
+      // 正しいパスで配列を取得
+      const examples = (translations as unknown as TranslationKeys)?.checklistItems?.[itemId]
         ?.examplesGood;
 
       if (Array.isArray(examples)) {
@@ -330,11 +328,9 @@ export const factChecklistI18n = {
   getCheckItemExamplesBad: (itemId: string): string[] => {
     try {
       const translations = i18nStore.translations;
-      const currentLang = i18nStore.currentLanguage;
 
-      // 型安全な方法で配列を取得
-      const langTranslations = translations?.[currentLang as keyof typeof translations];
-      const examples = (langTranslations as unknown as TranslationKeys)?.checklistItems?.[itemId]
+      // 正しいパスで配列を取得
+      const examples = (translations as unknown as TranslationKeys)?.checklistItems?.[itemId]
         ?.examplesBad;
 
       if (Array.isArray(examples)) {
@@ -357,6 +353,20 @@ export const factChecklistI18n = {
     const translations = i18nStore.translations;
     const safeTranslator = createSafeTranslator(translations as unknown as NestedRecord);
     return safeTranslator(`checklist.judgmentAdvice.${judgment}`);
+  },
+
+  // 信頼度テキストの翻訳
+  getConfidenceText: (level: string) => {
+    const translations = i18nStore.translations;
+    const safeTranslator = createSafeTranslator(translations as unknown as NestedRecord);
+    return safeTranslator(`checklist.confidence.${level}`);
+  },
+
+  // 信頼度レベルに基づくアドバイスの翻訳
+  getConfidenceLevelAdvice: (level: string) => {
+    const translations = i18nStore.translations;
+    const safeTranslator = createSafeTranslator(translations as unknown as NestedRecord);
+    return safeTranslator(`checklist.advice.${level}`);
   },
 
   getExportFormatName: (format: string) => {

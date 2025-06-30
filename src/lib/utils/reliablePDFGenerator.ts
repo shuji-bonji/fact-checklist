@@ -7,6 +7,7 @@
 import type jsPDF from 'jspdf';
 import type { ChecklistResult, CheckItem } from '$lib/types/checklist.js';
 import { CATEGORIES } from '$lib/data/checklist-items.js';
+import type { TranslationFunction } from '$lib/i18n/types.js';
 // Font registration is now handled internally with caching
 // import { registerJapaneseFonts } from './fontToBase64.js';
 
@@ -26,6 +27,8 @@ export interface ReliablePDFOptions {
   documentTitle?: string; // カスタムドキュメントタイトル
   documentAuthor?: string; // 文書作成者
   documentSubject?: string; // 文書の件名
+  // i18n support
+  t?: TranslationFunction; // 翻訳関数
 }
 
 export class ReliablePDFGenerator {
@@ -42,6 +45,7 @@ export class ReliablePDFGenerator {
   // Phase 3: 高度なPDF機能用プロパティ
   private tableOfContents: Array<{ title: string; page: number; level: number }> = [];
   private options: ReliablePDFOptions = {} as ReliablePDFOptions;
+  private t!: TranslationFunction;
 
   // パフォーマンス最適化: フォントキャッシュ
   private static fontCache: Map<string, string> = new Map();
@@ -64,6 +68,9 @@ export class ReliablePDFGenerator {
     // オプションを保存
     this.options = options;
     this.tableOfContents = [];
+
+    // 翻訳関数の設定（フォールバック付き）
+    this.t = options.t ?? ((key: string) => key);
 
     console.log('🔥 Starting reliable PDF generation with advanced features...');
 
@@ -214,7 +221,7 @@ export class ReliablePDFGenerator {
     // タイトルを文字化けしにくい形式で表示
     const mainTitle = this.useFallbackFont
       ? '📋 Fact Checking Checklist'
-      : '📋 事実確認チェックシート';
+      : `📋 ${this.t('app.title')}`;
 
     this.addText(mainTitle);
 
@@ -245,7 +252,7 @@ export class ReliablePDFGenerator {
       day: '2-digit'
     });
 
-    const createdLabel = this.useFallbackFont ? 'Created' : '作成日';
+    const createdLabel = this.useFallbackFont ? 'Created' : this.t('datetime.createdAt');
     this.addText(`${createdLabel}: ${createdDate}`);
 
     if (checklist.completedAt) {
@@ -254,7 +261,7 @@ export class ReliablePDFGenerator {
         month: '2-digit',
         day: '2-digit'
       });
-      const completedLabel = this.useFallbackFont ? 'Completed' : '完了日';
+      const completedLabel = this.useFallbackFont ? 'Completed' : this.t('datetime.completedAt');
       this.addText(`${completedLabel}: ${completedDate}`);
     }
 
@@ -263,7 +270,7 @@ export class ReliablePDFGenerator {
       month: '2-digit',
       day: '2-digit'
     });
-    const outputLabel = this.useFallbackFont ? 'Generated' : '出力日';
+    const outputLabel = this.useFallbackFont ? 'Generated' : this.t('datetime.updatedAt');
     this.addText(`${outputLabel}: ${outputDate}`);
     this.currentY += 15;
   }
@@ -278,7 +285,9 @@ export class ReliablePDFGenerator {
     this.setFontWeight('bold');
     this.pdf.setTextColor(44, 62, 80); // #2c3e50
 
-    const summaryTitle = this.useFallbackFont ? '📊 Evaluation Summary' : '📊 評価結果サマリー';
+    const summaryTitle = this.useFallbackFont
+      ? '📊 Evaluation Summary'
+      : `📊 ${this.t('checklist.evaluationResults')}`;
     this.addText(summaryTitle);
 
     // Phase 3: TOCエントリー追加
