@@ -1,171 +1,171 @@
 <!-- src/lib/components/ExportModal.svelte -->
 <script lang="ts">
-	import type { ChecklistResult, CheckItem } from '$lib/types/checklist.js';
-	import { CATEGORIES } from '$lib/data/checklist-items.js';
-	import { PWAAwarePDFExporter } from '$lib/utils/pwaAwarePDFExporter.js';
-	import {
-		ReliablePDFGenerator,
-		type ReliablePDFOptions
-	} from '$lib/utils/reliablePDFGenerator.js';
-	// import { HTMLToPDFGenerator, type HTMLToPDFOptions } from '$lib/utils/htmlToPDFGenerator.js';
-	import { SimplePDFGenerator } from '$lib/utils/simplePDFGenerator.js';
-	import { platformStore } from '$lib/stores/platformStore.svelte.js';
+  import type { ChecklistResult, CheckItem } from '$lib/types/checklist.js';
+  import { CATEGORIES } from '$lib/data/checklist-items.js';
+  import { PWAAwarePDFExporter } from '$lib/utils/pwaAwarePDFExporter.js';
+  import {
+    ReliablePDFGenerator,
+    type ReliablePDFOptions
+  } from '$lib/utils/reliablePDFGenerator.js';
+  // import { HTMLToPDFGenerator, type HTMLToPDFOptions } from '$lib/utils/htmlToPDFGenerator.js';
+  import { SimplePDFGenerator } from '$lib/utils/simplePDFGenerator.js';
+  import { platformStore } from '$lib/stores/platformStore.svelte.js';
 
-	interface Props {
-		checklist: ChecklistResult | null;
-		onClose: () => void;
-	}
+  interface Props {
+    checklist: ChecklistResult | null;
+    onClose: () => void;
+  }
 
-	interface ExportOptions {
-		format: 'pdf' | 'html' | 'json' | 'markdown';
-		includeGuides: boolean;
-		includeNotes: boolean;
-		includeSummary: boolean;
-		sectionBreaks: boolean; // セクションごとのページブレイク
-		textMode: boolean; // PDF生成モード: true=テキストベース, false=画像ベース
-		advancedMode: boolean; // 高度なPDF機能を使用するか
-		reliableMode: boolean; // 確実な日本語フォント対応
-		pixelPerfectMode: boolean; // HTML→Canvas→PDF（ブラウザ表示と完全一致）
-	}
+  interface ExportOptions {
+    format: 'pdf' | 'html' | 'json' | 'markdown';
+    includeGuides: boolean;
+    includeNotes: boolean;
+    includeSummary: boolean;
+    sectionBreaks: boolean; // セクションごとのページブレイク
+    textMode: boolean; // PDF生成モード: true=テキストベース, false=画像ベース
+    advancedMode: boolean; // 高度なPDF機能を使用するか
+    reliableMode: boolean; // 確実な日本語フォント対応
+    pixelPerfectMode: boolean; // HTML→Canvas→PDF（ブラウザ表示と完全一致）
+  }
 
-	const { checklist, onClose }: Props = $props();
+  const { checklist, onClose }: Props = $props();
 
-	let modalElement: HTMLDivElement;
-	let isExporting = $state(false);
-	const exportProgress = $state<{
-		current: number;
-		total: number;
-		stage: string;
-		message: string;
-	}>({ current: 0, total: 100, stage: '', message: '' });
-	let exportError = $state<string | null>(null);
-	let exportSuccess = $state<boolean>(false);
+  let modalElement: HTMLDivElement;
+  let isExporting = $state(false);
+  const exportProgress = $state<{
+    current: number;
+    total: number;
+    stage: string;
+    message: string;
+  }>({ current: 0, total: 100, stage: '', message: '' });
+  let exportError = $state<string | null>(null);
+  let exportSuccess = $state<boolean>(false);
 
-	// PWA対応PDF生成器
-	const pdfExporter = new PWAAwarePDFExporter();
-	const reliablePDFGenerator = new ReliablePDFGenerator();
-	const supportedFeatures = $derived(pdfExporter.getSupportedFeatures());
+  // PWA対応PDF生成器
+  const pdfExporter = new PWAAwarePDFExporter();
+  const reliablePDFGenerator = new ReliablePDFGenerator();
+  const supportedFeatures = $derived(pdfExporter.getSupportedFeatures());
 
-	// エクスポートオプション（個別の状態として管理）
-	let format = $state<'pdf' | 'html' | 'json' | 'markdown'>('pdf');
-	let includeGuides = $state(true);
-	let includeNotes = $state(true);
-	let includeSummary = $state(true);
-	let sectionBreaks = $state(true);
-	let textMode = $state(false); // テキストベースPDF（レガシー）
-	let advancedMode = $state(false); // 高度なモード
-	let reliableMode = $state(false); // 確実な日本語フォント対応
-	let pixelPerfectMode = $state(true); // HTML→印刷→PDF（デフォルト）
+  // エクスポートオプション（個別の状態として管理）
+  let format = $state<'pdf' | 'html' | 'json' | 'markdown'>('pdf');
+  let includeGuides = $state(true);
+  let includeNotes = $state(true);
+  let includeSummary = $state(true);
+  let sectionBreaks = $state(true);
+  let textMode = $state(false); // テキストベースPDF（レガシー）
+  let advancedMode = $state(false); // 高度なモード
+  let reliableMode = $state(false); // 確実な日本語フォント対応
+  let pixelPerfectMode = $state(true); // HTML→印刷→PDF（デフォルト）
 
-	// リアクティブなエクスポートオプション
-	const exportOptions = $derived<ExportOptions>({
-		format,
-		includeGuides,
-		includeNotes,
-		includeSummary,
-		sectionBreaks,
-		textMode,
-		advancedMode,
-		reliableMode,
-		pixelPerfectMode
-	});
+  // リアクティブなエクスポートオプション
+  const exportOptions = $derived<ExportOptions>({
+    format,
+    includeGuides,
+    includeNotes,
+    includeSummary,
+    sectionBreaks,
+    textMode,
+    advancedMode,
+    reliableMode,
+    pixelPerfectMode
+  });
 
-	function updateExportOption<K extends keyof ExportOptions>(key: K, value: ExportOptions[K]) {
-		switch (key) {
-			case 'format':
-				format = value as 'pdf' | 'html' | 'json' | 'markdown';
-				break;
-			case 'includeGuides':
-				includeGuides = value as boolean;
-				break;
-			case 'includeNotes':
-				includeNotes = value as boolean;
-				break;
-			case 'includeSummary':
-				includeSummary = value as boolean;
-				break;
-			case 'sectionBreaks':
-				sectionBreaks = value as boolean;
-				break;
-			case 'textMode':
-				textMode = value as boolean;
-				// テキストモードを有効にしたら他のPDFモードを無効化
-				if (textMode) {
-					pixelPerfectMode = false;
-					reliableMode = false;
-				}
-				break;
-			case 'advancedMode':
-				advancedMode = value as boolean;
-				break;
-			case 'reliableMode':
-				reliableMode = value as boolean;
-				// 確実モードを有効にしたら他のPDFモードを無効化
-				if (reliableMode) {
-					pixelPerfectMode = false;
-					textMode = false;
-				}
-				break;
-			case 'pixelPerfectMode':
-				pixelPerfectMode = value as boolean;
-				// ピクセルパーフェクトモードを有効にしたら他のPDFモードを無効化
-				if (pixelPerfectMode) {
-					reliableMode = false;
-					textMode = false;
-				}
-				break;
-		}
-	}
+  function updateExportOption<K extends keyof ExportOptions>(key: K, value: ExportOptions[K]) {
+    switch (key) {
+      case 'format':
+        format = value as 'pdf' | 'html' | 'json' | 'markdown';
+        break;
+      case 'includeGuides':
+        includeGuides = value as boolean;
+        break;
+      case 'includeNotes':
+        includeNotes = value as boolean;
+        break;
+      case 'includeSummary':
+        includeSummary = value as boolean;
+        break;
+      case 'sectionBreaks':
+        sectionBreaks = value as boolean;
+        break;
+      case 'textMode':
+        textMode = value as boolean;
+        // テキストモードを有効にしたら他のPDFモードを無効化
+        if (textMode) {
+          pixelPerfectMode = false;
+          reliableMode = false;
+        }
+        break;
+      case 'advancedMode':
+        advancedMode = value as boolean;
+        break;
+      case 'reliableMode':
+        reliableMode = value as boolean;
+        // 確実モードを有効にしたら他のPDFモードを無効化
+        if (reliableMode) {
+          pixelPerfectMode = false;
+          textMode = false;
+        }
+        break;
+      case 'pixelPerfectMode':
+        pixelPerfectMode = value as boolean;
+        // ピクセルパーフェクトモードを有効にしたら他のPDFモードを無効化
+        if (pixelPerfectMode) {
+          reliableMode = false;
+          textMode = false;
+        }
+        break;
+    }
+  }
 
-	function handleBackdropClick(event: MouseEvent) {
-		if (event.target === modalElement) {
-			onClose();
-		}
-	}
+  function handleBackdropClick(event: MouseEvent) {
+    if (event.target === modalElement) {
+      onClose();
+    }
+  }
 
-	// セクション別にアイテムを分類（リアクティブ）
-	const sections = $derived(
-		checklist
-			? CATEGORIES.map(category => {
-					const items = checklist.items.filter(item => item.category.id === category.id);
-					const checkedItems = items.filter(item => item.checked);
-					const uncheckedItems = items.filter(item => !item.checked);
+  // セクション別にアイテムを分類（リアクティブ）
+  const sections = $derived(
+    checklist
+      ? CATEGORIES.map(category => {
+          const items = checklist.items.filter(item => item.category.id === category.id);
+          const checkedItems = items.filter(item => item.checked);
+          const uncheckedItems = items.filter(item => !item.checked);
 
-					return {
-						category,
-						items,
-						checkedItems,
-						uncheckedItems,
-						completionRate:
-							items.length > 0 ? Math.round((checkedItems.length / items.length) * 100) : 0
-					};
-				})
-			: []
-	);
+          return {
+            category,
+            items,
+            checkedItems,
+            uncheckedItems,
+            completionRate:
+              items.length > 0 ? Math.round((checkedItems.length / items.length) * 100) : 0
+          };
+        })
+      : []
+  );
 
-	// 従来の関数も残しておく（HTML生成時に使用）
-	function groupItemsByCategory() {
-		if (!checklist) return [];
+  // 従来の関数も残しておく（HTML生成時に使用）
+  function groupItemsByCategory() {
+    if (!checklist) return [];
 
-		return CATEGORIES.map(category => {
-			const items = checklist.items.filter(item => item.category.id === category.id);
-			const checkedItems = items.filter(item => item.checked);
-			const uncheckedItems = items.filter(item => !item.checked);
+    return CATEGORIES.map(category => {
+      const items = checklist.items.filter(item => item.category.id === category.id);
+      const checkedItems = items.filter(item => item.checked);
+      const uncheckedItems = items.filter(item => !item.checked);
 
-			return {
-				category,
-				items,
-				checkedItems,
-				uncheckedItems,
-				completionRate:
-					items.length > 0 ? Math.round((checkedItems.length / items.length) * 100) : 0
-			};
-		});
-	}
+      return {
+        category,
+        items,
+        checkedItems,
+        uncheckedItems,
+        completionRate:
+          items.length > 0 ? Math.round((checkedItems.length / items.length) * 100) : 0
+      };
+    });
+  }
 
-	// HTML生成用のヘルパー関数
-	function renderCheckItem(item: CheckItem): string {
-		return `
+  // HTML生成用のヘルパー関数
+  function renderCheckItem(item: CheckItem): string {
+    return `
 			<div class="check-item ${item.checked ? 'checked' : 'unchecked'}">
 				<div class="check-item-header">
 					<span class="check-icon">${item.checked ? '✅' : '❌'}</span>
@@ -173,325 +173,325 @@
 						<div class="check-item-title">${item.title}</div>
 						<div class="check-item-description">${item.description}</div>
 						${
-							exportOptions.includeGuides && item.guideContent
-								? `
+              exportOptions.includeGuides && item.guideContent
+                ? `
 							<div class="check-item-guide">
 								<div class="guide-title">${item.guideContent.title}</div>
 								<div>${item.guideContent.content.replace(/\n/g, '<br>')}</div>
 								${
-									item.guideContent.examples
-										? `
+                  item.guideContent.examples
+                    ? `
 									<div style="margin-top: 10px;">
 										${
-											item.guideContent.examples.good.length > 0
-												? `
+                      item.guideContent.examples.good.length > 0
+                        ? `
 											<div style="margin-bottom: 8px;">
 												<strong style="color: #27ae60;">✅ 良い例:</strong>
 												${item.guideContent.examples.good
-													.map(
-														ex => `
+                          .map(
+                            ex => `
 													<div style="margin-left: 15px; margin-top: 5px;">• ${ex}</div>
 												`
-													)
-													.join('')}
+                          )
+                          .join('')}
 											</div>
 										`
-												: ''
-										}
+                        : ''
+                    }
 										${
-											item.guideContent.examples.bad.length > 0
-												? `
+                      item.guideContent.examples.bad.length > 0
+                        ? `
 											<div>
 												<strong style="color: #e74c3c;">❌ 悪い例:</strong>
 												${item.guideContent.examples.bad
-													.map(
-														ex => `
+                          .map(
+                            ex => `
 													<div style="margin-left: 15px; margin-top: 5px;">• ${ex}</div>
 												`
-													)
-													.join('')}
+                          )
+                          .join('')}
 											</div>
 										`
-												: ''
-										}
+                        : ''
+                    }
 									</div>
 								`
-										: ''
-								}
+                    : ''
+                }
 							</div>
 						`
-								: ''
-						}
+                : ''
+            }
 					</div>
 				</div>
 			</div>
 		`;
-	}
+  }
 
-	// 進捗更新ユーティリティ
-	function updateProgress(current: number, total: number, stage: string, message: string) {
-		exportProgress.current = current;
-		exportProgress.total = total;
-		exportProgress.stage = stage;
-		exportProgress.message = message;
-	}
+  // 進捗更新ユーティリティ
+  function updateProgress(current: number, total: number, stage: string, message: string) {
+    exportProgress.current = current;
+    exportProgress.total = total;
+    exportProgress.stage = stage;
+    exportProgress.message = message;
+  }
 
-	// エラーリセット
-	function resetExportState() {
-		exportError = null;
-		exportSuccess = false;
-		updateProgress(0, 100, '', '');
-	}
+  // エラーリセット
+  function resetExportState() {
+    exportError = null;
+    exportSuccess = false;
+    updateProgress(0, 100, '', '');
+  }
 
-	// ユーザーフレンドリーエラーメッセージ
-	function getErrorMessage(error: unknown, context: string): string {
-		const errorStr = error instanceof Error ? error.message : String(error);
+  // ユーザーフレンドリーエラーメッセージ
+  function getErrorMessage(error: unknown, context: string): string {
+    const errorStr = error instanceof Error ? error.message : String(error);
 
-		if (errorStr.includes('fetch')) {
-			return 'フォントファイルの読み込みに失敗しました。インターネット接続を確認してください。';
-		} else if (errorStr.includes('memory') || errorStr.includes('size')) {
-			return 'メモリ不足のため処理できません。ブラウザを再起動してから再度お試しください。';
-		} else if (errorStr.includes('permission') || errorStr.includes('access')) {
-			return 'ファイルへのアクセスが拒否されました。ブラウザのダウンロード設定を確認してください。';
-		} else {
-			return `${context}中にエラーが発生しました: ${errorStr.substring(0, 100)}`;
-		}
-	}
+    if (errorStr.includes('fetch')) {
+      return 'フォントファイルの読み込みに失敗しました。インターネット接続を確認してください。';
+    } else if (errorStr.includes('memory') || errorStr.includes('size')) {
+      return 'メモリ不足のため処理できません。ブラウザを再起動してから再度お試しください。';
+    } else if (errorStr.includes('permission') || errorStr.includes('access')) {
+      return 'ファイルへのアクセスが拒否されました。ブラウザのダウンロード設定を確認してください。';
+    } else {
+      return `${context}中にエラーが発生しました: ${errorStr.substring(0, 100)}`;
+    }
+  }
 
-	async function handleExport() {
-		if (!checklist) return;
+  async function handleExport() {
+    if (!checklist) return;
 
-		resetExportState();
-		isExporting = true;
+    resetExportState();
+    isExporting = true;
 
-		try {
-			updateProgress(10, 100, '初期化', 'エクスポートを開始しています...');
+    try {
+      updateProgress(10, 100, '初期化', 'エクスポートを開始しています...');
 
-			switch (exportOptions.format) {
-				case 'pdf':
-					await exportToPDF();
-					break;
-				case 'html':
-					await exportToHTML();
-					break;
-				case 'json':
-					await exportToJSON();
-					break;
-				case 'markdown':
-					await exportToMarkdown();
-					break;
-			}
+      switch (exportOptions.format) {
+        case 'pdf':
+          await exportToPDF();
+          break;
+        case 'html':
+          await exportToHTML();
+          break;
+        case 'json':
+          await exportToJSON();
+          break;
+        case 'markdown':
+          await exportToMarkdown();
+          break;
+      }
 
-			updateProgress(100, 100, '完了', 'エクスポートが成功しました！');
-			exportSuccess = true;
+      updateProgress(100, 100, '完了', 'エクスポートが成功しました！');
+      exportSuccess = true;
 
-			// 成功メッセージを短時間表示後にモーダルを閉じる
-			setTimeout(() => {
-				onClose();
-			}, 2000);
-		} catch (error) {
-			console.error('エクスポートエラー:', error);
-			exportError = getErrorMessage(error, `${exportOptions.format.toUpperCase()}エクスポート`);
-			updateProgress(0, 100, 'エラー', exportError);
-		} finally {
-			isExporting = false;
-		}
-	}
+      // 成功メッセージを短時間表示後にモーダルを閉じる
+      setTimeout(() => {
+        onClose();
+      }, 2000);
+    } catch (error) {
+      console.error('エクスポートエラー:', error);
+      exportError = getErrorMessage(error, `${exportOptions.format.toUpperCase()}エクスポート`);
+      updateProgress(0, 100, 'エラー', exportError);
+    } finally {
+      isExporting = false;
+    }
+  }
 
-	async function exportToPDF() {
-		if (!checklist) return;
+  async function exportToPDF() {
+    if (!checklist) return;
 
-		try {
-			updateProgress(20, 100, 'PDF生成準備', 'PDFエクスポートを開始しています...');
-			console.log('🚀 Starting PDF export with reliable font support');
+    try {
+      updateProgress(20, 100, 'PDF生成準備', 'PDFエクスポートを開始しています...');
+      console.log('🚀 Starting PDF export with reliable font support');
 
-			if (exportOptions.pixelPerfectMode) {
-				// HTML→印刷→PDF（ピクセルパーフェクト）
-				updateProgress(30, 100, 'HTML生成', 'ブラウザ表示と同じHTMLを生成しています...');
-				console.log('🎨 Using SimplePDFGenerator for pixel-perfect output');
+      if (exportOptions.pixelPerfectMode) {
+        // HTML→印刷→PDF（ピクセルパーフェクト）
+        updateProgress(30, 100, 'HTML生成', 'ブラウザ表示と同じHTMLを生成しています...');
+        console.log('🎨 Using SimplePDFGenerator for pixel-perfect output');
 
-				// HTMLコンテンツを生成
-				const htmlContent = generateSectionedHTMLContent();
+        // HTMLコンテンツを生成
+        const htmlContent = generateSectionedHTMLContent();
 
-				updateProgress(50, 100, 'PDF準備', '印刷用ビューを準備しています...');
+        updateProgress(50, 100, 'PDF準備', '印刷用ビューを準備しています...');
 
-				const simplePdfGenerator = new SimplePDFGenerator();
+        const simplePdfGenerator = new SimplePDFGenerator();
 
-				// ファイル名生成
-				const timestamp = new Date().toISOString().slice(0, 10);
-				const sanitizedTitle = checklist.title.replace(
-					/[^\w\s\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/gi,
-					''
-				);
-				const filename = `事実確認チェックシート_${sanitizedTitle}_${timestamp}.pdf`;
+        // ファイル名生成
+        const timestamp = new Date().toISOString().slice(0, 10);
+        const sanitizedTitle = checklist.title.replace(
+          /[^\w\s\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/gi,
+          ''
+        );
+        const filename = `事実確認チェックシート_${sanitizedTitle}_${timestamp}.pdf`;
 
-				try {
-					// 印刷ダイアログを開く方式
-					updateProgress(70, 100, '印刷ビュー', '印刷プレビューを開いています...');
-					await simplePdfGenerator.generateFromHTML(htmlContent, filename);
+        try {
+          // 印刷ダイアログを開く方式
+          updateProgress(70, 100, '印刷ビュー', '印刷プレビューを開いています...');
+          await simplePdfGenerator.generateFromHTML(htmlContent, filename);
 
-					updateProgress(100, 100, '完了', 'PDFの保存画面が開きました');
-					console.log('✅ Print dialog opened successfully');
-				} catch (printError) {
-					// フォールバック: 直接PDF生成
-					console.warn('⚠️ Print dialog failed, using direct PDF generation:', printError);
-					updateProgress(70, 100, 'PDF生成', '直接PDF生成に切り替えています...');
+          updateProgress(100, 100, '完了', 'PDFの保存画面が開きました');
+          console.log('✅ Print dialog opened successfully');
+        } catch (printError) {
+          // フォールバック: 直接PDF生成
+          console.warn('⚠️ Print dialog failed, using direct PDF generation:', printError);
+          updateProgress(70, 100, 'PDF生成', '直接PDF生成に切り替えています...');
 
-					const pdfBlob = await simplePdfGenerator.generateDirectPDF(htmlContent, checklist);
+          const pdfBlob = await simplePdfGenerator.generateDirectPDF(htmlContent, checklist);
 
-					updateProgress(80, 100, 'ファイル生成', 'ファイルを保存しています...');
+          updateProgress(80, 100, 'ファイル生成', 'ファイルを保存しています...');
 
-					// ダウンロード実行
-					const url = URL.createObjectURL(pdfBlob);
-					const a = document.createElement('a');
-					a.href = url;
-					a.download = filename;
-					document.body.appendChild(a);
-					a.click();
-					document.body.removeChild(a);
-					URL.revokeObjectURL(url);
-				}
+          // ダウンロード実行
+          const url = URL.createObjectURL(pdfBlob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }
 
-				console.log('✅ Pixel-perfect PDF generated successfully');
-			} else if (exportOptions.reliableMode) {
-				// 確実な日本語フォント対応PDF生成
-				updateProgress(30, 100, 'フォント読み込み', '日本語フォントを読み込んでいます...');
-				console.log('📝 Using ReliablePDFGenerator for Japanese font support');
+        console.log('✅ Pixel-perfect PDF generated successfully');
+      } else if (exportOptions.reliableMode) {
+        // 確実な日本語フォント対応PDF生成
+        updateProgress(30, 100, 'フォント読み込み', '日本語フォントを読み込んでいます...');
+        console.log('📝 Using ReliablePDFGenerator for Japanese font support');
 
-				const reliableOptions: ReliablePDFOptions = {
-					includeGuides: exportOptions.includeGuides,
-					includeNotes: exportOptions.includeNotes,
-					includeSummary: exportOptions.includeSummary,
-					sectionBreaks: exportOptions.sectionBreaks,
-					useLocalFonts: true, // 静的フォント使用
-					optimizeForMobile:
-						platformStore.capabilities.platform === 'ios' ||
-						platformStore.capabilities.platform === 'android',
-					// Phase 3: 高度なPDF機能
-					addWatermark: exportOptions.advancedMode,
-					includeTableOfContents: exportOptions.advancedMode,
-					addMetadata: true,
-					watermarkText: 'FACT CHECK EVALUATION',
-					documentTitle: `事実確認チェックシート - ${checklist.title}`,
-					documentAuthor: 'Fact Checklist Generator',
-					documentSubject:
-						'情報の信頼性を科学的・体系的に評価するための実用的事実確認チェックシート'
-				};
+        const reliableOptions: ReliablePDFOptions = {
+          includeGuides: exportOptions.includeGuides,
+          includeNotes: exportOptions.includeNotes,
+          includeSummary: exportOptions.includeSummary,
+          sectionBreaks: exportOptions.sectionBreaks,
+          useLocalFonts: true, // 静的フォント使用
+          optimizeForMobile:
+            platformStore.capabilities.platform === 'ios' ||
+            platformStore.capabilities.platform === 'android',
+          // Phase 3: 高度なPDF機能
+          addWatermark: exportOptions.advancedMode,
+          includeTableOfContents: exportOptions.advancedMode,
+          addMetadata: true,
+          watermarkText: 'FACT CHECK EVALUATION',
+          documentTitle: `事実確認チェックシート - ${checklist.title}`,
+          documentAuthor: 'Fact Checklist Generator',
+          documentSubject:
+            '情報の信頼性を科学的・体系的に評価するための実用的事実確認チェックシート'
+        };
 
-				updateProgress(50, 100, 'PDFドキュメント作成', 'PDFドキュメントを作成しています...');
-				const pdf = await reliablePDFGenerator.generateFromChecklist(checklist, reliableOptions);
+        updateProgress(50, 100, 'PDFドキュメント作成', 'PDFドキュメントを作成しています...');
+        const pdf = await reliablePDFGenerator.generateFromChecklist(checklist, reliableOptions);
 
-				updateProgress(80, 100, 'ファイル生成', 'ファイルを保存しています...');
+        updateProgress(80, 100, 'ファイル生成', 'ファイルを保存しています...');
 
-				// ファイル名生成
-				const timestamp = new Date().toISOString().slice(0, 10);
-				const sanitizedTitle = checklist.title.replace(
-					/[^\\w\\s\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FAF]/gi,
-					''
-				);
-				const filename = `事実確認チェックシート_${sanitizedTitle}_${timestamp}.pdf`;
+        // ファイル名生成
+        const timestamp = new Date().toISOString().slice(0, 10);
+        const sanitizedTitle = checklist.title.replace(
+          /[^\\w\\s\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FAF]/gi,
+          ''
+        );
+        const filename = `事実確認チェックシート_${sanitizedTitle}_${timestamp}.pdf`;
 
-				// ダウンロード実行
-				pdf.save(filename);
-				console.log('✅ PDF generated successfully with reliable font support');
-			} else {
-				// 従来のPWA対応エクスポーター使用
-				updateProgress(40, 100, 'PWAモード', '従来のPDFエクスポートを実行中...');
-				console.log('🔄 Using PWA-aware PDF exporter (legacy mode)');
-				await pdfExporter.exportPDF(checklist, {
-					textMode: exportOptions.textMode,
-					includeGuides: exportOptions.includeGuides,
-					includeNotes: exportOptions.includeNotes,
-					includeSummary: exportOptions.includeSummary,
-					sectionBreaks: exportOptions.sectionBreaks,
-					showSaveDialog: supportedFeatures.canSave,
-					enableSharing: supportedFeatures.canShare,
-					useNativeFeatures: exportOptions.advancedMode,
-					optimizeForMobile:
-						platformStore.capabilities.platform === 'ios' ||
-						platformStore.capabilities.platform === 'android'
-				});
-			}
-		} catch (error) {
-			console.error('PDF生成エラー:', error);
-			throw error; // エラーは上位でハンドリング
-		}
-	}
+        // ダウンロード実行
+        pdf.save(filename);
+        console.log('✅ PDF generated successfully with reliable font support');
+      } else {
+        // 従来のPWA対応エクスポーター使用
+        updateProgress(40, 100, 'PWAモード', '従来のPDFエクスポートを実行中...');
+        console.log('🔄 Using PWA-aware PDF exporter (legacy mode)');
+        await pdfExporter.exportPDF(checklist, {
+          textMode: exportOptions.textMode,
+          includeGuides: exportOptions.includeGuides,
+          includeNotes: exportOptions.includeNotes,
+          includeSummary: exportOptions.includeSummary,
+          sectionBreaks: exportOptions.sectionBreaks,
+          showSaveDialog: supportedFeatures.canSave,
+          enableSharing: supportedFeatures.canShare,
+          useNativeFeatures: exportOptions.advancedMode,
+          optimizeForMobile:
+            platformStore.capabilities.platform === 'ios' ||
+            platformStore.capabilities.platform === 'android'
+        });
+      }
+    } catch (error) {
+      console.error('PDF生成エラー:', error);
+      throw error; // エラーは上位でハンドリング
+    }
+  }
 
-	async function exportToHTML() {
-		updateProgress(30, 100, 'HTML生成', 'HTMLコンテンツを生成しています...');
-		const htmlContent = generateSectionedHTMLContent();
-		updateProgress(70, 100, 'ファイル作成', 'HTMLファイルを作成しています...');
-		const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
-		const filename = `事実確認チェックシート_${checklist!.title}_${new Date().toISOString().slice(0, 10)}.html`;
-		downloadBlob(blob, filename);
-	}
+  async function exportToHTML() {
+    updateProgress(30, 100, 'HTML生成', 'HTMLコンテンツを生成しています...');
+    const htmlContent = generateSectionedHTMLContent();
+    updateProgress(70, 100, 'ファイル作成', 'HTMLファイルを作成しています...');
+    const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+    const filename = `事実確認チェックシート_${checklist!.title}_${new Date().toISOString().slice(0, 10)}.html`;
+    downloadBlob(blob, filename);
+  }
 
-	async function exportToJSON() {
-		updateProgress(30, 100, 'データ整理', 'エクスポートデータを整理しています...');
+  async function exportToJSON() {
+    updateProgress(30, 100, 'データ整理', 'エクスポートデータを整理しています...');
 
-		// アイテムデータをオプションに応じて調整
-		const processedItems = checklist!.items.map(item => {
-			const processedItem = { ...item };
+    // アイテムデータをオプションに応じて調整
+    const processedItems = checklist!.items.map(item => {
+      const processedItem = { ...item };
 
-			// ガイド内容を含めない場合は削除
-			if (!exportOptions.includeGuides) {
-				delete processedItem.guideContent;
-			}
+      // ガイド内容を含めない場合は削除
+      if (!exportOptions.includeGuides) {
+        delete processedItem.guideContent;
+      }
 
-			return processedItem;
-		});
+      return processedItem;
+    });
 
-		const exportData = {
-			title: checklist!.title,
-			notes: exportOptions.includeNotes ? checklist!.notes : undefined,
-			createdAt: checklist!.createdAt.toISOString(),
-			completedAt: checklist!.completedAt?.toISOString(),
-			score: exportOptions.includeSummary ? checklist!.score : undefined,
-			judgment: exportOptions.includeSummary ? checklist!.judgment : undefined,
-			judgmentAdvice: exportOptions.includeSummary ? checklist!.judgmentAdvice : undefined,
-			confidenceLevel: exportOptions.includeSummary ? checklist!.confidenceLevel : undefined,
-			confidenceText: exportOptions.includeSummary ? checklist!.confidenceText : undefined,
-			items: processedItems,
-			sections: exportOptions.includeSummary ? groupItemsByCategory() : undefined,
-			exportedAt: new Date().toISOString(),
-			version: '1.0',
-			exportOptions: {
-				includeGuides: exportOptions.includeGuides,
-				includeNotes: exportOptions.includeNotes,
-				includeSummary: exportOptions.includeSummary
-			}
-		};
+    const exportData = {
+      title: checklist!.title,
+      notes: exportOptions.includeNotes ? checklist!.notes : undefined,
+      createdAt: checklist!.createdAt.toISOString(),
+      completedAt: checklist!.completedAt?.toISOString(),
+      score: exportOptions.includeSummary ? checklist!.score : undefined,
+      judgment: exportOptions.includeSummary ? checklist!.judgment : undefined,
+      judgmentAdvice: exportOptions.includeSummary ? checklist!.judgmentAdvice : undefined,
+      confidenceLevel: exportOptions.includeSummary ? checklist!.confidenceLevel : undefined,
+      confidenceText: exportOptions.includeSummary ? checklist!.confidenceText : undefined,
+      items: processedItems,
+      sections: exportOptions.includeSummary ? groupItemsByCategory() : undefined,
+      exportedAt: new Date().toISOString(),
+      version: '1.0',
+      exportOptions: {
+        includeGuides: exportOptions.includeGuides,
+        includeNotes: exportOptions.includeNotes,
+        includeSummary: exportOptions.includeSummary
+      }
+    };
 
-		// undefinedのプロパティを削除
-		Object.keys(exportData).forEach(key => {
-			if (exportData[key as keyof typeof exportData] === undefined) {
-				delete exportData[key as keyof typeof exportData];
-			}
-		});
+    // undefinedのプロパティを削除
+    Object.keys(exportData).forEach(key => {
+      if (exportData[key as keyof typeof exportData] === undefined) {
+        delete exportData[key as keyof typeof exportData];
+      }
+    });
 
-		updateProgress(70, 100, 'JSON生成', 'JSONファイルを生成しています...');
-		const jsonString = JSON.stringify(exportData, null, 2);
-		const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8' });
-		const filename = `事実確認チェックシート_${checklist!.title}_${new Date().toISOString().slice(0, 10)}.json`;
-		downloadBlob(blob, filename);
-	}
+    updateProgress(70, 100, 'JSON生成', 'JSONファイルを生成しています...');
+    const jsonString = JSON.stringify(exportData, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8' });
+    const filename = `事実確認チェックシート_${checklist!.title}_${new Date().toISOString().slice(0, 10)}.json`;
+    downloadBlob(blob, filename);
+  }
 
-	async function exportToMarkdown() {
-		updateProgress(30, 100, 'Markdown生成', 'Markdownコンテンツを生成しています...');
-		const markdownContent = generateMarkdownContent();
-		updateProgress(70, 100, 'ファイル作成', 'Markdownファイルを作成しています...');
-		const blob = new Blob([markdownContent], { type: 'text/markdown;charset=utf-8' });
-		const filename = `事実確認チェックシート_${checklist!.title}_${new Date().toISOString().slice(0, 10)}.md`;
-		downloadBlob(blob, filename);
-	}
+  async function exportToMarkdown() {
+    updateProgress(30, 100, 'Markdown生成', 'Markdownコンテンツを生成しています...');
+    const markdownContent = generateMarkdownContent();
+    updateProgress(70, 100, 'ファイル作成', 'Markdownファイルを作成しています...');
+    const blob = new Blob([markdownContent], { type: 'text/markdown;charset=utf-8' });
+    const filename = `事実確認チェックシート_${checklist!.title}_${new Date().toISOString().slice(0, 10)}.md`;
+    downloadBlob(blob, filename);
+  }
 
-	function generateSectionedHTMLContent(): string {
-		if (!checklist) return '';
+  function generateSectionedHTMLContent(): string {
+    if (!checklist) return '';
 
-		const sections = groupItemsByCategory();
+    const sections = groupItemsByCategory();
 
-		return `
+    return `
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -706,8 +706,8 @@
 		</div>
 		
 		${
-			exportOptions.includeSummary
-				? `
+      exportOptions.includeSummary
+        ? `
 		<div class="score-summary">
 			<h2>📊 評価結果サマリー</h2>
 			<div class="score-grid">
@@ -726,26 +726,26 @@
 					</span>
 				</div>
 				${
-					checklist.judgmentAdvice
-						? `
+          checklist.judgmentAdvice
+            ? `
 				<div class="score-item">
 					<strong>推奨</strong>
 					${checklist.judgmentAdvice}
 				</div>
 				`
-						: ''
-				}
+            : ''
+        }
 			</div>
 		</div>
 		`
-				: ''
-		}
+        : ''
+    }
 	</div>
 
 	<!-- カテゴリ別セクション -->
 	${sections
-		.map(
-			section => `
+    .map(
+      section => `
 		<div class="category-section">
 			<div class="section-header ${section.category.id}">
 				<div class="section-title">
@@ -768,13 +768,13 @@
 			</div>
 		</div>
 	`
-		)
-		.join('')}
+    )
+    .join('')}
 
 	<!-- ノートセクション -->
 	${
-		exportOptions.includeNotes && checklist.notes
-			? `
+    exportOptions.includeNotes && checklist.notes
+      ? `
 		<div class="notes-section">
 			<h2>📝 評価メモ</h2>
 			<div class="notes-content">
@@ -782,8 +782,8 @@
 			</div>
 		</div>
 	`
-			: ''
-	}
+      : ''
+  }
 
 	<!-- フッター -->
 	<div class="footer">
@@ -793,163 +793,163 @@
 </body>
 </html>
 		`.trim();
-	}
+  }
 
-	function generateMarkdownContent(): string {
-		if (!checklist) return '';
+  function generateMarkdownContent(): string {
+    if (!checklist) return '';
 
-		const sections = groupItemsByCategory();
+    const sections = groupItemsByCategory();
 
-		// Markdownヘッダー
-		let markdown = `# 📋 ${checklist.title}\n\n`;
+    // Markdownヘッダー
+    let markdown = `# 📋 ${checklist.title}\n\n`;
 
-		// メタ情報
-		markdown += '## 📄 基本情報\n\n';
-		markdown += `- **作成日**: ${checklist.createdAt.toLocaleDateString('ja-JP')}\n`;
-		if (checklist.completedAt) {
-			markdown += `- **評価完了日**: ${checklist.completedAt.toLocaleDateString('ja-JP')}\n`;
-		}
-		markdown += `- **出力日**: ${new Date().toLocaleDateString('ja-JP')}\n\n`;
+    // メタ情報
+    markdown += '## 📄 基本情報\n\n';
+    markdown += `- **作成日**: ${checklist.createdAt.toLocaleDateString('ja-JP')}\n`;
+    if (checklist.completedAt) {
+      markdown += `- **評価完了日**: ${checklist.completedAt.toLocaleDateString('ja-JP')}\n`;
+    }
+    markdown += `- **出力日**: ${new Date().toLocaleDateString('ja-JP')}\n\n`;
 
-		// サマリー
-		if (exportOptions.includeSummary) {
-			markdown += '## 📊 評価結果サマリー\n\n';
-			markdown += '| 項目 | 値 |\n';
-			markdown += '|------|----|\n';
-			markdown += `| 総合スコア | ${checklist.score.total}/${checklist.score.maxScore} (${checklist.confidenceLevel}%) |\n`;
-			markdown += `| 信頼度 | ${checklist.confidenceText} |\n`;
-			markdown += `| 最終判定 | ${getJudgmentTextPlain(checklist.judgment)} |\n`;
-			if (checklist.judgmentAdvice) {
-				markdown += `| 推奨アクション | ${checklist.judgmentAdvice} |\n`;
-			}
-			markdown += '\n';
+    // サマリー
+    if (exportOptions.includeSummary) {
+      markdown += '## 📊 評価結果サマリー\n\n';
+      markdown += '| 項目 | 値 |\n';
+      markdown += '|------|----|\n';
+      markdown += `| 総合スコア | ${checklist.score.total}/${checklist.score.maxScore} (${checklist.confidenceLevel}%) |\n`;
+      markdown += `| 信頼度 | ${checklist.confidenceText} |\n`;
+      markdown += `| 最終判定 | ${getJudgmentTextPlain(checklist.judgment)} |\n`;
+      if (checklist.judgmentAdvice) {
+        markdown += `| 推奨アクション | ${checklist.judgmentAdvice} |\n`;
+      }
+      markdown += '\n';
 
-			// セクション別達成率
-			markdown += '### 📈 セクション別達成率\n\n';
-			markdown += '| セクション | 完了率 | 完了項目 |\n';
-			markdown += '|------------|--------|----------|\n';
-			sections.forEach(section => {
-				markdown += `| ${section.category.emoji} ${section.category.name} | ${section.completionRate}% | ${section.checkedItems.length}/${section.items.length} |\n`;
-			});
-			markdown += '\n';
-		}
+      // セクション別達成率
+      markdown += '### 📈 セクション別達成率\n\n';
+      markdown += '| セクション | 完了率 | 完了項目 |\n';
+      markdown += '|------------|--------|----------|\n';
+      sections.forEach(section => {
+        markdown += `| ${section.category.emoji} ${section.category.name} | ${section.completionRate}% | ${section.checkedItems.length}/${section.items.length} |\n`;
+      });
+      markdown += '\n';
+    }
 
-		// カテゴリ別チェック項目
-		markdown += '## 📋 チェック項目詳細\n\n';
+    // カテゴリ別チェック項目
+    markdown += '## 📋 チェック項目詳細\n\n';
 
-		sections.forEach((section, index) => {
-			if (exportOptions.sectionBreaks && index > 0) {
-				markdown += '---\n\n';
-			}
+    sections.forEach((section, index) => {
+      if (exportOptions.sectionBreaks && index > 0) {
+        markdown += '---\n\n';
+      }
 
-			markdown += `### ${section.category.emoji} ${section.category.name}\n\n`;
-			markdown += `> ${section.category.description}\n\n`;
-			markdown += `**達成状況**: ${section.checkedItems.length}/${section.items.length} 完了 (${section.completionRate}%)\n\n`;
+      markdown += `### ${section.category.emoji} ${section.category.name}\n\n`;
+      markdown += `> ${section.category.description}\n\n`;
+      markdown += `**達成状況**: ${section.checkedItems.length}/${section.items.length} 完了 (${section.completionRate}%)\n\n`;
 
-			section.items.forEach(item => {
-				const checkbox = item.checked ? '- [x]' : '- [ ]';
-				markdown += `${checkbox} **${item.title}**\n`;
-				markdown += `  ${item.description}\n`;
+      section.items.forEach(item => {
+        const checkbox = item.checked ? '- [x]' : '- [ ]';
+        markdown += `${checkbox} **${item.title}**\n`;
+        markdown += `  ${item.description}\n`;
 
-				if (exportOptions.includeGuides && item.guideContent) {
-					markdown += '\n';
-					markdown += '  <details>\n';
-					markdown += `  <summary>📚 ガイド: ${item.guideContent.title}</summary>\n\n`;
-					markdown += `  ${item.guideContent.content}\n\n`;
+        if (exportOptions.includeGuides && item.guideContent) {
+          markdown += '\n';
+          markdown += '  <details>\n';
+          markdown += `  <summary>📚 ガイド: ${item.guideContent.title}</summary>\n\n`;
+          markdown += `  ${item.guideContent.content}\n\n`;
 
-					if (item.guideContent.examples) {
-						if (item.guideContent.examples.good.length > 0) {
-							markdown += '  **✅ 良い例:**\n';
-							item.guideContent.examples.good.forEach(ex => {
-								markdown += `  - ${ex}\n`;
-							});
-							markdown += '\n';
-						}
+          if (item.guideContent.examples) {
+            if (item.guideContent.examples.good.length > 0) {
+              markdown += '  **✅ 良い例:**\n';
+              item.guideContent.examples.good.forEach(ex => {
+                markdown += `  - ${ex}\n`;
+              });
+              markdown += '\n';
+            }
 
-						if (item.guideContent.examples.bad.length > 0) {
-							markdown += '  **❌ 悪い例:**\n';
-							item.guideContent.examples.bad.forEach(ex => {
-								markdown += `  - ${ex}\n`;
-							});
-							markdown += '\n';
-						}
-					}
-					markdown += '  </details>\n';
-				}
-				markdown += '\n';
-			});
-		});
+            if (item.guideContent.examples.bad.length > 0) {
+              markdown += '  **❌ 悪い例:**\n';
+              item.guideContent.examples.bad.forEach(ex => {
+                markdown += `  - ${ex}\n`;
+              });
+              markdown += '\n';
+            }
+          }
+          markdown += '  </details>\n';
+        }
+        markdown += '\n';
+      });
+    });
 
-		// ノート
-		if (exportOptions.includeNotes && checklist.notes) {
-			markdown += '## 📝 評価メモ\n\n';
-			markdown += '```\n';
-			markdown += `${checklist.notes}\n`;
-			markdown += '```\n\n';
-		}
+    // ノート
+    if (exportOptions.includeNotes && checklist.notes) {
+      markdown += '## 📝 評価メモ\n\n';
+      markdown += '```\n';
+      markdown += `${checklist.notes}\n`;
+      markdown += '```\n\n';
+    }
 
-		// フッター
-		markdown += '---\n\n';
-		markdown += '*実用的事実確認チェックシートによる評価結果*  \n';
-		markdown += `*生成日時: ${new Date().toLocaleString('ja-JP')}*\n`;
+    // フッター
+    markdown += '---\n\n';
+    markdown += '*実用的事実確認チェックシートによる評価結果*  \n';
+    markdown += `*生成日時: ${new Date().toLocaleString('ja-JP')}*\n`;
 
-		return markdown;
-	}
+    return markdown;
+  }
 
-	function downloadBlob(blob: Blob, filename: string) {
-		const url = URL.createObjectURL(blob);
-		const a = document.createElement('a');
-		a.href = url;
-		a.download = filename;
-		document.body.appendChild(a);
-		a.click();
-		document.body.removeChild(a);
-		URL.revokeObjectURL(url);
-	}
+  function downloadBlob(blob: Blob, filename: string) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
 
-	function getJudgmentText(judgment: string | null): string {
-		switch (judgment) {
-			case 'accept':
-				return '📗 採用';
-			case 'caution':
-				return '📙 要注意';
-			case 'reject':
-				return '📕 不採用';
-			default:
-				return '❓ 未判定';
-		}
-	}
+  function getJudgmentText(judgment: string | null): string {
+    switch (judgment) {
+      case 'accept':
+        return '📗 採用';
+      case 'caution':
+        return '📙 要注意';
+      case 'reject':
+        return '📕 不採用';
+      default:
+        return '❓ 未判定';
+    }
+  }
 
-	function getJudgmentTextPlain(judgment: string | null): string {
-		switch (judgment) {
-			case 'accept':
-				return '✅ 採用';
-			case 'caution':
-				return '⚠️ 要注意';
-			case 'reject':
-				return '❌ 不採用';
-			default:
-				return '❓ 未判定';
-		}
-	}
+  function getJudgmentTextPlain(judgment: string | null): string {
+    switch (judgment) {
+      case 'accept':
+        return '✅ 採用';
+      case 'caution':
+        return '⚠️ 要注意';
+      case 'reject':
+        return '❌ 不採用';
+      default:
+        return '❓ 未判定';
+    }
+  }
 
-	function getJudgmentColor(judgment: string | null): string {
-		switch (judgment) {
-			case 'accept':
-				return '#27ae60';
-			case 'caution':
-				return '#f39c12';
-			case 'reject':
-				return '#e74c3c';
-			default:
-				return '#95a5a6';
-		}
-	}
+  function getJudgmentColor(judgment: string | null): string {
+    switch (judgment) {
+      case 'accept':
+        return '#27ae60';
+      case 'caution':
+        return '#f39c12';
+      case 'reject':
+        return '#e74c3c';
+      default:
+        return '#95a5a6';
+    }
+  }
 
-	async function copyToClipboard() {
-		if (!checklist) return;
+  async function copyToClipboard() {
+    if (!checklist) return;
 
-		const text = `
+    const text = `
 📋 事実確認評価結果
 
 タイトル: ${checklist.title}
@@ -964,728 +964,728 @@ ${sections.map(s => `${s.category.emoji} ${s.category.name}: ${s.completionRate}
 ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
 		`.trim();
 
-		try {
-			await navigator.clipboard.writeText(text);
-			alert('📋 クリップボードにコピーしました');
-		} catch (error) {
-			console.error('コピーに失敗:', error);
-			alert('❌ コピーに失敗しました');
-		}
-	}
+    try {
+      await navigator.clipboard.writeText(text);
+      alert('📋 クリップボードにコピーしました');
+    } catch (error) {
+      console.error('コピーに失敗:', error);
+      alert('❌ コピーに失敗しました');
+    }
+  }
 </script>
 
 <div
-	class="modal-backdrop"
-	bind:this={modalElement}
-	onclick={handleBackdropClick}
-	onkeydown={e => {
-		if (e.key === 'Escape') {
-			onClose();
-		}
-	}}
-	role="dialog"
-	aria-modal="true"
-	aria-labelledby="modal-title"
-	tabindex="-1"
+  class="modal-backdrop"
+  bind:this={modalElement}
+  onclick={handleBackdropClick}
+  onkeydown={e => {
+    if (e.key === 'Escape') {
+      onClose();
+    }
+  }}
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="modal-title"
+  tabindex="-1"
 >
-	<div class="modal-content">
-		<div class="modal-header">
-			<h2 id="modal-title">📄 エクスポート・共有</h2>
-			<button class="close-btn" onclick={onClose} aria-label="閉じる"> ✕ </button>
-		</div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modal-title">📄 エクスポート・共有</h2>
+      <button class="close-btn" onclick={onClose} aria-label="閉じる"> ✕ </button>
+    </div>
 
-		<div class="modal-body">
-			<!-- フォーマット選択 -->
-			<div class="option-group">
-				<h3>📋 出力形式</h3>
-				<div class="format-options">
-					<label class="radio-option">
-						<input
-							type="radio"
-							name="format"
-							value="pdf"
-							checked={exportOptions.format === 'pdf'}
-							onchange={() => updateExportOption('format', 'pdf')}
-						/>
-						<span>📄 PDF</span>
-						<small>印刷・共有に最適（セクション分割対応）</small>
-					</label>
+    <div class="modal-body">
+      <!-- フォーマット選択 -->
+      <div class="option-group">
+        <h3>📋 出力形式</h3>
+        <div class="format-options">
+          <label class="radio-option">
+            <input
+              type="radio"
+              name="format"
+              value="pdf"
+              checked={exportOptions.format === 'pdf'}
+              onchange={() => updateExportOption('format', 'pdf')}
+            />
+            <span>📄 PDF</span>
+            <small>印刷・共有に最適（セクション分割対応）</small>
+          </label>
 
-					<label class="radio-option">
-						<input
-							type="radio"
-							name="format"
-							value="html"
-							checked={exportOptions.format === 'html'}
-							onchange={() => updateExportOption('format', 'html')}
-						/>
-						<span>🌐 HTML</span>
-						<small>ブラウザで表示可能（セクション構造化）</small>
-					</label>
+          <label class="radio-option">
+            <input
+              type="radio"
+              name="format"
+              value="html"
+              checked={exportOptions.format === 'html'}
+              onchange={() => updateExportOption('format', 'html')}
+            />
+            <span>🌐 HTML</span>
+            <small>ブラウザで表示可能（セクション構造化）</small>
+          </label>
 
-					<label class="radio-option">
-						<input
-							type="radio"
-							name="format"
-							value="json"
-							checked={exportOptions.format === 'json'}
-							onchange={() => updateExportOption('format', 'json')}
-						/>
-						<span>📊 JSON</span>
-						<small>データ形式（プログラム処理用）</small>
-					</label>
+          <label class="radio-option">
+            <input
+              type="radio"
+              name="format"
+              value="json"
+              checked={exportOptions.format === 'json'}
+              onchange={() => updateExportOption('format', 'json')}
+            />
+            <span>📊 JSON</span>
+            <small>データ形式（プログラム処理用）</small>
+          </label>
 
-					<label class="radio-option">
-						<input
-							type="radio"
-							name="format"
-							value="markdown"
-							checked={exportOptions.format === 'markdown'}
-							onchange={() => updateExportOption('format', 'markdown')}
-						/>
-						<span>📝 Markdown</span>
-						<small>テキスト形式（GitHub/エディタで表示可能）</small>
-					</label>
-				</div>
-			</div>
+          <label class="radio-option">
+            <input
+              type="radio"
+              name="format"
+              value="markdown"
+              checked={exportOptions.format === 'markdown'}
+              onchange={() => updateExportOption('format', 'markdown')}
+            />
+            <span>📝 Markdown</span>
+            <small>テキスト形式（GitHub/エディタで表示可能）</small>
+          </label>
+        </div>
+      </div>
 
-			<!-- 内容オプション -->
-			<div class="option-group">
-				<h3>📝 含める内容</h3>
-				<div class="checkbox-options">
-					<label class="checkbox-option">
-						<input
-							type="checkbox"
-							checked={exportOptions.includeSummary}
-							onchange={e =>
-								updateExportOption('includeSummary', (e.target as HTMLInputElement).checked)}
-						/>
-						<span>📊 評価サマリー</span>
-						<small>スコア・判定結果の概要</small>
-					</label>
+      <!-- 内容オプション -->
+      <div class="option-group">
+        <h3>📝 含める内容</h3>
+        <div class="checkbox-options">
+          <label class="checkbox-option">
+            <input
+              type="checkbox"
+              checked={exportOptions.includeSummary}
+              onchange={e =>
+                updateExportOption('includeSummary', (e.target as HTMLInputElement).checked)}
+            />
+            <span>📊 評価サマリー</span>
+            <small>スコア・判定結果の概要</small>
+          </label>
 
-					<label class="checkbox-option">
-						<input
-							type="checkbox"
-							checked={exportOptions.includeGuides}
-							onchange={e =>
-								updateExportOption('includeGuides', (e.target as HTMLInputElement).checked)}
-						/>
-						<span>📚 ガイド内容</span>
-						<small>各項目の詳細説明・例</small>
-					</label>
+          <label class="checkbox-option">
+            <input
+              type="checkbox"
+              checked={exportOptions.includeGuides}
+              onchange={e =>
+                updateExportOption('includeGuides', (e.target as HTMLInputElement).checked)}
+            />
+            <span>📚 ガイド内容</span>
+            <small>各項目の詳細説明・例</small>
+          </label>
 
-					<label class="checkbox-option">
-						<input
-							type="checkbox"
-							checked={exportOptions.includeNotes}
-							onchange={e =>
-								updateExportOption('includeNotes', (e.target as HTMLInputElement).checked)}
-						/>
-						<span>📝 評価メモ</span>
-						<small>追加したメモ・コメント</small>
-					</label>
+          <label class="checkbox-option">
+            <input
+              type="checkbox"
+              checked={exportOptions.includeNotes}
+              onchange={e =>
+                updateExportOption('includeNotes', (e.target as HTMLInputElement).checked)}
+            />
+            <span>📝 評価メモ</span>
+            <small>追加したメモ・コメント</small>
+          </label>
 
-					{#if exportOptions.format === 'pdf' || exportOptions.format === 'markdown'}
-						<label class="checkbox-option">
-							<input
-								type="checkbox"
-								checked={exportOptions.sectionBreaks}
-								onchange={e =>
-									updateExportOption('sectionBreaks', (e.target as HTMLInputElement).checked)}
-							/>
-							<span>📄 セクション区切り</span>
-							<small
-								>{exportOptions.format === 'pdf'
-									? '各セクションを個別ページに分離'
-									: 'セクション間に区切り線を追加'}</small
-							>
-						</label>
-					{/if}
+          {#if exportOptions.format === 'pdf' || exportOptions.format === 'markdown'}
+            <label class="checkbox-option">
+              <input
+                type="checkbox"
+                checked={exportOptions.sectionBreaks}
+                onchange={e =>
+                  updateExportOption('sectionBreaks', (e.target as HTMLInputElement).checked)}
+              />
+              <span>📄 セクション区切り</span>
+              <small
+                >{exportOptions.format === 'pdf'
+                  ? '各セクションを個別ページに分離'
+                  : 'セクション間に区切り線を追加'}</small
+              >
+            </label>
+          {/if}
 
-					{#if exportOptions.format === 'pdf'}
-						<div class="pdf-mode-section">
-							<div class="section-label">PDF生成モード（いずれか1つを選択）</div>
+          {#if exportOptions.format === 'pdf'}
+            <div class="pdf-mode-section">
+              <div class="section-label">PDF生成モード（いずれか1つを選択）</div>
 
-							<label class="checkbox-option">
-								<input
-									type="checkbox"
-									checked={exportOptions.pixelPerfectMode}
-									onchange={e =>
-										updateExportOption('pixelPerfectMode', (e.target as HTMLInputElement).checked)}
-								/>
-								<span>🎨 ピクセルパーフェクト PDF</span>
-								<small>ブラウザ表示と完全一致（印刷プレビュー使用・推奨）</small>
-							</label>
+              <label class="checkbox-option">
+                <input
+                  type="checkbox"
+                  checked={exportOptions.pixelPerfectMode}
+                  onchange={e =>
+                    updateExportOption('pixelPerfectMode', (e.target as HTMLInputElement).checked)}
+                />
+                <span>🎨 ピクセルパーフェクト PDF</span>
+                <small>ブラウザ表示と完全一致（印刷プレビュー使用・推奨）</small>
+              </label>
 
-							<label class="checkbox-option">
-								<input
-									type="checkbox"
-									checked={exportOptions.reliableMode}
-									onchange={e =>
-										updateExportOption('reliableMode', (e.target as HTMLInputElement).checked)}
-								/>
-								<span>🔥 確実な日本語フォント対応</span>
-								<small>文字化け防止・CSP対応（プログラムで生成）</small>
-							</label>
+              <label class="checkbox-option">
+                <input
+                  type="checkbox"
+                  checked={exportOptions.reliableMode}
+                  onchange={e =>
+                    updateExportOption('reliableMode', (e.target as HTMLInputElement).checked)}
+                />
+                <span>🔥 確実な日本語フォント対応</span>
+                <small>文字化け防止・CSP対応（プログラムで生成）</small>
+              </label>
 
-							<label class="checkbox-option">
-								<input
-									type="checkbox"
-									checked={exportOptions.textMode}
-									onchange={e =>
-										updateExportOption('textMode', (e.target as HTMLInputElement).checked)}
-								/>
-								<span>🔤 テキストベースPDF</span>
-								<small>文字検索・コピー可能（レガシーモード）</small>
-							</label>
-						</div>
+              <label class="checkbox-option">
+                <input
+                  type="checkbox"
+                  checked={exportOptions.textMode}
+                  onchange={e =>
+                    updateExportOption('textMode', (e.target as HTMLInputElement).checked)}
+                />
+                <span>🔤 テキストベースPDF</span>
+                <small>文字検索・コピー可能（レガシーモード）</small>
+              </label>
+            </div>
 
-						<label class="checkbox-option">
-							<input
-								type="checkbox"
-								checked={exportOptions.advancedMode}
-								onchange={e =>
-									updateExportOption('advancedMode', (e.target as HTMLInputElement).checked)}
-							/>
-							<span>⚡ 高度なPWA機能</span>
-							<small>プラットフォーム固有の最適化を使用</small>
-						</label>
+            <label class="checkbox-option">
+              <input
+                type="checkbox"
+                checked={exportOptions.advancedMode}
+                onchange={e =>
+                  updateExportOption('advancedMode', (e.target as HTMLInputElement).checked)}
+              />
+              <span>⚡ 高度なPWA機能</span>
+              <small>プラットフォーム固有の最適化を使用</small>
+            </label>
 
-						<!-- プラットフォーム機能表示 -->
-						{#if platformStore.capabilities.isNativeApp || supportedFeatures.hasNativeFeatures}
-							<div class="platform-info">
-								<div class="platform-badge">
-									{#if platformStore.capabilities.isNativeApp}
-										📱 ネイティブアプリ機能
-									{:else}
-										🌐 拡張機能
-									{/if}
-								</div>
-								<div class="feature-list">
-									{#if supportedFeatures.canSave}
-										<span class="feature-item">💾 直接保存</span>
-									{/if}
-									{#if supportedFeatures.canShare}
-										<span class="feature-item">📤 ネイティブ共有</span>
-									{/if}
-									{#if supportedFeatures.qualityLevel === 'high'}
-										<span class="feature-item">✨ 高品質</span>
-									{/if}
-								</div>
-							</div>
-						{/if}
-					{/if}
-				</div>
-			</div>
-		</div>
+            <!-- プラットフォーム機能表示 -->
+            {#if platformStore.capabilities.isNativeApp || supportedFeatures.hasNativeFeatures}
+              <div class="platform-info">
+                <div class="platform-badge">
+                  {#if platformStore.capabilities.isNativeApp}
+                    📱 ネイティブアプリ機能
+                  {:else}
+                    🌐 拡張機能
+                  {/if}
+                </div>
+                <div class="feature-list">
+                  {#if supportedFeatures.canSave}
+                    <span class="feature-item">💾 直接保存</span>
+                  {/if}
+                  {#if supportedFeatures.canShare}
+                    <span class="feature-item">📤 ネイティブ共有</span>
+                  {/if}
+                  {#if supportedFeatures.qualityLevel === 'high'}
+                    <span class="feature-item">✨ 高品質</span>
+                  {/if}
+                </div>
+              </div>
+            {/if}
+          {/if}
+        </div>
+      </div>
+    </div>
 
-		<div class="modal-footer">
-			<!-- 進捗インジケータ -->
-			{#if isExporting}
-				<div class="progress-container">
-					<div class="progress-header">
-						<span class="progress-stage">{exportProgress.stage}</span>
-						<span class="progress-percentage">{Math.round(exportProgress.current)}%</span>
-					</div>
-					<div class="progress-bar">
-						<div
-							class="progress-fill"
-							style:width="{(exportProgress.current / exportProgress.total) * 100}%"
-						></div>
-					</div>
-					<div class="progress-message">{exportProgress.message}</div>
-				</div>
-			{/if}
+    <div class="modal-footer">
+      <!-- 進捗インジケータ -->
+      {#if isExporting}
+        <div class="progress-container">
+          <div class="progress-header">
+            <span class="progress-stage">{exportProgress.stage}</span>
+            <span class="progress-percentage">{Math.round(exportProgress.current)}%</span>
+          </div>
+          <div class="progress-bar">
+            <div
+              class="progress-fill"
+              style:width="{(exportProgress.current / exportProgress.total) * 100}%"
+            ></div>
+          </div>
+          <div class="progress-message">{exportProgress.message}</div>
+        </div>
+      {/if}
 
-			<!-- エラー表示 -->
-			{#if exportError}
-				<div class="error-container">
-					<div class="error-header">
-						<span class="error-icon">⚠️</span>
-						<span class="error-title">エクスポートエラー</span>
-					</div>
-					<div class="error-message">{exportError}</div>
-					<div class="error-actions">
-						<button class="btn btn-secondary btn-small" onclick={resetExportState}>
-							🔄 再試行
-						</button>
-					</div>
-				</div>
-			{/if}
+      <!-- エラー表示 -->
+      {#if exportError}
+        <div class="error-container">
+          <div class="error-header">
+            <span class="error-icon">⚠️</span>
+            <span class="error-title">エクスポートエラー</span>
+          </div>
+          <div class="error-message">{exportError}</div>
+          <div class="error-actions">
+            <button class="btn btn-secondary btn-small" onclick={resetExportState}>
+              🔄 再試行
+            </button>
+          </div>
+        </div>
+      {/if}
 
-			<!-- 成功表示 -->
-			{#if exportSuccess}
-				<div class="success-container">
-					<div class="success-header">
-						<span class="success-icon">✅</span>
-						<span class="success-title">エクスポート完了</span>
-					</div>
-					<div class="success-message">ファイルが正常にダウンロードされました！</div>
-				</div>
-			{/if}
+      <!-- 成功表示 -->
+      {#if exportSuccess}
+        <div class="success-container">
+          <div class="success-header">
+            <span class="success-icon">✅</span>
+            <span class="success-title">エクスポート完了</span>
+          </div>
+          <div class="success-message">ファイルが正常にダウンロードされました！</div>
+        </div>
+      {/if}
 
-			<div class="action-buttons">
-				<button
-					class="btn btn-secondary"
-					onclick={copyToClipboard}
-					disabled={!checklist || isExporting}
-				>
-					📋 コピー
-				</button>
+      <div class="action-buttons">
+        <button
+          class="btn btn-secondary"
+          onclick={copyToClipboard}
+          disabled={!checklist || isExporting}
+        >
+          📋 コピー
+        </button>
 
-				<button class="btn btn-primary" onclick={handleExport} disabled={!checklist || isExporting}>
-					{isExporting ? '⏳ 出力中...' : '📤 エクスポート'}
-				</button>
-			</div>
-		</div>
-	</div>
+        <button class="btn btn-primary" onclick={handleExport} disabled={!checklist || isExporting}>
+          {isExporting ? '⏳ 出力中...' : '📤 エクスポート'}
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <style>
-	.modal-backdrop {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background: rgba(0, 0, 0, 0.6);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		z-index: 1000;
-		backdrop-filter: blur(4px);
-	}
+  .modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+  }
 
-	.modal-content {
-		background: white;
-		border-radius: 16px;
-		padding: 0;
-		width: 90%;
-		max-width: 600px;
-		max-height: 90vh;
-		overflow: hidden;
-		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-		display: flex;
-		flex-direction: column;
-	}
+  .modal-content {
+    background: white;
+    border-radius: 16px;
+    padding: 0;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+  }
 
-	.modal-header {
-		padding: 25px 30px;
-		border-bottom: 1px solid #e9ecef;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-		color: white;
-	}
+  .modal-header {
+    padding: 25px 30px;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
 
-	.modal-header h2 {
-		margin: 0;
-		font-size: 20px;
-		font-weight: 600;
-	}
+  .modal-header h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+  }
 
-	.close-btn {
-		background: none;
-		border: none;
-		font-size: 24px;
-		color: white;
-		cursor: pointer;
-		padding: 5px 10px;
-		border-radius: 6px;
-		transition: background-color 0.2s;
-	}
+  .close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+  }
 
-	.close-btn:hover {
-		background: rgba(255, 255, 255, 0.1);
-	}
+  .close-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
 
-	.modal-body {
-		padding: 30px;
-		overflow-y: auto;
-		flex: 1;
-	}
+  .modal-body {
+    padding: 30px;
+    overflow-y: auto;
+    flex: 1;
+  }
 
-	.option-group {
-		margin-bottom: 30px;
-	}
+  .option-group {
+    margin-bottom: 30px;
+  }
 
-	.option-group h3 {
-		margin: 0 0 15px 0;
-		font-size: 16px;
-		font-weight: 600;
-		color: #2c3e50;
-		display: flex;
-		align-items: center;
-		gap: 8px;
-	}
+  .option-group h3 {
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 
-	.format-options,
-	.checkbox-options {
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-	}
+  .format-options,
+  .checkbox-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
 
-	.radio-option,
-	.checkbox-option {
-		display: flex;
-		align-items: flex-start;
-		gap: 12px;
-		padding: 15px;
-		border: 2px solid #e9ecef;
-		border-radius: 10px;
-		cursor: pointer;
-		transition: all 0.2s;
-		background: #fafafa;
-	}
+  .radio-option,
+  .checkbox-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 15px;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #fafafa;
+  }
 
-	.radio-option:hover,
-	.checkbox-option:hover {
-		border-color: #3498db;
-		background: #f8f9fa;
-	}
+  .radio-option:hover,
+  .checkbox-option:hover {
+    border-color: #3498db;
+    background: #f8f9fa;
+  }
 
-	.radio-option input[type='radio']:checked + span,
-	.checkbox-option input[type='checkbox']:checked + span {
-		color: #3498db;
-		font-weight: 600;
-	}
+  .radio-option input[type='radio']:checked + span,
+  .checkbox-option input[type='checkbox']:checked + span {
+    color: #3498db;
+    font-weight: 600;
+  }
 
-	.radio-option input[type='radio']:checked,
-	.checkbox-option input[type='checkbox']:checked {
-		accent-color: #3498db;
-	}
+  .radio-option input[type='radio']:checked,
+  .checkbox-option input[type='checkbox']:checked {
+    accent-color: #3498db;
+  }
 
-	.radio-option span,
-	.checkbox-option span {
-		font-weight: 500;
-		font-size: 15px;
-		color: #2c3e50;
-	}
+  .radio-option span,
+  .checkbox-option span {
+    font-weight: 500;
+    font-size: 15px;
+    color: #2c3e50;
+  }
 
-	.radio-option small,
-	.checkbox-option small {
-		display: block;
-		color: #6c757d;
-		font-size: 13px;
-		margin-top: 4px;
-		line-height: 1.4;
-	}
+  .radio-option small,
+  .checkbox-option small {
+    display: block;
+    color: #6c757d;
+    font-size: 13px;
+    margin-top: 4px;
+    line-height: 1.4;
+  }
 
-	.modal-footer {
-		padding: 20px 30px;
-		border-top: 1px solid #e9ecef;
-		background: #f8f9fa;
-	}
+  .modal-footer {
+    padding: 20px 30px;
+    border-top: 1px solid #e9ecef;
+    background: #f8f9fa;
+  }
 
-	.action-buttons {
-		display: flex;
-		gap: 12px;
-		justify-content: flex-end;
-	}
+  .action-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+  }
 
-	.btn {
-		padding: 12px 24px;
-		border: none;
-		border-radius: 8px;
-		font-weight: 600;
-		cursor: pointer;
-		transition: all 0.2s;
-		font-size: 14px;
-		display: flex;
-		align-items: center;
-		gap: 8px;
-	}
+  .btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 
-	.btn:disabled {
-		opacity: 0.6;
-		cursor: not-allowed;
-	}
+  .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 
-	.btn-secondary {
-		background: #6c757d;
-		color: white;
-	}
+  .btn-secondary {
+    background: #6c757d;
+    color: white;
+  }
 
-	.btn-secondary:hover:not(:disabled) {
-		background: #5a6268;
-		transform: translateY(-1px);
-	}
+  .btn-secondary:hover:not(:disabled) {
+    background: #5a6268;
+    transform: translateY(-1px);
+  }
 
-	.btn-primary {
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-		color: white;
-	}
+  .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
 
-	.btn-primary:hover:not(:disabled) {
-		transform: translateY(-1px);
-		box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-	}
+  .btn-primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  }
 
-	/* レスポンシブ対応 */
-	@media (max-width: 768px) {
-		.modal-content {
-			width: 95%;
-			max-height: 95vh;
-		}
+  /* レスポンシブ対応 */
+  @media (max-width: 768px) {
+    .modal-content {
+      width: 95%;
+      max-height: 95vh;
+    }
 
-		.modal-header,
-		.modal-body,
-		.modal-footer {
-			padding-left: 20px;
-			padding-right: 20px;
-		}
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
 
-		.action-buttons {
-			flex-direction: column;
-		}
+    .action-buttons {
+      flex-direction: column;
+    }
 
-		.btn {
-			width: 100%;
-			justify-content: center;
-		}
-	}
+    .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
 
-	/* アクセシビリティ */
-	@media (prefers-reduced-motion: reduce) {
-		.modal-backdrop,
-		.modal-content,
-		.btn,
-		.radio-option,
-		.checkbox-option {
-			transition: none;
-		}
-	}
+  /* アクセシビリティ */
+  @media (prefers-reduced-motion: reduce) {
+    .modal-backdrop,
+    .modal-content,
+    .btn,
+    .radio-option,
+    .checkbox-option {
+      transition: none;
+    }
+  }
 
-	/* フォーカス状態 */
-	.radio-option:focus-within,
-	.checkbox-option:focus-within {
-		border-color: #3498db;
-		box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-	}
+  /* フォーカス状態 */
+  .radio-option:focus-within,
+  .checkbox-option:focus-within {
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+  }
 
-	.btn:focus {
-		outline: 2px solid #3498db;
-		outline-offset: 2px;
-	}
+  .btn:focus {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
+  }
 
-	/* PDFモードセクション */
-	.pdf-mode-section {
-		margin-top: 10px;
-		padding: 15px;
-		background: rgba(52, 152, 219, 0.05);
-		border: 1px solid rgba(52, 152, 219, 0.2);
-		border-radius: 8px;
-	}
+  /* PDFモードセクション */
+  .pdf-mode-section {
+    margin-top: 10px;
+    padding: 15px;
+    background: rgba(52, 152, 219, 0.05);
+    border: 1px solid rgba(52, 152, 219, 0.2);
+    border-radius: 8px;
+  }
 
-	.section-label {
-		font-size: 12px;
-		font-weight: 600;
-		color: #2c3e50;
-		margin-bottom: 10px;
-		text-transform: uppercase;
-		letter-spacing: 0.5px;
-	}
+  .section-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
 
-	.pdf-mode-section .checkbox-option {
-		margin-bottom: 8px;
-	}
+  .pdf-mode-section .checkbox-option {
+    margin-bottom: 8px;
+  }
 
-	.pdf-mode-section .checkbox-option:last-child {
-		margin-bottom: 0;
-	}
+  .pdf-mode-section .checkbox-option:last-child {
+    margin-bottom: 0;
+  }
 
-	/* プラットフォーム情報スタイル */
-	.platform-info {
-		margin-top: 10px;
-		padding: 12px;
-		background: linear-gradient(135deg, #e8f4fd, #d1ecf1);
-		border-radius: 8px;
-		border-left: 3px solid #3498db;
-	}
+  /* プラットフォーム情報スタイル */
+  .platform-info {
+    margin-top: 10px;
+    padding: 12px;
+    background: linear-gradient(135deg, #e8f4fd, #d1ecf1);
+    border-radius: 8px;
+    border-left: 3px solid #3498db;
+  }
 
-	.platform-badge {
-		font-weight: 600;
-		color: #2c3e50;
-		margin-bottom: 8px;
-		font-size: 13px;
-	}
+  .platform-badge {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
 
-	.feature-list {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 8px;
-	}
+  .feature-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
 
-	.feature-item {
-		background: rgba(255, 255, 255, 0.8);
-		padding: 4px 8px;
-		border-radius: 12px;
-		font-size: 11px;
-		color: #2c3e50;
-		border: 1px solid rgba(52, 152, 219, 0.3);
-	}
+  .feature-item {
+    background: rgba(255, 255, 255, 0.8);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    color: #2c3e50;
+    border: 1px solid rgba(52, 152, 219, 0.3);
+  }
 
-	/* 進捗インジケータスタイル */
-	.progress-container {
-		margin-bottom: 20px;
-		padding: 16px;
-		background: linear-gradient(135deg, #e8f4fd, #d1ecf1);
-		border-radius: 12px;
-		border-left: 4px solid #3498db;
-	}
+  /* 進捗インジケータスタイル */
+  .progress-container {
+    margin-bottom: 20px;
+    padding: 16px;
+    background: linear-gradient(135deg, #e8f4fd, #d1ecf1);
+    border-radius: 12px;
+    border-left: 4px solid #3498db;
+  }
 
-	.progress-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-bottom: 8px;
-	}
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
 
-	.progress-stage {
-		font-weight: 600;
-		color: #2c3e50;
-		font-size: 14px;
-	}
+  .progress-stage {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 14px;
+  }
 
-	.progress-percentage {
-		font-weight: 700;
-		color: #3498db;
-		font-size: 14px;
-	}
+  .progress-percentage {
+    font-weight: 700;
+    color: #3498db;
+    font-size: 14px;
+  }
 
-	.progress-bar {
-		height: 8px;
-		background: rgba(52, 152, 219, 0.2);
-		border-radius: 4px;
-		overflow: hidden;
-		margin-bottom: 8px;
-	}
+  .progress-bar {
+    height: 8px;
+    background: rgba(52, 152, 219, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
 
-	.progress-fill {
-		height: 100%;
-		background: linear-gradient(90deg, #3498db, #2980b9);
-		border-radius: 4px;
-		transition: width 0.3s ease;
-		position: relative;
-	}
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3498db, #2980b9);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    position: relative;
+  }
 
-	.progress-fill::after {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		bottom: 0;
-		right: 0;
-		background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-		animation: shimmer 2s infinite;
-	}
+  .progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shimmer 2s infinite;
+  }
 
-	@keyframes shimmer {
-		0% {
-			transform: translateX(-100%);
-		}
-		100% {
-			transform: translateX(100%);
-		}
-	}
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
 
-	.progress-message {
-		font-size: 13px;
-		color: #5a6c7d;
-		font-style: italic;
-	}
+  .progress-message {
+    font-size: 13px;
+    color: #5a6c7d;
+    font-style: italic;
+  }
 
-	/* エラー表示スタイル */
-	.error-container {
-		margin-bottom: 20px;
-		padding: 16px;
-		background: linear-gradient(135deg, #fdebeb, #f1d4d4);
-		border-radius: 12px;
-		border-left: 4px solid #e74c3c;
-	}
+  /* エラー表示スタイル */
+  .error-container {
+    margin-bottom: 20px;
+    padding: 16px;
+    background: linear-gradient(135deg, #fdebeb, #f1d4d4);
+    border-radius: 12px;
+    border-left: 4px solid #e74c3c;
+  }
 
-	.error-header {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		margin-bottom: 8px;
-	}
+  .error-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
 
-	.error-icon {
-		font-size: 16px;
-	}
+  .error-icon {
+    font-size: 16px;
+  }
 
-	.error-title {
-		font-weight: 600;
-		color: #c0392b;
-		font-size: 14px;
-	}
+  .error-title {
+    font-weight: 600;
+    color: #c0392b;
+    font-size: 14px;
+  }
 
-	.error-message {
-		color: #721c24;
-		font-size: 13px;
-		line-height: 1.4;
-		margin-bottom: 12px;
-	}
+  .error-message {
+    color: #721c24;
+    font-size: 13px;
+    line-height: 1.4;
+    margin-bottom: 12px;
+  }
 
-	.error-actions {
-		display: flex;
-		gap: 8px;
-	}
+  .error-actions {
+    display: flex;
+    gap: 8px;
+  }
 
-	.btn-small {
-		padding: 6px 12px;
-		font-size: 12px;
-	}
+  .btn-small {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
 
-	/* 成功表示スタイル */
-	.success-container {
-		margin-bottom: 20px;
-		padding: 16px;
-		background: linear-gradient(135deg, #ebf7eb, #d4f1d4);
-		border-radius: 12px;
-		border-left: 4px solid #27ae60;
-	}
+  /* 成功表示スタイル */
+  .success-container {
+    margin-bottom: 20px;
+    padding: 16px;
+    background: linear-gradient(135deg, #ebf7eb, #d4f1d4);
+    border-radius: 12px;
+    border-left: 4px solid #27ae60;
+  }
 
-	.success-header {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		margin-bottom: 8px;
-	}
+  .success-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
 
-	.success-icon {
-		font-size: 16px;
-	}
+  .success-icon {
+    font-size: 16px;
+  }
 
-	.success-title {
-		font-weight: 600;
-		color: #1e8449;
-		font-size: 14px;
-	}
+  .success-title {
+    font-weight: 600;
+    color: #1e8449;
+    font-size: 14px;
+  }
 
-	.success-message {
-		color: #145a32;
-		font-size: 13px;
-		line-height: 1.4;
-	}
+  .success-message {
+    color: #145a32;
+    font-size: 13px;
+    line-height: 1.4;
+  }
 
-	/* レスポンシブ対応 */
-	@media (max-width: 480px) {
-		.progress-header {
-			flex-direction: column;
-			align-items: flex-start;
-			gap: 4px;
-		}
+  /* レスポンシブ対応 */
+  @media (max-width: 480px) {
+    .progress-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
 
-		.error-header,
-		.success-header {
-			flex-direction: column;
-			align-items: flex-start;
-			gap: 4px;
-		}
-	}
+    .error-header,
+    .success-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+  }
 </style>

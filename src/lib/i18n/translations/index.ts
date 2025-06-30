@@ -21,57 +21,57 @@ import { translations as ko, metadata as koMetadata } from './ko.js';
 
 // Translation map
 export const translations: Record<LanguageCode, TranslationKeys> = {
-	ja,
-	en,
-	fr,
-	'zh-TW': zhTW,
-	es,
-	pt,
-	hi,
-	de,
-	it,
-	ar,
-	id,
-	ko
+  ja,
+  en,
+  fr,
+  'zh-TW': zhTW,
+  es,
+  pt,
+  hi,
+  de,
+  it,
+  ar,
+  id,
+  ko
 };
 
 // Metadata map
 export const translationMetadata = {
-	ja: jaMetadata,
-	en: enMetadata,
-	fr: frMetadata,
-	'zh-TW': zhTWMetadata,
-	es: esMetadata,
-	pt: ptMetadata,
-	hi: hiMetadata,
-	de: deMetadata,
-	it: itMetadata,
-	ar: arMetadata,
-	id: idMetadata,
-	ko: koMetadata
+  ja: jaMetadata,
+  en: enMetadata,
+  fr: frMetadata,
+  'zh-TW': zhTWMetadata,
+  es: esMetadata,
+  pt: ptMetadata,
+  hi: hiMetadata,
+  de: deMetadata,
+  it: itMetadata,
+  ar: arMetadata,
+  id: idMetadata,
+  ko: koMetadata
 };
 
 // Helper function to get translation by language code
 export function getTranslation(languageCode: LanguageCode): TranslationKeys {
-	return translations[languageCode] || translations.ja; // fallback to Japanese
+  return translations[languageCode] || translations.ja; // fallback to Japanese
 }
 
 // Helper function to get translation metadata
 export function getTranslationMetadata(languageCode: LanguageCode) {
-	return translationMetadata[languageCode] || translationMetadata.ja;
+  return translationMetadata[languageCode] || translationMetadata.ja;
 }
 
 // Get available languages with completion status
 export function getAvailableLanguages() {
-	return Object.entries(translationMetadata).map(([code, meta]) => ({
-		code: code as LanguageCode,
-		...meta
-	}));
+  return Object.entries(translationMetadata).map(([code, meta]) => ({
+    code: code as LanguageCode,
+    ...meta
+  }));
 }
 
 // Get completed translations only (above certain threshold)
 export function getCompletedTranslations(threshold = 80) {
-	return getAvailableLanguages().filter(lang => lang.completeness >= threshold);
+  return getAvailableLanguages().filter(lang => lang.completeness >= threshold);
 }
 
 export default translations;
