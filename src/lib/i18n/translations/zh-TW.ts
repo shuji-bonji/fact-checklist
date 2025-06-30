@@ -96,6 +96,7 @@ export const translations: TranslationKeys = {
     score: '評估分數',
     confidenceLevel: '信心程度',
     finalJudgment: '最終判斷',
+    completed: '已完成',
     judgment: {
       accept: '接受',
       caution: '謹慎',
@@ -191,7 +192,21 @@ export const translations: TranslationKeys = {
       finalizing: '完成中...',
       completed: '完成',
       failed: '失敗'
-    }
+    },
+    generatedAt: '產生時間',
+    summaryTable: {
+      item: '項目',
+      value: '數值'
+    },
+    table: {
+      section: '章節',
+      completionRate: '完成率',
+      completedItems: '已完成項目'
+    },
+    sectionCompletionRates: '章節完成率',
+    achievementStatus: '達成狀態',
+    goodExamples: '良好範例',
+    badExamples: '不良範例'
   },
 
   // 歷史記錄

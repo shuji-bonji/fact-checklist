@@ -186,6 +186,7 @@ export interface TranslationKeys {
     actions: string;
     exportShare: string;
     reEdit: string;
+    completed: string;
   };
 
   // チェック項目カテゴリ
@@ -241,6 +242,20 @@ export interface TranslationKeys {
       completed: string;
       failed: string;
     };
+    generatedAt: string;
+    summaryTable: {
+      item: string;
+      value: string;
+    };
+    table: {
+      section: string;
+      completionRate: string;
+      completedItems: string;
+    };
+    sectionCompletionRates: string;
+    achievementStatus: string;
+    goodExamples: string;
+    badExamples: string;
   };
 
   // 履歴

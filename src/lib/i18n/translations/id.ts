@@ -90,6 +90,7 @@ export const translations: TranslationKeys = {
     score: 'Skor Evaluasi',
     confidenceLevel: 'Tingkat Kepercayaan',
     finalJudgment: 'Penilaian Akhir',
+    completed: 'Selesai',
     judgment: {
       accept: 'Terima',
       caution: 'Hati-hati',
@@ -181,7 +182,21 @@ export const translations: TranslationKeys = {
       finalizing: 'Menyelesaikan...',
       completed: 'Selesai',
       failed: 'Gagal'
-    }
+    },
+    generatedAt: 'Dihasilkan pada',
+    summaryTable: {
+      item: 'Item',
+      value: 'Nilai'
+    },
+    table: {
+      section: 'Bagian',
+      completionRate: 'Tingkat Penyelesaian',
+      completedItems: 'Item Selesai'
+    },
+    sectionCompletionRates: 'Tingkat Penyelesaian per Bagian',
+    achievementStatus: 'Status Pencapaian',
+    goodExamples: 'Contoh Baik',
+    badExamples: 'Contoh Buruk'
   },
   history: {
     title: 'Riwayat Evaluasi',

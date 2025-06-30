@@ -92,6 +92,7 @@ export const translations: TranslationKeys = {
     score: 'Bewertungspunktzahl',
     confidenceLevel: 'Vertrauensniveau',
     finalJudgment: 'Endurteil',
+    completed: 'Abgeschlossen',
     judgment: {
       accept: 'Akzeptieren',
       caution: 'Vorsicht',
@@ -186,7 +187,21 @@ export const translations: TranslationKeys = {
       finalizing: 'Finalisierung...',
       completed: 'Abgeschlossen',
       failed: 'Fehlgeschlagen'
-    }
+    },
+    generatedAt: 'Erstellt am',
+    summaryTable: {
+      item: 'Element',
+      value: 'Wert'
+    },
+    table: {
+      section: 'Abschnitt',
+      completionRate: 'Fertigstellungsgrad',
+      completedItems: 'Abgeschlossene Elemente'
+    },
+    sectionCompletionRates: 'Abschnitts-Fertigstellungsgrade',
+    achievementStatus: 'Erfolgsstatus',
+    goodExamples: 'Gute Beispiele',
+    badExamples: 'Schlechte Beispiele'
   },
   history: {
     title: 'Bewertungsverlauf',

@@ -91,6 +91,7 @@ export const translations: TranslationKeys = {
     score: 'Punteggio di Valutazione',
     confidenceLevel: 'Livello di Fiducia',
     finalJudgment: 'Giudizio Finale',
+    completed: 'Completato',
     judgment: {
       accept: 'Accetta',
       caution: 'Attenzione',
@@ -183,7 +184,21 @@ export const translations: TranslationKeys = {
       finalizing: 'Finalizzazione...',
       completed: 'Completato',
       failed: 'Fallito'
-    }
+    },
+    generatedAt: 'Generato il',
+    summaryTable: {
+      item: 'Elemento',
+      value: 'Valore'
+    },
+    table: {
+      section: 'Sezione',
+      completionRate: 'Tasso di Completamento',
+      completedItems: 'Elementi Completati'
+    },
+    sectionCompletionRates: 'Tassi di Completamento Sezioni',
+    achievementStatus: 'Stato di Completamento',
+    goodExamples: 'Buoni Esempi',
+    badExamples: 'Cattivi Esempi'
   },
   history: {
     title: 'Cronologia Valutazione',

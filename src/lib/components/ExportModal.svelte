@@ -686,8 +686,12 @@
   }
 
   async function exportToMarkdown() {
-    updateProgress(30, 100, t('export.progress.generating'), t('export.progress.generating'));
-    const markdownContent = generateMarkdownContent();
+    updateProgress(30, 100, t('export.progress.processing'), t('export.progress.processing'));
+
+    // Import i18n functions for multilingual data
+    const { factChecklistI18n } = await import('$lib/i18n/index.js');
+
+    const markdownContent = await generateMarkdownContent(factChecklistI18n);
     updateProgress(70, 100, t('export.progress.finalizing'), t('export.progress.finalizing'));
     const blob = new Blob([markdownContent], { type: 'text/markdown;charset=utf-8' });
     const filename = `${t('app.title')}_${checklist!.title}_${new Date().toISOString().slice(0, 10)}.md`;
@@ -1003,83 +1007,177 @@
 		`.trim();
   }
 
-  function generateMarkdownContent(): string {
+  async function generateMarkdownContent(factChecklistI18n: any): Promise<string> {
     if (!checklist) return '';
 
     const sections = groupItemsByCategory();
 
-    // Markdownヘッダー
+    // Markdown header with title
     let markdown = `# 📋 ${checklist.title}\n\n`;
 
-    // メタ情報
-    markdown += '## 📄 基本情報\n\n';
-    markdown += `- **作成日**: ${checklist.createdAt.toLocaleDateString('ja-JP')}\n`;
+    // Meta information section
+    markdown += `## 📄 ${t('checklist.title')}\n\n`;
+    markdown += `- **${t('datetime.createdAt')}**: ${factChecklistI18n.formatDate(checklist.createdAt)}\n`;
     if (checklist.completedAt) {
-      markdown += `- **評価完了日**: ${checklist.completedAt.toLocaleDateString('ja-JP')}\n`;
+      markdown += `- **${t('datetime.completedAt')}**: ${factChecklistI18n.formatDate(checklist.completedAt)}\n`;
     }
-    markdown += `- **出力日**: ${new Date().toLocaleDateString('ja-JP')}\n\n`;
+    markdown += `- **${t('export.generatedAt', { fallback: 'Generated at' })}**: ${factChecklistI18n.formatDate(new Date())}\n`;
+    if (checklist.description) {
+      markdown += `- **${t('checklist.targetInfo')}**: ${checklist.description}\n`;
+    }
+    markdown += '\n';
 
-    // サマリー
+    // Summary section
     if (exportOptions.includeSummary) {
-      markdown += '## 📊 評価結果サマリー\n\n';
-      markdown += '| 項目 | 値 |\n';
+      markdown += `## 📊 ${t('checklist.evaluationResults')}\n\n`;
+
+      // Results table
+      markdown += `| ${t('export.summaryTable.item', { fallback: 'Item' })} | ${t('export.summaryTable.value', { fallback: 'Value' })} |\n`;
       markdown += '|------|----|\n';
-      markdown += `| 総合スコア | ${checklist.score.total}/${checklist.score.maxScore} (${checklist.confidenceLevel}%) |\n`;
-      markdown += `| 信頼度 | ${checklist.confidenceText} |\n`;
-      markdown += `| 最終判定 | ${getJudgmentTextPlain(checklist.judgment)} |\n`;
-      if (checklist.judgmentAdvice) {
-        markdown += `| 推奨アクション | ${checklist.judgmentAdvice} |\n`;
+      markdown += `| ${t('checklist.totalScore')} | ${checklist.score.total}/${checklist.score.maxScore} (${checklist.confidenceLevel}%) |\n`;
+
+      // Get translated confidence text
+      const confidenceLevel =
+        checklist.confidenceLevel >= 80
+          ? 'high'
+          : checklist.confidenceLevel >= 60
+            ? 'medium'
+            : checklist.confidenceLevel >= 40
+              ? 'low'
+              : 'poor';
+      const confidenceText = factChecklistI18n.getConfidenceText(confidenceLevel);
+      markdown += `| ${t('checklist.confidenceLevel')} | ${confidenceText} |\n`;
+
+      // Get translated judgment
+      if (checklist.judgment) {
+        const judgmentText = factChecklistI18n.getJudgmentText(checklist.judgment);
+        markdown += `| ${t('checklist.finalJudgment')} | ${judgmentText} |\n`;
       }
+
+      // Get translated advice
+      const adviceText = factChecklistI18n.getConfidenceLevelAdvice(confidenceLevel);
+      markdown += `| ${t('checklist.recommendedActions')} | ${adviceText} |\n`;
       markdown += '\n';
 
-      // セクション別達成率
-      markdown += '### 📈 セクション別達成率\n\n';
-      markdown += '| セクション | 完了率 | 完了項目 |\n';
+      // Section completion rates
+      markdown += `### 📈 ${t('export.sectionCompletionRates', { fallback: 'Section Completion Rates' })}\n\n`;
+      markdown += `| ${t('export.table.section', { fallback: 'Section' })} | ${t('export.table.completionRate', { fallback: 'Completion Rate' })} | ${t('export.table.completedItems', { fallback: 'Completed Items' })} |\n`;
       markdown += '|------------|--------|----------|\n';
+
       sections.forEach(section => {
-        markdown += `| ${section.category.emoji} ${section.category.name} | ${section.completionRate}% | ${section.checkedItems.length}/${section.items.length} |\n`;
+        try {
+          const categoryName = factChecklistI18n.getCategoryName(section.category.id);
+          const categoryEmoji = factChecklistI18n.getCategoryEmoji(section.category.id);
+          markdown += `| ${categoryEmoji} ${categoryName} | ${section.completionRate}% | ${section.checkedItems.length}/${section.items.length} |\n`;
+        } catch {
+          // Fallback to original values
+          markdown += `| ${section.category.emoji} ${section.category.name} | ${section.completionRate}% | ${section.checkedItems.length}/${section.items.length} |\n`;
+        }
       });
       markdown += '\n';
     }
 
-    // カテゴリ別チェック項目
-    markdown += '## 📋 チェック項目詳細\n\n';
+    // Detailed checklist items
+    markdown += `## 📋 ${t('checklist.itemsDetail')}\n\n`;
 
     sections.forEach((section, index) => {
       if (exportOptions.sectionBreaks && index > 0) {
         markdown += '---\n\n';
       }
 
-      markdown += `### ${section.category.emoji} ${section.category.name}\n\n`;
-      markdown += `> ${section.category.description}\n\n`;
-      markdown += `**達成状況**: ${section.checkedItems.length}/${section.items.length} 完了 (${section.completionRate}%)\n\n`;
+      // Get translated category information
+      try {
+        const categoryName = factChecklistI18n.getCategoryName(section.category.id);
+        const categoryDescription = factChecklistI18n.getCategoryDescription(section.category.id);
+        const categoryEmoji = factChecklistI18n.getCategoryEmoji(section.category.id);
+
+        markdown += `### ${categoryEmoji} ${categoryName}\n\n`;
+        markdown += `> ${categoryDescription}\n\n`;
+      } catch {
+        // Fallback to original values
+        markdown += `### ${section.category.emoji} ${section.category.name}\n\n`;
+        markdown += `> ${section.category.description}\n\n`;
+      }
+
+      markdown += `**${t('export.achievementStatus', { fallback: 'Achievement Status' })}**: ${section.checkedItems.length}/${section.items.length} ${t('checklist.completed')} (${section.completionRate}%)\n\n`;
 
       section.items.forEach(item => {
         const checkbox = item.checked ? '- [x]' : '- [ ]';
-        markdown += `${checkbox} **${item.title}**\n`;
-        markdown += `  ${item.description}\n`;
+
+        // Get translated item information
+        try {
+          const itemTitle = factChecklistI18n.getCheckItemTitle(item.translationKey || item.id);
+          const itemDescription = factChecklistI18n.getCheckItemDescription(
+            item.translationKey || item.id
+          );
+
+          markdown += `${checkbox} **${itemTitle}**\n`;
+          markdown += `  ${itemDescription}\n`;
+        } catch {
+          // Fallback to original values
+          markdown += `${checkbox} **${item.title}**\n`;
+          markdown += `  ${item.description}\n`;
+        }
 
         if (exportOptions.includeGuides && item.guideContent) {
           markdown += '\n';
           markdown += '  <details>\n';
-          markdown += `  <summary>📚 ガイド: ${item.guideContent.title}</summary>\n\n`;
-          markdown += `  ${item.guideContent.content}\n\n`;
 
-          if (item.guideContent.examples) {
-            if (item.guideContent.examples.good.length > 0) {
-              markdown += '  **✅ 良い例:**\n';
-              item.guideContent.examples.good.forEach(ex => {
+          try {
+            const guideTitle = factChecklistI18n.getCheckItemGuideTitle(
+              item.translationKey || item.id
+            );
+            const guideContent = factChecklistI18n.getCheckItemGuideContent(
+              item.translationKey || item.id
+            );
+
+            markdown += `  <summary>📚 ${t('common.guide')}: ${guideTitle}</summary>\n\n`;
+            markdown += `  ${guideContent}\n\n`;
+
+            // Get translated examples
+            const goodExamples = factChecklistI18n.getCheckItemExamplesGood(
+              item.translationKey || item.id
+            );
+            const badExamples = factChecklistI18n.getCheckItemExamplesBad(
+              item.translationKey || item.id
+            );
+
+            if (goodExamples.length > 0) {
+              markdown += `  **✅ ${t('export.goodExamples', { fallback: 'Good Examples' })}:**\n`;
+              goodExamples.forEach((ex: string) => {
                 markdown += `  - ${ex}\n`;
               });
               markdown += '\n';
             }
 
-            if (item.guideContent.examples.bad.length > 0) {
-              markdown += '  **❌ 悪い例:**\n';
-              item.guideContent.examples.bad.forEach(ex => {
+            if (badExamples.length > 0) {
+              markdown += `  **❌ ${t('export.badExamples', { fallback: 'Bad Examples' })}:**\n`;
+              badExamples.forEach((ex: string) => {
                 markdown += `  - ${ex}\n`;
               });
               markdown += '\n';
+            }
+          } catch {
+            // Fallback to original guide content
+            markdown += `  <summary>📚 ${t('common.guide')}: ${item.guideContent.title}</summary>\n\n`;
+            markdown += `  ${item.guideContent.content}\n\n`;
+
+            if (item.guideContent.examples) {
+              if (item.guideContent.examples.good.length > 0) {
+                markdown += `  **✅ ${t('export.goodExamples', { fallback: 'Good Examples' })}:**\n`;
+                item.guideContent.examples.good.forEach(ex => {
+                  markdown += `  - ${ex}\n`;
+                });
+                markdown += '\n';
+              }
+
+              if (item.guideContent.examples.bad.length > 0) {
+                markdown += `  **❌ ${t('export.badExamples', { fallback: 'Bad Examples' })}:**\n`;
+                item.guideContent.examples.bad.forEach(ex => {
+                  markdown += `  - ${ex}\n`;
+                });
+                markdown += '\n';
+              }
             }
           }
           markdown += '  </details>\n';
@@ -1088,18 +1186,18 @@
       });
     });
 
-    // ノート
+    // Notes section
     if (exportOptions.includeNotes && checklist.notes) {
-      markdown += '## 📝 評価メモ\n\n';
+      markdown += `## 📝 ${t('checklist.evaluationNotes')}\n\n`;
       markdown += '```\n';
       markdown += `${checklist.notes}\n`;
       markdown += '```\n\n';
     }
 
-    // フッター
+    // Footer
     markdown += '---\n\n';
-    markdown += '*実用的事実確認チェックシートによる評価結果*  \n';
-    markdown += `*生成日時: ${new Date().toLocaleString('ja-JP')}*\n`;
+    markdown += `*${t('app.title')}*  \n`;
+    markdown += `*${t('export.generatedAt', { fallback: 'Generated at' })}: ${factChecklistI18n.formatDate(new Date())}*\n`;
 
     return markdown;
   }
@@ -1123,19 +1221,6 @@
         return '📙 要注意';
       case 'reject':
         return '📕 不採用';
-      default:
-        return '❓ 未判定';
-    }
-  }
-
-  function getJudgmentTextPlain(judgment: string | null): string {
-    switch (judgment) {
-      case 'accept':
-        return '✅ 採用';
-      case 'caution':
-        return '⚠️ 要注意';
-      case 'reject':
-        return '❌ 不採用';
       default:
         return '❓ 未判定';
     }

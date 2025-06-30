@@ -89,6 +89,7 @@ export const translations: TranslationKeys = {
     score: '평가 점수',
     confidenceLevel: '신뢰도',
     finalJudgment: '최종 판단',
+    completed: '완료',
     judgment: {
       accept: '수용',
       caution: '주의',
@@ -180,7 +181,21 @@ export const translations: TranslationKeys = {
       finalizing: '완료 중...',
       completed: '완료',
       failed: '실패'
-    }
+    },
+    generatedAt: '생성 시간',
+    summaryTable: {
+      item: '항목',
+      value: '값'
+    },
+    table: {
+      section: '섹션',
+      completionRate: '완료율',
+      completedItems: '완료된 항목'
+    },
+    sectionCompletionRates: '섹션별 완료율',
+    achievementStatus: '달성 상태',
+    goodExamples: '좋은 예시',
+    badExamples: '나쁜 예시'
   },
   history: {
     title: '평가 기록',

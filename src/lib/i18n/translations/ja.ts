@@ -138,7 +138,8 @@ export const translations: TranslationKeys = {
     completionRate: '完了率',
     actions: 'アクション',
     exportShare: 'エクスポート・共有',
-    reEdit: '再編集'
+    reEdit: '再編集',
+    completed: '完了'
   },
 
   // チェック項目カテゴリ
@@ -193,7 +194,21 @@ export const translations: TranslationKeys = {
       finalizing: '完了処理中...',
       completed: '完了',
       failed: '失敗'
-    }
+    },
+    generatedAt: '生成日時',
+    summaryTable: {
+      item: '項目',
+      value: '値'
+    },
+    table: {
+      section: 'セクション',
+      completionRate: '完了率',
+      completedItems: '完了項目'
+    },
+    sectionCompletionRates: 'セクション別達成率',
+    achievementStatus: '達成状況',
+    goodExamples: '良い例',
+    badExamples: '悪い例'
   },
 
   // 履歴

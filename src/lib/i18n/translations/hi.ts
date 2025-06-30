@@ -91,6 +91,7 @@ export const translations: TranslationKeys = {
     score: 'मूल्यांकन स्कोर',
     confidenceLevel: 'विश्वास स्तर',
     finalJudgment: 'अंतिम निर्णय',
+    completed: 'पूर्ण',
     judgment: {
       accept: 'स्वीकार करें',
       caution: 'सावधानी',
@@ -182,7 +183,21 @@ export const translations: TranslationKeys = {
       finalizing: 'अंतिम रूप दे रहा है...',
       completed: 'पूर्ण',
       failed: 'असफल'
-    }
+    },
+    generatedAt: 'पर उत्पन्न',
+    summaryTable: {
+      item: 'आइटम',
+      value: 'मूल्य'
+    },
+    table: {
+      section: 'खंड',
+      completionRate: 'पूर्णता दर',
+      completedItems: 'पूर्ण आइटम'
+    },
+    sectionCompletionRates: 'खंड पूर्णता दरें',
+    achievementStatus: 'उपलब्धि स्थिति',
+    goodExamples: 'अच्छे उदाहरण',
+    badExamples: 'बुरे उदाहरण'
   },
   history: {
     title: 'मूल्यांकन इतिहास',

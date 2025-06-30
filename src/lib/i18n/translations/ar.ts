@@ -89,6 +89,7 @@ export const translations: TranslationKeys = {
     score: 'نتيجة التقييم',
     confidenceLevel: 'مستوى الثقة',
     finalJudgment: 'الحكم النهائي',
+    completed: 'مكتمل',
     judgment: {
       accept: 'قبول',
       caution: 'تحذير',
@@ -180,7 +181,21 @@ export const translations: TranslationKeys = {
       finalizing: 'جارٍ الإنهاء...',
       completed: 'مكتمل',
       failed: 'فشل'
-    }
+    },
+    generatedAt: 'تم الإنشاء في',
+    summaryTable: {
+      item: 'العنصر',
+      value: 'القيمة'
+    },
+    table: {
+      section: 'القسم',
+      completionRate: 'معدل الإكمال',
+      completedItems: 'العناصر المكتملة'
+    },
+    sectionCompletionRates: 'معدلات إكمال الأقسام',
+    achievementStatus: 'حالة الإنجاز',
+    goodExamples: 'أمثلة جيدة',
+    badExamples: 'أمثلة سيئة'
   },
   history: {
     title: 'تاريخ التقييم',

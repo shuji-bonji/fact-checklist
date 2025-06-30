@@ -139,7 +139,8 @@ export const translations: TranslationKeys = {
     completionRate: 'Completion Rate',
     actions: 'Actions',
     exportShare: 'Export & Share',
-    reEdit: 'Re-edit'
+    reEdit: 'Re-edit',
+    completed: 'Completed'
   },
 
   // Check item categories
@@ -194,7 +195,21 @@ export const translations: TranslationKeys = {
       finalizing: 'Finalizing...',
       completed: 'Completed',
       failed: 'Failed'
-    }
+    },
+    generatedAt: 'Generated at',
+    summaryTable: {
+      item: 'Item',
+      value: 'Value'
+    },
+    table: {
+      section: 'Section',
+      completionRate: 'Completion Rate',
+      completedItems: 'Completed Items'
+    },
+    sectionCompletionRates: 'Section Completion Rates',
+    achievementStatus: 'Achievement Status',
+    goodExamples: 'Good Examples',
+    badExamples: 'Bad Examples'
   },
 
   // History
