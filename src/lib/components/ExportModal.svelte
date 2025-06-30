@@ -398,6 +398,10 @@
         updateProgress(30, 100, t('export.progress.processing'), t('export.progress.processing'));
         console.log('📝 Using ReliablePDFGenerator for Japanese font support');
 
+        // Import i18n functions for multilingual PDF generation
+        const { getCurrentLanguage } = await import('$lib/i18n/index.js');
+        const currentLang = getCurrentLanguage();
+
         const reliableOptions: ReliablePDFOptions = {
           includeGuides: exportOptions.includeGuides,
           includeNotes: exportOptions.includeNotes,
@@ -411,11 +415,13 @@
           addWatermark: exportOptions.advancedMode,
           includeTableOfContents: exportOptions.advancedMode,
           addMetadata: true,
-          watermarkText: 'FACT CHECK EVALUATION',
-          documentTitle: `事実確認チェックシート - ${checklist.title}`,
-          documentAuthor: 'Fact Checklist Generator',
-          documentSubject:
-            '情報の信頼性を科学的・体系的に評価するための実用的事実確認チェックシート'
+          watermarkText: t('app.title').toUpperCase(),
+          documentTitle: `${t('checklist.title')} - ${checklistStore.effectiveTitle}`,
+          documentAuthor: t('app.author'),
+          documentSubject: t('app.description'),
+          // Phase 4: 国際化対応
+          t,
+          language: currentLang
         };
 
         updateProgress(50, 100, t('export.progress.generating'), t('export.progress.generating'));

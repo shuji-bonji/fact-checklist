@@ -7,7 +7,8 @@
 import type jsPDF from 'jspdf';
 import type { ChecklistResult, CheckItem } from '$lib/types/checklist.js';
 import { CATEGORIES } from '$lib/data/checklist-items.js';
-import type { TranslationFunction } from '$lib/i18n/types.js';
+import type { TranslationFunction, LanguageCode } from '$lib/i18n/types.js';
+import { InternationalFontManager } from '$lib/i18n/fonts.js';
 // Font registration is now handled internally with caching
 // import { registerJapaneseFonts } from './fontToBase64.js';
 
@@ -29,6 +30,7 @@ export interface ReliablePDFOptions {
   documentSubject?: string; // 文書の件名
   // i18n support
   t?: TranslationFunction; // 翻訳関数
+  language?: LanguageCode; // 言語コード
 }
 
 export class ReliablePDFGenerator {
@@ -46,6 +48,7 @@ export class ReliablePDFGenerator {
   private tableOfContents: Array<{ title: string; page: number; level: number }> = [];
   private options: ReliablePDFOptions = {} as ReliablePDFOptions;
   private t!: TranslationFunction;
+  private fontManager!: InternationalFontManager;
 
   // パフォーマンス最適化: フォントキャッシュ
   private static fontCache: Map<string, string> = new Map();
@@ -72,7 +75,11 @@ export class ReliablePDFGenerator {
     // 翻訳関数の設定（フォールバック付き）
     this.t = options.t ?? ((key: string) => key);
 
-    console.log('🔥 Starting reliable PDF generation with advanced features...');
+    // 国際化フォントマネージャーの初期化
+    const language = options.language ?? 'en';
+    this.fontManager = new InternationalFontManager(this.pdf, language);
+
+    console.log(`🔥 Starting international PDF generation for language: ${language}...`);
 
     // Phase 3: PDFメタデータの設定
     if (options.addMetadata !== false) {
@@ -82,8 +89,8 @@ export class ReliablePDFGenerator {
     // 利用可能なフォントの確認
     console.log('📝 Available fonts in jsPDF:', this.pdf.getFontList());
 
-    // フォント設定の試行
-    await this.setupReliableFont(options);
+    // 国際化フォント設定
+    await this.setupInternationalFont(language);
 
     // PDF構築
     this.addHeader(checklist);
@@ -114,28 +121,27 @@ export class ReliablePDFGenerator {
     return this.pdf;
   }
 
-  private async setupReliableFont(options: ReliablePDFOptions): Promise<void> {
-    console.log('📝 Setting up reliable Japanese font...');
+  private async setupInternationalFont(language: LanguageCode): Promise<void> {
+    console.log(`📝 Setting up international font for language: ${language}...`);
 
     try {
-      // Method 1: 静的配置フォント（最優先）
-      if (options.useLocalFonts !== false) {
-        await this.tryLoadStaticFont();
+      // Try to load language-specific font
+      const fontLoaded = await this.fontManager.setupFontsForLanguage(language);
+
+      if (fontLoaded) {
+        this.fontLoaded = true;
+        console.log(`✅ Successfully loaded international font for ${language}`);
+      } else {
+        console.log(`⚠️ Using fallback font for ${language}`);
+        this.useFallbackFont = true;
       }
 
-      // Method 2: システムフォント（フォールバック）
-      if (!this.fontLoaded) {
-        console.log('⚠️ Static font failed, trying system font fallback...');
-        this.setupSystemFontFallback();
-      }
-
-      // Method 3: 安全な英数字フォント（最終フォールバック）
-      if (!this.fontLoaded && !this.useFallbackFont) {
-        console.log('⚠️ All Japanese fonts failed, using safe ASCII font...');
-        this.setupSafeFallback();
-      }
+      // Set initial font settings
+      this.fontManager.setFont('normal');
+      const fontSize = this.fontManager.getRecommendedFontSize(10);
+      this.pdf.setFontSize(fontSize);
     } catch (error) {
-      console.error('❌ Font setup failed, using final fallback:', error);
+      console.error('❌ International font setup failed, using fallback:', error);
       this.setupSafeFallback();
     }
   }
@@ -246,7 +252,9 @@ export class ReliablePDFGenerator {
     this.setFontWeight('normal');
     this.pdf.setTextColor(102, 102, 102); // #666
 
-    const createdDate = checklist.createdAt.toLocaleDateString('ja-JP', {
+    // Use locale-appropriate date formatting
+    const locale = this.getLocaleFromLanguage();
+    const createdDate = checklist.createdAt.toLocaleDateString(locale, {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit'
@@ -256,7 +264,7 @@ export class ReliablePDFGenerator {
     this.addText(`${createdLabel}: ${createdDate}`);
 
     if (checklist.completedAt) {
-      const completedDate = checklist.completedAt.toLocaleDateString('ja-JP', {
+      const completedDate = checklist.completedAt.toLocaleDateString(locale, {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit'
@@ -265,12 +273,12 @@ export class ReliablePDFGenerator {
       this.addText(`${completedLabel}: ${completedDate}`);
     }
 
-    const outputDate = new Date().toLocaleDateString('ja-JP', {
+    const outputDate = new Date().toLocaleDateString(locale, {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit'
     });
-    const outputLabel = this.useFallbackFont ? 'Generated' : this.t('datetime.updatedAt');
+    const outputLabel = this.useFallbackFont ? 'Generated' : this.t('export.generatedAt');
     this.addText(`${outputLabel}: ${outputDate}`);
     this.currentY += 15;
   }
@@ -492,18 +500,69 @@ export class ReliablePDFGenerator {
   }
 
   // ユーティリティメソッド
+  // International text rendering with RTL support
+  private addInternationalText(
+    text: string,
+    x?: number,
+    y?: number,
+    options?: { align?: 'left' | 'center' | 'right' }
+  ): void {
+    const textX = x ?? this.margin;
+    const textY = y ?? this.currentY;
+
+    if (this.fontManager.isRTL()) {
+      // For RTL languages, adjust text position
+      const textWidth = this.pdf.getTextWidth(text);
+      const adjustedX = options?.align === 'center' ? textX : this.pageWidth - textX - textWidth;
+      this.pdf.text(text, adjustedX, textY);
+    } else {
+      // LTR text rendering
+      if (options?.align === 'center') {
+        const textWidth = this.pdf.getTextWidth(text);
+        const centerX = textX + textWidth / 2;
+        this.pdf.text(text, centerX - textWidth / 2, textY);
+      } else {
+        this.pdf.text(text, textX, textY);
+      }
+    }
+
+    if (!x && !y) {
+      this.currentY += this.lineHeight;
+      this.checkPageBreak();
+    }
+  }
+
   private addText(text: string): void {
-    this.pdf.text(text, this.margin, this.currentY);
-    this.currentY += this.lineHeight;
+    this.addInternationalText(text);
   }
 
   private addWrappedText(text: string): void {
-    const lines = this.pdf.splitTextToSize(text, this.maxLineWidth - 10);
+    // Use international font manager for text wrapping with RTL support
+    const lines = this.fontManager.splitTextToFit(text, this.maxLineWidth - 10);
     lines.forEach((line: string) => {
       this.checkPageBreak();
-      this.pdf.text(line, this.margin, this.currentY);
-      this.currentY += this.lineHeight;
+      this.addInternationalText(line);
     });
+  }
+
+  // Helper method to get locale string from language code
+  private getLocaleFromLanguage(): string {
+    const language = this.options.language ?? 'en';
+    const localeMap: Record<LanguageCode, string> = {
+      ja: 'ja-JP',
+      en: 'en-US',
+      fr: 'fr-FR',
+      'zh-TW': 'zh-TW',
+      es: 'es-ES',
+      pt: 'pt-BR',
+      hi: 'hi-IN',
+      de: 'de-DE',
+      it: 'it-IT',
+      ar: 'ar-SA',
+      id: 'id-ID',
+      ko: 'ko-KR'
+    };
+    return localeMap[language] || 'en-US';
   }
 
   private checkPageBreak(requiredSpace: number = 20): void {
@@ -515,16 +574,9 @@ export class ReliablePDFGenerator {
 
   private setFontWeight(weight: 'normal' | 'bold' | 'italic'): void {
     try {
-      if (this.fontLoaded && !this.useFallbackFont) {
-        // 日本語フォントが正常に読み込まれた場合
-        this.pdf.setFont('NotoSansJP', weight === 'italic' ? 'normal' : weight);
-      } else if (this.useFallbackFont) {
-        // ASCII安全モード：courier使用
-        this.pdf.setFont('courier', weight === 'italic' ? 'normal' : weight);
-      } else {
-        // 標準モード：helvetica使用
-        this.pdf.setFont('helvetica', weight === 'italic' ? 'normal' : weight);
-      }
+      // Use international font manager for font setting
+      const fontStyle = weight === 'italic' ? 'normal' : (weight as 'normal' | 'bold');
+      this.fontManager.setFont(fontStyle);
     } catch (error) {
       // 最終的な安全フォールバック
       console.warn('⚠️ Font weight setting failed, using safe fallback:', error);
