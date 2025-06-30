@@ -314,6 +314,7 @@ export interface TranslationKeys {
       title: string;
       content: string;
       githubText: string;
+      suffix: string;
     };
   };
 

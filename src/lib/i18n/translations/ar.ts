@@ -320,7 +320,8 @@ export const translations: TranslationKeys = {
     contact: {
       title: 'معلومات الاتصال',
       content: 'إذا كانت لديك أسئلة حول سياسة الخصوصية هذه، يرجى الاتصال بنا عبر ',
-      githubText: 'GitHub Issues'
+      githubText: 'GitHub Issues',
+      suffix: '.'
     }
   },
 

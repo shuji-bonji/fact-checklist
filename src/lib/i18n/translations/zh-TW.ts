@@ -337,7 +337,8 @@ export const translations: TranslationKeys = {
     contact: {
       title: '聯絡資訊',
       content: '如果您對此隱私政策有疑問，請透過 ',
-      githubText: 'GitHub Issues'
+      githubText: 'GitHub Issues',
+      suffix: ' 聯繫我們。'
     }
   },
 

@@ -322,7 +322,8 @@ export const translations: TranslationKeys = {
       title: 'Informasi Kontak',
       content:
         'Jika Anda memiliki pertanyaan tentang kebijakan privasi ini, silakan hubungi kami melalui ',
-      githubText: 'GitHub Issues'
+      githubText: 'GitHub Issues',
+      suffix: '.'
     }
   },
 

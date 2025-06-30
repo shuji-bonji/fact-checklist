@@ -315,7 +315,8 @@ export const translations: TranslationKeys = {
     contact: {
       title: '📞 お問い合わせ',
       content: 'プライバシーポリシーに関するご質問やご不明な点がございましたら、',
-      githubText: 'GitHubのIssues'
+      githubText: 'GitHubのIssues',
+      suffix: 'からお気軽にお問い合わせください。'
     }
   },
 

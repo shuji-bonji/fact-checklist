@@ -1,5 +1,17 @@
 <script lang="ts">
-  import { t, tArray } from '$lib/i18n/index.js';
+  import { t, tArray, i18nStore } from '$lib/i18n/index.js';
+
+  // Svelte 5 runesでi18n初期化状態を監視
+  const isInitialized = $derived(i18nStore.initialized && !!i18nStore.translations);
+
+  // 配列翻訳用のヘルパー関数
+  function getTranslationArray(key: string): string[] {
+    const result = tArray(key);
+    if (Array.isArray(result)) {
+      return result;
+    }
+    return typeof result === 'string' ? [result] : [];
+  }
 </script>
 
 <svelte:head>
@@ -7,126 +19,135 @@
   <meta name="description" content={t('privacy.subtitle')} />
 </svelte:head>
 
-<div class="container">
-  <div class="privacy-header">
-    <h1>🔐 {t('privacy.title')}</h1>
-    <p class="last-updated">{t('privacy.lastUpdated')}</p>
+{#if isInitialized}
+  <div class="container">
+    <div class="privacy-header">
+      <h1>🔐 {t('privacy.title')}</h1>
+      <p class="last-updated">{t('privacy.lastUpdated')}</p>
+    </div>
+
+    <div class="privacy-content">
+      <div class="intro-section">
+        <h2>{t('privacy.introduction.title')}</h2>
+        <p>{t('privacy.introduction.content')}</p>
+      </div>
+
+      <div class="data-items-section">
+        <!-- データ収集について -->
+        <div class="data-item" data-item-id="data-collection">
+          <div class="data-item-header">
+            <h3 class="data-item-title">{t('privacy.dataCollection.title')}</h3>
+          </div>
+          <div class="data-item-content">
+            <p class="data-item-description">{t('privacy.dataCollection.description')}</p>
+            <ul class="data-item-details">
+              {#each getTranslationArray('privacy.dataCollection.details') as detail}
+                <li>{detail}</li>
+              {/each}
+            </ul>
+          </div>
+        </div>
+
+        <!-- ローカルストレージの使用 -->
+        <div class="data-item" data-item-id="local-storage">
+          <div class="data-item-header">
+            <h3 class="data-item-title">{t('privacy.localStorage.title')}</h3>
+          </div>
+          <div class="data-item-content">
+            <p class="data-item-description">{t('privacy.localStorage.description')}</p>
+            <ul class="data-item-details">
+              {#each getTranslationArray('privacy.localStorage.details') as detail}
+                <li>{detail}</li>
+              {/each}
+            </ul>
+          </div>
+        </div>
+
+        <!-- オフライン機能 -->
+        <div class="data-item" data-item-id="offline-functionality">
+          <div class="data-item-header">
+            <h3 class="data-item-title">{t('privacy.offlineFunctionality.title')}</h3>
+          </div>
+          <div class="data-item-content">
+            <p class="data-item-description">{t('privacy.offlineFunctionality.description')}</p>
+            <ul class="data-item-details">
+              {#each getTranslationArray('privacy.offlineFunctionality.details') as detail}
+                <li>{detail}</li>
+              {/each}
+            </ul>
+          </div>
+        </div>
+
+        <!-- セキュリティ対策 -->
+        <div class="data-item" data-item-id="security-measures">
+          <div class="data-item-header">
+            <h3 class="data-item-title">{t('privacy.securityMeasures.title')}</h3>
+          </div>
+          <div class="data-item-content">
+            <p class="data-item-description">{t('privacy.securityMeasures.description')}</p>
+            <ul class="data-item-details">
+              {#each getTranslationArray('privacy.securityMeasures.details') as detail}
+                <li>{detail}</li>
+              {/each}
+            </ul>
+          </div>
+        </div>
+
+        <!-- データ保持期間 -->
+        <div class="data-item" data-item-id="data-retention">
+          <div class="data-item-header">
+            <h3 class="data-item-title">{t('privacy.dataRetention.title')}</h3>
+          </div>
+          <div class="data-item-content">
+            <p class="data-item-description">{t('privacy.dataRetention.description')}</p>
+            <ul class="data-item-details">
+              {#each getTranslationArray('privacy.dataRetention.details') as detail}
+                <li>{detail}</li>
+              {/each}
+            </ul>
+          </div>
+        </div>
+
+        <!-- ポリシー更新 -->
+        <div class="data-item" data-item-id="policy-updates">
+          <div class="data-item-header">
+            <h3 class="data-item-title">{t('privacy.policyUpdates.title')}</h3>
+          </div>
+          <div class="data-item-content">
+            <p class="data-item-description">{t('privacy.policyUpdates.description')}</p>
+            <ul class="data-item-details">
+              {#each getTranslationArray('privacy.policyUpdates.details') as detail}
+                <li>{detail}</li>
+              {/each}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-section">
+        <h2>{t('privacy.contact.title')}</h2>
+        <p>
+          {t('privacy.contact.content')}
+          <a
+            href="https://github.com/shuji-bonji/fact-checklist/issues"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {t('privacy.contact.githubText')}
+          </a>
+          {t('privacy.contact.suffix')}
+        </p>
+      </div>
+    </div>
   </div>
-
-  <div class="privacy-content">
-    <div class="intro-section">
-      <h2>{t('privacy.introduction.title')}</h2>
-      <p>{t('privacy.introduction.content')}</p>
-    </div>
-
-    <div class="data-items-section">
-      <!-- データ収集について -->
-      <div class="data-item" data-item-id="data-collection">
-        <div class="data-item-header">
-          <h3 class="data-item-title">{t('privacy.dataCollection.title')}</h3>
-        </div>
-        <div class="data-item-content">
-          <p class="data-item-description">{t('privacy.dataCollection.description')}</p>
-          <ul class="data-item-details">
-            {#each tArray('privacy.dataCollection.details') as detail}
-              <li>{detail}</li>
-            {/each}
-          </ul>
-        </div>
-      </div>
-
-      <!-- ローカルストレージの使用 -->
-      <div class="data-item" data-item-id="local-storage">
-        <div class="data-item-header">
-          <h3 class="data-item-title">{t('privacy.localStorage.title')}</h3>
-        </div>
-        <div class="data-item-content">
-          <p class="data-item-description">{t('privacy.localStorage.description')}</p>
-          <ul class="data-item-details">
-            {#each tArray('privacy.localStorage.details') as detail}
-              <li>{detail}</li>
-            {/each}
-          </ul>
-        </div>
-      </div>
-
-      <!-- オフライン機能 -->
-      <div class="data-item" data-item-id="offline-functionality">
-        <div class="data-item-header">
-          <h3 class="data-item-title">{t('privacy.offlineFunctionality.title')}</h3>
-        </div>
-        <div class="data-item-content">
-          <p class="data-item-description">{t('privacy.offlineFunctionality.description')}</p>
-          <ul class="data-item-details">
-            {#each tArray('privacy.offlineFunctionality.details') as detail}
-              <li>{detail}</li>
-            {/each}
-          </ul>
-        </div>
-      </div>
-
-      <!-- セキュリティ対策 -->
-      <div class="data-item" data-item-id="security-measures">
-        <div class="data-item-header">
-          <h3 class="data-item-title">{t('privacy.securityMeasures.title')}</h3>
-        </div>
-        <div class="data-item-content">
-          <p class="data-item-description">{t('privacy.securityMeasures.description')}</p>
-          <ul class="data-item-details">
-            {#each tArray('privacy.securityMeasures.details') as detail}
-              <li>{detail}</li>
-            {/each}
-          </ul>
-        </div>
-      </div>
-
-      <!-- データ保持期間 -->
-      <div class="data-item" data-item-id="data-retention">
-        <div class="data-item-header">
-          <h3 class="data-item-title">{t('privacy.dataRetention.title')}</h3>
-        </div>
-        <div class="data-item-content">
-          <p class="data-item-description">{t('privacy.dataRetention.description')}</p>
-          <ul class="data-item-details">
-            {#each tArray('privacy.dataRetention.details') as detail}
-              <li>{detail}</li>
-            {/each}
-          </ul>
-        </div>
-      </div>
-
-      <!-- ポリシー更新 -->
-      <div class="data-item" data-item-id="policy-updates">
-        <div class="data-item-header">
-          <h3 class="data-item-title">{t('privacy.policyUpdates.title')}</h3>
-        </div>
-        <div class="data-item-content">
-          <p class="data-item-description">{t('privacy.policyUpdates.description')}</p>
-          <ul class="data-item-details">
-            {#each tArray('privacy.policyUpdates.details') as detail}
-              <li>{detail}</li>
-            {/each}
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="contact-section">
-      <h2>{t('privacy.contact.title')}</h2>
-      <p>
-        {t('privacy.contact.content')}
-        <a
-          href="https://github.com/shuji-bonji/fact-checklist/issues"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {t('privacy.contact.githubText')}
-        </a>
-        からお気軽にお問い合わせください。
-      </p>
+{:else}
+  <div class="container">
+    <div class="privacy-header">
+      <h1>🔐 Loading...</h1>
+      <p class="last-updated">Initializing translations...</p>
     </div>
   </div>
-</div>
+{/if}
 
 <style>
   .container {

@@ -327,7 +327,8 @@ export const translations: TranslationKeys = {
       title: 'Kontaktinformationen',
       content:
         'Wenn Sie Fragen zu dieser Datenschutzerklärung haben, kontaktieren Sie uns bitte über ',
-      githubText: 'GitHub Issues'
+      githubText: 'GitHub Issues',
+      suffix: '.'
     }
   },
 
