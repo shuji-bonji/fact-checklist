@@ -9,8 +9,11 @@
   import { page } from '$app/stores';
 
   // i18n
-  import { initializeI18n, t } from '$lib/i18n/index.js';
+  import { initializeI18n, t, i18nStore } from '$lib/i18n/index.js';
   import LanguageSwitcher from '$lib/components/LanguageSwitcher.svelte';
+
+  // i18n初期化状態を監視
+  const isI18nReady = $derived(i18nStore.initialized && !!i18nStore.translations);
 
   interface Props {
     children: import('svelte').Snippet;
@@ -27,6 +30,28 @@
   const isAboutPage = $derived(currentPath.includes('/about'));
   const isHelpPage = $derived(currentPath.includes('/help'));
   const isPrivacyPage = $derived(currentPath.includes('/privacy'));
+
+  // デバッグ用
+  $effect(() => {
+    console.log('Navigation debug:', {
+      currentPath,
+      isHelpPage,
+      isAboutPage,
+      isPrivacyPage,
+      isHomePage,
+      timestamp: new Date().toISOString()
+    });
+
+    // DOM要素のクラス確認
+    if (typeof window !== 'undefined') {
+      setTimeout(() => {
+        const navButtons = document.querySelectorAll('.desktop-menu .nav-link');
+        navButtons.forEach((button, index) => {
+          console.log(`Nav button ${index + 1} classes:`, button.className);
+        });
+      }, 100);
+    }
+  });
 
   onMount(async () => {
     // i18n初期化
@@ -100,20 +125,29 @@
 <svelte:head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content={t('app.description')} />
+  <meta
+    name="description"
+    content={isI18nReady ? t('app.description') : 'Information reliability evaluation checklist'}
+  />
   <!-- キーワードは各言語で適切に設定 -->
-  <meta name="author" content={t('app.author')} />
+  <meta name="author" content={isI18nReady ? t('app.author') : 'Fact Checklist Team'} />
 
   <!-- PWA用メタタグ -->
   <meta name="theme-color" content="#2c3e50" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content={t('app.title')} />
+  <meta
+    name="apple-mobile-web-app-title"
+    content={isI18nReady ? t('app.title') : 'Fact Checklist'}
+  />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content={t('app.title')} />
-  <meta property="og:description" content={t('app.description')} />
+  <meta property="og:title" content={isI18nReady ? t('app.title') : 'Fact Checklist'} />
+  <meta
+    property="og:description"
+    content={isI18nReady ? t('app.description') : 'Information reliability evaluation checklist'}
+  />
   <meta property="og:locale" content="ja_JP" />
 
   <!-- アイコン -->
@@ -121,7 +155,7 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <!-- Vite PWAが自動でmanifestリンクを挿入するため、手動linkは削除 -->
 
-  <title>{t('app.title')}</title>
+  <title>{isI18nReady ? t('app.title') : 'Fact Checklist'}</title>
 </svelte:head>
 
 <svelte:window onclick={handleClickOutside} />
@@ -129,9 +163,42 @@
 <div class="app">
   <!-- グローバルナビゲーション -->
   <nav class="global-nav">
-    <!-- タブレット用２段レイアウト -->
-    <div class="nav-content tablet-layout">
-      <div class="nav-top">
+    {#if isI18nReady}
+      <!-- タブレット用２段レイアウト -->
+      <div class="nav-content tablet-layout">
+        <div class="nav-top">
+          <button class="nav-brand" onclick={goToHome}>
+            <span class="nav-icon">🔍</span>
+            <div class="brand-text">
+              <span class="brand-title">事実確認チェックシート</span>
+              <span class="brand-subtitle">情報の信頼性を科学的評価</span>
+            </div>
+          </button>
+        </div>
+        <div class="nav-bottom">
+          <div class="nav-menu desktop-menu">
+            <button class="nav-link" class:active={isHomePage} onclick={goToHome}>
+              🏠 {t('navigation.home')}
+            </button>
+            <button class="nav-link" class:active={isAboutPage} onclick={goToAbout}>
+              📖 {t('navigation.about')}
+            </button>
+            <button class="nav-link" class:active={isHelpPage} onclick={goToHelp}>
+              ❓ {t('navigation.help')}
+            </button>
+            <button class="nav-link" class:active={isPrivacyPage} onclick={goToPrivacy}>
+              🔐 {t('navigation.privacy')}
+            </button>
+            <!-- タブレット用言語切り替え -->
+            <div class="tablet-language-switcher">
+              <LanguageSwitcher />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- デスクトップ用１段レイアウト -->
+      <div class="nav-content desktop-layout">
         <button class="nav-brand" onclick={goToHome}>
           <span class="nav-icon">🔍</span>
           <div class="brand-text">
@@ -139,8 +206,8 @@
             <span class="brand-subtitle">情報の信頼性を科学的評価</span>
           </div>
         </button>
-      </div>
-      <div class="nav-bottom">
+
+        <!-- デスクトップメニュー -->
         <div class="nav-menu desktop-menu">
           <button class="nav-link" class:active={isHomePage} onclick={goToHome}>
             🏠 {t('navigation.home')}
@@ -154,75 +221,56 @@
           <button class="nav-link" class:active={isPrivacyPage} onclick={goToPrivacy}>
             🔐 {t('navigation.privacy')}
           </button>
-          <!-- タブレット用言語切り替え -->
-          <div class="tablet-language-switcher">
-            <LanguageSwitcher />
+        </div>
+
+        <!-- モバイルメニューボタン -->
+        <button
+          class="mobile-menu-toggle"
+          onclick={toggleMenu}
+          aria-label={t('accessibility.openMenu')}
+        >
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+        <!-- デスクトップ用言語切り替え -->
+        <div class="desktop-language-switcher">
+          <LanguageSwitcher />
+        </div>
+      </div>
+
+      <!-- モバイルメニュー -->
+      {#if isMenuOpen}
+        <div class="mobile-menu">
+          <button class="mobile-nav-link" class:active={isHomePage} onclick={goToHome}>
+            🏠 {t('navigation.home')}
+          </button>
+          <button class="mobile-nav-link" class:active={isAboutPage} onclick={goToAbout}>
+            📖 {t('navigation.about')}
+          </button>
+          <button class="mobile-nav-link" class:active={isHelpPage} onclick={goToHelp}>
+            ❓ {t('navigation.help')}
+          </button>
+          <button class="mobile-nav-link" class:active={isPrivacyPage} onclick={goToPrivacy}>
+            🔐 {t('navigation.privacy')}
+          </button>
+          <!-- モバイル用言語切り替え -->
+          <div class="mobile-language-switcher">
+            <LanguageSwitcher mobileMode={true} />
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- デスクトップ用１段レイアウト -->
-    <div class="nav-content desktop-layout">
-      <button class="nav-brand" onclick={goToHome}>
-        <span class="nav-icon">🔍</span>
-        <div class="brand-text">
-          <span class="brand-title">事実確認チェックシート</span>
-          <span class="brand-subtitle">情報の信頼性を科学的評価</span>
+      {/if}
+    {:else}
+      <!-- Loading state for navigation -->
+      <div class="nav-content desktop-layout">
+        <div class="nav-brand-loading">
+          <span class="nav-icon">🔍</span>
+          <div class="brand-text">
+            <span class="brand-title">事実確認チェックシート</span>
+            <span class="brand-subtitle">情報の信頼性を科学的評価</span>
+          </div>
         </div>
-      </button>
-
-      <!-- デスクトップメニュー -->
-      <div class="nav-menu desktop-menu">
-        <button class="nav-link" class:active={isHomePage} onclick={goToHome}>
-          🏠 {t('navigation.home')}
-        </button>
-        <button class="nav-link" class:active={isAboutPage} onclick={goToAbout}>
-          📖 {t('navigation.about')}
-        </button>
-        <button class="nav-link" class:active={isHelpPage} onclick={goToHelp}>
-          ❓ {t('navigation.help')}
-        </button>
-        <button class="nav-link" class:active={isPrivacyPage} onclick={goToPrivacy}>
-          🔐 {t('navigation.privacy')}
-        </button>
-      </div>
-
-      <!-- モバイルメニューボタン -->
-      <button
-        class="mobile-menu-toggle"
-        onclick={toggleMenu}
-        aria-label={t('accessibility.openMenu')}
-      >
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-      </button>
-      <!-- デスクトップ用言語切り替え -->
-      <div class="desktop-language-switcher">
-        <LanguageSwitcher />
-      </div>
-    </div>
-
-    <!-- モバイルメニュー -->
-    {#if isMenuOpen}
-      <div class="mobile-menu">
-        <button class="mobile-nav-link" class:active={isHomePage} onclick={goToHome}>
-          🏠 {t('navigation.home')}
-        </button>
-        <button class="mobile-nav-link" class:active={isAboutPage} onclick={goToAbout}>
-          📖 {t('navigation.about')}
-        </button>
-        <button class="mobile-nav-link" class:active={isHelpPage} onclick={goToHelp}>
-          ❓ {t('navigation.help')}
-        </button>
-        <button class="mobile-nav-link" class:active={isPrivacyPage} onclick={goToPrivacy}>
-          🔐 {t('navigation.privacy')}
-        </button>
-        <!-- モバイル用言語切り替え -->
-        <div class="mobile-language-switcher">
-          <LanguageSwitcher mobileMode={true} />
-        </div>
+        <div class="nav-loading">Loading...</div>
       </div>
     {/if}
   </nav>
@@ -339,6 +387,21 @@
     gap: var(--spacing-2);
   }
 
+  /* Loading states */
+  .nav-brand-loading {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-2);
+    opacity: 0.6;
+  }
+
+  .nav-loading {
+    padding: var(--spacing-3) var(--spacing-4);
+    color: var(--text-color-secondary);
+    font-size: var(--font-size-sm);
+  }
+
   .nav-link {
     background: var(--surface-color);
     border: 2px solid transparent;
@@ -377,13 +440,14 @@
   }
 
   .nav-link.active {
-    background: var(--gradient-primary);
-    color: white;
-    box-shadow: var(--shadow-primary);
+    background: var(--gradient-primary) !important;
+    color: white !important;
+    box-shadow: var(--shadow-primary) !important;
+    transform: none !important;
   }
 
   .nav-link.active::before {
-    opacity: 0;
+    opacity: 0 !important;
   }
 
   .mobile-menu-toggle {

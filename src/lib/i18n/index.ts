@@ -310,19 +310,19 @@ export const factChecklistI18n = {
   getCheckItemExamplesGood: (itemId: string): string[] => {
     try {
       const translations = i18nStore.translations;
-      const safeTranslator = createSafeTranslator(translations as unknown as NestedRecord);
-      // 配列の各要素を取得
-      const examples: string[] = [];
-      for (let i = 0; i < 10; i++) {
-        // 最大10個まで
-        const example = safeTranslator(`checklistItems.${itemId}.examplesGood.${i}`);
-        if (example && example !== `checklistItems.${itemId}.examplesGood.${i}`) {
-          examples.push(example);
-        } else {
-          break;
-        }
+      const currentLang = i18nStore.currentLanguage;
+
+      // 型安全な方法で配列を取得
+      const langTranslations = translations?.[currentLang as keyof typeof translations];
+      const examples = (langTranslations as unknown as TranslationKeys)?.checklistItems?.[itemId]
+        ?.examplesGood;
+
+      if (Array.isArray(examples)) {
+        return examples;
       }
-      return examples;
+
+      // 配列でない場合は空配列を返す
+      return [];
     } catch {
       return [];
     }
@@ -330,19 +330,19 @@ export const factChecklistI18n = {
   getCheckItemExamplesBad: (itemId: string): string[] => {
     try {
       const translations = i18nStore.translations;
-      const safeTranslator = createSafeTranslator(translations as unknown as NestedRecord);
-      // 配列の各要素を取得
-      const examples: string[] = [];
-      for (let i = 0; i < 10; i++) {
-        // 最大10個まで
-        const example = safeTranslator(`checklistItems.${itemId}.examplesBad.${i}`);
-        if (example && example !== `checklistItems.${itemId}.examplesBad.${i}`) {
-          examples.push(example);
-        } else {
-          break;
-        }
+      const currentLang = i18nStore.currentLanguage;
+
+      // 型安全な方法で配列を取得
+      const langTranslations = translations?.[currentLang as keyof typeof translations];
+      const examples = (langTranslations as unknown as TranslationKeys)?.checklistItems?.[itemId]
+        ?.examplesBad;
+
+      if (Array.isArray(examples)) {
+        return examples;
       }
-      return examples;
+
+      // 配列でない場合は空配列を返す
+      return [];
     } catch {
       return [];
     }

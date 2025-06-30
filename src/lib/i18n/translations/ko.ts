@@ -206,13 +206,250 @@ export const translations: TranslationKeys = {
   },
   help: {
     title: '도움말 및 사용법',
-    overview: '개요',
-    howToUse: '사용법',
-    categories: '카테고리',
-    scoring: '점수 계산',
-    features: '기능',
-    troubleshooting: '문제 해결',
-    faq: '자주 묻는 질문'
+    subtitle: '팩트체크 체크리스트 사용을 위한 상세 가이드',
+    tableOfContents: '목차',
+    navigation: {
+      overview: '개요',
+      usage: '사용법',
+      categories: '카테고리',
+      scoring: '점수',
+      features: '기능',
+      privacy: '개인정보보호',
+      troubleshooting: '문제 해결'
+    },
+    sections: {
+      overview: {
+        title: '앱 개요',
+        emoji: '📋',
+        description: '팩트체크 체크리스트의 기본 사용법',
+        content: '이 앱은 인터넷상의 정보의 신뢰성을 과학적이고 체계적으로 평가하는 도구입니다.',
+        subSections: {
+          features: {
+            title: '주요 기능',
+            content:
+              '• 완전한 프라이버시: 모든 데이터가 로컬에 저장됨\n• 오프라인 작동\n• 과학적 평가\n• 기록 관리'
+          },
+          targetUsers: {
+            title: '대상 사용자',
+            content: '기자, 연구자, 학생 및 정보의 신뢰성 평가에 관심이 있는 모든 사람'
+          }
+        }
+      },
+      usage: {
+        title: '사용법',
+        emoji: '🔍',
+        description: '앱 사용을 위한 단계별 가이드',
+        content: '다음 단계를 따라 정보의 신뢰성을 체계적으로 평가하세요.',
+        subSections: {
+          step1: {
+            title: '1단계: 정보 입력',
+            content: '평가하려는 정보의 제목과 설명을 입력하세요'
+          },
+          step2: {
+            title: '2단계: 요소 평가',
+            content: '사용 가능한 증거를 바탕으로 목록의 각 요소를 평가하세요'
+          },
+          step3: {
+            title: '3단계: 결과 검토',
+            content: '계산된 결과와 신뢰도 수준을 검토하세요'
+          },
+          step4: {
+            title: '4단계: 최종 결정',
+            content: '평가를 바탕으로 최종 결정을 내리세요: 수용, 주의 또는 거부'
+          }
+        }
+      },
+      categories: {
+        title: '평가 카테고리',
+        emoji: '📊',
+        description: '네 가지 주요 평가 카테고리',
+        content:
+          '평가 요소는 포괄적인 평가를 보장하기 위해 네 가지 주요 카테고리로 구성되어 있습니다.',
+        subSections: {
+          critical: {
+            title: '핵심 평가',
+            content: '정보의 기본적인 신뢰성을 결정하는 가장 중요한 요소'
+          },
+          detailed: {
+            title: '상세 평가',
+            content: '정보의 품질과 전문성을 평가하는 요소'
+          },
+          verification: {
+            title: '검증 및 교차 확인',
+            content: '정보의 검증 가능성과 지원을 확인하는 요소'
+          },
+          context: {
+            title: '맥락 및 편견 평가',
+            content: '편견과 맥락의 적절성을 평가하는 요소'
+          }
+        }
+      },
+      scoring: {
+        title: '점수 시스템',
+        emoji: '🎯',
+        description: '점수와 신뢰도 수준이 계산되는 방법',
+        content: '점수는 총 요소 중 충족된 요소의 수를 기반으로 계산됩니다.',
+        subSections: {
+          calculation: {
+            title: '계산 방법',
+            content: '점수 = (충족된 요소 수 / 총 요소 수) × 100'
+          },
+          criteria: {
+            title: '평가 기준',
+            content:
+              '• 80%+: 높은 신뢰성\n• 60-79%: 중간 신뢰성\n• 40-59%: 낮은 신뢰성\n• <40%: 신뢰성 문제'
+          },
+          finalJudgment: {
+            title: '최종 판단',
+            content: '점수를 가이드로 사용하되, 최종 결정은 개인적 판단에 따라 달라집니다'
+          }
+        }
+      },
+      features: {
+        title: '기능',
+        emoji: '⭐',
+        description: '앱의 고급 기능',
+        content: '앱은 사용자 경험을 향상시키는 여러 고급 기능을 제공합니다.',
+        subSections: {
+          detailedGuide: {
+            title: '상세 가이드',
+            content:
+              '각 평가 요소에는 평가에 도움이 되는 상세한 가이드와 실용적인 예제가 포함되어 있습니다'
+          },
+          exportFunction: {
+            title: '내보내기 기능',
+            content: '평가 결과를 여러 형식으로 내보낼 수 있습니다 (PDF, HTML, JSON, Markdown)',
+            exportFormats: {
+              title: '내보내기 형식',
+              formats: {
+                pdf: {
+                  name: 'PDF',
+                  features: '인쇄 및 공유를 위한 전문적인 형식',
+                  usage: '공식 보고서 및 보관에 적합'
+                },
+                html: {
+                  name: 'HTML',
+                  features: '브라우저에서 상호작용 표시',
+                  usage: '웹을 통한 공유에 적합'
+                },
+                json: {
+                  name: 'JSON',
+                  features: '구조화된 데이터 형식',
+                  usage: '자동 분석 및 가져오기에 적합'
+                },
+                markdown: {
+                  name: 'Markdown',
+                  features: '유연한 텍스트 형식',
+                  usage: '블로그 및 문서화에 적합'
+                }
+              }
+            },
+            pdfModes: {
+              title: 'PDF 모드',
+              modes: {
+                pixelPerfect: {
+                  name: '픽셀 퍼펙트',
+                  subtitle: '최고의 시각적 품질',
+                  description: '높은 정확도로 원본 디자인을 유지합니다',
+                  features: '인터페이스 준수 디자인, 정확한 색상, 선명한 글꼴'
+                },
+                reliableFont: {
+                  name: '신뢰할 수 있는 글꼴',
+                  description: '텍스트 명확성과 가독성에 초점을 맞춥니다',
+                  features: '최적화된 글꼴, 빠른 성능, 작은 파일 크기'
+                },
+                textBased: {
+                  name: '텍스트 기반',
+                  subtitle: '검색 가능하고 복사 가능한 텍스트',
+                  description: '순수 텍스트, 검색 가능한 PDF를 생성합니다',
+                  features: '검색 가능한 텍스트, 작은 크기, 높은 호환성'
+                }
+              }
+            },
+            exportOptions: {
+              title: '내보내기 옵션',
+              options: {
+                summary: {
+                  name: '요약 포함',
+                  description: '결과 및 평가 요약을 추가합니다',
+                  formats: '모든 형식에서 사용 가능'
+                },
+                guides: {
+                  name: '가이드 포함',
+                  description: '각 요소에 대한 상세한 가이드를 추가합니다',
+                  formats: 'PDF 및 HTML에서 사용 가능'
+                },
+                notes: {
+                  name: '메모 포함',
+                  description: '개인 메모를 추가합니다',
+                  formats: '모든 형식에서 사용 가능'
+                },
+                sectionBreaks: {
+                  name: '섹션 구분',
+                  description: '섹션에 대한 별도 페이지를 추가합니다',
+                  formats: 'PDF에서만 사용 가능'
+                }
+              }
+            },
+            exportNote: '기억하세요: 모든 내보내기는 데이터 전송 없이 기기에서 로컬로 수행됩니다'
+          },
+          historyManagement: {
+            title: '기록 관리',
+            content: '앱은 자동으로 최근 5개의 평가를 저장하고 액세스 및 관리할 수 있게 해줍니다'
+          },
+          pwaSupport: {
+            title: 'PWA 지원',
+            content: '앱은 기기에 설치할 수 있으며 완전히 오프라인으로 작동할 수 있습니다'
+          }
+        }
+      },
+      privacy: {
+        title: '개인정보보호 및 보안',
+        emoji: '🔒',
+        description: '개인정보와 데이터를 보호하는 방법',
+        content:
+          '우리는 개인정보보호 우선 설계를 통해 개인정보를 보호하기 위해 최선을 다하고 있습니다.',
+        subSections: {
+          localStorage: {
+            title: '로컬 저장소',
+            content: '모든 데이터는 브라우저에 로컬로 저장되며 기기를 떠나지 않습니다'
+          },
+          security: {
+            title: '보안',
+            content: '외부 연결이나 사용자 추적이 없습니다'
+          },
+          dataDeletion: {
+            title: '데이터 삭제',
+            content: '브라우저 데이터를 지워서 언제든지 모든 데이터를 삭제할 수 있습니다'
+          }
+        }
+      },
+      troubleshooting: {
+        title: '문제 해결',
+        emoji: '🔧',
+        description: '일반적인 문제에 대한 해결책',
+        content: '문제가 발생하면 이러한 일반적인 해결책을 시도해보세요.',
+        subSections: {
+          dataNotSaved: {
+            title: '데이터가 저장되지 않음',
+            content:
+              '브라우저에서 로컬 저장소가 활성화되어 있고 브라우저가 최신 상태인지 확인하세요'
+          },
+          scoreNotDisplayed: {
+            title: '점수가 표시되지 않음',
+            content: '모든 필요한 요소의 평가를 완료했는지 확인하세요'
+          },
+          exportFailed: {
+            title: '내보내기 실패',
+            content: '브라우저에서 다운로드가 허용되고 충분한 공간이 있는지 확인하세요'
+          },
+          otherIssues: {
+            title: '기타 문제',
+            content: '페이지를 새로고침하거나 브라우저 캐시를 지워보세요'
+          }
+        }
+      }
+    }
   },
   accessibility: {
     skipToContent: '콘텐츠로 건너뛰기',

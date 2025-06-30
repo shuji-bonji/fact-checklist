@@ -230,13 +230,265 @@ export const translations: TranslationKeys = {
   // Ayuda y Guía
   help: {
     title: 'Ayuda y Uso',
-    overview: 'Resumen',
-    howToUse: 'Cómo Usar',
-    categories: 'Categorías',
-    scoring: 'Cálculo de Puntuación',
-    features: 'Características',
-    troubleshooting: 'Solución de Problemas',
-    faq: 'Preguntas Frecuentes'
+    subtitle: 'Guía detallada para usar la lista de verificación de hechos',
+    tableOfContents: 'Tabla de contenidos',
+    navigation: {
+      overview: 'Resumen',
+      usage: 'Uso',
+      categories: 'Categorías',
+      scoring: 'Puntuación',
+      features: 'Características',
+      privacy: 'Privacidad',
+      troubleshooting: 'Solución de problemas'
+    },
+    sections: {
+      overview: {
+        title: 'Resumen de la aplicación',
+        emoji: '📋',
+        description: 'Uso básico de la lista de verificación de hechos',
+        content:
+          'Esta aplicación es una herramienta para evaluar la credibilidad de información en internet de manera científica y sistemática.',
+        subSections: {
+          features: {
+            title: 'Características principales',
+            content:
+              '• Privacidad completa: todos los datos se almacenan localmente\n• Funciona sin conexión\n• Evaluación científica\n• Gestión de historial'
+          },
+          targetUsers: {
+            title: 'Usuarios objetivo',
+            content:
+              'Periodistas, investigadores, estudiantes y cualquier persona interesada en evaluar la credibilidad de la información'
+          }
+        }
+      },
+      usage: {
+        title: 'Uso',
+        emoji: '🔍',
+        description: 'Guía paso a paso para usar la aplicación',
+        content:
+          'Sigue estos pasos para evaluar la credibilidad de información de manera sistemática.',
+        subSections: {
+          step1: {
+            title: 'Paso 1: Ingresar información',
+            content: 'Ingresa el título y descripción de la información que quieres evaluar'
+          },
+          step2: {
+            title: 'Paso 2: Evaluar elementos',
+            content: 'Evalúa cada elemento de la lista basándote en la evidencia disponible'
+          },
+          step3: {
+            title: 'Paso 3: Revisar resultado',
+            content: 'Revisa el resultado calculado y el nivel de confianza'
+          },
+          step4: {
+            title: 'Paso 4: Decisión final',
+            content:
+              'Toma tu decisión final basada en la evaluación: aceptar, precaución o rechazar'
+          }
+        }
+      },
+      categories: {
+        title: 'Categorías de evaluación',
+        emoji: '📊',
+        description: 'Las cuatro categorías principales de evaluación',
+        content:
+          'Los elementos de evaluación están organizados en cuatro categorías principales para asegurar una evaluación integral.',
+        subSections: {
+          critical: {
+            title: 'Evaluación crítica',
+            content:
+              'Los elementos más importantes para determinar la credibilidad básica de la información'
+          },
+          detailed: {
+            title: 'Evaluación detallada',
+            content: 'Elementos para evaluar la calidad y experiencia de la información'
+          },
+          verification: {
+            title: 'Verificación y verificación cruzada',
+            content: 'Elementos para confirmar la verificabilidad y soporte de la información'
+          },
+          context: {
+            title: 'Evaluación de contexto y sesgo',
+            content: 'Elementos para evaluar la adecuación del sesgo y contexto'
+          }
+        }
+      },
+      scoring: {
+        title: 'Sistema de puntuación',
+        emoji: '🎯',
+        description: 'Cómo se calculan las puntuaciones y nivel de confianza',
+        content:
+          'La puntuación se calcula basándose en el número de elementos cumplidos del total de elementos.',
+        subSections: {
+          calculation: {
+            title: 'Método de cálculo',
+            content: 'Puntuación = (número de elementos cumplidos / total de elementos) × 100'
+          },
+          criteria: {
+            title: 'Criterios de evaluación',
+            content:
+              '• 80%+: Alta credibilidad\n• 60-79%: Credibilidad media\n• 40-59%: Credibilidad baja\n• <40%: Problemas de credibilidad'
+          },
+          finalJudgment: {
+            title: 'Decisión final',
+            content:
+              'Usa la puntuación como guía, pero la decisión final depende de tu juicio personal'
+          }
+        }
+      },
+      features: {
+        title: 'Características',
+        emoji: '⭐',
+        description: 'Características avanzadas de la aplicación',
+        content:
+          'La aplicación ofrece varias características avanzadas para mejorar la experiencia del usuario.',
+        subSections: {
+          detailedGuide: {
+            title: 'Guías detalladas',
+            content:
+              'Cada elemento de evaluación contiene una guía detallada y ejemplos prácticos para ayudarte en tu evaluación'
+          },
+          exportFunction: {
+            title: 'Función de exportación',
+            content:
+              'Puedes exportar resultados de evaluación en múltiples formatos (PDF, HTML, JSON, Markdown)',
+            exportFormats: {
+              title: 'Formatos de exportación',
+              formats: {
+                pdf: {
+                  name: 'PDF',
+                  features: 'Formato profesional para imprimir y compartir',
+                  usage: 'Adecuado para informes oficiales y archivo'
+                },
+                html: {
+                  name: 'HTML',
+                  features: 'Visualización interactiva en navegador',
+                  usage: 'Adecuado para compartir por web'
+                },
+                json: {
+                  name: 'JSON',
+                  features: 'Formato de datos estructurado',
+                  usage: 'Adecuado para análisis automático e importación'
+                },
+                markdown: {
+                  name: 'Markdown',
+                  features: 'Formato de texto flexible',
+                  usage: 'Adecuado para blogs y documentación'
+                }
+              }
+            },
+            pdfModes: {
+              title: 'Modos PDF',
+              modes: {
+                pixelPerfect: {
+                  name: 'Píxel perfecto',
+                  subtitle: 'Mejor calidad visual',
+                  description: 'Mantiene el diseño original con alta precisión',
+                  features: 'Diseño conforme a interfaz, colores precisos, fuentes claras'
+                },
+                reliableFont: {
+                  name: 'Fuente confiable',
+                  description: 'Se enfoca en claridad de texto y legibilidad',
+                  features: 'Fuentes optimizadas, rendimiento rápido, tamaño de archivo menor'
+                },
+                textBased: {
+                  name: 'Basado en texto',
+                  subtitle: 'Texto buscable y copiable',
+                  description: 'Produce PDF puramente textual y buscable',
+                  features: 'Texto buscable, tamaño pequeño, alta compatibilidad'
+                }
+              }
+            },
+            exportOptions: {
+              title: 'Opciones de exportación',
+              options: {
+                summary: {
+                  name: 'Incluir resumen',
+                  description: 'Añade resumen de resultado y evaluación',
+                  formats: 'Disponible en todos los formatos'
+                },
+                guides: {
+                  name: 'Incluir guías',
+                  description: 'Añade guías detalladas para cada elemento',
+                  formats: 'Disponible en PDF y HTML'
+                },
+                notes: {
+                  name: 'Incluir notas',
+                  description: 'Añade tus notas personales',
+                  formats: 'Disponible en todos los formatos'
+                },
+                sectionBreaks: {
+                  name: 'Saltos de sección',
+                  description: 'Añade páginas separadas para secciones',
+                  formats: 'Solo disponible en PDF'
+                }
+              }
+            },
+            exportNote:
+              'Recuerda: todas las exportaciones se realizan localmente en tu dispositivo sin transferencia de datos'
+          },
+          historyManagement: {
+            title: 'Gestión de historial',
+            content:
+              'La aplicación guarda automáticamente las últimas 5 evaluaciones y te permite acceder y gestionar'
+          },
+          pwaSupport: {
+            title: 'Soporte PWA',
+            content:
+              'La aplicación puede instalarse en el dispositivo y funcionar completamente sin conexión'
+          }
+        }
+      },
+      privacy: {
+        title: 'Privacidad y seguridad',
+        emoji: '🔒',
+        description: 'Cómo protegemos tu privacidad y datos',
+        content:
+          'Estamos comprometidos con proteger tu privacidad a través de diseño orientado a la privacidad.',
+        subSections: {
+          localStorage: {
+            title: 'Almacenamiento local',
+            content:
+              'Todos tus datos se almacenan localmente en tu navegador y nunca salen de tu dispositivo'
+          },
+          security: {
+            title: 'Seguridad',
+            content: 'Sin conexiones externas o seguimiento de usuarios'
+          },
+          dataDeletion: {
+            title: 'Eliminación de datos',
+            content:
+              'Puedes eliminar todos tus datos en cualquier momento borrando los datos del navegador'
+          }
+        }
+      },
+      troubleshooting: {
+        title: 'Solución de problemas',
+        emoji: '🔧',
+        description: 'Soluciones para problemas comunes',
+        content: 'Si tienes problemas, prueba estas soluciones comunes.',
+        subSections: {
+          dataNotSaved: {
+            title: 'Los datos no se guardan',
+            content:
+              'Asegúrate de que el almacenamiento local esté habilitado en el navegador y que el navegador esté actualizado'
+          },
+          scoreNotDisplayed: {
+            title: 'La puntuación no se muestra',
+            content: 'Asegúrate de haber completado la evaluación de todos los elementos requeridos'
+          },
+          exportFailed: {
+            title: 'Exportación falló',
+            content:
+              'Asegúrate de que las descargas estén permitidas en el navegador y que haya suficiente espacio'
+          },
+          otherIssues: {
+            title: 'Otros problemas',
+            content: 'Intenta actualizar la página o borrar la caché del navegador'
+          }
+        }
+      }
+    }
   },
 
   // Accesibilidad

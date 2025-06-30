@@ -227,14 +227,278 @@ export const translations: TranslationKeys = {
 
   // ヘルプ・ガイド
   help: {
-    title: 'ヘルプ・使い方',
-    overview: '概要',
-    howToUse: '使い方',
-    categories: 'カテゴリー',
-    scoring: 'スコア計算',
-    features: '機能',
-    troubleshooting: 'トラブルシューティング',
-    faq: 'よくある質問'
+    title: 'ヘルプ・使い方ガイド',
+    subtitle: '事実確認チェックシートの使い方を詳しく説明します',
+    tableOfContents: '目次',
+
+    // ナビゲーション
+    navigation: {
+      overview: '概要',
+      usage: '使い方',
+      categories: 'カテゴリー',
+      scoring: 'スコア計算',
+      features: '機能',
+      privacy: 'プライバシー',
+      troubleshooting: 'トラブルシューティング'
+    },
+
+    // セクション
+    sections: {
+      overview: {
+        title: 'アプリ概要',
+        emoji: '📋',
+        description: '事実確認チェックシートの基本的な使い方',
+        content:
+          'このアプリは、インターネット上の情報の信頼性を科学的・体系的に評価するためのツールです。4つの主要カテゴリ（クリティカル評価・詳細評価・検証評価・コンテキスト評価）にわたって、合計20項目をチェックすることで、情報の信頼度を数値化し、最終的な判定を支援します。',
+        subSections: {
+          features: {
+            title: '主な特徴',
+            content:
+              '• 完全プライベート: すべてのデータは端末内に保存\n• オフライン対応: ネットワークなしでも動作\n• 科学的評価: 体系的なチェック項目\n• 履歴管理: 過去の評価結果を保存・参照'
+          },
+          targetUsers: {
+            title: '対象ユーザー',
+            content:
+              '• 一般の方: ネット情報の信頼性を確認したい方\n• 専門家: 情報分析の補助ツールとして\n• 報道関係者: ファクトチェックの支援として'
+          }
+        }
+      },
+      usage: {
+        title: '使い方ガイド',
+        emoji: '🚀',
+        description: 'ステップバイステップの利用手順',
+        content: 'チェックリストの作成から評価完了まで、以下の手順で進めてください。',
+        subSections: {
+          step1: {
+            title: 'Step 1: チェックリスト作成',
+            content:
+              '1. タイトルと対象情報の概要を入力\n2. 評価したい情報の詳細を記録\n3. 自動的にチェックリストが作成されます'
+          },
+          step2: {
+            title: 'Step 2: 項目評価',
+            content:
+              '1. クリティカル評価から開始\n2. 各項目を順番にチェック\n3. 不明な項目は詳細ガイドを参照\n4. スコアがリアルタイムで更新されます'
+          },
+          step3: {
+            title: 'Step 3: 最終判定',
+            content:
+              '1. すべての項目をチェック\n2. 評価メモを記録（任意）\n3. 最終判定を選択（採用・要注意・不採用）\n4. 「評価を完了」ボタンを押下'
+          },
+          step4: {
+            title: 'Step 4: 結果確認・共有',
+            content:
+              '1. 評価結果ページで詳細確認\n2. 必要に応じてエクスポート\n3. PDF・HTML・JSON・Markdown形式で出力可能'
+          }
+        }
+      },
+      categories: {
+        title: '評価カテゴリ',
+        emoji: '📊',
+        description: '4つの評価カテゴリの詳細説明',
+        content: '情報の信頼性を多角的に評価するため、4つのカテゴリに分けてチェックを行います。',
+        subSections: {
+          critical: {
+            title: 'クリティカル評価（Critical）',
+            content:
+              '最も重要な基本的信頼性を評価します。\n• 権威ある情報源からの発表\n• 一次情報の確認\n• 複数の独立した情報源\n• 匿名・出典不明でない\n• 扇動的・煽情的表現の少なさ\n• 論理的一貫性'
+          },
+          detailed: {
+            title: '詳細評価（Detailed）',
+            content:
+              '情報の質と詳細度を評価します。\n• 情報の新しさ\n• 更新・訂正の履歴\n• 適切な専門知識\n• 十分な詳細と根拠\n• 適切な引用・参照\n• 引用元の確認可能性'
+          },
+          verification: {
+            title: '検証評価（Verification）',
+            content:
+              '外部検証と客観性を評価します。\n• 他情報源との照合\n• ファクトチェック組織の検証\n• 検証可能なデータ\n• 手法・方法論の妥当性'
+          },
+          context: {
+            title: 'コンテキスト評価（Context）',
+            content:
+              '情報の背景と偏向を評価します。\n• 利害関係の開示\n• バランスの取れた視点\n• 十分な背景情報\n• 適用範囲の明確化'
+          }
+        }
+      },
+      scoring: {
+        title: 'スコアリング',
+        emoji: '🎯',
+        description: 'スコア計算と判定基準の詳細',
+        content: '各項目のチェック状況に基づいて、信頼度スコアが自動計算されます。',
+        subSections: {
+          calculation: {
+            title: '計算方法',
+            content:
+              '• 各カテゴリの重要度による重み付け\n• クリティカル評価: 35%\n• 詳細評価: 25%\n• 検証評価: 25%\n• コンテキスト評価: 15%'
+          },
+          criteria: {
+            title: '判定基準',
+            content:
+              '• 80%以上: 高い信頼性 → 「採用」推奨\n• 60-79%: 中程度の信頼性 → 追加確認推奨\n• 40-59%: 低い信頼性 → 「要注意」\n• 40%未満: 信頼性に問題 → 「不採用」推奨'
+          },
+          finalJudgment: {
+            title: '最終判定',
+            content:
+              'スコアは参考値です。最終的な判定は、評価者の専門知識と総合的な判断に委ねられます。「採用」「要注意」「不採用」から選択してください。'
+          }
+        }
+      },
+      features: {
+        title: '機能詳細',
+        emoji: '⚙️',
+        description: 'アプリの各種機能について',
+        content: 'さまざまな機能を使って、効率的に情報評価を行えます。',
+        subSections: {
+          detailedGuide: {
+            title: '詳細ガイドモード',
+            content:
+              '各チェック項目の詳細説明と具体例を表示します。初めて使用する方や、項目の判断基準を確認したい場合に便利です。'
+          },
+          exportFunction: {
+            title: 'エクスポート機能',
+            content: '評価結果を4つの形式で出力可能です。',
+            exportFormats: {
+              title: '出力形式一覧',
+              formats: {
+                pdf: {
+                  name: 'PDF',
+                  features: '• 印刷に最適\n• 日本語フォント対応\n• 3つのモードから選択可能',
+                  usage: '報告書、アーカイブ、印刷配布'
+                },
+                html: {
+                  name: 'HTML',
+                  features: '• ブラウザで表示可能\n• CSSスタイル埋め込み済み\n• 単一ファイル',
+                  usage: 'Web共有、オンライン閲覧'
+                },
+                json: {
+                  name: 'JSON',
+                  features: '• 構造化データ\n• プログラム処理可能\n• 完全なデータ保持',
+                  usage: 'システム連携、データ分析'
+                },
+                markdown: {
+                  name: 'Markdown',
+                  features: '• テキストエディタで編集可\n• GitHub等で表示最適\n• シンプルな形式',
+                  usage: '文書編集、バージョン管理'
+                }
+              }
+            },
+            pdfModes: {
+              title: 'PDF生成モード（いずれか1つを選択）',
+              modes: {
+                pixelPerfect: {
+                  name: '🎨 ピクセルパーフェクト',
+                  subtitle: '（デフォルト・推奨）',
+                  description:
+                    'ブラウザの印刷機能を使用して、画面表示と完全に同じ見た目のPDFを生成',
+                  features:
+                    '• グラデーション・色・レイアウト完全再現\n• 印刷プレビューで確認可能\n• 最高品質の出力'
+                },
+                reliableFont: {
+                  name: '🔥 確実な日本語対応',
+                  description: 'jsPDFライブラリで直接PDF生成し、日本語フォントを確実に埋め込み',
+                  features:
+                    '• 日本語フォント埋め込み保証\n• 文字化け完全防止\n• CSP準拠・セキュア\n• 透かし・目次等の高度機能'
+                },
+                textBased: {
+                  name: '🔤 テキストベース',
+                  subtitle: '（レガシー・PWA方式）',
+                  description: 'PWA機能を活用したテキスト中心のシンプルなPDF生成',
+                  features:
+                    '• PWAの保存・共有機能利用\n• 文字検索・コピー可能\n• ファイルサイズ最小\n• モバイル最適化'
+                }
+              }
+            },
+            exportOptions: {
+              title: '共通エクスポートオプション',
+              options: {
+                summary: {
+                  name: '📊 評価サマリー',
+                  description: 'スコア・判定結果・達成率の概要',
+                  formats: '全形式'
+                },
+                guides: {
+                  name: '📚 ガイド内容',
+                  description: '各チェック項目の詳細説明と例',
+                  formats: '全形式'
+                },
+                notes: {
+                  name: '📝 評価メモ',
+                  description: '追加したメモ・コメント',
+                  formats: '全形式'
+                },
+                sectionBreaks: {
+                  name: '📄 セクション区切り',
+                  description: 'カテゴリごとの改ページ・区切り線',
+                  formats: 'PDF、Markdown'
+                }
+              }
+            },
+            exportNote:
+              '📌 注意: PDF生成モードは排他的です。3つのモードのうち、いずれか1つのみ選択できます。デフォルトでは最も高品質な「ピクセルパーフェクト」モードが選択されています。'
+          },
+          historyManagement: {
+            title: '履歴管理',
+            content:
+              '過去の評価結果を自動保存します。\n• 最新5件をサイドバーに表示\n• 全履歴の一覧表示\n• 個別削除機能\n• 再編集機能（完了前のみ）'
+          },
+          pwaSupport: {
+            title: 'PWA対応・高度機能',
+            content:
+              '• ホーム画面への追加\n• オフライン動作\n• プラットフォーム適応型機能\n• フォントキャッシュシステム\n• デバイス別最適化\n• 自動アップデート'
+          }
+        }
+      },
+      privacy: {
+        title: 'プライバシー',
+        emoji: '🔐',
+        description: 'データの取り扱いとセキュリティ',
+        content: 'ユーザーのプライバシー保護を最優先に設計されています。',
+        subSections: {
+          localStorage: {
+            title: 'ローカル保存',
+            content:
+              '• すべてのデータは端末内のみに保存\n• サーバーへの送信は一切なし\n• 第三者へのデータ提供なし\n• 個人を特定する情報は収集しません'
+          },
+          security: {
+            title: 'セキュリティ',
+            content:
+              '• HTTPS通信の強制\n• Content Security Policy実装\n• XSS攻撃防止対策\n• Same-Origin Policy遵守'
+          },
+          dataDeletion: {
+            title: 'データ削除',
+            content:
+              'ユーザーはいつでも保存されたデータを削除できます。ブラウザのデータ削除でも完全に削除されます。'
+          }
+        }
+      },
+      troubleshooting: {
+        title: 'トラブルシューティング',
+        emoji: '🔧',
+        description: 'よくある問題と解決方法',
+        content: '使用中に問題が発生した場合の対処法をご案内します。',
+        subSections: {
+          dataNotSaved: {
+            title: 'データが保存されない',
+            content:
+              '• ブラウザのプライベートモードを確認\n• ストレージ容量の確認\n• ブラウザの設定でローカルストレージが有効か確認\n• 別のブラウザで試す'
+          },
+          scoreNotDisplayed: {
+            title: 'スコアが表示されない',
+            content:
+              '• ページのリロード\n• ブラウザのキャッシュクリア\n• JavaScript が有効か確認\n• ブラウザのコンソールでエラー確認'
+          },
+          exportFailed: {
+            title: 'エクスポートできない',
+            content:
+              '• ポップアップブロックの確認\n• ダウンロード設定の確認\n• ブラウザの権限設定\n• 十分なストレージ容量があるか確認'
+          },
+          otherIssues: {
+            title: 'その他の問題',
+            content:
+              '上記で解決しない場合は、GitHubのIssuesからお気軽にお問い合わせください。可能な限りサポートいたします。'
+          }
+        }
+      }
+    }
   },
 
   // プライバシーポリシー

@@ -212,13 +212,266 @@ export const translations: TranslationKeys = {
   },
   help: {
     title: 'Hilfe & Nutzung',
-    overview: 'Übersicht',
-    howToUse: 'Wie zu verwenden',
-    categories: 'Kategorien',
-    scoring: 'Punktzahl-Berechnung',
-    features: 'Funktionen',
-    troubleshooting: 'Fehlerbehebung',
-    faq: 'FAQ'
+    subtitle: 'Detaillierte Anleitung zur Verwendung der Faktencheck-Checkliste',
+    tableOfContents: 'Inhaltsverzeichnis',
+    navigation: {
+      overview: 'Übersicht',
+      usage: 'Verwendung',
+      categories: 'Kategorien',
+      scoring: 'Bewertung',
+      features: 'Funktionen',
+      privacy: 'Datenschutz',
+      troubleshooting: 'Fehlerbehebung'
+    },
+    sections: {
+      overview: {
+        title: 'App-Übersicht',
+        emoji: '📋',
+        description: 'Grundlegende Verwendung der Faktencheck-Checkliste',
+        content:
+          'Diese App ist ein Werkzeug zur wissenschaftlichen und systematischen Bewertung der Glaubwürdigkeit von Informationen im Internet.',
+        subSections: {
+          features: {
+            title: 'Hauptmerkmale',
+            content:
+              '• Vollständige Privatsphäre: Alle Daten werden lokal gespeichert\n• Offline-fähig\n• Wissenschaftliche Bewertung\n• Verlaufsverwaltung'
+          },
+          targetUsers: {
+            title: 'Zielgruppe',
+            content:
+              'Journalisten, Forscher, Studenten und alle, die an der Bewertung der Informationsglaubwürdigkeit interessiert sind'
+          }
+        }
+      },
+      usage: {
+        title: 'Verwendung',
+        emoji: '🔍',
+        description: 'Schritt-für-Schritt-Anleitung zur App-Nutzung',
+        content:
+          'Folgen Sie diesen Schritten, um die Glaubwürdigkeit von Informationen systematisch zu bewerten.',
+        subSections: {
+          step1: {
+            title: 'Schritt 1: Informationen eingeben',
+            content: 'Geben Sie Titel und Beschreibung der zu bewertenden Informationen ein'
+          },
+          step2: {
+            title: 'Schritt 2: Elemente bewerten',
+            content: 'Bewerten Sie jedes Listenelement basierend auf verfügbaren Belegen'
+          },
+          step3: {
+            title: 'Schritt 3: Ergebnis überprüfen',
+            content: 'Überprüfen Sie das berechnete Ergebnis und Vertrauensniveau'
+          },
+          step4: {
+            title: 'Schritt 4: Endgültige Entscheidung',
+            content:
+              'Treffen Sie Ihre endgültige Entscheidung basierend auf der Bewertung: Akzeptieren, Vorsicht oder Ablehnen'
+          }
+        }
+      },
+      categories: {
+        title: 'Bewertungskategorien',
+        emoji: '📊',
+        description: 'Die vier Hauptkategorien der Bewertung',
+        content:
+          'Bewertungselemente sind in vier Hauptkategorien organisiert, um eine umfassende Bewertung zu gewährleisten.',
+        subSections: {
+          critical: {
+            title: 'Kritische Bewertung',
+            content:
+              'Die wichtigsten Elemente zur Bestimmung der grundlegenden Glaubwürdigkeit von Informationen'
+          },
+          detailed: {
+            title: 'Detaillierte Bewertung',
+            content: 'Elemente zur Bewertung der Qualität und Expertise von Informationen'
+          },
+          verification: {
+            title: 'Verifikation und Kreuzprüfung',
+            content:
+              'Elemente zur Bestätigung der Überprüfbarkeit und Unterstützung von Informationen'
+          },
+          context: {
+            title: 'Kontext- und Bias-Bewertung',
+            content: 'Elemente zur Bewertung der Angemessenheit von Bias und Kontext'
+          }
+        }
+      },
+      scoring: {
+        title: 'Bewertungssystem',
+        emoji: '🎯',
+        description: 'Wie Punkte und Vertrauensniveau berechnet werden',
+        content:
+          'Die Punktzahl wird basierend auf der Anzahl erfüllter Elemente von der Gesamtzahl der Elemente berechnet.',
+        subSections: {
+          calculation: {
+            title: 'Berechnungsmethode',
+            content: 'Punktzahl = (Anzahl erfüllter Elemente / Gesamtzahl der Elemente) × 100'
+          },
+          criteria: {
+            title: 'Bewertungskriterien',
+            content:
+              '• 80%+: Hohe Glaubwürdigkeit\n• 60-79%: Mittlere Glaubwürdigkeit\n• 40-59%: Niedrige Glaubwürdigkeit\n• <40%: Glaubwürdigkeitsprobleme'
+          },
+          finalJudgment: {
+            title: 'Endgültige Entscheidung',
+            content:
+              'Verwenden Sie die Punktzahl als Leitfaden, aber die endgültige Entscheidung hängt von Ihrem persönlichen Urteil ab'
+          }
+        }
+      },
+      features: {
+        title: 'Funktionen',
+        emoji: '⭐',
+        description: 'Erweiterte App-Funktionen',
+        content:
+          'Die App bietet mehrere erweiterte Funktionen zur Verbesserung der Benutzererfahrung.',
+        subSections: {
+          detailedGuide: {
+            title: 'Detaillierte Leitfäden',
+            content:
+              'Jedes Bewertungselement enthält einen detaillierten Leitfaden und praktische Beispiele zur Unterstützung Ihrer Bewertung'
+          },
+          exportFunction: {
+            title: 'Exportfunktion',
+            content:
+              'Sie können Bewertungsergebnisse in mehreren Formaten exportieren (PDF, HTML, JSON, Markdown)',
+            exportFormats: {
+              title: 'Exportformate',
+              formats: {
+                pdf: {
+                  name: 'PDF',
+                  features: 'Professionelles Format zum Drucken und Teilen',
+                  usage: 'Geeignet für offizielle Berichte und Archivierung'
+                },
+                html: {
+                  name: 'HTML',
+                  features: 'Interaktive Anzeige im Browser',
+                  usage: 'Geeignet zum Teilen über das Web'
+                },
+                json: {
+                  name: 'JSON',
+                  features: 'Strukturiertes Datenformat',
+                  usage: 'Geeignet für automatische Analyse und Import'
+                },
+                markdown: {
+                  name: 'Markdown',
+                  features: 'Flexibles Textformat',
+                  usage: 'Geeignet für Blogs und Dokumentation'
+                }
+              }
+            },
+            pdfModes: {
+              title: 'PDF-Modi',
+              modes: {
+                pixelPerfect: {
+                  name: 'Pixelgenau',
+                  subtitle: 'Beste visuelle Qualität',
+                  description: 'Behält das ursprüngliche Design mit hoher Genauigkeit bei',
+                  features: 'Interface-konformes Design, genaue Farben, klare Schriften'
+                },
+                reliableFont: {
+                  name: 'Zuverlässige Schrift',
+                  description: 'Fokus auf Textklarheit und Lesbarkeit',
+                  features: 'Optimierte Schriften, schnelle Leistung, kleinere Dateigröße'
+                },
+                textBased: {
+                  name: 'Textbasiert',
+                  subtitle: 'Durchsuchbarer und kopierbarer Text',
+                  description: 'Erzeugt rein textuelle, durchsuchbare PDF',
+                  features: 'Durchsuchbarer Text, kleine Größe, hohe Kompatibilität'
+                }
+              }
+            },
+            exportOptions: {
+              title: 'Exportoptionen',
+              options: {
+                summary: {
+                  name: 'Zusammenfassung einschließen',
+                  description: 'Fügt Ergebnis- und Bewertungszusammenfassung hinzu',
+                  formats: 'Verfügbar in allen Formaten'
+                },
+                guides: {
+                  name: 'Leitfäden einschließen',
+                  description: 'Fügt detaillierte Leitfäden für jedes Element hinzu',
+                  formats: 'Verfügbar in PDF und HTML'
+                },
+                notes: {
+                  name: 'Notizen einschließen',
+                  description: 'Fügt Ihre persönlichen Notizen hinzu',
+                  formats: 'Verfügbar in allen Formaten'
+                },
+                sectionBreaks: {
+                  name: 'Abschnittsumbrüche',
+                  description: 'Fügt separate Seiten für Abschnitte hinzu',
+                  formats: 'Nur in PDF verfügbar'
+                }
+              }
+            },
+            exportNote:
+              'Denken Sie daran: Alle Exporte erfolgen lokal auf Ihrem Gerät ohne Datenübertragung'
+          },
+          historyManagement: {
+            title: 'Verlaufsverwaltung',
+            content:
+              'Die App speichert automatisch die letzten 5 Bewertungen und ermöglicht Ihnen den Zugriff und die Verwaltung'
+          },
+          pwaSupport: {
+            title: 'PWA-Unterstützung',
+            content:
+              'Die App kann auf dem Gerät installiert und vollständig offline verwendet werden'
+          }
+        }
+      },
+      privacy: {
+        title: 'Datenschutz und Sicherheit',
+        emoji: '🔒',
+        description: 'Wie wir Ihre Privatsphäre und Daten schützen',
+        content:
+          'Wir sind dem Schutz Ihrer Privatsphäre durch datenschutzorientiertes Design verpflichtet.',
+        subSections: {
+          localStorage: {
+            title: 'Lokale Speicherung',
+            content:
+              'Alle Ihre Daten werden lokal in Ihrem Browser gespeichert und verlassen niemals Ihr Gerät'
+          },
+          security: {
+            title: 'Sicherheit',
+            content: 'Keine externen Verbindungen oder Benutzer-Tracking'
+          },
+          dataDeletion: {
+            title: 'Datenlöschung',
+            content:
+              'Sie können alle Ihre Daten jederzeit durch Löschen der Browser-Daten entfernen'
+          }
+        }
+      },
+      troubleshooting: {
+        title: 'Fehlerbehebung',
+        emoji: '🔧',
+        description: 'Lösungen für häufige Probleme',
+        content: 'Wenn Sie Probleme haben, versuchen Sie diese häufigen Lösungen.',
+        subSections: {
+          dataNotSaved: {
+            title: 'Daten werden nicht gespeichert',
+            content:
+              'Stellen Sie sicher, dass lokale Speicherung im Browser aktiviert ist und der Browser aktuell ist'
+          },
+          scoreNotDisplayed: {
+            title: 'Punktzahl wird nicht angezeigt',
+            content: 'Stellen Sie sicher, dass alle erforderlichen Elemente bewertet wurden'
+          },
+          exportFailed: {
+            title: 'Export fehlgeschlagen',
+            content:
+              'Stellen Sie sicher, dass Downloads im Browser erlaubt sind und ausreichend Speicherplatz vorhanden ist'
+          },
+          otherIssues: {
+            title: 'Andere Probleme',
+            content: 'Versuchen Sie, die Seite zu aktualisieren oder den Browser-Cache zu leeren'
+          }
+        }
+      }
+    }
   },
   accessibility: {
     skipToContent: 'Zum Inhalt springen',

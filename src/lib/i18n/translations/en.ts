@@ -228,14 +228,285 @@ export const translations: TranslationKeys = {
 
   // Help & Guide
   help: {
-    title: 'Help & Usage',
-    overview: 'Overview',
-    howToUse: 'How to Use',
-    categories: 'Categories',
-    scoring: 'Score Calculation',
-    features: 'Features',
-    troubleshooting: 'Troubleshooting',
-    faq: 'FAQ'
+    title: 'Help & Usage Guide',
+    subtitle: 'Detailed explanation of how to use the Fact Verification Checklist',
+    tableOfContents: 'Table of Contents',
+
+    // Navigation
+    navigation: {
+      overview: 'Overview',
+      usage: 'Usage',
+      categories: 'Categories',
+      scoring: 'Scoring',
+      features: 'Features',
+      privacy: 'Privacy',
+      troubleshooting: 'Troubleshooting'
+    },
+
+    // Sections
+    sections: {
+      overview: {
+        title: 'App Overview',
+        emoji: '📋',
+        description: 'Basic usage of the Fact Verification Checklist',
+        content:
+          'This app is a tool for scientifically and systematically evaluating the reliability of information on the Internet. By checking a total of 20 items across 4 major categories (Critical Assessment, Detailed Assessment, Verification Assessment, and Context Assessment), it quantifies the reliability of information and supports final judgment.',
+        subSections: {
+          features: {
+            title: 'Key Features',
+            content:
+              '• Completely Private: All data is stored only on your device\n• Offline Support: Works without network connection\n• Scientific Assessment: Systematic checklist items\n• History Management: Save and reference past evaluation results'
+          },
+          targetUsers: {
+            title: 'Target Users',
+            content:
+              '• General Users: Those who want to verify the reliability of online information\n• Professionals: As a supplementary tool for information analysis\n• Media Professionals: As support for fact-checking'
+          }
+        }
+      },
+      usage: {
+        title: 'Usage Guide',
+        emoji: '🚀',
+        description: 'Step-by-step usage instructions',
+        content:
+          'Please follow these steps from creating a checklist to completing the evaluation.',
+        subSections: {
+          step1: {
+            title: 'Step 1: Create Checklist',
+            content:
+              '1. Enter title and overview of target information\n2. Record details of information to be evaluated\n3. Checklist will be automatically created'
+          },
+          step2: {
+            title: 'Step 2: Item Evaluation',
+            content:
+              '1. Start with Critical Assessment\n2. Check each item in order\n3. Refer to detailed guide for unclear items\n4. Score updates in real-time'
+          },
+          step3: {
+            title: 'Step 3: Final Judgment',
+            content:
+              '1. Check all items\n2. Record evaluation notes (optional)\n3. Select final judgment (Accept/Caution/Reject)\n4. Click "Complete Evaluation" button'
+          },
+          step4: {
+            title: 'Step 4: Review Results & Share',
+            content:
+              '1. Review details on evaluation results page\n2. Export if needed\n3. Output available in PDF, HTML, JSON, Markdown formats'
+          }
+        }
+      },
+      categories: {
+        title: 'Assessment Categories',
+        emoji: '📊',
+        description: 'Detailed explanation of the 4 assessment categories',
+        content:
+          'To evaluate information reliability from multiple angles, we conduct checks across 4 categories.',
+        subSections: {
+          critical: {
+            title: 'Critical Assessment',
+            content:
+              'Evaluates the most important basic reliability.\n• Publication from authoritative sources\n• Verification of primary information\n• Multiple independent sources\n• Not anonymous or unattributed\n• Minimal inflammatory or sensational language\n• Logical consistency'
+          },
+          detailed: {
+            title: 'Detailed Assessment',
+            content:
+              'Evaluates information quality and detail.\n• Recency of information\n• Update and correction history\n• Appropriate expertise\n• Sufficient detail and evidence\n• Proper citation and references\n• Verifiability of cited sources'
+          },
+          verification: {
+            title: 'Verification Assessment',
+            content:
+              'Evaluates external verification and objectivity.\n• Cross-checking with other sources\n• Verification by fact-checking organizations\n• Verifiable data\n• Validity of methods and methodology'
+          },
+          context: {
+            title: 'Context Assessment',
+            content:
+              'Evaluates information background and bias.\n• Disclosure of conflicts of interest\n• Balanced perspective\n• Sufficient background information\n• Clear scope of application'
+          }
+        }
+      },
+      scoring: {
+        title: 'Scoring',
+        emoji: '🎯',
+        description: 'Details of score calculation and judgment criteria',
+        content:
+          'Reliability scores are automatically calculated based on the status of each item check.',
+        subSections: {
+          calculation: {
+            title: 'Calculation Method',
+            content:
+              '• Weighting by importance of each category\n• Critical Assessment: 35%\n• Detailed Assessment: 25%\n• Verification Assessment: 25%\n• Context Assessment: 15%'
+          },
+          criteria: {
+            title: 'Judgment Criteria',
+            content:
+              '• 80% or higher: High reliability → "Accept" recommended\n• 60-79%: Moderate reliability → Additional verification recommended\n• 40-59%: Low reliability → "Caution"\n• Below 40%: Reliability issues → "Reject" recommended'
+          },
+          finalJudgment: {
+            title: 'Final Judgment',
+            content:
+              'The score is a reference value. The final judgment is left to the evaluator\'s expertise and comprehensive judgment. Please select from "Accept," "Caution," or "Reject."'
+          }
+        }
+      },
+      features: {
+        title: 'Feature Details',
+        emoji: '⚙️',
+        description: 'About the various features of the app',
+        content: 'Use various features to efficiently evaluate information.',
+        subSections: {
+          detailedGuide: {
+            title: 'Detailed Guide Mode',
+            content:
+              'Displays detailed explanations and specific examples for each checklist item. Useful for first-time users or when you want to confirm judgment criteria for items.'
+          },
+          exportFunction: {
+            title: 'Export Function',
+            content: 'Evaluation results can be output in 4 formats.',
+            exportFormats: {
+              title: 'List of Output Formats',
+              formats: {
+                pdf: {
+                  name: 'PDF',
+                  features:
+                    '• Optimized for printing\n• Japanese font support\n• Choose from 3 modes',
+                  usage: 'Reports, archives, printed distribution'
+                },
+                html: {
+                  name: 'HTML',
+                  features: '• Viewable in browser\n• CSS styles embedded\n• Single file',
+                  usage: 'Web sharing, online viewing'
+                },
+                json: {
+                  name: 'JSON',
+                  features:
+                    '• Structured data\n• Programmable processing\n• Complete data retention',
+                  usage: 'System integration, data analysis'
+                },
+                markdown: {
+                  name: 'Markdown',
+                  features:
+                    '• Editable in text editor\n• Optimized for GitHub display\n• Simple format',
+                  usage: 'Document editing, version control'
+                }
+              }
+            },
+            pdfModes: {
+              title: 'PDF Generation Modes (select one)',
+              modes: {
+                pixelPerfect: {
+                  name: '🎨 Pixel Perfect',
+                  subtitle: '(Default, Recommended)',
+                  description:
+                    'Uses browser print function to generate PDF with exactly the same appearance as screen display',
+                  features:
+                    '• Complete reproduction of gradients, colors, layout\n• Confirmable with print preview\n• Highest quality output'
+                },
+                reliableFont: {
+                  name: '🔥 Reliable Japanese Support',
+                  description:
+                    'Directly generates PDF with jsPDF library, ensuring Japanese font embedding',
+                  features:
+                    '• Guaranteed Japanese font embedding\n• Complete prevention of garbled text\n• CSP compliant and secure\n• Advanced features like watermarks and table of contents'
+                },
+                textBased: {
+                  name: '🔤 Text-Based',
+                  subtitle: '(Legacy PWA Method)',
+                  description: 'Simple PDF generation centered on text utilizing PWA features',
+                  features:
+                    '• Utilizes PWA save and share functions\n• Text searchable and copyable\n• Minimal file size\n• Mobile optimized'
+                }
+              }
+            },
+            exportOptions: {
+              title: 'Common Export Options',
+              options: {
+                summary: {
+                  name: '📊 Evaluation Summary',
+                  description: 'Overview of scores, judgment results, and achievement rates',
+                  formats: 'All formats'
+                },
+                guides: {
+                  name: '📚 Guide Content',
+                  description: 'Detailed explanations and examples for each checklist item',
+                  formats: 'All formats'
+                },
+                notes: {
+                  name: '📝 Evaluation Notes',
+                  description: 'Added notes and comments',
+                  formats: 'All formats'
+                },
+                sectionBreaks: {
+                  name: '📄 Section Breaks',
+                  description: 'Page breaks and dividers for each category',
+                  formats: 'PDF, Markdown'
+                }
+              }
+            },
+            exportNote:
+              '📌 Note: PDF generation modes are exclusive. Only one of the 3 modes can be selected. By default, the highest quality "Pixel Perfect" mode is selected.'
+          },
+          historyManagement: {
+            title: 'History Management',
+            content:
+              'Automatically saves past evaluation results.\n• Display latest 5 items in sidebar\n• List view of all history\n• Individual deletion function\n• Re-edit function (before completion only)'
+          },
+          pwaSupport: {
+            title: 'PWA Support & Advanced Features',
+            content:
+              '• Add to home screen\n• Offline operation\n• Platform-adaptive features\n• Font cache system\n• Device-specific optimization\n• Automatic updates'
+          }
+        }
+      },
+      privacy: {
+        title: 'Privacy',
+        emoji: '🔐',
+        description: 'Data handling and security',
+        content: 'Designed with user privacy protection as the top priority.',
+        subSections: {
+          localStorage: {
+            title: 'Local Storage',
+            content:
+              '• All data is stored only on your device\n• No data transmission to servers\n• No data provision to third parties\n• No collection of personally identifiable information'
+          },
+          security: {
+            title: 'Security',
+            content:
+              '• Enforced HTTPS communication\n• Content Security Policy implementation\n• XSS attack prevention measures\n• Same-Origin Policy compliance'
+          },
+          dataDeletion: {
+            title: 'Data Deletion',
+            content:
+              'Users can delete saved data at any time. Data is also completely deleted when browser data is cleared.'
+          }
+        }
+      },
+      troubleshooting: {
+        title: 'Troubleshooting',
+        emoji: '🔧',
+        description: 'Common problems and solutions',
+        content: 'Here are solutions for problems that may occur during use.',
+        subSections: {
+          dataNotSaved: {
+            title: 'Data Not Saved',
+            content:
+              '• Check browser private mode\n• Check storage capacity\n• Verify local storage is enabled in browser settings\n• Try a different browser'
+          },
+          scoreNotDisplayed: {
+            title: 'Score Not Displayed',
+            content:
+              '• Reload the page\n• Clear browser cache\n• Verify JavaScript is enabled\n• Check browser console for errors'
+          },
+          exportFailed: {
+            title: 'Export Failed',
+            content:
+              '• Check popup blocking\n• Check download settings\n• Check browser permission settings\n• Verify sufficient storage capacity'
+          },
+          otherIssues: {
+            title: 'Other Issues',
+            content:
+              "If the above doesn't resolve the issue, please feel free to contact us through GitHub Issues. We will provide support to the best of our ability."
+          }
+        }
+      }
+    }
   },
 
   // Accessibility

@@ -7,7 +7,10 @@
   import { checklistStore } from '$lib/stores/checklistStore.svelte.js';
   import { getCategories } from '$lib/data/checklist-items.js';
   import type { JudgmentType } from '$lib/types/checklist.js';
-  import { t } from '$lib/i18n/index.js';
+  import { t, i18nStore } from '$lib/i18n/index.js';
+
+  // i18n初期化状態を監視
+  const isI18nReady = $derived(i18nStore.initialized && !!i18nStore.translations);
 
   import CheckSection from '$lib/components/CheckSection.svelte';
   import ScoreDisplay from '$lib/components/ScoreDisplay.svelte';
@@ -51,7 +54,7 @@
       console.log('Loading existing checklist...');
       checklistStore.loadChecklist(checklistId).then(loaded => {
         console.log('loadChecklist result:', loaded);
-        console.log('currentChecklist after load:', currentChecklist);
+        console.log('[snapshot] currentChecklist after load:', $state.snapshot(currentChecklist));
         if (loaded && currentChecklist) {
           title = currentChecklist.title;
           description = currentChecklist.description;
@@ -167,8 +170,11 @@
 </script>
 
 <svelte:head>
-  <title>{t('app.title')}</title>
-  <meta name="description" content={t('app.description')} />
+  <title>{isI18nReady ? t('app.title') : 'Fact Checklist'}</title>
+  <meta
+    name="description"
+    content={isI18nReady ? t('app.description') : 'Information reliability evaluation checklist'}
+  />
 </svelte:head>
 
 <div class="container">

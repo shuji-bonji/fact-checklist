@@ -1,7 +1,10 @@
 <script lang="ts">
   import { base } from '$app/paths';
   import { goto } from '$app/navigation';
-  import { t, tArray } from '$lib/i18n/index.js';
+  import { t, tArray, i18nStore } from '$lib/i18n/index.js';
+
+  // i18n初期化状態を監視
+  const isInitialized = $derived(i18nStore.initialized && !!i18nStore.translations);
 
   // アプリの特徴
   interface Feature {
@@ -203,157 +206,170 @@
 </script>
 
 <svelte:head>
-  <title>{t('about.title')} - {t('app.title')}</title>
-  <meta name="description" content={t('about.subtitle')} />
+  <title
+    >{isInitialized ? `${t('about.title')} - ${t('app.title')}` : 'About - Fact Checklist'}</title
+  >
+  <meta
+    name="description"
+    content={isInitialized ? t('about.subtitle') : 'Learn about Fact Checklist'}
+  />
 </svelte:head>
 
-<div class="container">
-  <!-- ヒーローセクション -->
-  <section class="hero">
-    <div class="hero-content">
-      <h1 class="hero-title">🔍 {t('about.hero.title')}</h1>
-      <p class="hero-subtitle">{t('about.hero.subtitle')}</p>
-      <div class="hero-description">
-        {#each tArray('about.hero.description') as paragraph}
-          <p>{paragraph}</p>
-        {/each}
-      </div>
-      <div class="hero-cta">
-        <button class="btn btn-primary btn-large" onclick={startEvaluation}>
-          🚀 {t('about.hero.startButton')}
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- 特徴セクション -->
-  <section class="features-section">
-    <div class="section-header">
-      <h2>✨ {t('about.sections.features')}</h2>
-      <p>{t('about.subtitle')}</p>
-    </div>
-    <div class="features-grid">
-      {#each features as feature (feature.id)}
-        <div class="feature-card">
-          <div class="feature-icon">{feature.emoji}</div>
-          <div class="feature-content">
-            <h3 class="feature-title">{feature.title}</h3>
-            <p class="feature-description">{feature.description}</p>
-            <ul class="feature-details">
-              {#each feature.details as detail}
-                <li>{detail}</li>
-              {/each}
-            </ul>
-          </div>
+{#if isInitialized}
+  <div class="container">
+    <!-- ヒーローセクション -->
+    <section class="hero">
+      <div class="hero-content">
+        <h1 class="hero-title">🔍 {t('about.hero.title')}</h1>
+        <p class="hero-subtitle">{t('about.hero.subtitle')}</p>
+        <div class="hero-description">
+          {#each tArray('about.hero.description') as paragraph}
+            <p>{paragraph}</p>
+          {/each}
         </div>
-      {/each}
-    </div>
-  </section>
-
-  <!-- 使い方セクション -->
-  <section class="steps-section">
-    <div class="section-header">
-      <h2>🚀 {t('about.sections.howItWorks')}</h2>
-      <p>{t('about.sectionDescriptions.howItWorks')}</p>
-    </div>
-    <div class="steps-grid">
-      {#each steps as step (step.id)}
-        <div class="step">
-          <div class="step-number">{step.number}</div>
-          <div class="step-content">
-            <div class="step-emoji">{step.emoji}</div>
-            <h3 class="step-title">{step.title}</h3>
-            <p class="step-description">{step.description}</p>
-          </div>
+        <div class="hero-cta">
+          <button class="btn btn-primary btn-large" onclick={startEvaluation}>
+            🚀 {t('about.hero.startButton')}
+          </button>
         </div>
-      {/each}
-    </div>
-  </section>
+      </div>
+    </section>
 
-  <!-- 評価カテゴリセクション -->
-  <section class="categories-section">
-    <div class="section-header">
-      <h2>📊 {t('about.sections.categories')}</h2>
-      <p>{t('about.sectionDescriptions.categories')}</p>
-    </div>
-    <div class="categories-grid">
-      {#each categories as category (category.id)}
-        <div class="category-card" style:--category-color={category.color}>
-          <div class="category-icon">{category.emoji}</div>
-          <div class="category-content">
-            <h3 class="category-title">{category.name}</h3>
-            <p class="category-description">{category.description}</p>
-            <div class="category-items">
-              <span class="category-count">{category.items}{t('units.items')}</span>
+    <!-- 特徴セクション -->
+    <section class="features-section">
+      <div class="section-header">
+        <h2>✨ {t('about.sections.features')}</h2>
+        <p>{t('about.subtitle')}</p>
+      </div>
+      <div class="features-grid">
+        {#each features as feature (feature.id)}
+          <div class="feature-card">
+            <div class="feature-icon">{feature.emoji}</div>
+            <div class="feature-content">
+              <h3 class="feature-title">{feature.title}</h3>
+              <p class="feature-description">{feature.description}</p>
+              <ul class="feature-details">
+                {#each feature.details as detail}
+                  <li>{detail}</li>
+                {/each}
+              </ul>
             </div>
           </div>
-        </div>
-      {/each}
-    </div>
-  </section>
+        {/each}
+      </div>
+    </section>
 
-  <!-- 技術スタックセクション -->
-  <section class="tech-section">
-    <div class="section-header">
-      <h2>⚙️ {t('about.sections.techStack')}</h2>
-      <p>{t('about.sectionDescriptions.techStack')}</p>
-    </div>
-    <div class="tech-grid">
-      {#each techStack as tech (tech.id)}
-        <div class="tech-item">
-          <div class="tech-icon">{tech.icon}</div>
-          <div class="tech-content">
-            <h4 class="tech-name">{tech.name}</h4>
-            <p class="tech-description">{tech.description}</p>
-            <span class="tech-category">{tech.category}</span>
+    <!-- 使い方セクション -->
+    <section class="steps-section">
+      <div class="section-header">
+        <h2>🚀 {t('about.sections.howItWorks')}</h2>
+        <p>{t('about.sectionDescriptions.howItWorks')}</p>
+      </div>
+      <div class="steps-grid">
+        {#each steps as step (step.id)}
+          <div class="step">
+            <div class="step-number">{step.number}</div>
+            <div class="step-content">
+              <div class="step-emoji">{step.emoji}</div>
+              <h3 class="step-title">{step.title}</h3>
+              <p class="step-description">{step.description}</p>
+            </div>
           </div>
+        {/each}
+      </div>
+    </section>
+
+    <!-- 評価カテゴリセクション -->
+    <section class="categories-section">
+      <div class="section-header">
+        <h2>📊 {t('about.sections.categories')}</h2>
+        <p>{t('about.sectionDescriptions.categories')}</p>
+      </div>
+      <div class="categories-grid">
+        {#each categories as category (category.id)}
+          <div class="category-card" style:--category-color={category.color}>
+            <div class="category-icon">{category.emoji}</div>
+            <div class="category-content">
+              <h3 class="category-title">{category.name}</h3>
+              <p class="category-description">{category.description}</p>
+              <div class="category-items">
+                <span class="category-count">{category.items}{t('units.items')}</span>
+              </div>
+            </div>
+          </div>
+        {/each}
+      </div>
+    </section>
+
+    <!-- 技術スタックセクション -->
+    <section class="tech-section">
+      <div class="section-header">
+        <h2>⚙️ {t('about.sections.techStack')}</h2>
+        <p>{t('about.sectionDescriptions.techStack')}</p>
+      </div>
+      <div class="tech-grid">
+        {#each techStack as tech (tech.id)}
+          <div class="tech-item">
+            <div class="tech-icon">{tech.icon}</div>
+            <div class="tech-content">
+              <h4 class="tech-name">{tech.name}</h4>
+              <p class="tech-description">{tech.description}</p>
+              <span class="tech-category">{tech.category}</span>
+            </div>
+          </div>
+        {/each}
+      </div>
+    </section>
+
+    <!-- 統計情報セクション -->
+    <section class="stats-section">
+      <div class="section-header">
+        <h2>📈 {t('about.sections.performance')}</h2>
+        <p>{t('about.sectionDescriptions.performance')}</p>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-value">95+</div>
+          <div class="stat-label">{t('about.stats.performance')}</div>
         </div>
-      {/each}
-    </div>
-  </section>
+        <div class="stat-item">
+          <div class="stat-value">100</div>
+          <div class="stat-label">{t('about.stats.accessibility')}</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">100</div>
+          <div class="stat-label">{t('about.stats.bestPractices')}</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">100</div>
+          <div class="stat-label">{t('about.stats.seo')}</div>
+        </div>
+      </div>
+    </section>
 
-  <!-- 統計情報セクション -->
-  <section class="stats-section">
-    <div class="section-header">
-      <h2>📈 {t('about.sections.performance')}</h2>
-      <p>{t('about.sectionDescriptions.performance')}</p>
+    <!-- CTAセクション -->
+    <section class="cta-section">
+      <div class="cta-content">
+        <h2>🌟 {t('about.cta.title')}</h2>
+        <p>{t('about.cta.description')}</p>
+        <div class="cta-buttons">
+          <button class="btn btn-primary btn-large" onclick={startEvaluation}>
+            🔍 {t('about.cta.startButton')}
+          </button>
+          <button class="btn btn-secondary btn-large" onclick={() => goto(`${base}/help`)}>
+            📖 {t('about.cta.helpButton')}
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+{:else}
+  <div class="container">
+    <div class="loading">
+      <h1>Loading...</h1>
     </div>
-    <div class="stats-grid">
-      <div class="stat-item">
-        <div class="stat-value">95+</div>
-        <div class="stat-label">{t('about.stats.performance')}</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-value">100</div>
-        <div class="stat-label">{t('about.stats.accessibility')}</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-value">100</div>
-        <div class="stat-label">{t('about.stats.bestPractices')}</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-value">100</div>
-        <div class="stat-label">{t('about.stats.seo')}</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTAセクション -->
-  <section class="cta-section">
-    <div class="cta-content">
-      <h2>🌟 {t('about.cta.title')}</h2>
-      <p>{t('about.cta.description')}</p>
-      <div class="cta-buttons">
-        <button class="btn btn-primary btn-large" onclick={startEvaluation}>
-          🔍 {t('about.cta.startButton')}
-        </button>
-        <button class="btn btn-secondary btn-large" onclick={() => goto(`${base}/help`)}>
-          📖 {t('about.cta.helpButton')}
-        </button>
-      </div>
-    </div>
-  </section>
-</div>
+  </div>
+{/if}
 
 <style>
   .container {
@@ -1074,5 +1090,14 @@
   .tech-item:focus-within {
     outline: 3px solid var(--primary-color);
     outline-offset: 3px;
+  }
+
+  /* ローディング状態 */
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+    color: var(--text-color-secondary);
   }
 </style>

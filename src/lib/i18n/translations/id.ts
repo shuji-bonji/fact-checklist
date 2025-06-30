@@ -207,13 +207,258 @@ export const translations: TranslationKeys = {
   },
   help: {
     title: 'Bantuan & Penggunaan',
-    overview: 'Ringkasan',
-    howToUse: 'Cara Menggunakan',
-    categories: 'Kategori',
-    scoring: 'Perhitungan Skor',
-    features: 'Fitur',
-    troubleshooting: 'Pemecahan Masalah',
-    faq: 'FAQ'
+    subtitle: 'Panduan lengkap untuk menggunakan daftar periksa fakta',
+    tableOfContents: 'Daftar Isi',
+    navigation: {
+      overview: 'Ringkasan',
+      usage: 'Penggunaan',
+      categories: 'Kategori',
+      scoring: 'Penilaian',
+      features: 'Fitur',
+      privacy: 'Privasi',
+      troubleshooting: 'Pemecahan Masalah'
+    },
+    sections: {
+      overview: {
+        title: 'Ringkasan Aplikasi',
+        emoji: '📋',
+        description: 'Penggunaan dasar daftar periksa fakta',
+        content:
+          'Aplikasi ini adalah alat untuk mengevaluasi kredibilitas informasi di internet secara ilmiah dan sistematis.',
+        subSections: {
+          features: {
+            title: 'Fitur Utama',
+            content:
+              '• Privasi lengkap: semua data disimpan secara lokal\n• Berfungsi offline\n• Evaluasi ilmiah\n• Manajemen riwayat'
+          },
+          targetUsers: {
+            title: 'Pengguna Target',
+            content:
+              'Jurnalis, peneliti, mahasiswa, dan siapa saja yang tertarik mengevaluasi kredibilitas informasi'
+          }
+        }
+      },
+      usage: {
+        title: 'Penggunaan',
+        emoji: '🔍',
+        description: 'Panduan langkah demi langkah untuk menggunakan aplikasi',
+        content:
+          'Ikuti langkah-langkah ini untuk mengevaluasi kredibilitas informasi secara sistematis.',
+        subSections: {
+          step1: {
+            title: 'Langkah 1: Masukkan informasi',
+            content: 'Masukkan judul dan deskripsi informasi yang ingin Anda evaluasi'
+          },
+          step2: {
+            title: 'Langkah 2: Evaluasi elemen',
+            content: 'Evaluasi setiap elemen daftar berdasarkan bukti yang tersedia'
+          },
+          step3: {
+            title: 'Langkah 3: Tinjau hasil',
+            content: 'Tinjau hasil yang dihitung dan tingkat kepercayaan'
+          },
+          step4: {
+            title: 'Langkah 4: Keputusan akhir',
+            content: 'Buat keputusan akhir berdasarkan evaluasi: terima, hati-hati, atau tolak'
+          }
+        }
+      },
+      categories: {
+        title: 'Kategori Evaluasi',
+        emoji: '📊',
+        description: 'Empat kategori utama evaluasi',
+        content:
+          'Elemen evaluasi diorganisir dalam empat kategori utama untuk memastikan evaluasi yang komprehensif.',
+        subSections: {
+          critical: {
+            title: 'Evaluasi Kritis',
+            content: 'Elemen paling penting untuk menentukan kredibilitas dasar informasi'
+          },
+          detailed: {
+            title: 'Evaluasi Rinci',
+            content: 'Elemen untuk mengevaluasi kualitas dan keahlian informasi'
+          },
+          verification: {
+            title: 'Verifikasi dan Cross-checking',
+            content: 'Elemen untuk mengonfirmasi verifikabilitas dan dukungan informasi'
+          },
+          context: {
+            title: 'Evaluasi Konteks dan Bias',
+            content: 'Elemen untuk mengevaluasi kesesuaian bias dan konteks'
+          }
+        }
+      },
+      scoring: {
+        title: 'Sistem Penilaian',
+        emoji: '🎯',
+        description: 'Bagaimana skor dan tingkat kepercayaan dihitung',
+        content: 'Skor dihitung berdasarkan jumlah elemen yang terpenuhi dari total elemen.',
+        subSections: {
+          calculation: {
+            title: 'Metode Perhitungan',
+            content: 'Skor = (jumlah elemen terpenuhi / total elemen) × 100'
+          },
+          criteria: {
+            title: 'Kriteria Evaluasi',
+            content:
+              '• 80%+: Kredibilitas tinggi\n• 60-79%: Kredibilitas sedang\n• 40-59%: Kredibilitas rendah\n• <40%: Masalah kredibilitas'
+          },
+          finalJudgment: {
+            title: 'Keputusan Akhir',
+            content:
+              'Gunakan skor sebagai panduan, tetapi keputusan akhir bergantung pada penilaian pribadi Anda'
+          }
+        }
+      },
+      features: {
+        title: 'Fitur',
+        emoji: '⭐',
+        description: 'Fitur canggih aplikasi',
+        content:
+          'Aplikasi menyediakan beberapa fitur canggih untuk meningkatkan pengalaman pengguna.',
+        subSections: {
+          detailedGuide: {
+            title: 'Panduan Rinci',
+            content:
+              'Setiap elemen evaluasi berisi panduan rinci dan contoh praktis untuk membantu evaluasi Anda'
+          },
+          exportFunction: {
+            title: 'Fungsi Ekspor',
+            content:
+              'Anda dapat mengekspor hasil evaluasi dalam berbagai format (PDF, HTML, JSON, Markdown)',
+            exportFormats: {
+              title: 'Format Ekspor',
+              formats: {
+                pdf: {
+                  name: 'PDF',
+                  features: 'Format profesional untuk cetak dan berbagi',
+                  usage: 'Cocok untuk laporan resmi dan pengarsipan'
+                },
+                html: {
+                  name: 'HTML',
+                  features: 'Tampilan interaktif di browser',
+                  usage: 'Cocok untuk berbagi melalui web'
+                },
+                json: {
+                  name: 'JSON',
+                  features: 'Format data terstruktur',
+                  usage: 'Cocok untuk analisis otomatis dan impor'
+                },
+                markdown: {
+                  name: 'Markdown',
+                  features: 'Format teks fleksibel',
+                  usage: 'Cocok untuk blog dan dokumentasi'
+                }
+              }
+            },
+            pdfModes: {
+              title: 'Mode PDF',
+              modes: {
+                pixelPerfect: {
+                  name: 'Pixel Perfect',
+                  subtitle: 'Kualitas visual terbaik',
+                  description: 'Mempertahankan desain asli dengan akurasi tinggi',
+                  features: 'Desain sesuai antarmuka, warna akurat, font jelas'
+                },
+                reliableFont: {
+                  name: 'Font Andal',
+                  description: 'Fokus pada kejelasan teks dan keterbacaan',
+                  features: 'Font yang dioptimalkan, performa cepat, ukuran file lebih kecil'
+                },
+                textBased: {
+                  name: 'Berbasis Teks',
+                  subtitle: 'Teks yang dapat dicari dan disalin',
+                  description: 'Menghasilkan PDF murni tekstual yang dapat dicari',
+                  features: 'Teks dapat dicari, ukuran kecil, kompatibilitas tinggi'
+                }
+              }
+            },
+            exportOptions: {
+              title: 'Opsi Ekspor',
+              options: {
+                summary: {
+                  name: 'Sertakan Ringkasan',
+                  description: 'Menambahkan ringkasan hasil dan evaluasi',
+                  formats: 'Tersedia di semua format'
+                },
+                guides: {
+                  name: 'Sertakan Panduan',
+                  description: 'Menambahkan panduan rinci untuk setiap elemen',
+                  formats: 'Tersedia di PDF dan HTML'
+                },
+                notes: {
+                  name: 'Sertakan Catatan',
+                  description: 'Menambahkan catatan pribadi Anda',
+                  formats: 'Tersedia di semua format'
+                },
+                sectionBreaks: {
+                  name: 'Pemisah Bagian',
+                  description: 'Menambahkan halaman terpisah untuk bagian',
+                  formats: 'Hanya tersedia di PDF'
+                }
+              }
+            },
+            exportNote:
+              'Ingat: semua ekspor dilakukan secara lokal di perangkat Anda tanpa transfer data'
+          },
+          historyManagement: {
+            title: 'Manajemen Riwayat',
+            content:
+              'Aplikasi menyimpan 5 evaluasi terakhir secara otomatis dan memungkinkan Anda mengakses dan mengelolanya'
+          },
+          pwaSupport: {
+            title: 'Dukungan PWA',
+            content: 'Aplikasi dapat diinstal di perangkat dan bekerja sepenuhnya offline'
+          }
+        }
+      },
+      privacy: {
+        title: 'Privasi dan Keamanan',
+        emoji: '🔒',
+        description: 'Bagaimana kami melindungi privasi dan data Anda',
+        content:
+          'Kami berkomitmen melindungi privasi Anda melalui desain yang mengutamakan privasi.',
+        subSections: {
+          localStorage: {
+            title: 'Penyimpanan Lokal',
+            content:
+              'Semua data Anda disimpan secara lokal di browser dan tidak pernah meninggalkan perangkat Anda'
+          },
+          security: {
+            title: 'Keamanan',
+            content: 'Tidak ada koneksi eksternal atau pelacakan pengguna'
+          },
+          dataDeletion: {
+            title: 'Penghapusan Data',
+            content: 'Anda dapat menghapus semua data kapan saja dengan menghapus data browser'
+          }
+        }
+      },
+      troubleshooting: {
+        title: 'Pemecahan Masalah',
+        emoji: '🔧',
+        description: 'Solusi untuk masalah umum',
+        content: 'Jika Anda mengalami masalah, coba solusi umum ini.',
+        subSections: {
+          dataNotSaved: {
+            title: 'Data tidak tersimpan',
+            content: 'Pastikan penyimpanan lokal diaktifkan di browser dan browser terbaru'
+          },
+          scoreNotDisplayed: {
+            title: 'Skor tidak ditampilkan',
+            content: 'Pastikan Anda telah menyelesaikan evaluasi semua elemen yang diperlukan'
+          },
+          exportFailed: {
+            title: 'Ekspor gagal',
+            content: 'Pastikan unduhan diizinkan di browser dan ruang yang cukup tersedia'
+          },
+          otherIssues: {
+            title: 'Masalah lain',
+            content: 'Coba refresh halaman atau bersihkan cache browser'
+          }
+        }
+      }
+    }
   },
   accessibility: {
     skipToContent: 'Lompat ke konten',

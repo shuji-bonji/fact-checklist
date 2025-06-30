@@ -231,14 +231,288 @@ export const translations: TranslationKeys = {
 
   // Aide et Guide
   help: {
-    title: 'Aide et Utilisation',
-    overview: 'Aperçu',
-    howToUse: 'Comment Utiliser',
-    categories: 'Catégories',
-    scoring: 'Calcul du Score',
-    features: 'Fonctionnalités',
-    troubleshooting: 'Dépannage',
-    faq: 'FAQ'
+    title: "Guide d'Aide et d'Utilisation",
+    subtitle: "Explication détaillée de l'utilisation de la Liste de Vérification des Faits",
+    tableOfContents: 'Table des Matières',
+    // Navigation
+    navigation: {
+      overview: 'Aperçu',
+      usage: 'Utilisation',
+      categories: 'Catégories',
+      scoring: 'Notation',
+      features: 'Fonctionnalités',
+      privacy: 'Confidentialité',
+      troubleshooting: 'Dépannage'
+    },
+
+    // Sections
+    sections: {
+      overview: {
+        title: "Aperçu de l'Application",
+        emoji: '📋',
+        description: 'Utilisation de base de la Liste de Vérification des Faits',
+        content:
+          'Cette application est un outil pour évaluer de manière scientifique et systématique la fiabilité des informations sur Internet. En vérifiant un total de 20 éléments à travers 4 catégories principales (Évaluation Critique, Évaluation Détaillée, Évaluation de Vérification et Évaluation de Contexte), elle quantifie la fiabilité des informations et soutient le jugement final.',
+        subSections: {
+          features: {
+            title: 'Caractéristiques Principales',
+            content:
+              "• Complètement Privé : Toutes les données sont stockées uniquement sur votre appareil\n• Support Hors Ligne : Fonctionne sans connexion réseau\n• Évaluation Scientifique : Éléments de liste de vérification systématiques\n• Gestion de l'Historique : Sauvegarder et référencer les résultats d'évaluation passés"
+          },
+          targetUsers: {
+            title: 'Utilisateurs Cibles',
+            content:
+              "• Utilisateurs Généraux : Ceux qui veulent vérifier la fiabilité des informations en ligne\n• Professionnels : Comme outil supplémentaire pour l'analyse d'informations\n• Professionnels des Médias : Comme support pour la vérification des faits"
+          }
+        }
+      },
+      usage: {
+        title: "Guide d'Utilisation",
+        emoji: '🚀',
+        description: "Instructions d'utilisation étape par étape",
+        content:
+          "Veuillez suivre ces étapes de la création d'une liste de vérification à l'achèvement de l'évaluation.",
+        subSections: {
+          step1: {
+            title: 'Étape 1 : Créer une Liste de Vérification',
+            content:
+              "1. Entrer le titre et l'aperçu des informations cibles\n2. Enregistrer les détails des informations à évaluer\n3. La liste de vérification sera automatiquement créée"
+          },
+          step2: {
+            title: 'Étape 2 : Évaluation des Éléments',
+            content:
+              "1. Commencer par l'Évaluation Critique\n2. Vérifier chaque élément dans l'ordre\n3. Consulter le guide détaillé pour les éléments peu clairs\n4. Le score se met à jour en temps réel"
+          },
+          step3: {
+            title: 'Étape 3 : Jugement Final',
+            content:
+              '1. Vérifier tous les éléments\n2. Enregistrer les notes d\'évaluation (optionnel)\n3. Sélectionner le jugement final (Accepter/Attention/Rejeter)\n4. Cliquer sur le bouton "Terminer l\'Évaluation"'
+          },
+          step4: {
+            title: 'Étape 4 : Examiner les Résultats et Partager',
+            content:
+              "1. Examiner les détails sur la page des résultats d'évaluation\n2. Exporter si nécessaire\n3. Sortie disponible en formats PDF, HTML, JSON, Markdown"
+          }
+        }
+      },
+      categories: {
+        title: "Catégories d'Évaluation",
+        emoji: '📊',
+        description: "Explication détaillée des 4 catégories d'évaluation",
+        content:
+          'Pour évaluer la fiabilité des informations sous plusieurs angles, nous effectuons des vérifications à travers 4 catégories.',
+        subSections: {
+          critical: {
+            title: 'Évaluation Critique',
+            content:
+              'Évalue la fiabilité de base la plus importante.\n• Publication de sources faisant autorité\n• Vérification des informations primaires\n• Sources multiples et indépendantes\n• Pas anonyme ou non attribué\n• Langage inflammatoire ou sensationnel minimal\n• Cohérence logique'
+          },
+          detailed: {
+            title: 'Évaluation Détaillée',
+            content:
+              'Évalue la qualité et le détail des informations.\n• Récence des informations\n• Historique des mises à jour et corrections\n• Expertise appropriée\n• Détail et preuves suffisants\n• Citation et références appropriées\n• Vérifiabilité des sources citées'
+          },
+          verification: {
+            title: 'Évaluation de Vérification',
+            content:
+              "Évalue la vérification externe et l'objectivité.\n• Vérification croisée avec d'autres sources\n• Vérification par des organisations de fact-checking\n• Données vérifiables\n• Validité des méthodes et de la méthodologie"
+          },
+          context: {
+            title: 'Évaluation de Contexte',
+            content:
+              "Évalue le contexte et les biais des informations.\n• Divulgation des conflits d'intérêts\n• Perspective équilibrée\n• Informations de contexte suffisantes\n• Portée d'application claire"
+          }
+        }
+      },
+      scoring: {
+        title: 'Notation',
+        emoji: '🎯',
+        description: 'Détails du calcul de score et critères de jugement',
+        content:
+          "Les scores de fiabilité sont automatiquement calculés en fonction du statut de chaque vérification d'élément.",
+        subSections: {
+          calculation: {
+            title: 'Méthode de Calcul',
+            content:
+              '• Pondération par importance de chaque catégorie\n• Évaluation Critique : 35%\n• Évaluation Détaillée : 25%\n• Évaluation de Vérification : 25%\n• Évaluation de Contexte : 15%'
+          },
+          criteria: {
+            title: 'Critères de Jugement',
+            content:
+              '• 80% ou plus : Fiabilité élevée → "Accepter" recommandé\n• 60-79% : Fiabilité modérée → Vérification supplémentaire recommandée\n• 40-59% : Fiabilité faible → "Attention"\n• Moins de 40% : Problèmes de fiabilité → "Rejeter" recommandé'
+          },
+          finalJudgment: {
+            title: 'Jugement Final',
+            content:
+              'Le score est une valeur de référence. Le jugement final est laissé à l\'expertise de l\'évaluateur et au jugement global. Veuillez sélectionner parmi "Accepter", "Attention" ou "Rejeter".'
+          }
+        }
+      },
+      features: {
+        title: 'Détails des Fonctionnalités',
+        emoji: '⚙️',
+        description: "À propos des diverses fonctionnalités de l'application",
+        content: 'Utilisez diverses fonctionnalités pour évaluer efficacement les informations.',
+        subSections: {
+          detailedGuide: {
+            title: 'Mode Guide Détaillé',
+            content:
+              'Affiche des explications détaillées et des exemples spécifiques pour chaque élément de la liste de vérification. Utile pour les utilisateurs débutants ou lorsque vous voulez confirmer les critères de jugement pour les éléments.'
+          },
+          exportFunction: {
+            title: "Fonction d'Exportation",
+            content: "Les résultats d'évaluation peuvent être exportés en 4 formats.",
+            exportFormats: {
+              title: 'Liste des Formats de Sortie',
+              formats: {
+                pdf: {
+                  name: 'PDF',
+                  features:
+                    "• Optimisé pour l'impression\n• Support de police japonaise\n• Choisir parmi 3 modes",
+                  usage: 'Rapports, archives, distribution imprimée'
+                },
+                html: {
+                  name: 'HTML',
+                  features: '• Visible dans le navigateur\n• Styles CSS intégrés\n• Fichier unique',
+                  usage: 'Partage web, visualisation en ligne'
+                },
+                json: {
+                  name: 'JSON',
+                  features:
+                    '• Données structurées\n• Traitement programmable\n• Rétention complète des données',
+                  usage: 'Intégration système, analyse de données'
+                },
+                markdown: {
+                  name: 'Markdown',
+                  features:
+                    "• Éditable dans l'éditeur de texte\n• Optimisé pour l'affichage GitHub\n• Format simple",
+                  usage: 'Édition de documents, contrôle de version'
+                }
+              }
+            },
+            pdfModes: {
+              title: 'Modes de Génération PDF (sélectionner un)',
+              modes: {
+                pixelPerfect: {
+                  name: '🎨 Pixel Perfect',
+                  subtitle: '(Par défaut, Recommandé)',
+                  description:
+                    "Utilise la fonction d'impression du navigateur pour générer un PDF avec exactement la même apparence que l'affichage à l'écran",
+                  features:
+                    "• Reproduction complète des dégradés, couleurs, mise en page\n• Confirmable avec l'aperçu d'impression\n• Sortie de la plus haute qualité"
+                },
+                reliableFont: {
+                  name: '🔥 Support Japonais Fiable',
+                  description:
+                    "Génère directement un PDF avec la bibliothèque jsPDF, garantissant l'intégration de police japonaise",
+                  features:
+                    '• Intégration de police japonaise garantie\n• Prévention complète du texte corrompu\n• Conforme CSP et sécurisé\n• Fonctionnalités avancées comme filigranes et table des matières'
+                },
+                textBased: {
+                  name: '🔤 Basé sur le Texte',
+                  subtitle: '(Méthode PWA Héritée)',
+                  description:
+                    'Génération PDF simple centrée sur le texte utilisant les fonctionnalités PWA',
+                  features:
+                    '• Utilise les fonctions de sauvegarde et partage PWA\n• Texte recherchable et copiable\n• Taille de fichier minimale\n• Optimisé mobile'
+                }
+              }
+            },
+            exportOptions: {
+              title: "Options d'Exportation Communes",
+              options: {
+                summary: {
+                  name: "📊 Résumé d'Évaluation",
+                  description: 'Aperçu des scores, résultats de jugement et taux de réalisation',
+                  formats: 'Tous formats'
+                },
+                guides: {
+                  name: '📚 Contenu du Guide',
+                  description:
+                    'Explications détaillées et exemples pour chaque élément de la liste de vérification',
+                  formats: 'Tous formats'
+                },
+                notes: {
+                  name: "📝 Notes d'Évaluation",
+                  description: 'Notes et commentaires ajoutés',
+                  formats: 'Tous formats'
+                },
+                sectionBreaks: {
+                  name: '📄 Sauts de Section',
+                  description: 'Sauts de page et séparateurs pour chaque catégorie',
+                  formats: 'PDF, Markdown'
+                }
+              }
+            },
+            exportNote:
+              '📌 Note : Les modes de génération PDF sont exclusifs. Seul un des 3 modes peut être sélectionné. Par défaut, le mode "Pixel Perfect" de la plus haute qualité est sélectionné.'
+          },
+          historyManagement: {
+            title: "Gestion de l'Historique",
+            content:
+              "Sauvegarde automatiquement les résultats d'évaluation passés.\n• Afficher les 5 derniers éléments dans la barre latérale\n• Vue liste de tout l'historique\n• Fonction de suppression individuelle\n• Fonction de ré-édition (avant completion seulement)"
+          },
+          pwaSupport: {
+            title: 'Support PWA et Fonctionnalités Avancées',
+            content:
+              "• Ajouter à l'écran d'accueil\n• Fonctionnement hors ligne\n• Fonctionnalités adaptatives à la plateforme\n• Système de cache de police\n• Optimisation spécifique à l'appareil\n• Mises à jour automatiques"
+          }
+        }
+      },
+      privacy: {
+        title: 'Confidentialité',
+        emoji: '🔐',
+        description: 'Gestion des données et sécurité',
+        content:
+          'Conçu avec la protection de la vie privée des utilisateurs comme priorité absolue.',
+        subSections: {
+          localStorage: {
+            title: 'Stockage Local',
+            content:
+              "• Toutes les données sont stockées uniquement sur votre appareil\n• Aucune transmission de données vers des serveurs\n• Aucune fourniture de données à des tiers\n• Aucune collecte d'informations personnellement identifiables"
+          },
+          security: {
+            title: 'Sécurité',
+            content:
+              "• Communication HTTPS forcée\n• Implémentation de Content Security Policy\n• Mesures de prévention d'attaques XSS\n• Conformité Same-Origin Policy"
+          },
+          dataDeletion: {
+            title: 'Suppression de Données',
+            content:
+              'Les utilisateurs peuvent supprimer les données sauvegardées à tout moment. Les données sont également complètement supprimées lorsque les données du navigateur sont effacées.'
+          }
+        }
+      },
+      troubleshooting: {
+        title: 'Dépannage',
+        emoji: '🔧',
+        description: 'Problèmes communs et solutions',
+        content:
+          "Voici les solutions pour les problèmes qui peuvent survenir pendant l'utilisation.",
+        subSections: {
+          dataNotSaved: {
+            title: 'Données Non Sauvegardées',
+            content:
+              '• Vérifier le mode privé du navigateur\n• Vérifier la capacité de stockage\n• Vérifier que le stockage local est activé dans les paramètres du navigateur\n• Essayer un navigateur différent'
+          },
+          scoreNotDisplayed: {
+            title: 'Score Non Affiché',
+            content:
+              '• Recharger la page\n• Vider le cache du navigateur\n• Vérifier que JavaScript est activé\n• Vérifier la console du navigateur pour les erreurs'
+          },
+          exportFailed: {
+            title: "Échec d'Exportation",
+            content:
+              '• Vérifier le blocage de popups\n• Vérifier les paramètres de téléchargement\n• Vérifier les paramètres de permission du navigateur\n• Vérifier une capacité de stockage suffisante'
+          },
+          otherIssues: {
+            title: 'Autres Problèmes',
+            content:
+              "Si ce qui précède ne résout pas le problème, n'hésitez pas à nous contacter via GitHub Issues. Nous fournirons un support au mieux de nos capacités."
+          }
+        }
+      }
+    }
   },
 
   // Accessibilité

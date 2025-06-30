@@ -113,6 +113,19 @@ export interface TranslationKeys {
     settings: string;
   };
 
+  // アクセシビリティ
+  accessibility: {
+    skipToContent: string;
+    mainNavigation: string;
+    searchForm: string;
+    languageSelector: string;
+    themeToggle: string;
+    closeDialog: string;
+    openMenu: string;
+    expandSection: string;
+    collapseSection: string;
+  };
+
   // チェックリスト関連
   checklist: {
     title: string;
@@ -262,13 +275,244 @@ export interface TranslationKeys {
   // ヘルプ・ガイド
   help: {
     title: string;
-    overview: string;
-    howToUse: string;
-    categories: string;
-    scoring: string;
-    features: string;
-    troubleshooting: string;
-    faq: string;
+    subtitle: string;
+    tableOfContents: string;
+    navigation: {
+      overview: string;
+      usage: string;
+      categories: string;
+      scoring: string;
+      features: string;
+      privacy: string;
+      troubleshooting: string;
+    };
+    sections: {
+      overview: {
+        title: string;
+        emoji: string;
+        description: string;
+        content: string;
+        subSections: {
+          features: {
+            title: string;
+            content: string;
+          };
+          targetUsers: {
+            title: string;
+            content: string;
+          };
+        };
+      };
+      usage: {
+        title: string;
+        emoji: string;
+        description: string;
+        content: string;
+        subSections: {
+          step1: {
+            title: string;
+            content: string;
+          };
+          step2: {
+            title: string;
+            content: string;
+          };
+          step3: {
+            title: string;
+            content: string;
+          };
+          step4: {
+            title: string;
+            content: string;
+          };
+        };
+      };
+      categories: {
+        title: string;
+        emoji: string;
+        description: string;
+        content: string;
+        subSections: {
+          critical: {
+            title: string;
+            content: string;
+          };
+          detailed: {
+            title: string;
+            content: string;
+          };
+          verification: {
+            title: string;
+            content: string;
+          };
+          context: {
+            title: string;
+            content: string;
+          };
+        };
+      };
+      scoring: {
+        title: string;
+        emoji: string;
+        description: string;
+        content: string;
+        subSections: {
+          calculation: {
+            title: string;
+            content: string;
+          };
+          criteria: {
+            title: string;
+            content: string;
+          };
+          finalJudgment: {
+            title: string;
+            content: string;
+          };
+        };
+      };
+      features: {
+        title: string;
+        emoji: string;
+        description: string;
+        content: string;
+        subSections: {
+          detailedGuide: {
+            title: string;
+            content: string;
+          };
+          exportFunction: {
+            title: string;
+            content: string;
+            exportFormats: {
+              title: string;
+              formats: {
+                pdf: {
+                  name: string;
+                  features: string;
+                  usage: string;
+                };
+                html: {
+                  name: string;
+                  features: string;
+                  usage: string;
+                };
+                json: {
+                  name: string;
+                  features: string;
+                  usage: string;
+                };
+                markdown: {
+                  name: string;
+                  features: string;
+                  usage: string;
+                };
+              };
+            };
+            pdfModes: {
+              title: string;
+              modes: {
+                pixelPerfect: {
+                  name: string;
+                  subtitle: string;
+                  description: string;
+                  features: string;
+                };
+                reliableFont: {
+                  name: string;
+                  description: string;
+                  features: string;
+                };
+                textBased: {
+                  name: string;
+                  subtitle: string;
+                  description: string;
+                  features: string;
+                };
+              };
+            };
+            exportOptions: {
+              title: string;
+              options: {
+                summary: {
+                  name: string;
+                  description: string;
+                  formats: string;
+                };
+                guides: {
+                  name: string;
+                  description: string;
+                  formats: string;
+                };
+                notes: {
+                  name: string;
+                  description: string;
+                  formats: string;
+                };
+                sectionBreaks: {
+                  name: string;
+                  description: string;
+                  formats: string;
+                };
+              };
+            };
+            exportNote: string;
+          };
+          historyManagement: {
+            title: string;
+            content: string;
+          };
+          pwaSupport: {
+            title: string;
+            content: string;
+          };
+        };
+      };
+      privacy: {
+        title: string;
+        emoji: string;
+        description: string;
+        content: string;
+        subSections: {
+          localStorage: {
+            title: string;
+            content: string;
+          };
+          security: {
+            title: string;
+            content: string;
+          };
+          dataDeletion: {
+            title: string;
+            content: string;
+          };
+        };
+      };
+      troubleshooting: {
+        title: string;
+        emoji: string;
+        description: string;
+        content: string;
+        subSections: {
+          dataNotSaved: {
+            title: string;
+            content: string;
+          };
+          scoreNotDisplayed: {
+            title: string;
+            content: string;
+          };
+          exportFailed: {
+            title: string;
+            content: string;
+          };
+          otherIssues: {
+            title: string;
+            content: string;
+          };
+        };
+      };
+    };
   };
 
   // プライバシーポリシー
@@ -451,19 +695,6 @@ export interface TranslationKeys {
       startButton: string;
       helpButton: string;
     };
-  };
-
-  // アクセシビリティ
-  accessibility: {
-    skipToContent: string;
-    mainNavigation: string;
-    searchForm: string;
-    languageSelector: string;
-    themeToggle: string;
-    closeDialog: string;
-    openMenu: string;
-    expandSection: string;
-    collapseSection: string;
   };
 
   // 日付・時刻
