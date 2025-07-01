@@ -299,6 +299,8 @@
 
   .hero-language-switcher {
     opacity: 0.9;
+    position: relative;
+    z-index: 10000;
   }
 
   .hero-language-switcher :global(.language-switcher) {

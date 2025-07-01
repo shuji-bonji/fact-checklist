@@ -180,7 +180,7 @@
     box-shadow:
       0 4px 6px -1px rgba(0, 0, 0, 0.1),
       0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    z-index: 1000;
+    z-index: 9999;
     max-height: 300px;
     overflow-y: auto;
     margin-top: 0.25rem;
@@ -285,23 +285,20 @@
   /* レスポンシブ対応（通常モード） */
   @media (max-width: 768px) {
     .language-switcher:not(.mobile-mode) .language-button {
-      min-width: 100px;
+      min-width: 120px;
       font-size: 0.8rem;
       padding: 0.4rem 0.6rem;
     }
 
-    .language-switcher:not(.mobile-mode) .language-name {
-      display: none;
-    }
-
     .language-switcher:not(.mobile-mode) .language-dropdown {
-      position: fixed;
-      top: auto;
-      bottom: 0;
+      position: absolute;
+      top: 100%;
+      bottom: auto;
       left: 0;
-      right: 0;
-      border-radius: 0.5rem 0.5rem 0 0;
-      max-height: 50vh;
+      right: auto;
+      min-width: 250px;
+      border-radius: 0.375rem;
+      max-height: 60vh;
     }
   }
 
