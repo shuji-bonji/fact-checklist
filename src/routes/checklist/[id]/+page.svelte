@@ -102,6 +102,36 @@
     name="description"
     content={isI18nReady ? t('checklist.description') : 'Fact checklist evaluation results'}
   />
+  {#if isI18nReady}
+    <meta name="keywords" content={t('pages.home.keywords')} />
+    <meta name="author" content={t('app.author')} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article" />
+    <meta
+      property="og:title"
+      content="{checklist?.title || t('checklist.title')} - {t('app.title')}"
+    />
+    <meta property="og:description" content={t('checklist.description')} />
+    <meta property="og:url" content={$page.url.href} />
+    <meta property="og:image" content="{$page.url.origin}{base}/og-image.png" />
+    <meta property="og:site_name" content={t('app.title')} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="{checklist?.title || t('checklist.title')} - {t('app.title')}"
+    />
+    <meta name="twitter:description" content={t('checklist.description')} />
+    <meta name="twitter:image" content="{$page.url.origin}{base}/og-image.png" />
+  {:else}
+    <title>Fact Checklist Results</title>
+    <meta name="description" content="Fact checklist evaluation results" />
+    <meta property="og:title" content="Fact Checklist Results" />
+    <meta property="og:description" content="Fact checklist evaluation results" />
+    <meta property="og:image" content="{base}/og-image.png" />
+  {/if}
 </svelte:head>
 
 {#if loading}

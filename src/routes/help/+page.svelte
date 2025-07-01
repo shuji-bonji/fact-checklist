@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores';
+  import { base } from '$app/paths';
   import { t, i18nStore } from '$lib/i18n/index.js';
 
   // Svelte 5 runesでi18n初期化状態を監視
@@ -290,20 +291,20 @@
     <meta property="og:title" content={t('pages.help.title')} />
     <meta property="og:description" content={t('pages.help.description')} />
     <meta property="og:url" content={$page.url.href} />
-    <meta property="og:image" content="{$page.url.origin}/og-image.png" />
+    <meta property="og:image" content="{$page.url.origin}{base}/og-image.png" />
     <meta property="og:site_name" content={t('app.title')} />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={t('pages.help.title')} />
     <meta name="twitter:description" content={t('pages.help.description')} />
-    <meta name="twitter:image" content="{$page.url.origin}/og-image.png" />
+    <meta name="twitter:image" content="{$page.url.origin}{base}/og-image.png" />
   {:else}
     <title>Help - Fact Checklist</title>
     <meta name="description" content="How to use Fact Checklist" />
     <meta property="og:title" content="Help - Fact Checklist" />
     <meta property="og:description" content="How to use Fact Checklist" />
-    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:image" content="{base}/og-image.png" />
   {/if}
 </svelte:head>
 
