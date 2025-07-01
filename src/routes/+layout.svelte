@@ -153,8 +153,8 @@
   />
 
   <!-- アイコン -->
-  <link rel="icon" href="/favicon.png" />
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="icon" href="{base}/favicon.png" />
+  <link rel="apple-touch-icon" href="{base}/apple-touch-icon.png" />
   <!-- Vite PWAが自動でmanifestリンクを挿入するため、手動linkは削除 -->
 </svelte:head>
 
