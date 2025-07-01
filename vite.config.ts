@@ -15,8 +15,12 @@ export default defineConfig(({ mode }) => {
         // Service Workerを手動で管理するため無効化
         injectRegister: false,
         workbox: {
+          // version: '1.0.0'
           globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2}'],
           navigateFallback: null,
+          cleanupOutdatedCaches: true,
+          clientsClaim: true,
+          skipWaiting: true,
           runtimeCaching: [
             {
               urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
