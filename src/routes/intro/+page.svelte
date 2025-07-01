@@ -54,8 +54,9 @@
     <title>{t('pages.intro.title')}</title>
     <meta name="description" content={t('pages.intro.description')} />
     <meta name="keywords" content={t('pages.intro.keywords')} />
+    <meta name="author" content={t('app.author')} />
 
-    <!-- Open Graph / Facebook -->
+    <!-- Open Graph -->
     <meta property="og:type" content="article" />
     <meta property="og:title" content={t('pages.intro.title')} />
     <meta property="og:description" content={t('pages.intro.description')} />
@@ -68,20 +69,13 @@
     <meta name="twitter:title" content={t('pages.intro.title')} />
     <meta name="twitter:description" content={t('pages.intro.description')} />
     <meta name="twitter:image" content="{$page.url.origin}/og-image-intro.png" />
-
-    <!-- LinkedIn specific -->
-    <meta property="article:author" content="shuji-bonji" />
-    <meta property="article:published_time" content="2024-01-01T00:00:00Z" />
-    <meta property="article:modified_time" content={new Date().toISOString()} />
   {:else}
-    <title>Fact Checklist - Loading...</title>
-    <meta name="description" content="Loading..." />
+    <title>Fact Checklist - Intro</title>
+    <meta name="description" content="Information reliability evaluation intro" />
+    <meta property="og:title" content="Fact Checklist - Intro" />
+    <meta property="og:description" content="Information reliability evaluation intro" />
+    <meta property="og:image" content="/og-image-intro.png" />
   {/if}
-
-  <!-- SEO -->
-  <meta name="robots" content="index, follow" />
-  <meta name="googlebot" content="index, follow" />
-  <link rel="canonical" href={$page.url.href} />
 </svelte:head>
 
 {#if isI18nReady}

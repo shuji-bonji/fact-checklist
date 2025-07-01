@@ -1,6 +1,7 @@
 <script lang="ts">
   import { base } from '$app/paths';
   import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
   import { t, tArray, i18nStore } from '$lib/i18n/index.js';
 
   // i18n初期化状態を監視
@@ -210,9 +211,27 @@
     <title>{t('pages.about.title')}</title>
     <meta name="description" content={t('pages.about.description')} />
     <meta name="keywords" content={t('pages.about.keywords')} />
+    <meta name="author" content={t('app.author')} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={t('pages.about.title')} />
+    <meta property="og:description" content={t('pages.about.description')} />
+    <meta property="og:url" content={$page.url.href} />
+    <meta property="og:image" content="{$page.url.origin}/og-image.png" />
+    <meta property="og:site_name" content={t('app.title')} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={t('pages.about.title')} />
+    <meta name="twitter:description" content={t('pages.about.description')} />
+    <meta name="twitter:image" content="{$page.url.origin}/og-image.png" />
   {:else}
     <title>About - Fact Checklist</title>
     <meta name="description" content="Learn about Fact Checklist" />
+    <meta property="og:title" content="About - Fact Checklist" />
+    <meta property="og:description" content="Learn about Fact Checklist" />
+    <meta property="og:image" content="/og-image.png" />
   {/if}
 </svelte:head>
 

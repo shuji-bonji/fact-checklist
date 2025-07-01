@@ -54,39 +54,55 @@
     }
   });
 
-  onMount(async () => {
-    // i18n初期化
-    try {
-      await initializeI18n();
-      console.log('✅ i18n initialized in layout');
-    } catch (error) {
-      console.error('❌ Failed to initialize i18n:', error);
-    }
-
-    // ローディング画面を確実に非表示にする（ブラウザ環境でのみ）
-    if (browser) {
-      document.body.classList.add('app-loaded');
-      const loadingElement = document.querySelector('.app-loading') as HTMLElement;
-      if (loadingElement) {
-        loadingElement.style.display = 'none';
-        console.log('Loading screen hidden from layout');
-      }
-    }
-
-    if (!dev && 'serviceWorker' in navigator && browser) {
+  onMount(() => {
+    // 非同期初期化処理
+    (async () => {
+      // i18n初期化
       try {
-        // ベースパスを考慮したService Worker登録
-        const swPath = `${base}/service-worker.js`;
-        console.log('Registering Service Worker at:', swPath);
-
-        const registration = await navigator.serviceWorker.register(swPath, {
-          scope: `${base}/`
-        });
-        console.log('Service Worker registered successfully:', registration);
+        await initializeI18n();
+        console.log('✅ i18n initialized in layout');
       } catch (error) {
-        console.error('Service Worker registration failed:', error);
+        console.error('❌ Failed to initialize i18n:', error);
       }
-    }
+
+      // ローディング画面を確実に非表示にする（ブラウザ環境でのみ）
+      if (browser) {
+        document.body.classList.add('app-loaded');
+        const loadingElement = document.querySelector('.app-loading') as HTMLElement;
+        if (loadingElement) {
+          loadingElement.style.display = 'none';
+          console.log('Loading screen hidden from layout');
+        }
+      }
+
+      if (!dev && 'serviceWorker' in navigator && browser) {
+        try {
+          // ベースパスを考慮したService Worker登録
+          const swPath = `${base}/service-worker.js`;
+          console.log('Registering Service Worker at:', swPath);
+
+          const registration = await navigator.serviceWorker.register(swPath, {
+            scope: `${base}/`
+          });
+          console.log('Service Worker registered successfully:', registration);
+        } catch (error) {
+          console.error('Service Worker registration failed:', error);
+        }
+      }
+    })();
+
+    // リサイズイベントでハンバーガーメニューを自動的に閉じる
+    const handleResize = () => {
+      if (isMenuOpen && window.innerWidth >= 1024) {
+        isMenuOpen = false;
+      }
+    };
+    window.addEventListener('resize', handleResize);
+
+    // クリーンアップ関数を返す
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   });
 
   // ナビゲーション関数
@@ -126,12 +142,6 @@
 <svelte:head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta
-    name="description"
-    content={isI18nReady ? t('app.description') : 'Information reliability evaluation checklist'}
-  />
-  <!-- キーワードは各言語で適切に設定 -->
-  <meta name="author" content={isI18nReady ? t('app.author') : 'Fact Checklist Team'} />
 
   <!-- PWA用メタタグ -->
   <meta name="theme-color" content="#2c3e50" />
@@ -142,21 +152,10 @@
     content={isI18nReady ? t('app.title') : 'Fact Checklist'}
   />
 
-  <!-- Open Graph -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content={isI18nReady ? t('app.title') : 'Fact Checklist'} />
-  <meta
-    property="og:description"
-    content={isI18nReady ? t('app.description') : 'Information reliability evaluation checklist'}
-  />
-  <meta property="og:locale" content="ja_JP" />
-
   <!-- アイコン -->
   <link rel="icon" href="/favicon.png" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <!-- Vite PWAが自動でmanifestリンクを挿入するため、手動linkは削除 -->
-
-  <title>{isI18nReady ? t('app.title') : 'Fact Checklist'}</title>
 </svelte:head>
 
 <svelte:window onclick={handleClickOutside} />
