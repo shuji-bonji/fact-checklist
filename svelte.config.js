@@ -31,7 +31,7 @@ const config = {
       handleHttpError: 'warn',
       handleMissingId: 'warn',
       // 新しく追加したページを明示的にエントリに追加
-      entries: ['/', '/about', '/help', '/privacy'],
+      entries: ['/', '/about', '/help', '/privacy', '/intro'],
       crawl: true
     },
 
