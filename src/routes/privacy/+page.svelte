@@ -15,15 +15,14 @@
 </script>
 
 <svelte:head>
-  <title
-    >{isInitialized
-      ? `${t('privacy.title')} - ${t('app.title')}`
-      : 'Privacy Policy - Fact Checklist'}</title
-  >
-  <meta
-    name="description"
-    content={isInitialized ? t('privacy.subtitle') : 'Privacy policy for Fact Checklist'}
-  />
+  {#if isInitialized}
+    <title>{t('pages.privacy.title')}</title>
+    <meta name="description" content={t('pages.privacy.description')} />
+    <meta name="keywords" content={t('pages.privacy.keywords')} />
+  {:else}
+    <title>Privacy Policy - Fact Checklist</title>
+    <meta name="description" content="Privacy policy for Fact Checklist" />
+  {/if}
 </svelte:head>
 
 {#if isInitialized}

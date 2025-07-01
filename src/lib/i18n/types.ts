@@ -102,6 +102,35 @@ export interface TranslationKeys {
     poweredBy: string;
   };
 
+  // ページ固有メタデータ
+  pages: {
+    home: {
+      title: string;
+      description: string;
+      keywords: string;
+    };
+    about: {
+      title: string;
+      description: string;
+      keywords: string;
+    };
+    help: {
+      title: string;
+      description: string;
+      keywords: string;
+    };
+    privacy: {
+      title: string;
+      description: string;
+      keywords: string;
+    };
+    intro: {
+      title: string;
+      description: string;
+      keywords: string;
+    };
+  };
+
   // ナビゲーション
   navigation: {
     home: string;
@@ -783,6 +812,79 @@ export interface TranslationKeys {
       guideContent: string;
       examplesGood: string[];
       examplesBad: string[];
+    };
+  };
+
+  // イントロページ
+  intro: {
+    meta: {
+      title: string;
+      keywords: string;
+    };
+    hero: {
+      title: string;
+      subtitle: string;
+    };
+    cta: {
+      startNow: string;
+      useChecklist: string;
+      learnMore: string;
+    };
+    sections: {
+      regulation: {
+        title: string;
+        quote: string;
+        content1: string;
+        content2: string;
+      };
+      balance: {
+        title: string;
+        control: {
+          title: string;
+          content: string;
+        };
+        quality: {
+          title: string;
+          content: string;
+        };
+        conclusion: string;
+      };
+      aiLimitations: {
+        title: string;
+        lead: string;
+        point1: string;
+        point2: string;
+        point3: string;
+        conclusion: string;
+      };
+      features: {
+        title: string;
+      };
+    };
+    features: {
+      systematic: {
+        title: string;
+        description: string;
+      };
+      privacy: {
+        title: string;
+        description: string;
+      };
+      pwa: {
+        title: string;
+        description: string;
+      };
+      multilingual: {
+        title: string;
+        description: string;
+      };
+    };
+    finalCta: {
+      title: string;
+      subtitle: string;
+    };
+    share: {
+      title: string;
     };
   };
 }

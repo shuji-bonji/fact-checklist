@@ -68,6 +68,35 @@ export const translations: TranslationKeys = {
     poweredBy: 'Desarrollado por'
   },
 
+  // Metadatos específicos de páginas
+  pages: {
+    home: {
+      title: 'Fact Checklist - Evaluación Práctica de Confiabilidad de Información',
+      description: 'Evalúe sistemáticamente la confiabilidad de la información con 20 elementos de verificación. Juzgue la información con sus propios ojos y mente sin depender de IA o gobierno.',
+      keywords: 'verificación de hechos,verificación de información,evaluación de confiabilidad,PWA,alfabetización informacional,contramedidas de desinformación'
+    },
+    about: {
+      title: 'Acerca de Esta App - Fact Checklist',
+      description: 'Conozca el contexto de desarrollo, características y uso de Fact Checklist. Una herramienta para juzgar la confiabilidad de la información por usted mismo.',
+      keywords: 'descripción de la app,filosofía de desarrollo,evaluación de información,juicio de confiabilidad,verificación de hechos,cómo usar'
+    },
+    help: {
+      title: 'Ayuda y Guía - Fact Checklist',
+      description: 'Instrucciones detalladas de uso, explicaciones de elementos de la lista de verificación y consejos para una evaluación efectiva de información.',
+      keywords: 'cómo usar,ayuda,elementos de verificación,evaluación de información,guía,instrucciones'
+    },
+    privacy: {
+      title: 'Política de Privacidad - Fact Checklist',
+      description: 'Información sobre el manejo de datos personales. Todos los datos se almacenan localmente y no se transmiten externamente.',
+      keywords: 'privacidad,información personal,protección de datos,almacenamiento local,seguridad'
+    },
+    intro: {
+      title: 'Lista de Verificación de Hechos Práctica para Sobrevivir en un Mundo Lleno de Desinformación',
+      description: 'Una lista de verificación simple para evaluar la confiabilidad de la información con sus propios ojos y mente mientras avanza la regulación gubernamental de redes sociales. Evalúe información científica y sistemáticamente sin confiar ciegamente en IA o medios.',
+      keywords: 'verificación de hechos,verificación de información,evaluación de confiabilidad,PWA,alfabetización informacional,contramedidas de desinformación,regulación de redes sociales,control de información,calidad de información,verificación de hechos por IA'
+    }
+  },
+
   // Navegación
   navigation: {
     home: 'Inicio',
@@ -1139,6 +1168,77 @@ export const translations: TranslationKeys = {
         'Generalización ilimitada de resultados de investigación limitados',
         'Alcance de aplicación desconocido'
       ]
+    }
+  },
+  intro: {
+    meta: {
+      title: 'Lista de Verificación Práctica de Hechos para Sobrevivir en un Mundo Lleno de Desinformación',
+      keywords: 'verificación de hechos,verificación de información,evaluación de confiabilidad,PWA,alfabetización informacional,contramedidas de desinformación'
+    },
+    hero: {
+      title: 'Lista de Verificación Práctica de Hechos para Sobrevivir en un Mundo Lleno de Desinformación',
+      subtitle: 'Una lista de verificación simple para evaluar la confiabilidad de la información con tus propios ojos y mente mientras avanzan las regulaciones gubernamentales de redes sociales'
+    },
+    cta: {
+      startNow: 'Comenzar Verificación Ahora',
+      useChecklist: 'Usar la Lista de Verificación',
+      learnMore: 'Saber Más'
+    },
+    sections: {
+      regulation: {
+        title: 'Regulación Gubernamental de Redes Sociales y la Realidad del Control de Información',
+        quote: 'Bajo la noble causa de "eliminar la desinformación", ¿quién decide qué es la "verdad"?',
+        content1: 'Las regulaciones de redes sociales que avanzan mundialmente afirman ser "medidas anti-desinformación", pero en realidad, corren el riesgo de convertirse en herramientas para controlar información inconveniente para los gobiernos.',
+        content2: 'Lo que necesitamos es la capacidad de juzgar la confiabilidad de la información nosotros mismos, sin depender de gobiernos, medios principales o IA.'
+      },
+      balance: {
+        title: 'Control del Discurso vs. Calidad de la Información: Un Enfoque Equilibrado',
+        control: {
+          title: 'Riesgos del Control',
+          content: 'Determinación arbitraria de la "verdad" por el poder, supresión de opiniones diversas, obstáculo a la innovación'
+        },
+        quality: {
+          title: 'Mejora de la Calidad',
+          content: 'Mejorar la alfabetización informacional individual, fomentar el pensamiento crítico, fortalecer las habilidades de autojuicio'
+        },
+        conclusion: 'En lugar de depender de regulaciones, que cada persona desarrolle la capacidad de discernir información forma la base de una sociedad saludable.'
+      },
+      aiLimitations: {
+        title: 'Limitaciones de la Verificación de Hechos por IA',
+        lead: 'Aunque la IA como ChatGPT y Gemini son convenientes, tienen limitaciones significativas para la verificación de hechos:',
+        point1: 'Sesgo de datos de entrenamiento: La IA refleja sesgos inherentes en sus datos de entrenamiento',
+        point2: 'Comprensión incompleta del contexto: Malinterpreta matices sutiles, sarcasmo y contextos culturales',
+        point3: 'Sobredependencia de la autoridad: Juzga acríticamente la información de medios principales y agencias gubernamentales como "correcta"',
+        conclusion: 'Aunque la IA puede ser útil como referencia, los juicios finales deben ser realizados por humanos.'
+      },
+      features: {
+        title: 'Características de Esta Aplicación'
+      }
+    },
+    features: {
+      systematic: {
+        title: 'Evaluación Sistemática',
+        description: 'Evaluación integral desde fuentes de información hasta estructura lógica con una lista de verificación de 20 elementos'
+      },
+      privacy: {
+        title: 'Privacidad Completa',
+        description: 'Todos los datos almacenados en el dispositivo. Sin transmisión a servidores externos'
+      },
+      pwa: {
+        title: 'Soporte Sin Conexión',
+        description: 'Disponible incluso sin conexión a internet gracias a la tecnología PWA'
+      },
+      multilingual: {
+        title: 'Soporte para 12 Idiomas',
+        description: 'Soporte completo para 12 idiomas incluyendo japonés, inglés y chino'
+      }
+    },
+    finalCta: {
+      title: 'Comencemos Ahora',
+      subtitle: 'Entrena tu juicio para evitar ahogarte en el mar de información'
+    },
+    share: {
+      title: 'Compartir Esta Herramienta'
     }
   }
 };

@@ -278,12 +278,14 @@
 </script>
 
 <svelte:head>
-  <title>{isInitialized ? `${t('help.title')} - ${t('app.title')}` : 'Help - Fact Checklist'}</title
-  >
-  <meta
-    name="description"
-    content={isInitialized ? t('help.subtitle') : 'How to use Fact Checklist'}
-  />
+  {#if isInitialized}
+    <title>{t('pages.help.title')}</title>
+    <meta name="description" content={t('pages.help.description')} />
+    <meta name="keywords" content={t('pages.help.keywords')} />
+  {:else}
+    <title>Help - Fact Checklist</title>
+    <meta name="description" content="How to use Fact Checklist" />
+  {/if}
 </svelte:head>
 
 {#if isInitialized}

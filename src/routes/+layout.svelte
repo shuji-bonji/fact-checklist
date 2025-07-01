@@ -30,6 +30,7 @@
   const isAboutPage = $derived(currentPath.includes('/about'));
   const isHelpPage = $derived(currentPath.includes('/help'));
   const isPrivacyPage = $derived(currentPath.includes('/privacy'));
+  const isIntroPage = $derived(currentPath.includes('/intro'));
 
   // デバッグ用
   $effect(() => {
@@ -161,7 +162,8 @@
 <svelte:window onclick={handleClickOutside} />
 
 <div class="app">
-  <!-- グローバルナビゲーション -->
+  <!-- グローバルナビゲーション（introページでは非表示） -->
+  {#if !isIntroPage}
   <nav class="global-nav">
     {#if isI18nReady}
       <!-- タブレット用２段レイアウト -->
@@ -274,6 +276,7 @@
       </div>
     {/if}
   </nav>
+  {/if}
 
   <main>
     {@render children()}

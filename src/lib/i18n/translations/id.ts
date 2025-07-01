@@ -64,6 +64,36 @@ export const translations: TranslationKeys = {
     copyright: '© 2025 Tim Daftar Periksa Fakta',
     poweredBy: 'Didukung oleh'
   },
+
+  // Metadata khusus halaman
+  pages: {
+    home: {
+      title: 'Fact Checklist - Evaluasi Praktis Keandalan Informasi',
+      description: 'Evaluasi keandalan informasi secara sistematis dengan 20 item pemeriksaan. Nilai informasi dengan mata dan pikiran Anda sendiri tanpa bergantung pada AI atau pemerintah.',
+      keywords: 'pengecekan fakta,verifikasi informasi,evaluasi keandalan,PWA,literasi informasi,penanggulangan misinformasi'
+    },
+    about: {
+      title: 'Tentang Aplikasi Ini - Fact Checklist',
+      description: 'Pelajari latar belakang pengembangan, fitur, dan penggunaan Fact Checklist. Alat untuk menilai keandalan informasi sendiri.',
+      keywords: 'gambaran umum aplikasi,filosofi pengembangan,evaluasi informasi,penilaian keandalan,pengecekan fakta,cara penggunaan'
+    },
+    help: {
+      title: 'Bantuan & Panduan - Fact Checklist',
+      description: 'Instruksi penggunaan terperinci, penjelasan item daftar periksa, dan tips untuk evaluasi informasi yang efektif.',
+      keywords: 'cara penggunaan,bantuan,item pemeriksaan,evaluasi informasi,panduan,instruksi'
+    },
+    privacy: {
+      title: 'Kebijakan Privasi - Fact Checklist',
+      description: 'Informasi tentang penanganan data pribadi. Semua data disimpan secara lokal dan tidak dikirim ke luar.',
+      keywords: 'privasi,informasi pribadi,perlindungan data,penyimpanan lokal,keamanan'
+    },
+    intro: {
+      title: 'Daftar Periksa Fakta Praktis untuk Bertahan di Dunia Penuh Misinformasi',
+      description: 'Daftar periksa sederhana untuk mengevaluasi keandalan informasi dengan mata dan pikiran Anda sendiri saat regulasi media sosial pemerintah berkembang. Evaluasi informasi secara ilmiah dan sistematis tanpa mempercayai AI atau media secara membabi buta.',
+      keywords: 'pengecekan fakta,verifikasi informasi,evaluasi keandalan,PWA,literasi informasi,penanggulangan misinformasi,regulasi media sosial,kontrol informasi,kualitas informasi,pengecekan fakta AI'
+    }
+  },
+
   navigation: {
     home: 'Beranda',
     about: 'Tentang',
@@ -1086,6 +1116,79 @@ export const translations: TranslationKeys = {
         'Generalisasi tanpa batas hasil penelitian terbatas',
         'Ruang lingkup penerapan tidak jelas'
       ]
+    }
+  },
+
+  // Intro page
+  intro: {
+    meta: {
+      title: 'Daftar Periksa Praktis Pemeriksaan Fakta untuk Bertahan di Dunia yang Penuh Disinformasi',
+      keywords: 'pemeriksaan fakta,verifikasi informasi,penilaian keandalan,PWA,literasi informasi,penanggulangan disinformasi'
+    },
+    hero: {
+      title: 'Daftar Periksa Praktis Pemeriksaan Fakta untuk Bertahan di Dunia yang Penuh Disinformasi',
+      subtitle: 'Daftar periksa sederhana untuk mengevaluasi keandalan informasi dengan mata dan pikiran Anda sendiri saat regulasi media sosial pemerintah berkembang'
+    },
+    cta: {
+      startNow: 'Mulai Periksa Sekarang',
+      useChecklist: 'Gunakan Daftar Periksa',
+      learnMore: 'Pelajari Lebih Lanjut'
+    },
+    sections: {
+      regulation: {
+        title: 'Regulasi Media Sosial Pemerintah dan Realitas Kontrol Informasi',
+        quote: 'Di bawah tujuan mulia "menghapus disinformasi", siapa yang memutuskan apa yang "benar"?',
+        content1: 'Regulasi media sosial yang berkembang di seluruh dunia mengklaim sebagai "tindakan anti-disinformasi", tetapi pada kenyataannya, mereka berisiko menjadi alat untuk mengontrol informasi yang tidak nyaman bagi pemerintah.',
+        content2: 'Yang kita butuhkan adalah kemampuan untuk menilai keandalan informasi sendiri, tanpa bergantung pada pemerintah, media mainstream, atau AI.'
+      },
+      balance: {
+        title: 'Kontrol Ucapan vs. Kualitas Informasi: Pendekatan Seimbang',
+        control: {
+          title: 'Risiko Kontrol',
+          content: 'Penentuan sewenang-wenang "kebenaran" oleh kekuasaan, penindasan pendapat yang beragam, hambatan terhadap inovasi'
+        },
+        quality: {
+          title: 'Peningkatan Kualitas',
+          content: 'Meningkatkan literasi informasi individu, memupuk pemikiran kritis, memperkuat kemampuan penilaian diri'
+        },
+        conclusion: 'Daripada bergantung pada regulasi, setiap orang mengembangkan kemampuan untuk membedakan informasi membentuk fondasi masyarakat yang sehat.'
+      },
+      aiLimitations: {
+        title: 'Keterbatasan Pemeriksaan Fakta AI',
+        lead: 'Meskipun AI seperti ChatGPT dan Gemini nyaman, mereka memiliki keterbatasan signifikan untuk pemeriksaan fakta:',
+        point1: 'Bias data pelatihan: AI mencerminkan bias yang melekat dalam data pelatihannya',
+        point2: 'Pemahaman konteks yang tidak lengkap: Salah mengartikan nuansa halus, sarkasme, dan konteks budaya',
+        point3: 'Ketergantungan berlebihan pada otoritas: Menilai tanpa kritis informasi dari media mainstream dan lembaga pemerintah sebagai "benar"',
+        conclusion: 'Meskipun AI dapat membantu sebagai referensi, penilaian akhir harus dibuat oleh manusia.'
+      },
+      features: {
+        title: 'Fitur-fitur Aplikasi Ini'
+      }
+    },
+    features: {
+      systematic: {
+        title: 'Evaluasi Sistematis',
+        description: 'Penilaian komprehensif dari sumber informasi hingga struktur logis dengan daftar periksa 20 item'
+      },
+      privacy: {
+        title: 'Privasi Lengkap',
+        description: 'Semua data disimpan di perangkat. Tidak ada transmisi ke server eksternal'
+      },
+      pwa: {
+        title: 'Dukungan Offline',
+        description: 'Tersedia bahkan tanpa koneksi internet berkat teknologi PWA'
+      },
+      multilingual: {
+        title: 'Dukungan 12 Bahasa',
+        description: 'Dukungan penuh untuk 12 bahasa termasuk Jepang, Inggris, dan Mandarin'
+      }
+    },
+    finalCta: {
+      title: 'Mari Mulai Sekarang',
+      subtitle: 'Latih penilaian Anda untuk menghindari tenggelam di lautan informasi'
+    },
+    share: {
+      title: 'Bagikan Alat Ini'
     }
   }
 };
