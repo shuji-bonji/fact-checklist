@@ -243,3 +243,27 @@ export const PDF_PERFORMANCE = {
   CONCURRENT_GENERATION_LIMIT: 1, // 同時生成数制限
   CLEANUP_DELAY: 1000 // リソースクリーンアップ遅延
 } as const;
+
+/**
+ * PDF 生成戦略
+ */
+export const PDF_GENERATION_STRATEGIES = {
+  /** プリントダイアログ（推奨） */
+  PRINT_DIALOG: 'print-dialog',
+  /** 確実なフォント対応 */
+  RELIABLE_FONTS: 'reliable-fonts',
+  /** テキストベース */
+  TEXT_BASED: 'text-based',
+  /** PWA最適化 */
+  PWA_OPTIMIZED: 'pwa-optimized'
+} as const;
+
+/**
+ * PDF フォールバックチェーン（失敗時の代替手段）
+ */
+export const PDF_FALLBACK_CHAIN = [
+  PDF_GENERATION_STRATEGIES.PRINT_DIALOG,
+  PDF_GENERATION_STRATEGIES.RELIABLE_FONTS,
+  PDF_GENERATION_STRATEGIES.TEXT_BASED,
+  PDF_GENERATION_STRATEGIES.PWA_OPTIMIZED
+] as const;
