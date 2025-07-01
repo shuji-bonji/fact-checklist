@@ -64,6 +64,46 @@ export const translations: TranslationKeys = {
     copyright: '© 2025 Team Lista di Controllo Fact-Check',
     poweredBy: 'Sviluppato da'
   },
+
+  // Metadati specifici delle pagine
+  pages: {
+    home: {
+      title: "Fact Checklist - Valutazione Pratica dell'Affidabilità delle Informazioni",
+      description:
+        "Valuta sistematicamente l'affidabilità delle informazioni con 20 elementi di controllo. Giudica le informazioni con i tuoi occhi e la tua mente senza dipendere da IA o governo.",
+      keywords:
+        "verifica dei fatti,verifica delle informazioni,valutazione dell'affidabilità,PWA,alfabetizzazione informativa,contromisure alla disinformazione"
+    },
+    about: {
+      title: 'Informazioni su Questa App - Fact Checklist',
+      description:
+        "Scopri il contesto di sviluppo, le caratteristiche e l'uso di Fact Checklist. Uno strumento per giudicare l'affidabilità delle informazioni da solo.",
+      keywords:
+        "panoramica dell'app,filosofia di sviluppo,valutazione delle informazioni,giudizio di affidabilità,verifica dei fatti,come usare"
+    },
+    help: {
+      title: 'Aiuto e Guida - Fact Checklist',
+      description:
+        "Istruzioni dettagliate per l'uso, spiegazioni degli elementi della lista di controllo e consigli per una valutazione efficace delle informazioni.",
+      keywords:
+        'come usare,aiuto,elementi di controllo,valutazione delle informazioni,guida,istruzioni'
+    },
+    privacy: {
+      title: 'Politica sulla Privacy - Fact Checklist',
+      description:
+        'Informazioni sulla gestione dei dati personali. Tutti i dati sono memorizzati localmente e non vengono trasmessi esternamente.',
+      keywords: 'privacy,informazioni personali,protezione dei dati,memorizzazione locale,sicurezza'
+    },
+    intro: {
+      title:
+        'Lista di Controllo Pratica per Fact-Check per Sopravvivere in un Mondo Pieno di Disinformazione',
+      description:
+        "Una lista di controllo semplice per valutare l'affidabilità delle informazioni con i tuoi occhi e la tua mente mentre avanza la regolamentazione governativa dei social media. Valuta le informazioni scientificamente e sistematicamente senza fidarti ciecamente di IA o media.",
+      keywords:
+        "verifica dei fatti,verifica delle informazioni,valutazione dell'affidabilità,PWA,alfabetizzazione informativa,contromisure alla disinformazione,regolamentazione dei social media,controllo delle informazioni,qualità delle informazioni,verifica dei fatti tramite IA"
+    }
+  },
+
   navigation: {
     home: 'Home',
     about: 'Informazioni',
@@ -1189,6 +1229,94 @@ export const translations: TranslationKeys = {
         'Nessuna menzione delle limitazioni',
         'Estrapolazione indebita a contesti diversi'
       ]
+    }
+  },
+  intro: {
+    meta: {
+      title:
+        'Checklist Pratica di Verifica dei Fatti per Sopravvivere in un Mondo Pieno di Disinformazione',
+      keywords:
+        "verifica dei fatti,verifica delle informazioni,valutazione dell'affidabilità,PWA,alfabetizzazione informativa,contromisure alla disinformazione"
+    },
+    hero: {
+      title:
+        'Checklist Pratica di Verifica dei Fatti per Sopravvivere in un Mondo Pieno di Disinformazione',
+      subtitle:
+        "Una semplice checklist per valutare l'affidabilità delle informazioni con i tuoi occhi e la tua mente mentre avanzano le regolamentazioni governative dei social media"
+    },
+    cta: {
+      startNow: 'Inizia la Verifica Ora',
+      useChecklist: 'Usa la Checklist',
+      learnMore: 'Scopri di Più'
+    },
+    sections: {
+      regulation: {
+        title:
+          "Regolamentazione Governativa dei Social Media e la Realtà del Controllo dell'Informazione",
+        quote:
+          'Sotto la nobile causa di "rimuovere la disinformazione", chi decide cosa sia la "verità"?',
+        content1:
+          'Le regolamentazioni dei social media che avanzano a livello mondiale affermano di essere "misure anti-disinformazione", ma in realtà, rischiano di diventare strumenti per controllare informazioni scomode per i governi.',
+        content2:
+          "Quello di cui abbiamo bisogno è la capacità di giudicare l'affidabilità delle informazioni da soli, senza fare affidamento su governi, media tradizionali o IA."
+      },
+      balance: {
+        title: "Controllo del Discorso vs. Qualità dell'Informazione: Un Approccio Equilibrato",
+        control: {
+          title: 'Rischi del Controllo',
+          content:
+            'Determinazione arbitraria della "verità" da parte del potere, soppressione di opinioni diverse, ostacolo all\'innovazione'
+        },
+        quality: {
+          title: 'Miglioramento della Qualità',
+          content:
+            "Migliorare l'alfabetizzazione informativa individuale, promuovere il pensiero critico, rafforzare le capacità di autogiudizio"
+        },
+        conclusion:
+          'Piuttosto che fare affidamento sulle regolamentazioni, avere ogni persona che sviluppa la capacità di discernere le informazioni forma la base di una società sana.'
+      },
+      aiLimitations: {
+        title: 'Limitazioni della Verifica dei Fatti tramite IA',
+        lead: "Mentre l'IA come ChatGPT e Gemini sono convenienti, hanno limitazioni significative per la verifica dei fatti:",
+        point1:
+          "Bias dei dati di addestramento: L'IA riflette i pregiudizi inerenti nei suoi dati di addestramento",
+        point2:
+          'Comprensione incompleta del contesto: Interpreta male sfumature sottili, sarcasmo e contesti culturali',
+        point3:
+          'Eccessiva dipendenza dall\'autorità: Giudica acriticamente le informazioni dai media tradizionali e dalle agenzie governative come "corrette"',
+        conclusion:
+          "Mentre l'IA può essere utile come riferimento, i giudizi finali dovrebbero essere fatti dagli esseri umani."
+      },
+      features: {
+        title: 'Caratteristiche di Questa App'
+      }
+    },
+    features: {
+      systematic: {
+        title: 'Valutazione Sistematica',
+        description:
+          'Valutazione completa dalle fonti di informazione alla struttura logica con una checklist di 20 elementi'
+      },
+      privacy: {
+        title: 'Privacy Completa',
+        description:
+          'Tutti i dati memorizzati sul dispositivo. Nessuna trasmissione a server esterni'
+      },
+      pwa: {
+        title: 'Supporto Offline',
+        description: 'Disponibile anche senza connessione internet grazie alla tecnologia PWA'
+      },
+      multilingual: {
+        title: 'Supporto per 12 Lingue',
+        description: 'Supporto completo per 12 lingue inclusi giapponese, inglese e cinese'
+      }
+    },
+    finalCta: {
+      title: 'Iniziamo Ora',
+      subtitle: 'Allena il tuo giudizio per evitare di annegare nel mare di informazioni'
+    },
+    share: {
+      title: 'Condividi Questo Strumento'
     }
   }
 };

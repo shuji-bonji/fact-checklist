@@ -68,6 +68,46 @@ export const translations: TranslationKeys = {
     poweredBy: 'Propulsé par'
   },
 
+  // Métadonnées spécifiques aux pages
+  pages: {
+    home: {
+      title: 'Fact Checklist - Évaluation Pratique de la Fiabilité des Informations',
+      description:
+        "Évaluez systématiquement la fiabilité des informations avec 20 éléments de vérification. Jugez les informations avec vos propres yeux et votre esprit sans dépendre de l'IA ou du gouvernement.",
+      keywords:
+        'vérification des faits,vérification des informations,évaluation de la fiabilité,PWA,littératie informationnelle,contre-mesures de désinformation'
+    },
+    about: {
+      title: 'À Propos de Cette App - Fact Checklist',
+      description:
+        "Découvrez le contexte de développement, les fonctionnalités et l'utilisation de Fact Checklist. Un outil pour juger vous-même de la fiabilité des informations.",
+      keywords:
+        "aperçu de l'app,philosophie de développement,évaluation des informations,jugement de fiabilité,vérification des faits,comment utiliser"
+    },
+    help: {
+      title: 'Aide et Guide - Fact Checklist',
+      description:
+        "Instructions d'utilisation détaillées, explications des éléments de la liste de vérification, et conseils pour une évaluation efficace des informations.",
+      keywords:
+        'comment utiliser,aide,éléments de vérification,évaluation des informations,guide,instructions'
+    },
+    privacy: {
+      title: 'Politique de Confidentialité - Fact Checklist',
+      description:
+        "Informations sur le traitement des données personnelles. Toutes les données sont stockées localement et ne sont pas transmises à l'extérieur.",
+      keywords:
+        'confidentialité,informations personnelles,protection des données,stockage local,sécurité'
+    },
+    intro: {
+      title:
+        'Liste de Vérification Factuelle Pratique pour Survivre dans un Monde Plein de Désinformation',
+      description:
+        "Une liste de vérification simple pour évaluer la fiabilité des informations avec vos propres yeux et votre esprit alors que la réglementation gouvernementale des réseaux sociaux progresse. Évaluez scientifiquement et systématiquement les informations sans faire aveuglément confiance à l'IA ou aux médias.",
+      keywords:
+        "vérification des faits,vérification des informations,évaluation de la fiabilité,PWA,littératie informationnelle,contre-mesures de désinformation,réglementation des réseaux sociaux,contrôle de l'information,qualité de l'information,vérification factuelle par IA"
+    }
+  },
+
   // Navigation
   navigation: {
     home: 'Accueil',
@@ -1173,6 +1213,92 @@ export const translations: TranslationKeys = {
         'Généralisation illimitée de résultats de recherche limités',
         "Portée d'application inconnue"
       ]
+    }
+  },
+  intro: {
+    meta: {
+      title: 'Liste de contrôle pratique pour survivre dans un monde plein de désinformation',
+      keywords:
+        "vérification des faits,vérification de l'information,évaluation de la fiabilité,PWA,littératie informationnelle,contre-mesures désinformation"
+    },
+    hero: {
+      title: 'Liste de contrôle pratique pour survivre dans un monde plein de désinformation',
+      subtitle:
+        "Une liste simple pour évaluer la fiabilité de l'information avec vos propres yeux et votre esprit alors que les réglementations gouvernementales sur les réseaux sociaux progressent"
+    },
+    cta: {
+      startNow: 'Commencer la vérification',
+      useChecklist: 'Utiliser la liste',
+      learnMore: 'En savoir plus'
+    },
+    sections: {
+      regulation: {
+        title:
+          "Réglementation gouvernementale des réseaux sociaux et la réalité du contrôle de l'information",
+        quote:
+          'Sous la noble cause de "supprimer la désinformation", qui décide de ce qui est "vérité" ?',
+        content1:
+          'Les réglementations des réseaux sociaux qui progressent mondialement prétendent être des "mesures anti-désinformation", mais en réalité, elles risquent de devenir des outils pour contrôler l\'information gênante pour les gouvernements.',
+        content2:
+          "Ce dont nous avons besoin, c'est la capacité de juger la fiabilité de l'information nous-mêmes, sans dépendre des gouvernements, des médias grand public, ou de l'IA."
+      },
+      balance: {
+        title: "Contrôle de la parole vs. Qualité de l'information : Une approche équilibrée",
+        control: {
+          title: 'Risques du contrôle',
+          content:
+            'Détermination arbitraire de la "vérité" par le pouvoir, suppression d\'opinions diverses, entrave à l\'innovation'
+        },
+        quality: {
+          title: 'Amélioration de la qualité',
+          content:
+            "Améliorer la littératie informationnelle individuelle, encourager la pensée critique, renforcer les capacités d'auto-jugement"
+        },
+        conclusion:
+          "Plutôt que de dépendre des réglementations, avoir chaque personne développer la capacité de discerner l'information forme la base d'une société saine."
+      },
+      aiLimitations: {
+        title: 'Limitations de la vérification des faits par IA',
+        lead: "Bien que l'IA comme ChatGPT et Gemini soit pratique, elle a des limitations significatives pour la vérification des faits :",
+        point1:
+          "Biais des données d'entraînement : L'IA reflète les biais inhérents dans ses données d'entraînement",
+        point2:
+          'Compréhension incomplète du contexte : Interprète mal les nuances subtiles, le sarcasme et les contextes culturels',
+        point3:
+          'Dépendance excessive à l\'autorité : Juge sans esprit critique l\'information des médias grand public et des agences gouvernementales comme "correcte"',
+        conclusion:
+          "Bien que l'IA puisse être utile comme référence, les jugements finaux devraient être faits par les humains."
+      },
+      features: {
+        title: 'Caractéristiques de cette application'
+      }
+    },
+    features: {
+      systematic: {
+        title: 'Évaluation systématique',
+        description:
+          "Évaluation complète des sources d'information à la structure logique avec une liste de contrôle de 20 éléments"
+      },
+      privacy: {
+        title: 'Confidentialité complète',
+        description:
+          "Toutes les données stockées sur l'appareil. Aucune transmission vers des serveurs externes"
+      },
+      pwa: {
+        title: 'Support hors ligne',
+        description: 'Disponible même sans connexion internet grâce à la technologie PWA'
+      },
+      multilingual: {
+        title: 'Support de 12 langues',
+        description: "Support complet pour 12 langues incluant le japonais, l'anglais et le chinois"
+      }
+    },
+    finalCta: {
+      title: 'Commençons maintenant',
+      subtitle: "Entraînez votre jugement pour éviter de vous noyer dans la mer d'informations"
+    },
+    share: {
+      title: 'Partager cet outil'
     }
   }
 };

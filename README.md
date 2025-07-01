@@ -257,10 +257,10 @@ fact-checklist/
 #### 📄 International PDF Generation / 国際化PDF生成（3つのモード - 排他選択）
 
 - **🎨 Pixel-Perfect (Default)**: Browser print function with HTML display
-  perfect
-  matchピクセルパーフェクト（デフォルト）: ブラウザ印刷機能でHTML表示と完全一致
+  perfect match
+  / ピクセルパーフェクト（デフォルト）: ブラウザ印刷機能でHTML表示と完全一致
 - **🔥 International Font Support**: jsPDF with embedded fonts for all 12
-  languages国際化フォント対応:
+  languages / 国際化フォント対応:
   12言語すべてに対応したフォント埋め込み、透かし・メタデータ対応
   - **Latin Script**: Roboto for English, French, Spanish, Portuguese, German,
     Italian, Indonesian
@@ -268,7 +268,7 @@ fact-checklist/
   - **Devanagari Script**: Noto Sans Devanagari for Hindi
   - **Arabic Script**: Noto Sans Arabic for Arabic with RTL support
 - **🔤 Text-Based**: Lightweight PDF utilizing PWA features, text searchable and
-  copyableテキストベース: PWA機能を活用した軽量PDF、文字検索・コピー可能
+  copyable / テキストベース: PWA機能を活用した軽量PDF、文字検索・コピー可能
 
 #### 🌐 Other Formats / その他形式
 

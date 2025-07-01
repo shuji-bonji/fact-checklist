@@ -68,6 +68,43 @@ export const translations: TranslationKeys = {
     poweredBy: 'Powered by'
   },
 
+  // Page-specific metadata
+  pages: {
+    home: {
+      title: 'Fact Checklist - Practical Information Reliability Evaluation',
+      description:
+        'Systematically evaluate information reliability with 20 checklist items. Judge information with your own eyes and mind without relying on AI or government.',
+      keywords:
+        'fact-checking,information verification,reliability assessment,PWA,information literacy,misinformation countermeasures'
+    },
+    about: {
+      title: 'About This App - Fact Checklist',
+      description:
+        'Learn about the development background, features, and usage of Fact Checklist. A tool for judging information reliability yourself.',
+      keywords:
+        'app overview,development philosophy,information evaluation,reliability judgment,fact-checking,how to use'
+    },
+    help: {
+      title: 'Help & Guide - Fact Checklist',
+      description:
+        'Detailed usage instructions, checklist item explanations, and tips for effective information evaluation.',
+      keywords: 'how to use,help,checklist items,information evaluation,guide,instructions'
+    },
+    privacy: {
+      title: 'Privacy Policy - Fact Checklist',
+      description:
+        'Information about personal data handling. All data is stored locally and not transmitted externally.',
+      keywords: 'privacy,personal information,data protection,local storage,security'
+    },
+    intro: {
+      title: 'Practical Fact-Check Checklist for Surviving in a World Full of Misinformation',
+      description:
+        'A simple checklist to evaluate information reliability with your own eyes and mind as government SNS regulations advance. Scientifically and systematically evaluate information without blindly trusting AI or media.',
+      keywords:
+        'fact-checking,information verification,reliability assessment,PWA,information literacy,misinformation countermeasures,SNS regulation,information control,information quality,AI fact-checking'
+    }
+  },
+
   // Navigation
   navigation: {
     home: 'Home',
@@ -1137,6 +1174,90 @@ export const translations: TranslationKeys = {
         'Unlimited generalization of limited research results',
         'Unclear scope of application'
       ]
+    }
+  },
+
+  // Intro page
+  intro: {
+    meta: {
+      title: 'Practical Fact-Check Checklist for Surviving in a World Full of Misinformation',
+      keywords:
+        'fact-checking,fact verification,information verification,reliability assessment,PWA,information literacy,misinformation countermeasures'
+    },
+    hero: {
+      title: 'Practical Fact-Check Checklist for Surviving in a World Full of Misinformation',
+      subtitle:
+        'A simple checklist to evaluate information reliability with your own eyes and mind as government SNS regulations advance'
+    },
+    cta: {
+      startNow: 'Start Checking Now',
+      useChecklist: 'Use the Checklist',
+      learnMore: 'Learn More'
+    },
+    sections: {
+      regulation: {
+        title: 'Government SNS Regulation and the Reality of Information Control',
+        quote: 'Under the noble cause of "removing misinformation," who decides what is "truth"?',
+        content1:
+          'SNS regulations advancing worldwide claim to be "anti-misinformation measures," but in reality, they risk becoming tools for controlling information inconvenient to governments.',
+        content2:
+          'What we need is the ability to judge information reliability ourselves, without relying on governments, mainstream media, or AI.'
+      },
+      balance: {
+        title: 'Speech Control vs. Information Quality: A Balanced Approach',
+        control: {
+          title: 'Risks of Control',
+          content:
+            'Arbitrary determination of "truth" by power, suppression of diverse opinions, hindrance to innovation'
+        },
+        quality: {
+          title: 'Quality Improvement',
+          content:
+            'Improving individual information literacy, fostering critical thinking, strengthening self-judgment abilities'
+        },
+        conclusion:
+          'Rather than relying on regulations, having each person develop the ability to discern information forms the foundation of a healthy society.'
+      },
+      aiLimitations: {
+        title: 'Limitations of AI Fact-Checking',
+        lead: 'While AI like ChatGPT and Gemini are convenient, they have significant limitations for fact-checking:',
+        point1: 'Training data bias: AI reflects biases inherent in its training data',
+        point2:
+          'Incomplete context understanding: Misinterprets subtle nuances, sarcasm, and cultural contexts',
+        point3:
+          'Over-reliance on authority: Uncritically judges information from mainstream media and government agencies as "correct"',
+        conclusion:
+          'While AI can be helpful for reference, final judgments should be made by humans.'
+      },
+      features: {
+        title: 'Features of This App'
+      }
+    },
+    features: {
+      systematic: {
+        title: 'Systematic Evaluation',
+        description:
+          'Comprehensive assessment from information sources to logical structure with a 20-item checklist'
+      },
+      privacy: {
+        title: 'Complete Privacy',
+        description: 'All data stored on device. No transmission to external servers'
+      },
+      pwa: {
+        title: 'Offline Support',
+        description: 'Available even without internet connection thanks to PWA technology'
+      },
+      multilingual: {
+        title: '12 Language Support',
+        description: 'Full support for 12 languages including Japanese, English, and Chinese'
+      }
+    },
+    finalCta: {
+      title: "Let's Start Now",
+      subtitle: 'Train your judgment to avoid drowning in the sea of information'
+    },
+    share: {
+      title: 'Share This Tool'
     }
   }
 };

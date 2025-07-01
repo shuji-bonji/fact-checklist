@@ -170,11 +170,14 @@
 </script>
 
 <svelte:head>
-  <title>{isI18nReady ? t('app.title') : 'Fact Checklist'}</title>
-  <meta
-    name="description"
-    content={isI18nReady ? t('app.description') : 'Information reliability evaluation checklist'}
-  />
+  {#if isI18nReady}
+    <title>{t('pages.home.title')}</title>
+    <meta name="description" content={t('pages.home.description')} />
+    <meta name="keywords" content={t('pages.home.keywords')} />
+  {:else}
+    <title>Fact Checklist</title>
+    <meta name="description" content="Information reliability evaluation checklist" />
+  {/if}
 </svelte:head>
 
 <div class="container">

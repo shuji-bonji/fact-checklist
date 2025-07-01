@@ -30,6 +30,7 @@
   const isAboutPage = $derived(currentPath.includes('/about'));
   const isHelpPage = $derived(currentPath.includes('/help'));
   const isPrivacyPage = $derived(currentPath.includes('/privacy'));
+  const isIntroPage = $derived(currentPath.includes('/intro'));
 
   // デバッグ用
   $effect(() => {
@@ -161,12 +162,45 @@
 <svelte:window onclick={handleClickOutside} />
 
 <div class="app">
-  <!-- グローバルナビゲーション -->
-  <nav class="global-nav">
-    {#if isI18nReady}
-      <!-- タブレット用２段レイアウト -->
-      <div class="nav-content tablet-layout">
-        <div class="nav-top">
+  <!-- グローバルナビゲーション（introページでは非表示） -->
+  {#if !isIntroPage}
+    <nav class="global-nav">
+      {#if isI18nReady}
+        <!-- タブレット用２段レイアウト -->
+        <div class="nav-content tablet-layout">
+          <div class="nav-top">
+            <button class="nav-brand" onclick={goToHome}>
+              <span class="nav-icon">🔍</span>
+              <div class="brand-text">
+                <span class="brand-title">事実確認チェックシート</span>
+                <span class="brand-subtitle">情報の信頼性を科学的評価</span>
+              </div>
+            </button>
+          </div>
+          <div class="nav-bottom">
+            <div class="nav-menu desktop-menu">
+              <button class="nav-link" class:active={isHomePage} onclick={goToHome}>
+                🏠 {t('navigation.home')}
+              </button>
+              <button class="nav-link" class:active={isAboutPage} onclick={goToAbout}>
+                📖 {t('navigation.about')}
+              </button>
+              <button class="nav-link" class:active={isHelpPage} onclick={goToHelp}>
+                ❓ {t('navigation.help')}
+              </button>
+              <button class="nav-link" class:active={isPrivacyPage} onclick={goToPrivacy}>
+                🔐 {t('navigation.privacy')}
+              </button>
+              <!-- タブレット用言語切り替え -->
+              <div class="tablet-language-switcher">
+                <LanguageSwitcher />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- デスクトップ用１段レイアウト -->
+        <div class="nav-content desktop-layout">
           <button class="nav-brand" onclick={goToHome}>
             <span class="nav-icon">🔍</span>
             <div class="brand-text">
@@ -174,8 +208,8 @@
               <span class="brand-subtitle">情報の信頼性を科学的評価</span>
             </div>
           </button>
-        </div>
-        <div class="nav-bottom">
+
+          <!-- デスクトップメニュー -->
           <div class="nav-menu desktop-menu">
             <button class="nav-link" class:active={isHomePage} onclick={goToHome}>
               🏠 {t('navigation.home')}
@@ -189,91 +223,60 @@
             <button class="nav-link" class:active={isPrivacyPage} onclick={goToPrivacy}>
               🔐 {t('navigation.privacy')}
             </button>
-            <!-- タブレット用言語切り替え -->
-            <div class="tablet-language-switcher">
-              <LanguageSwitcher />
+          </div>
+
+          <!-- モバイルメニューボタン -->
+          <button
+            class="mobile-menu-toggle"
+            onclick={toggleMenu}
+            aria-label={t('accessibility.openMenu')}
+          >
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+          </button>
+          <!-- デスクトップ用言語切り替え -->
+          <div class="desktop-language-switcher">
+            <LanguageSwitcher />
+          </div>
+        </div>
+
+        <!-- モバイルメニュー -->
+        {#if isMenuOpen}
+          <div class="mobile-menu">
+            <button class="mobile-nav-link" class:active={isHomePage} onclick={goToHome}>
+              🏠 {t('navigation.home')}
+            </button>
+            <button class="mobile-nav-link" class:active={isAboutPage} onclick={goToAbout}>
+              📖 {t('navigation.about')}
+            </button>
+            <button class="mobile-nav-link" class:active={isHelpPage} onclick={goToHelp}>
+              ❓ {t('navigation.help')}
+            </button>
+            <button class="mobile-nav-link" class:active={isPrivacyPage} onclick={goToPrivacy}>
+              🔐 {t('navigation.privacy')}
+            </button>
+            <!-- モバイル用言語切り替え -->
+            <div class="mobile-language-switcher">
+              <LanguageSwitcher mobileMode={true} />
             </div>
           </div>
-        </div>
-      </div>
-
-      <!-- デスクトップ用１段レイアウト -->
-      <div class="nav-content desktop-layout">
-        <button class="nav-brand" onclick={goToHome}>
-          <span class="nav-icon">🔍</span>
-          <div class="brand-text">
-            <span class="brand-title">事実確認チェックシート</span>
-            <span class="brand-subtitle">情報の信頼性を科学的評価</span>
+        {/if}
+      {:else}
+        <!-- Loading state for navigation -->
+        <div class="nav-content desktop-layout">
+          <div class="nav-brand-loading">
+            <span class="nav-icon">🔍</span>
+            <div class="brand-text">
+              <span class="brand-title">事実確認チェックシート</span>
+              <span class="brand-subtitle">情報の信頼性を科学的評価</span>
+            </div>
           </div>
-        </button>
-
-        <!-- デスクトップメニュー -->
-        <div class="nav-menu desktop-menu">
-          <button class="nav-link" class:active={isHomePage} onclick={goToHome}>
-            🏠 {t('navigation.home')}
-          </button>
-          <button class="nav-link" class:active={isAboutPage} onclick={goToAbout}>
-            📖 {t('navigation.about')}
-          </button>
-          <button class="nav-link" class:active={isHelpPage} onclick={goToHelp}>
-            ❓ {t('navigation.help')}
-          </button>
-          <button class="nav-link" class:active={isPrivacyPage} onclick={goToPrivacy}>
-            🔐 {t('navigation.privacy')}
-          </button>
-        </div>
-
-        <!-- モバイルメニューボタン -->
-        <button
-          class="mobile-menu-toggle"
-          onclick={toggleMenu}
-          aria-label={t('accessibility.openMenu')}
-        >
-          <span class="hamburger-line"></span>
-          <span class="hamburger-line"></span>
-          <span class="hamburger-line"></span>
-        </button>
-        <!-- デスクトップ用言語切り替え -->
-        <div class="desktop-language-switcher">
-          <LanguageSwitcher />
-        </div>
-      </div>
-
-      <!-- モバイルメニュー -->
-      {#if isMenuOpen}
-        <div class="mobile-menu">
-          <button class="mobile-nav-link" class:active={isHomePage} onclick={goToHome}>
-            🏠 {t('navigation.home')}
-          </button>
-          <button class="mobile-nav-link" class:active={isAboutPage} onclick={goToAbout}>
-            📖 {t('navigation.about')}
-          </button>
-          <button class="mobile-nav-link" class:active={isHelpPage} onclick={goToHelp}>
-            ❓ {t('navigation.help')}
-          </button>
-          <button class="mobile-nav-link" class:active={isPrivacyPage} onclick={goToPrivacy}>
-            🔐 {t('navigation.privacy')}
-          </button>
-          <!-- モバイル用言語切り替え -->
-          <div class="mobile-language-switcher">
-            <LanguageSwitcher mobileMode={true} />
-          </div>
+          <div class="nav-loading">Loading...</div>
         </div>
       {/if}
-    {:else}
-      <!-- Loading state for navigation -->
-      <div class="nav-content desktop-layout">
-        <div class="nav-brand-loading">
-          <span class="nav-icon">🔍</span>
-          <div class="brand-text">
-            <span class="brand-title">事実確認チェックシート</span>
-            <span class="brand-subtitle">情報の信頼性を科学的評価</span>
-          </div>
-        </div>
-        <div class="nav-loading">Loading...</div>
-      </div>
-    {/if}
-  </nav>
+    </nav>
+  {/if}
 
   <main>
     {@render children()}

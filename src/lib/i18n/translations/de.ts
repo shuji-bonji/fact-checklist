@@ -65,6 +65,45 @@ export const translations: TranslationKeys = {
     copyright: '© 2025 Faktencheck-Checkliste Team',
     poweredBy: 'Betrieben von'
   },
+
+  // Seitenspezifische Metadaten
+  pages: {
+    home: {
+      title: 'Fact Checklist - Praktische Bewertung der Informationszuverlässigkeit',
+      description:
+        'Bewerten Sie systematisch die Informationszuverlässigkeit mit 20 Checklisten-Elementen. Beurteilen Sie Informationen mit Ihren eigenen Augen und Ihrem Verstand, ohne auf KI oder Regierung angewiesen zu sein.',
+      keywords:
+        'Faktenchecking,Informationsverifizierung,Zuverlässigkeitsbewertung,PWA,Informationskompetenz,Desinformations-Gegenmaßnahmen'
+    },
+    about: {
+      title: 'Über Diese App - Fact Checklist',
+      description:
+        'Erfahren Sie mehr über den Entwicklungshintergrund, die Funktionen und die Nutzung von Fact Checklist. Ein Tool zur eigenständigen Beurteilung der Informationszuverlässigkeit.',
+      keywords:
+        'App-Überblick,Entwicklungsphilosophie,Informationsbewertung,Zuverlässigkeitsbeurteilung,Faktenchecking,Anleitung'
+    },
+    help: {
+      title: 'Hilfe & Anleitung - Fact Checklist',
+      description:
+        'Detaillierte Nutzungsanweisungen, Erklärungen der Checklisten-Elemente und Tipps für eine effektive Informationsbewertung.',
+      keywords: 'Anleitung,Hilfe,Checklisten-Elemente,Informationsbewertung,Leitfaden,Anweisungen'
+    },
+    privacy: {
+      title: 'Datenschutzrichtlinie - Fact Checklist',
+      description:
+        'Informationen über den Umgang mit persönlichen Daten. Alle Daten werden lokal gespeichert und nicht extern übertragen.',
+      keywords:
+        'Datenschutz,persönliche Informationen,Datensicherheit,lokale Speicherung,Sicherheit'
+    },
+    intro: {
+      title: 'Praktische Faktencheck-Checkliste zum Überleben in einer Welt voller Desinformation',
+      description:
+        'Eine einfache Checkliste zur Bewertung der Informationszuverlässigkeit mit Ihren eigenen Augen und Ihrem Verstand, während die staatliche Regulierung sozialer Netzwerke voranschreitet. Bewerten Sie Informationen wissenschaftlich und systematisch, ohne blind KI oder Medien zu vertrauen.',
+      keywords:
+        'Faktenchecking,Informationsverifizierung,Zuverlässigkeitsbewertung,PWA,Informationskompetenz,Desinformations-Gegenmaßnahmen,Social-Media-Regulierung,Informationskontrolle,Informationsqualität,KI-Faktenchecking'
+    }
+  },
+
   navigation: {
     home: 'Startseite',
     about: 'Über',
@@ -1147,6 +1186,92 @@ export const translations: TranslationKeys = {
         '"Alle Menschen" ohne Spezifikation',
         'Fehlende Angabe von Einschränkungen'
       ]
+    }
+  },
+  intro: {
+    meta: {
+      title:
+        'Praktische Faktencheck-Checkliste zum Überleben in einer Welt voller Fehlinformationen',
+      keywords:
+        'Faktencheck,Faktenuberprufung,Informationsverifikation,Zuverlassigkeitsbewertung,PWA,Informationskompetenz,Fehlinformationsbekampfung'
+    },
+    hero: {
+      title:
+        'Praktische Faktencheck-Checkliste zum Überleben in einer Welt voller Fehlinformationen',
+      subtitle:
+        'Eine einfache Checkliste zur Bewertung der Informationszuverlässigkeit mit eigenen Augen und Verstand, während staatliche SNS-Regulierungen voranschreiten'
+    },
+    cta: {
+      startNow: 'Jetzt Prüfung starten',
+      useChecklist: 'Checkliste verwenden',
+      learnMore: 'Mehr erfahren'
+    },
+    sections: {
+      regulation: {
+        title: 'Staatliche SNS-Regulierung und die Realität der Informationskontrolle',
+        quote:
+          'Unter dem noblen Vorwand der "Entfernung von Fehlinformationen" - wer entscheidet, was "Wahrheit" ist?',
+        content1:
+          'Weltweit voranschreitende SNS-Regulierungen behaupten, "Anti-Fehlinformations-Maßnahmen" zu sein, drohen aber in Wirklichkeit zu Werkzeugen zur Kontrolle regierungsunbequemer Informationen zu werden.',
+        content2:
+          'Was wir brauchen, ist die Fähigkeit, Informationszuverlässigkeit selbst zu beurteilen, ohne uns auf Regierungen, Mainstream-Medien oder KI zu verlassen.'
+      },
+      balance: {
+        title: 'Meinungskontrolle vs. Informationsqualität: Ein ausgewogener Ansatz',
+        control: {
+          title: 'Risiken der Kontrolle',
+          content:
+            'Willkürliche Bestimmung der "Wahrheit" durch die Macht, Unterdrückung vielfältiger Meinungen, Behinderung von Innovation'
+        },
+        quality: {
+          title: 'Qualitätsverbesserung',
+          content:
+            'Verbesserung der individuellen Informationskompetenz, Förderung kritischen Denkens, Stärkung der Selbsturteilsfähigkeit'
+        },
+        conclusion:
+          'Anstatt sich auf Regulierungen zu verlassen, bildet die Entwicklung der Fähigkeit jedes Einzelnen, Informationen zu unterscheiden, das Fundament einer gesunden Gesellschaft.'
+      },
+      aiLimitations: {
+        title: 'Grenzen des KI-Faktenchecks',
+        lead: 'Während KI wie ChatGPT und Gemini praktisch sind, haben sie erhebliche Einschränkungen beim Faktencheck:',
+        point1: 'Trainingsdaten-Bias: KI spiegelt in Trainingsdaten enthaltene Vorurteile wider',
+        point2:
+          'Unvollständiges Kontextverständnis: Missversteht subtile Nuancen, Sarkasmus und kulturelle Kontexte',
+        point3:
+          'Überabhängigkeit von Autorität: Beurteilt unkritisch Informationen von Mainstream-Medien und Regierungsbehörden als "korrekt"',
+        conclusion:
+          'Während KI als Referenz hilfreich sein kann, sollten endgültige Urteile von Menschen gefällt werden.'
+      },
+      features: {
+        title: 'Funktionen dieser App'
+      }
+    },
+    features: {
+      systematic: {
+        title: 'Systematische Bewertung',
+        description:
+          'Umfassende Bewertung von Informationsquellen bis zur logischen Struktur mit einer 20-Punkte-Checkliste'
+      },
+      privacy: {
+        title: 'Vollständige Privatsphäre',
+        description: 'Alle Daten auf dem Gerät gespeichert. Keine Übertragung an externe Server'
+      },
+      pwa: {
+        title: 'Offline-Unterstützung',
+        description: 'Dank PWA-Technologie auch ohne Internetverbindung verfügbar'
+      },
+      multilingual: {
+        title: '12-Sprachen-Unterstützung',
+        description:
+          'Vollständige Unterstützung für 12 Sprachen einschließlich Japanisch, Englisch und Chinesisch'
+      }
+    },
+    finalCta: {
+      title: 'Lassen Sie uns jetzt beginnen',
+      subtitle: 'Trainieren Sie Ihr Urteilsvermögen, um nicht im Informationsmeer zu ertrinken'
+    },
+    share: {
+      title: 'Dieses Tool teilen'
     }
   }
 };
