@@ -1,6 +1,7 @@
 <script lang="ts">
   import { t, i18nStore } from '$lib/i18n';
   import { page } from '$app/stores';
+  import { base } from '$app/paths';
   import LanguageSwitcher from '$lib/components/LanguageSwitcher.svelte';
 
   // i18n初期化状態を監視
@@ -91,7 +92,7 @@
         <h1 class="hero-title">{t('intro.hero.title')}</h1>
         <p class="hero-subtitle">{t('intro.hero.subtitle')}</p>
         <div class="hero-cta">
-          <a href="/" class="cta-button primary large">
+          <a href="{base}/" class="cta-button primary large">
             <span class="cta-icon">✓</span>
             {t('intro.cta.startNow')}
           </a>
@@ -175,10 +176,10 @@
           <h2>{t('intro.finalCta.title')}</h2>
           <p>{t('intro.finalCta.subtitle')}</p>
           <div class="cta-buttons">
-            <a href="/" class="cta-button primary large">
+            <a href="{base}/" class="cta-button primary large">
               {t('intro.cta.useChecklist')}
             </a>
-            <a href="/about" class="cta-button secondary">
+            <a href="{base}/about" class="cta-button secondary">
               {t('intro.cta.learnMore')}
             </a>
           </div>

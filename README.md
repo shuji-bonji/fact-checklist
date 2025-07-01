@@ -257,27 +257,23 @@ fact-checklist/
 #### 📄 International PDF Generation / 国際化PDF生成（3つのモード - 排他選択）
 
 - **🎨 Pixel-Perfect (Default)**: Browser print function with HTML display
-  perfect
-  matchピクセルパーフェクト（デフォルト）: ブラウザ印刷機能でHTML表示と完全一致
+  perfect match
 - **🔥 International Font Support**: jsPDF with embedded fonts for all 12
-  languages国際化フォント対応:
-  12言語すべてに対応したフォント埋め込み、透かし・メタデータ対応
+  languages
   - **Latin Script**: Roboto for English, French, Spanish, Portuguese, German,
     Italian, Indonesian
   - **CJK Script**: Noto Sans CJK for Japanese, Korean, Traditional Chinese
   - **Devanagari Script**: Noto Sans Devanagari for Hindi
   - **Arabic Script**: Noto Sans Arabic for Arabic with RTL support
 - **🔤 Text-Based**: Lightweight PDF utilizing PWA features, text searchable and
-  copyableテキストベース: PWA機能を活用した軽量PDF、文字検索・コピー可能
+  copyable
 
 #### 🌐 Other Formats / その他形式
 
-- **HTML**: Browser-displayable with embedded styles and
-  internationalizationブラウザで表示可能（スタイル埋め込み済み・国際化対応）
-- **JSON**: Structured data with export options and language
-  context構造化データ（エクスポートオプション・言語情報反映）
+- **HTML**: Browser-displayable with embedded styles and internationalization
+- **JSON**: Structured data with export options and language context
 - **Markdown**: Text format with tables and details tags, fully
-  internationalizedテキスト形式（テーブル・詳細タグ使用・完全国際化対応）
+  internationalized
 
 #### 🌍 Language-Specific Features / 言語固有機能
 
