@@ -160,6 +160,25 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Generate sitemap and update PWA version
+        run: |
+          npm run generate:sitemap
+          npm run update:pwa-version
+
+      - name: Commit updated files (if changed)
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+          if [ -n "$(git status --porcelain)" ]; then
+            git add static/sitemap.xml
+            git commit -m "Auto-update: sitemap.xml and PWA version [skip ci]"
+            git push
+          else
+            echo "No changes to commit"
+          fi
+        continue-on-error: true
+
       - name: Build for production
         run: npm run build
         env:

@@ -12,6 +12,9 @@
   import { initializeI18n, t, i18nStore } from '$lib/i18n/index.js';
   import LanguageSwitcher from '$lib/components/LanguageSwitcher.svelte';
 
+  // PWA
+  import { registerPWA, setupPWAInstallPrompt } from '$lib/utils/pwa-register.js';
+
   // i18n初期化状態を監視
   const isI18nReady = $derived(i18nStore.initialized && !!i18nStore.translations);
 
@@ -75,18 +78,16 @@
         }
       }
 
-      if (!dev && 'serviceWorker' in navigator && browser) {
+      // PWA Service Worker登録（Safari対応強化版）
+      if (!dev && browser) {
         try {
-          // ベースパスを考慮したService Worker登録
-          const swPath = `${base}/service-worker.js`;
-          console.log('Registering Service Worker at:', swPath);
+          const pwaInfo = await registerPWA();
+          console.log('PWA registration:', pwaInfo);
 
-          const registration = await navigator.serviceWorker.register(swPath, {
-            scope: `${base}/`
-          });
-          console.log('Service Worker registered successfully:', registration);
+          // PWAインストール促進設定
+          setupPWAInstallPrompt();
         } catch (error) {
-          console.error('Service Worker registration failed:', error);
+          console.error('PWA registration failed:', error);
         }
       }
     })();
