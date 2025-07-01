@@ -69,13 +69,7 @@ export interface ChecklistHistoryItem {
   confidenceLevel: number;
 }
 
-export interface ExportOptions {
-  format: 'pdf' | 'html' | 'json';
-  includeGuides: boolean;
-  includeNotes: boolean;
-}
-
 export interface ShareOptions {
   method: 'email' | 'sms' | 'copy' | 'download';
-  format: ExportOptions['format'];
+  format: 'pdf' | 'html' | 'json' | 'markdown';
 }
