@@ -62,20 +62,20 @@
     <meta property="og:title" content={t('pages.intro.title')} />
     <meta property="og:description" content={t('pages.intro.description')} />
     <meta property="og:url" content={$page.url.href} />
-    <meta property="og:image" content="{$page.url.origin}/og-image-intro.png" />
+    <meta property="og:image" content="{$page.url.origin}{base}/og-image-intro.png" />
     <meta property="og:site_name" content={t('app.title')} />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={t('pages.intro.title')} />
     <meta name="twitter:description" content={t('pages.intro.description')} />
-    <meta name="twitter:image" content="{$page.url.origin}/og-image-intro.png" />
+    <meta name="twitter:image" content="{$page.url.origin}{base}/og-image-intro.png" />
   {:else}
     <title>Fact Checklist - Intro</title>
     <meta name="description" content="Information reliability evaluation intro" />
     <meta property="og:title" content="Fact Checklist - Intro" />
     <meta property="og:description" content="Information reliability evaluation intro" />
-    <meta property="og:image" content="/og-image-intro.png" />
+    <meta property="og:image" content="{base}/og-image-intro.png" />
   {/if}
 </svelte:head>
 

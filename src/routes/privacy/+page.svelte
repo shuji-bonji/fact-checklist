@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores';
+  import { base } from '$app/paths';
   import { t, tArray, i18nStore } from '$lib/i18n/index.js';
 
   // Svelte 5 runesでi18n初期化状態を監視
@@ -27,20 +28,20 @@
     <meta property="og:title" content={t('pages.privacy.title')} />
     <meta property="og:description" content={t('pages.privacy.description')} />
     <meta property="og:url" content={$page.url.href} />
-    <meta property="og:image" content="{$page.url.origin}/og-image.png" />
+    <meta property="og:image" content="{$page.url.origin}{base}/og-image.png" />
     <meta property="og:site_name" content={t('app.title')} />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={t('pages.privacy.title')} />
     <meta name="twitter:description" content={t('pages.privacy.description')} />
-    <meta name="twitter:image" content="{$page.url.origin}/og-image.png" />
+    <meta name="twitter:image" content="{$page.url.origin}{base}/og-image.png" />
   {:else}
     <title>Privacy Policy - Fact Checklist</title>
     <meta name="description" content="Privacy policy for Fact Checklist" />
     <meta property="og:title" content="Privacy Policy - Fact Checklist" />
     <meta property="og:description" content="Privacy policy for Fact Checklist" />
-    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:image" content="{base}/og-image.png" />
   {/if}
 </svelte:head>
 
