@@ -14,6 +14,8 @@ export default defineConfig(({ mode }) => {
         registerType: 'autoUpdate',
         // Service Workerを手動で管理するため無効化
         injectRegister: false,
+        // GitHub Pages対応: baseパス設定
+        base: base,
         workbox: {
           // version: '1.0.0'
           globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2}'],
