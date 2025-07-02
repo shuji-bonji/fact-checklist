@@ -119,16 +119,73 @@ export function setupPWAInstallPrompt() {
     console.log('📱 PWA install prompt available');
   });
 
+  // フォールバック：beforeinstallpromptイベントが発火しない場合の代替判定
+  const canInstallFallback = () => {
+    // Service Workerがサポートされている
+    const hasServiceWorker = 'serviceWorker' in navigator;
+
+    // PWAとして実行されていない（standalone mode ではない）
+    const isNotStandalone = !window.matchMedia('(display-mode: standalone)').matches;
+
+    // モバイルまたはデスクトップブラウザ
+    const isSupportedBrowser = 'serviceWorker' in navigator && 'PushManager' in window;
+
+    return hasServiceWorker && isNotStandalone && isSupportedBrowser;
+  };
+
   return {
-    canInstall: () => !!deferredPrompt,
+    canInstall: () => {
+      // 元のイベントベースの判定を優先
+      if (deferredPrompt) return true;
+
+      // フォールバック判定を使用
+      return canInstallFallback();
+    },
     install: async () => {
-      if (!deferredPrompt) return false;
+      // 元のイベントベースのインストール
+      if (deferredPrompt) {
+        try {
+          deferredPrompt.prompt();
+          const { outcome } = await deferredPrompt.userChoice;
+          deferredPrompt = null;
+          return outcome === 'accepted';
+        } catch (error) {
+          console.error('PWA install prompt failed:', error);
+          deferredPrompt = null;
+          return false;
+        }
+      }
 
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      deferredPrompt = null;
+      // フォールバック：手動でインストール手順を案内
+      const userAgent = navigator.userAgent.toLowerCase();
+      if (userAgent.includes('chrome') || userAgent.includes('edge')) {
+        alert(
+          'このサイトをアプリとしてインストールするには:\n1. ブラウザのメニュー（⋮）を開く\n2. 「アプリをインストール」を選択\n3. 確認ダイアログで「インストール」をクリック'
+        );
+      } else if (userAgent.includes('safari')) {
+        alert(
+          'このサイトをホーム画面に追加するには:\n1. 共有ボタン（□↗）をタップ\n2. 「ホーム画面に追加」を選択\n3. 「追加」をタップ'
+        );
+      } else if (userAgent.includes('firefox')) {
+        alert(
+          'このサイトをアプリとしてインストールするには:\n1. アドレスバーの家アイコンをクリック\n2. 「このサイトをインストール」を選択'
+        );
+      } else {
+        alert(
+          'このサイトをアプリとしてインストールするには、ブラウザのメニューから「アプリをインストール」または「ホーム画面に追加」を選択してください。'
+        );
+      }
 
-      return outcome === 'accepted';
-    }
+      return true; // ユーザーに案内したので成功とみなす
+    },
+
+    // デバッグ用の情報を提供
+    getDebugInfo: () => ({
+      hasDeferredPrompt: !!deferredPrompt,
+      canInstallFallback: canInstallFallback(),
+      isStandalone: window.matchMedia('(display-mode: standalone)').matches,
+      hasServiceWorker: 'serviceWorker' in navigator,
+      userAgent: navigator.userAgent
+    })
   };
 }
