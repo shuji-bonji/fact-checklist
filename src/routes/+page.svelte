@@ -4,7 +4,7 @@
   import { page } from '$app/stores';
   import { browser } from '$app/environment';
   import { base } from '$app/paths';
-  import { checklistStore } from '$lib/stores/checklistStore.svelte.js';
+  import { refactoredChecklistStore } from '$lib/stores/refactoredChecklistStore.svelte.js';
   import { getCategories } from '$lib/data/checklist-items.js';
   import type { JudgmentType } from '$lib/types/checklist.js';
   import { t, i18nStore } from '$lib/i18n/index.js';
@@ -28,11 +28,11 @@
 
   // Derived state
   const categories = $derived(getCategories());
-  const currentChecklist = $derived(checklistStore.currentChecklist);
-  const score = $derived(checklistStore.score);
-  const confidenceLevel = $derived(checklistStore.confidenceLevel);
-  const confidenceText = $derived(checklistStore.confidenceText);
-  const judgmentAdvice = $derived(checklistStore.judgmentAdvice);
+  const currentChecklist = $derived(refactoredChecklistStore.currentChecklist);
+  const score = $derived(refactoredChecklistStore.score);
+  const confidenceLevel = $derived(refactoredChecklistStore.confidenceLevel);
+  const confidenceText = $derived(refactoredChecklistStore.confidenceText);
+  const judgmentAdvice = $derived(refactoredChecklistStore.judgmentAdvice);
 
   onMount(() => {
     // ローディング画面を確実に非表示にする（ブラウザ環境でのみ）
@@ -52,7 +52,7 @@
     if (checklistId) {
       // 既存のチェックリストを読み込み（非同期）
       console.log('Loading existing checklist...');
-      checklistStore.loadChecklist(checklistId).then(loaded => {
+      refactoredChecklistStore.loadChecklist(checklistId).then(loaded => {
         console.log('loadChecklist result:', loaded);
         console.log('[snapshot] currentChecklist after load:', $state.snapshot(currentChecklist));
         if (loaded && currentChecklist) {
@@ -79,7 +79,7 @@
 
   async function startNewChecklist() {
     console.log('startNewChecklist called');
-    const id = checklistStore.createNewChecklist();
+    const id = await refactoredChecklistStore.createNewChecklist();
     console.log('Created new checklist with id:', id);
     console.log('[snapshot] currentChecklist after create:', $state.snapshot(currentChecklist));
 
@@ -101,25 +101,25 @@
     }
   }
 
-  function handleCheckItem(itemId: string, checked: boolean) {
-    checklistStore.updateCheckItem(itemId, checked);
+  async function handleCheckItem(itemId: string, checked: boolean) {
+    await refactoredChecklistStore.updateCheckItem(itemId, checked);
   }
 
-  function handleTitleChange() {
-    checklistStore.updateTitle(title);
+  async function handleTitleChange() {
+    await refactoredChecklistStore.updateTitle(title);
   }
 
-  function handleDescriptionChange() {
-    checklistStore.updateDescription(description);
+  async function handleDescriptionChange() {
+    await refactoredChecklistStore.updateDescription(description);
   }
 
-  function handleNotesChange() {
-    checklistStore.updateNotes(notes);
+  async function handleNotesChange() {
+    await refactoredChecklistStore.updateNotes(notes);
   }
 
-  function handleJudgmentChange(judgment: JudgmentType) {
+  async function handleJudgmentChange(judgment: JudgmentType) {
     currentJudgment = judgment;
-    checklistStore.setJudgment(judgment);
+    await refactoredChecklistStore.setJudgment(judgment);
   }
 
   function toggleSection(categoryId: string) {
@@ -139,10 +139,10 @@
       return;
     }
 
-    console.log('About to call checklistStore.completeChecklist()');
+    console.log('About to call refactoredChecklistStore.completeChecklist()');
 
     try {
-      const success = await checklistStore.completeChecklist();
+      const success = await refactoredChecklistStore.completeChecklist();
       console.log('completeChecklist result:', success);
 
       if (success) {

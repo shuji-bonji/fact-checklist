@@ -3,9 +3,9 @@
   import { page } from '$app/stores';
   import { goto } from '$app/navigation';
   import { base } from '$app/paths';
-  import { checklistStore } from '$lib/stores/checklistStore.svelte.js';
+  import { refactoredChecklistStore } from '$lib/stores/refactoredChecklistStore.svelte.js';
   import { getCategories } from '$lib/data/checklist-items.js';
-  import type { ChecklistResult, JudgmentType } from '$lib/types/checklist.js';
+  import type { JudgmentType } from '$lib/types/checklist.js';
   import { t, i18nStore, factChecklistI18n } from '$lib/i18n/index.js';
 
   import ExportModal from '$lib/components/ExportModal.svelte';
@@ -17,10 +17,17 @@
   const categories = $derived(isI18nReady ? getCategories() : []);
 
   // State
-  let checklist = $state<ChecklistResult | null>(null);
   let showExportModal = $state(false);
   let isCompleted = $state(false);
   let loading = $state(true);
+
+  // Derived state from refactored store
+  const checklist = $derived(refactoredChecklistStore.currentChecklist);
+  const score = $derived(refactoredChecklistStore.score);
+  const confidenceLevel = $derived(refactoredChecklistStore.confidenceLevel);
+  const confidenceText = $derived(refactoredChecklistStore.confidenceText);
+  const judgmentAdvice = $derived(refactoredChecklistStore.judgmentAdvice);
+  const effectiveTitle = $derived(refactoredChecklistStore.effectiveTitle);
 
   // URL parameters
   const checklistId = $derived($page.params.id);
@@ -37,10 +44,8 @@
       return;
     }
 
-    const loaded = await checklistStore.loadChecklist(checklistId);
-    if (loaded) {
-      checklist = checklistStore.currentChecklist;
-    } else {
+    const loaded = await refactoredChecklistStore.loadChecklist(checklistId);
+    if (!loaded) {
       // チェックリストが見つからない場合はホームに戻る
       goto(base || '/');
       return;
@@ -52,8 +57,8 @@
     goto(`${base}/?id=${checklistId}`);
   }
 
-  function createNewChecklist() {
-    const id = checklistStore.createNewChecklist();
+  async function createNewChecklist() {
+    const id = await refactoredChecklistStore.createNewChecklist();
     goto(`${base}/?id=${id}`);
   }
 
@@ -157,7 +162,7 @@
     <!-- ヘッダー -->
     <header class="detail-header">
       <div class="header-content">
-        <h1>{checklistStore.effectiveTitle}</h1>
+        <h1>{effectiveTitle}</h1>
         {#if checklist.description}
           <p class="description">{checklist.description}</p>
         {/if}
@@ -200,7 +205,7 @@
               <div class="score-icon">🚨</div>
               <div class="score-info">
                 <div class="score-label">{t('categories.critical.name')}</div>
-                <div class="score-value">{checklist.score.critical}/6</div>
+                <div class="score-value">{score.critical}/6</div>
               </div>
             </div>
 
@@ -208,7 +213,7 @@
               <div class="score-icon">📝</div>
               <div class="score-info">
                 <div class="score-label">{t('categories.detailed.name')}</div>
-                <div class="score-value">{checklist.score.detailed}/6</div>
+                <div class="score-value">{score.detailed}/6</div>
               </div>
             </div>
 
@@ -216,7 +221,7 @@
               <div class="score-icon">🔍</div>
               <div class="score-info">
                 <div class="score-label">{t('categories.verification.name')}</div>
-                <div class="score-value">{checklist.score.verification}/4</div>
+                <div class="score-value">{score.verification}/4</div>
               </div>
             </div>
 
@@ -224,7 +229,7 @@
               <div class="score-icon">🌐</div>
               <div class="score-info">
                 <div class="score-label">{t('categories.context.name')}</div>
-                <div class="score-value">{checklist.score.context}/4</div>
+                <div class="score-value">{score.context}/4</div>
               </div>
             </div>
           </div>
@@ -232,18 +237,18 @@
           <div class="total-score-display">
             <div class="total-score">
               <span class="total-label">{t('checklist.totalScore')}</span>
-              <span class="total-value">{checklist.score.total}/{checklist.score.maxScore}</span>
+              <span class="total-value">{score.total}/{score.maxScore}</span>
             </div>
 
             <div class="confidence-display">
               <div class="confidence-meter">
                 <div
-                  class="confidence-bar {getConfidenceClass(checklist.confidenceLevel)}"
-                  style:width="{checklist.confidenceLevel}%"
+                  class="confidence-bar {getConfidenceClass(confidenceLevel)}"
+                  style:width="{confidenceLevel}%"
                 ></div>
               </div>
               <div class="confidence-text">
-                {t('checklist.confidenceLevel')}: {checklist.confidenceLevel}% ({checklist.confidenceText})
+                {t('checklist.confidenceLevel')}: {confidenceLevel}% ({confidenceText})
               </div>
             </div>
           </div>
@@ -321,10 +326,10 @@
         <div class="recommendations card">
           <h3>💡 {t('checklist.recommendedActions')}</h3>
           <div class="advice-content">
-            {checklist.judgmentAdvice}
+            {judgmentAdvice}
           </div>
 
-          {#if checklist.confidenceLevel < 60}
+          {#if confidenceLevel < 60}
             <div class="improvement-tips">
               <h4>{t('checklist.improvementTips')}:</h4>
               <ul>
