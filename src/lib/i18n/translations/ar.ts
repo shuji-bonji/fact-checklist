@@ -174,22 +174,26 @@ export const translations: TranslationKeys = {
     critical: {
       name: 'التقييم الحاسم (مطلوب)',
       description: 'العناصر الأكثر أهمية لتحديد الموثوقية الأساسية للمعلومات',
-      emoji: '🚨'
+      emoji: '🚨',
+      short: 'حاسم'
     },
     detailed: {
       name: 'التقييم التفصيلي (مهم)',
       description: 'عناصر لتقييم جودة وخبرة المعلومات',
-      emoji: '📝'
+      emoji: '📝',
+      short: 'تفصيلي'
     },
     verification: {
       name: 'التحقق والفحص المتقاطع',
       description: 'عناصر لتأكيد قابلية التحقق ودعم المعلومات',
-      emoji: '🔍'
+      emoji: '🔍',
+      short: 'التحقق'
     },
     context: {
       name: 'تقييم السياق والتحيز',
       description: 'عناصر لتقييم ملاءمة التحيز والسياق',
-      emoji: '🌐'
+      emoji: '🌐',
+      short: 'السياق'
     }
   },
   export: {
@@ -221,6 +225,7 @@ export const translations: TranslationKeys = {
       initializing: 'جارٍ التهيئة...',
       generating: 'جارٍ الإنشاء...',
       processing: 'جارٍ المعالجة...',
+      saving: 'حفظ...',
       finalizing: 'جارٍ الإنهاء...',
       completed: 'مكتمل',
       failed: 'فشل'
@@ -237,22 +242,49 @@ export const translations: TranslationKeys = {
     },
     sectionCompletionRates: 'معدلات إكمال الأقسام',
     achievementStatus: 'حالة الإنجاز',
+    completionStatus: 'حالة الإنجاز',
     goodExamples: 'أمثلة جيدة',
     badExamples: 'أمثلة سيئة',
     completed: 'مكتمل',
+    notCompleted: 'غير مكتمل',
     items: 'عناصر',
+    examples: 'أمثلة',
     metadata: {
+      title: 'البيانات الوصفية',
       created: 'تم الإنشاء',
       score: 'النتيجة',
       confidence: 'الثقة',
-      language: 'اللغة'
+      language: 'اللغة',
+      judgment: 'الحكم النهائي'
     },
     summary: {
       title: 'ملخص التقييم',
       totalScore: 'النتيجة الإجمالية',
       completionRate: 'معدل الإكمال',
       confidenceLevel: 'مستوى الثقة',
-      checkedItems: 'العناصر المحققة'
+      checkedItems: 'العناصر المحققة',
+      result: 'نتيجة التقييم',
+      confidenceText: 'نص الثقة',
+      judgmentAdvice: 'نصيحة الحكم'
+    },
+    clipboardTitle: 'نتائج تقييم التحقق من الحقائق',
+    sectionCompletion: 'معدل إكمال القسم',
+    notes: 'ملاحظات التقييم',
+    judgment: {
+      accept: 'موصى',
+      caution: 'يتطلب حذر',
+      reject: 'غير موصى',
+      notEvaluated: 'لم يتم تقييمه'
+    },
+    csv: {
+      id: 'ID',
+      title: 'العنوان',
+      description: 'الوصف',
+      checked: 'محقق',
+      category: 'الفئة'
+    },
+    error: {
+      pdfGeneration: 'فشل في إنشاء PDF'
     }
   },
   history: {

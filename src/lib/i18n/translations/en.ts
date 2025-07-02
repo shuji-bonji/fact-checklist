@@ -185,22 +185,26 @@ export const translations: TranslationKeys = {
     critical: {
       name: 'Critical Evaluation (Required)',
       description: 'Most important items for determining basic information reliability',
-      emoji: '🚨'
+      emoji: '🚨',
+      short: 'Critical'
     },
     detailed: {
       name: 'Detailed Evaluation (Important)',
       description: 'Items for evaluating information quality and expertise',
-      emoji: '📝'
+      emoji: '📝',
+      short: 'Detailed'
     },
     verification: {
       name: 'Verification & Cross-checking',
       description: 'Items for confirming information verifiability and backing',
-      emoji: '🔍'
+      emoji: '🔍',
+      short: 'Verification'
     },
     context: {
       name: 'Context & Bias Evaluation',
       description: 'Items for evaluating bias appropriateness and context',
-      emoji: '🌐'
+      emoji: '🌐',
+      short: 'Context'
     }
   },
 
@@ -234,6 +238,7 @@ export const translations: TranslationKeys = {
       initializing: 'Initializing...',
       generating: 'Generating...',
       processing: 'Processing...',
+      saving: 'Saving...',
       finalizing: 'Finalizing...',
       completed: 'Completed',
       failed: 'Failed'
@@ -250,22 +255,49 @@ export const translations: TranslationKeys = {
     },
     sectionCompletionRates: 'Section Completion Rates',
     achievementStatus: 'Achievement Status',
+    completionStatus: 'Completion Status',
     goodExamples: 'Good Examples',
     badExamples: 'Bad Examples',
     completed: 'Completed',
     items: 'Items',
     metadata: {
+      title: 'Metadata',
       created: 'Created',
       score: 'Score',
       confidence: 'Confidence',
-      language: 'Language'
+      language: 'Language',
+      judgment: 'Final Judgment'
     },
     summary: {
       title: 'Evaluation Summary',
       totalScore: 'Total Score',
       completionRate: 'Completion Rate',
       confidenceLevel: 'Confidence Level',
-      checkedItems: 'Checked Items'
+      checkedItems: 'Checked Items',
+      result: 'Evaluation Result',
+      confidenceText: 'Confidence Text',
+      judgmentAdvice: 'Judgment Advice'
+    },
+    clipboardTitle: 'Fact Check Evaluation Results',
+    sectionCompletion: 'Section Completion Rate',
+    notes: 'Evaluation Notes',
+    notCompleted: 'Not Completed',
+    examples: 'Examples',
+    judgment: {
+      accept: 'Recommended',
+      caution: 'Caution Required',
+      reject: 'Not Recommended',
+      notEvaluated: 'Not Evaluated'
+    },
+    csv: {
+      id: 'ID',
+      title: 'Title',
+      description: 'Description',
+      checked: 'Checked',
+      category: 'Category'
+    },
+    error: {
+      pdfGeneration: 'PDF generation failed'
     }
   },
 

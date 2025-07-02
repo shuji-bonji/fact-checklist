@@ -4,8 +4,8 @@
  * ExportModalのHTML生成ロジックを活用してブラウザ表示と完全に同じPDFを生成
  */
 
-import type { ChecklistResult, CheckItem } from '$lib/types/checklist.js';
-import { CATEGORIES } from '$lib/data/checklist-items.js';
+import type { ChecklistResult, CheckItem, CheckCategory } from '$lib/types/checklist.js';
+import { getCategories } from '$lib/data/checklist-items.js';
 
 export interface HTMLToPDFOptions {
   includeGuides: boolean;
@@ -654,7 +654,7 @@ export class HTMLToPDFGenerator {
   }
 
   private groupItemsByCategory(): SectionData[] {
-    return CATEGORIES.map(category => {
+    return getCategories().map(category => {
       const categoryItems = this.checklist.items.filter(item => item.category.id === category.id);
       const checkedItems = categoryItems.filter(item => item.checked);
 
@@ -674,7 +674,7 @@ export class HTMLToPDFGenerator {
 
 // 型定義
 interface SectionData {
-  category: (typeof CATEGORIES)[0];
+  category: CheckCategory;
   items: CheckItem[];
   checkedItems: CheckItem[];
   uncheckedItems: CheckItem[];

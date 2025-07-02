@@ -240,13 +240,7 @@ export class PDFService {
 
         case PDFGenerationMode.PWA_OPTIMIZED: {
           options.onProgress?.(50, 'Generating PWA-optimized PDF...');
-          const { factChecklistI18n } = await import('$lib/i18n/index.js');
-          await generator.exportChecklist?.(
-            checklist,
-            this.convertOptionsForPWA(options),
-            filename,
-            factChecklistI18n
-          );
+          await generator.exportPDF?.(checklist, this.convertOptionsForPWA(options, t));
           return { success: true, usedMode: mode, duration: 0, filename: filename! };
         }
 
@@ -390,7 +384,7 @@ export class PDFService {
   /**
    * PWAAwarePDFExporter用のオプション変換
    */
-  private convertOptionsForPWA(options: PDFServiceOptions) {
+  private convertOptionsForPWA(options: PDFServiceOptions, t?: TranslationFunction) {
     return {
       includeGuides: options.includeGuides,
       includeNotes: options.includeNotes,
@@ -398,7 +392,8 @@ export class PDFService {
       sectionBreaks: options.sectionBreaks,
       textMode: options.textMode,
       advancedMode: options.advancedMode,
-      optimizeForMobile: options.optimizeForMobile
+      optimizeForMobile: options.optimizeForMobile,
+      t
     };
   }
 

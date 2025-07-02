@@ -6,6 +6,7 @@
 
 import type jsPDF from 'jspdf';
 import type { ChecklistResult } from '$lib/types/checklist.js';
+import type { TranslationFunction } from '$lib/types/i18n.js';
 import { TextBasedPDFGenerator, type TextPDFOptions } from './textBasedPDFGenerator.js';
 import { PlatformAwarePDFGenerator, type EnhancedPDFOptions } from './platformAwarePDFGenerator.js';
 import { platformStore } from '$lib/stores/platformStore.svelte.js';
@@ -16,6 +17,7 @@ export interface PDFExportOptions extends TextPDFOptions {
   enableSharing?: boolean;
   useNativeFeatures?: boolean;
   optimizeForMobile?: boolean;
+  t?: TranslationFunction;
 }
 
 export class PWAAwarePDFExporter {
@@ -66,13 +68,14 @@ export class PWAAwarePDFExporter {
       }
 
       // PWA機能を活用した保存/共有
-      await this.saveOrSharePDF(pdf, checklist.title, options);
+      await this.saveOrSharePDF(pdf, checklist.title, options, options.t);
 
       console.log('✅ PDF export completed successfully');
     } catch (error) {
       console.error('❌ PDF export failed:', error);
+      const errorPrefix = options.t?.('export.error.pdfGeneration') ?? 'PDF generation failed';
       throw new Error(
-        `PDF生成に失敗しました: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `${errorPrefix}: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
     }
   }
@@ -142,11 +145,13 @@ export class PWAAwarePDFExporter {
   private async saveOrSharePDF(
     pdf: jsPDF,
     title: string,
-    options: PDFExportOptions
+    options: PDFExportOptions,
+    t?: (key: string) => string
   ): Promise<void> {
     const timestamp = new Date().toISOString().slice(0, 10);
     const sanitizedTitle = title.replace(/[^\w\s\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/gi, '');
-    const filename = `事実確認チェックシート_${sanitizedTitle}_${timestamp}.pdf`;
+    const appTitle = t?.('app.title') ?? 'Fact-Checklist';
+    const filename = `${appTitle}_${sanitizedTitle}_${timestamp}.pdf`;
 
     console.log('💾 Attempting to save/share PDF:', filename);
 

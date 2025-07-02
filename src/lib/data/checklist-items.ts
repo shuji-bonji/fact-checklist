@@ -1,46 +1,55 @@
 import type { CheckItem, CheckCategory } from '../types/checklist.js';
 import { factChecklistI18n, t } from '../i18n/index.js';
 
-// カテゴリ情報の取得関数（i18n対応）
-export function getCategories(): CheckCategory[] {
+// カテゴリ情報の取得関数（動的翻訳対応）
+export function getCategories(translationFunction?: (key: string) => string): CheckCategory[] {
+  // 翻訳関数が提供されない場合は、現在のストアから取得
+  const translate = translationFunction || t;
+  
   return [
     {
       id: 'critical',
-      name: t('categories.critical.name'),
-      description: t('categories.critical.description'),
+      name: translate('categories.critical.name'),
+      description: translate('categories.critical.description'),
       color: '#e74c3c',
-      emoji: t('categories.critical.emoji')
+      emoji: translate('categories.critical.emoji')
     },
     {
       id: 'detailed',
-      name: t('categories.detailed.name'),
-      description: t('categories.detailed.description'),
+      name: translate('categories.detailed.name'),
+      description: translate('categories.detailed.description'),
       color: '#f39c12',
-      emoji: t('categories.detailed.emoji')
+      emoji: translate('categories.detailed.emoji')
     },
     {
       id: 'verification',
-      name: t('categories.verification.name'),
-      description: t('categories.verification.description'),
+      name: translate('categories.verification.name'),
+      description: translate('categories.verification.description'),
       color: '#3498db',
-      emoji: t('categories.verification.emoji')
+      emoji: translate('categories.verification.emoji')
     },
     {
       id: 'context',
-      name: t('categories.context.name'),
-      description: t('categories.context.description'),
+      name: translate('categories.context.name'),
+      description: translate('categories.context.description'),
       color: '#9b59b6',
-      emoji: t('categories.context.emoji')
+      emoji: translate('categories.context.emoji')
     }
   ];
 }
 
-// 後方互換性のためのエクスポート
+// 後方互換性のための動的関数
+export function getCategoriesCompat(): CheckCategory[] {
+  return getCategories();
+}
+
+// DEPRECATED: 静的なCATEGORIESエクスポートは削除予定
+// 既存コードとの互換性のために残しているが、動的な getCategories() を使用すること
 export const CATEGORIES = getCategories();
 
-// チェックリスト項目の取得関数（i18n対応）
-export function getChecklistItems(): CheckItem[] {
-  const categories = getCategories();
+// チェックリスト項目の取得関数（動的翻訳対応）
+export function getChecklistItems(translationFunction?: (key: string) => string): CheckItem[] {
+  const categories = getCategories(translationFunction);
   return [
     // クリティカル評価（6項目）
     {

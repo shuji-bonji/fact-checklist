@@ -172,22 +172,26 @@ export const translations: TranslationKeys = {
     critical: {
       name: '핵심 평가 (필수)',
       description: '기본적인 정보 신뢰성을 판단하는 가장 중요한 항목',
-      emoji: '🚨'
+      emoji: '🚨',
+      short: '핵심'
     },
     detailed: {
       name: '세부 평가 (중요)',
       description: '정보의 품질과 전문성을 평가하는 항목',
-      emoji: '📝'
+      emoji: '📝',
+      short: '세부'
     },
     verification: {
       name: '검증 및 교차확인',
       description: '정보의 검증 가능성과 뒷받침을 확인하는 항목',
-      emoji: '🔍'
+      emoji: '🔍',
+      short: '검증'
     },
     context: {
       name: '맥락 및 편향 평가',
       description: '편향의 적절성과 맥락을 평가하는 항목',
-      emoji: '🌐'
+      emoji: '🌐',
+      short: '맥락'
     }
   },
   export: {
@@ -219,6 +223,7 @@ export const translations: TranslationKeys = {
       initializing: '초기화 중...',
       generating: '생성 중...',
       processing: '처리 중...',
+      saving: '저장 중...',
       finalizing: '완료 중...',
       completed: '완료',
       failed: '실패'
@@ -235,22 +240,49 @@ export const translations: TranslationKeys = {
     },
     sectionCompletionRates: '섹션별 완료율',
     achievementStatus: '달성 상태',
+    completionStatus: '완료 상태',
     goodExamples: '좋은 예시',
     badExamples: '나쁜 예시',
     completed: '완료됨',
+    notCompleted: '미완료',
     items: '항목',
+    examples: '예시',
     metadata: {
+      title: '메타데이터',
       created: '생성됨',
       score: '점수',
       confidence: '신뢰도',
-      language: '언어'
+      language: '언어',
+      judgment: '최종 판단'
     },
     summary: {
       title: '평가 요약',
       totalScore: '총 점수',
       completionRate: '완료율',
       confidenceLevel: '신뢰 수준',
-      checkedItems: '확인된 항목'
+      checkedItems: '확인된 항목',
+      result: '평가 결과',
+      confidenceText: '신뢰도 텍스트',
+      judgmentAdvice: '판단 조언'
+    },
+    clipboardTitle: '팩트체크 평가 결과',
+    sectionCompletion: '섹션별 완료율',
+    notes: '평가 노트',
+    judgment: {
+      accept: '추천',
+      caution: '주의 필요',
+      reject: '비추천',
+      notEvaluated: '평가되지 않음'
+    },
+    csv: {
+      id: 'ID',
+      title: '제목',
+      description: '설명',
+      checked: '확인됨',
+      category: '카테고리'
+    },
+    error: {
+      pdfGeneration: 'PDF 생성 실패'
     }
   },
   history: {

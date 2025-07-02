@@ -224,21 +224,25 @@ export interface TranslationKeys {
       name: string;
       description: string;
       emoji: string;
+      short: string;
     };
     detailed: {
       name: string;
       description: string;
       emoji: string;
+      short: string;
     };
     verification: {
       name: string;
       description: string;
       emoji: string;
+      short: string;
     };
     context: {
       name: string;
       description: string;
       emoji: string;
+      short: string;
     };
   };
 
@@ -272,6 +276,7 @@ export interface TranslationKeys {
       initializing: string;
       generating: string;
       processing: string;
+      saving: string;
       finalizing: string;
       completed: string;
       failed: string;
@@ -288,15 +293,20 @@ export interface TranslationKeys {
     };
     sectionCompletionRates: string;
     achievementStatus: string;
+    completionStatus: string;
     goodExamples: string;
     badExamples: string;
     completed: string;
+    notCompleted: string;
     items: string;
+    examples: string;
     metadata: {
+      title: string;
       created: string;
       score: string;
       confidence: string;
       language: string;
+      judgment: string;
     };
     summary: {
       title: string;
@@ -304,6 +314,28 @@ export interface TranslationKeys {
       completionRate: string;
       confidenceLevel: string;
       checkedItems: string;
+      result: string;
+      confidenceText: string;
+      judgmentAdvice: string;
+    };
+    clipboardTitle: string;
+    sectionCompletion: string;
+    notes: string;
+    judgment: {
+      accept: string;
+      caution: string;
+      reject: string;
+      notEvaluated: string;
+    };
+    csv: {
+      id: string;
+      title: string;
+      description: string;
+      checked: string;
+      category: string;
+    };
+    error: {
+      pdfGeneration: string;
     };
   };
 

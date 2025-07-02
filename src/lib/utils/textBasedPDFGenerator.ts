@@ -5,8 +5,8 @@
  */
 
 import type jsPDF from 'jspdf';
-import type { ChecklistResult, CheckItem } from '$lib/types/checklist.js';
-import { CATEGORIES } from '$lib/data/checklist-items.js';
+import type { ChecklistResult, CheckItem, CheckCategory } from '$lib/types/checklist.js';
+import { getCategories } from '$lib/data/checklist-items.js';
 import { loadFontAsBase64 } from '$lib/i18n/fonts.js';
 import type { TranslationFunction } from '$lib/types/i18n.js';
 
@@ -29,6 +29,7 @@ export class TextBasedPDFGenerator {
   private readonly lineHeight: number = 7;
   private readonly maxLineWidth: number;
   private fontLoaded: boolean = false;
+  private t: (key: string) => string = (key: string) => key;
 
   constructor() {
     // jsPDFインスタンスは外部で作成されたものを受け取る
@@ -61,6 +62,9 @@ export class TextBasedPDFGenerator {
     // jsPDFを動的インポート
     const { default: jsPDF } = await import('jspdf');
     this.pdf = new jsPDF('p', 'mm', 'a4');
+
+    // 翻訳関数を設定（フォールバック付き）
+    this.t = options.t ?? ((key: string) => key);
 
     console.log('🔤 Starting text-based PDF generation...');
 
@@ -101,38 +105,26 @@ export class TextBasedPDFGenerator {
     this.pdf.setFontSize(16);
     this.setFontWeight('bold');
     this.addText('========================================');
-    this.addText('📋 事実確認チェックシート');
+    this.addText(`📋 ${this.t('app.title')}`);
     this.addText('========================================');
     this.currentY += 3;
 
     this.pdf.setFontSize(12);
     this.setFontWeight('normal');
-    this.addText(`タイトル: ${checklist.title}`);
+    this.addText(`${this.t('export.metadata.title')}: ${checklist.title}`);
     this.currentY += 2;
 
     this.pdf.setFontSize(10);
-    const createdDate = checklist.createdAt.toLocaleDateString('ja-JP', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    });
-    this.addText(`作成日: ${createdDate}`);
+    const createdDate = checklist.createdAt.toLocaleDateString();
+    this.addText(`${this.t('export.metadata.created')}: ${createdDate}`);
 
     if (checklist.completedAt) {
-      const completedDate = checklist.completedAt.toLocaleDateString('ja-JP', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit'
-      });
-      this.addText(`完了日: ${completedDate}`);
+      const completedDate = checklist.completedAt.toLocaleDateString();
+      this.addText(`${this.t('checklist.completedAt')}: ${completedDate}`);
     }
 
-    const outputDate = new Date().toLocaleDateString('ja-JP', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    });
-    this.addText(`出力日: ${outputDate}`);
+    const outputDate = new Date().toLocaleDateString();
+    this.addText(`${this.t('export.generatedAt')}: ${outputDate}`);
     this.currentY += 8;
   }
 
@@ -141,7 +133,7 @@ export class TextBasedPDFGenerator {
 
     this.pdf.setFontSize(14);
     this.setFontWeight('bold');
-    this.addText('📊 評価結果サマリー');
+    this.addText(`📊 ${this.t('export.summary.title')}`);
     this.addText('----------------------------------------');
     this.currentY += 2;
 
@@ -149,11 +141,13 @@ export class TextBasedPDFGenerator {
     this.setFontWeight('normal');
 
     const summaryData = [
-      `総合スコア: ${checklist.score.total}/${checklist.score.maxScore} ポイント`,
-      `信頼度レベル: ${checklist.confidenceLevel}%`,
-      `評価結果: ${checklist.confidenceText}`,
-      `最終判定: ${this.getJudgmentText(checklist.judgment)}`,
-      ...(checklist.judgmentAdvice ? [`推奨アクション: ${checklist.judgmentAdvice}`] : [])
+      `${this.t('export.summary.totalScore')}: ${checklist.score.total}/${checklist.score.maxScore} ${this.t('export.items')}`,
+      `${this.t('export.summary.confidenceLevel')}: ${checklist.confidenceLevel}%`,
+      `${this.t('export.summary.confidenceText')}: ${checklist.confidenceText || this.t('checklist.confidence.poor')}`,
+      `${this.t('export.metadata.judgment')}: ${this.getJudgmentText(checklist.judgment)}`,
+      ...(checklist.judgmentAdvice
+        ? [`${this.t('export.summary.judgmentAdvice')}: ${checklist.judgmentAdvice}`]
+        : [])
     ];
 
     summaryData.forEach(line => {
@@ -164,12 +158,12 @@ export class TextBasedPDFGenerator {
     // セクション別達成率
     this.currentY += 3;
     this.setFontWeight('bold');
-    this.addText('セクション別達成率:');
+    this.addText(`${this.t('export.sectionCompletion')}:`);
     this.setFontWeight('normal');
 
     const sections = this.groupItemsByCategory(checklist.items);
     sections.forEach(section => {
-      const completionText = `  ${section.category.emoji} ${section.category.name}: ${section.completionRate}% (${section.checkedItems.length}/${section.items.length})`;
+      const completionText = `  ${this.getLocalizedText(section.category.emoji)} ${this.getLocalizedText(section.category.name)}: ${section.completionRate}% (${section.checkedItems.length}/${section.items.length})`;
       this.addText(completionText);
     });
 
@@ -197,19 +191,21 @@ export class TextBasedPDFGenerator {
     this.setFontWeight('bold');
     this.addText('');
     this.addText('========================================');
-    this.addText(`${section.category.emoji} ${section.category.name}`);
+    this.addText(
+      `${this.getLocalizedText(section.category.emoji)} ${this.getLocalizedText(section.category.name)}`
+    );
     this.addText('========================================');
     this.currentY += 1;
 
     this.pdf.setFontSize(10);
     this.setFontWeight('normal');
-    this.addWrappedText(section.category.description);
+    this.addWrappedText(this.getLocalizedText(section.category.description));
     this.currentY += 2;
 
     this.pdf.setFontSize(11);
     this.setFontWeight('normal');
     this.addText(
-      `達成状況: ${section.completionRate}% (${section.checkedItems.length}/${section.items.length} 項目完了)`
+      `${this.t('export.achievementStatus')}: ${section.completionRate}% (${section.checkedItems.length}/${section.items.length} ${this.t('export.items')} ${this.t('export.completed')})`
     );
     this.currentY += 4;
 
@@ -227,7 +223,9 @@ export class TextBasedPDFGenerator {
     this.pdf.setFontSize(12);
     this.setFontWeight('bold');
 
-    const status = item.checked ? '✓ 完了' : '✗ 未完了';
+    const status = item.checked
+      ? `✓ ${this.t('export.completed')}`
+      : `✗ ${this.t('export.notCompleted')}`;
     const riskIcon = this.getRiskIcon(item.category.id);
 
     this.addText(`${itemNumber}. ${status} ${riskIcon}`);
@@ -235,13 +233,15 @@ export class TextBasedPDFGenerator {
 
     this.pdf.setFontSize(11);
     this.setFontWeight('bold');
-    this.addWrappedText(`   題目: ${item.title}`);
+    this.addWrappedText(`   ${this.t('export.title')}: ${this.getLocalizedText(item.title)}`);
     this.currentY += 1;
 
     // 説明
     this.pdf.setFontSize(10);
     this.setFontWeight('normal');
-    this.addWrappedText(`   説明: ${item.description}`);
+    this.addWrappedText(
+      `   ${this.t('export.description')}: ${this.getLocalizedText(item.description)}`
+    );
     this.currentY += 2;
 
     // ガイド内容（オプション）
@@ -257,15 +257,17 @@ export class TextBasedPDFGenerator {
     this.setFontWeight('normal');
 
     this.addText('   ----------------------------------------');
-    this.addWrappedText(`   💡 ガイド: ${guideContent.title}`);
+    this.addWrappedText(
+      `   💡 ${this.t('common.guide')}: ${this.getLocalizedText(guideContent.title)}`
+    );
     this.currentY += 1;
 
-    this.addWrappedText(`   ${guideContent.content}`);
+    this.addWrappedText(`   ${this.getLocalizedText(guideContent.content)}`);
     this.currentY += 1;
 
     // 良い例
     if (guideContent.examples?.good?.length) {
-      this.addText('   ✅ 良い例:');
+      this.addText(`   ✅ ${this.t('export.goodExamples')}:`);
       guideContent.examples.good.forEach(example => {
         this.addWrappedText(`     - ${example}`);
       });
@@ -274,7 +276,7 @@ export class TextBasedPDFGenerator {
 
     // 悪い例
     if (guideContent.examples?.bad?.length) {
-      this.addText('   ❌ 悪い例:');
+      this.addText(`   ❌ ${this.t('export.badExamples')}:`);
       guideContent.examples.bad.forEach(example => {
         this.addWrappedText(`     - ${example}`);
       });
@@ -292,7 +294,7 @@ export class TextBasedPDFGenerator {
     this.setFontWeight('bold');
     this.addText('');
     this.addText('========================================');
-    this.addText('📝 評価メモ');
+    this.addText(`📝 ${this.t('export.notes')}`);
     this.addText('========================================');
     this.currentY += 3;
 
@@ -314,8 +316,16 @@ export class TextBasedPDFGenerator {
       this.setFontWeight('normal');
 
       // 左側：生成情報
-      this.pdf.text('実用的事実確認チェックシートによる評価結果', this.margin, footerY);
-      this.pdf.text(`生成日時: ${new Date().toLocaleString('ja-JP')}`, this.margin, footerY + 4);
+      this.pdf.text(
+        `${this.t('app.title')} - ${this.t('checklist.evaluationResults')}`,
+        this.margin,
+        footerY
+      );
+      this.pdf.text(
+        `${this.t('export.generatedAt')}: ${new Date().toLocaleString()}`,
+        this.margin,
+        footerY + 4
+      );
 
       // 右側：ページ番号
       const pageText = `${i} / ${pageCount}`;
@@ -348,28 +358,28 @@ export class TextBasedPDFGenerator {
   private getJudgmentText(judgment: string | null): string {
     switch (judgment) {
       case 'accept':
-        return '✅ 採用推奨';
+        return `✅ ${this.t('export.judgment.accept')}`;
       case 'caution':
-        return '⚠️ 要注意';
+        return `⚠️ ${this.t('export.judgment.caution')}`;
       case 'reject':
-        return '❌ 不採用推奨';
+        return `❌ ${this.t('export.judgment.reject')}`;
       default:
-        return '❓ 判定未実施';
+        return `❓ ${this.t('export.judgment.notEvaluated')}`;
     }
   }
 
   private getRiskIcon(categoryId: string): string {
     switch (categoryId) {
       case 'critical':
-        return '🔴 重要';
+        return `🔴 ${this.t('categories.critical.name')}`;
       case 'detailed':
-        return '🟠 詳細';
+        return `🟠 ${this.t('categories.detailed.name')}`;
       case 'verification':
-        return '🔵 検証';
+        return `🔵 ${this.t('categories.verification.name')}`;
       case 'context':
-        return '🟣 文脈';
+        return `🟣 ${this.t('categories.context.name')}`;
       default:
-        return '⚪ 一般';
+        return `⚪ ${this.t('common.general')}`;
     }
   }
 
@@ -421,7 +431,10 @@ export class TextBasedPDFGenerator {
   }
 
   private groupItemsByCategory(items: CheckItem[]): SectionData[] {
-    return CATEGORIES.map(category => {
+    // Use the translation function to get categories in the correct language
+    const categories = getCategories(this.t);
+    
+    return categories.map(category => {
       const categoryItems = items.filter(item => item.category.id === category.id);
       const checkedItems = categoryItems.filter(item => item.checked);
 
@@ -437,11 +450,22 @@ export class TextBasedPDFGenerator {
       };
     });
   }
+
+  private isValidTranslationKey(text: string): boolean {
+    // 翻訳キーの形式をチェックする（英数字とドットのみ）
+    return /^[a-zA-Z0-9._-]+$/.test(text) && text.includes('.');
+  }
+
+  private getLocalizedText(text: string): string {
+    // 翻訳キーではない実際のテキストの判定
+    const isTranslationKey = this.isValidTranslationKey(text);
+    return isTranslationKey ? this.t(text) : text;
+  }
 }
 
 // 型定義
 interface SectionData {
-  category: (typeof CATEGORIES)[0];
+  category: CheckCategory;
   items: CheckItem[];
   checkedItems: CheckItem[];
   uncheckedItems: CheckItem[];

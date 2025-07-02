@@ -5,12 +5,14 @@
  */
 
 import type { ChecklistResult } from '$lib/types/checklist.js';
+import type { TranslationFunction } from '$lib/types/i18n.js';
 
 export interface SimplePDFOptions {
   includeGuides: boolean;
   includeNotes: boolean;
   includeSummary: boolean;
   sectionBreaks: boolean;
+  t?: TranslationFunction;
 }
 
 export class SimplePDFGenerator {
@@ -54,7 +56,11 @@ export class SimplePDFGenerator {
   /**
    * jsPDFを使用した直接PDF生成（フォールバック）
    */
-  async generateDirectPDF(htmlContent: string, checklist: ChecklistResult): Promise<Blob> {
+  async generateDirectPDF(
+    htmlContent: string,
+    checklist: ChecklistResult,
+    options?: SimplePDFOptions
+  ): Promise<Blob> {
     console.log('📄 Generating PDF directly with jsPDF...');
 
     // jsPDFを動的インポート
@@ -130,11 +136,12 @@ export class SimplePDFGenerator {
       }
 
       // メタデータ設定
+      const t = options?.t;
       pdf.setProperties({
-        title: `事実確認チェックシート - ${checklist.title}`,
-        author: 'Fact Checklist Generator',
-        subject: '情報の信頼性評価',
-        creator: 'Fact Checklist PWA'
+        title: t ? `${t('app.title')} - ${checklist.title}` : `Fact Checklist - ${checklist.title}`,
+        author: t ? t('app.author') : 'Fact Checklist Generator',
+        subject: t ? t('app.description') : 'Information reliability assessment',
+        creator: t ? t('app.title') : 'Fact Checklist PWA'
       });
 
       return pdf.output('blob');

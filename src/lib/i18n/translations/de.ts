@@ -181,22 +181,26 @@ export const translations: TranslationKeys = {
       name: 'Kritische Bewertung (Erforderlich)',
       description:
         'Wichtigste Einträge zur Bestimmung der grundlegenden Informationszuverlässigkeit',
-      emoji: '🚨'
+      emoji: '🚨',
+      short: 'Kritisch'
     },
     detailed: {
       name: 'Detaillierte Bewertung (Wichtig)',
       description: 'Einträge zur Bewertung der Informationsqualität und Expertise',
-      emoji: '📝'
+      emoji: '📝',
+      short: 'Detailliert'
     },
     verification: {
       name: 'Verifizierung & Kreuzprüfung',
       description: 'Einträge zur Bestätigung der Informationsverifizierbarkeit und Unterstützung',
-      emoji: '🔍'
+      emoji: '🔍',
+      short: 'Verifizierung'
     },
     context: {
       name: 'Kontext & Vorurteilsbewertung',
       description: 'Einträge zur Bewertung der Angemessenheit von Vorurteilen und Kontext',
-      emoji: '🌐'
+      emoji: '🌐',
+      short: 'Kontext'
     }
   },
   export: {
@@ -228,6 +232,7 @@ export const translations: TranslationKeys = {
       initializing: 'Initialisierung...',
       generating: 'Generierung...',
       processing: 'Verarbeitung...',
+      saving: 'Speichere...',
       finalizing: 'Finalisierung...',
       completed: 'Abgeschlossen',
       failed: 'Fehlgeschlagen'
@@ -244,22 +249,49 @@ export const translations: TranslationKeys = {
     },
     sectionCompletionRates: 'Abschnitts-Fertigstellungsgrade',
     achievementStatus: 'Erfolgsstatus',
+    completionStatus: 'Abschlussstatus',
     goodExamples: 'Gute Beispiele',
     badExamples: 'Schlechte Beispiele',
     completed: 'Abgeschlossen',
+    notCompleted: 'Nicht abgeschlossen',
     items: 'Elemente',
+    examples: 'Beispiele',
     metadata: {
+      title: 'Metadaten',
       created: 'Erstellt',
       score: 'Punktzahl',
       confidence: 'Vertrauen',
-      language: 'Sprache'
+      language: 'Sprache',
+      judgment: 'Abschließendes Urteil'
     },
     summary: {
       title: 'Bewertungszusammenfassung',
       totalScore: 'Gesamtpunktzahl',
       completionRate: 'Fertigstellungsgrad',
       confidenceLevel: 'Vertrauensniveau',
-      checkedItems: 'Geprüfte Elemente'
+      checkedItems: 'Geprüfte Elemente',
+      result: 'Bewertungsergebnis',
+      confidenceText: 'Vertrauenstext',
+      judgmentAdvice: 'Urteilsempfehlung'
+    },
+    clipboardTitle: 'Ergebnisse der Faktenüberprüfung',
+    sectionCompletion: 'Abschlussrate nach Abschnitten',
+    notes: 'Bewertungsnotizen',
+    judgment: {
+      accept: 'Empfohlen',
+      caution: 'Vorsicht erforderlich',
+      reject: 'Nicht empfohlen',
+      notEvaluated: 'Nicht bewertet'
+    },
+    csv: {
+      id: 'ID',
+      title: 'Titel',
+      description: 'Beschreibung',
+      checked: 'Geprüft',
+      category: 'Kategorie'
+    },
+    error: {
+      pdfGeneration: 'PDF-Generierung fehlgeschlagen'
     }
   },
   history: {

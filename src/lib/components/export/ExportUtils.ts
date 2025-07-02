@@ -54,7 +54,8 @@ export function groupItemsByCategory(checklist: ChecklistResult | null): Section
 export function renderCheckItem(
   item: CheckItem,
   options: ExportOptions,
-  factChecklistI18n?: FactChecklistI18n
+  factChecklistI18n?: FactChecklistI18n,
+  t?: (key: string) => string
 ): string {
   return `
     <div class="check-item ${item.checked ? 'checked' : 'unchecked'}">
@@ -96,7 +97,7 @@ export function renderCheckItem(
                   item.guideContent.examples.bad.length > 0)
                   ? `
                 <div class="guide-examples">
-                  <div class="examples-title">Examples:</div>
+                  <div class="examples-title">${t ? t('export.examples') : 'Examples'}:</div>
                   ${
                     factChecklistI18n && item.translationKey
                       ? (() => {
@@ -107,7 +108,7 @@ export function renderCheckItem(
                           return goodExamples.length > 0
                             ? `
                           <div class="good-examples">
-                            <div class="example-type">Good Examples:</div>
+                            <div class="example-type">${t ? t('export.goodExamples') : 'Good Examples'}:</div>
                             <ul>
                               ${goodExamples.map((example: string) => `<li>${example}</li>`).join('')}
                             </ul>
@@ -122,7 +123,7 @@ export function renderCheckItem(
                           return badExamples.length > 0
                             ? `
                           <div class="bad-examples">
-                            <div class="example-type">Bad Examples:</div>
+                            <div class="example-type">${t ? t('export.badExamples') : 'Bad Examples'}:</div>
                             <ul>
                               ${badExamples.map((example: string) => `<li>${example}</li>`).join('')}
                             </ul>
@@ -135,7 +136,7 @@ export function renderCheckItem(
                           item.guideContent.examples.good.length > 0
                             ? `
                           <div class="good-examples">
-                            <div class="example-type">Good Examples:</div>
+                            <div class="example-type">${t ? t('export.goodExamples') : 'Good Examples'}:</div>
                             <ul>
                               ${item.guideContent.examples.good.map(example => `<li>${example}</li>`).join('')}
                             </ul>
@@ -147,7 +148,7 @@ export function renderCheckItem(
                           item.guideContent.examples.bad.length > 0
                             ? `
                           <div class="bad-examples">
-                            <div class="example-type">Bad Examples:</div>
+                            <div class="example-type">${t ? t('export.badExamples') : 'Bad Examples'}:</div>
                             <ul>
                               ${item.guideContent.examples.bad.map(example => `<li>${example}</li>`).join('')}
                             </ul>
@@ -192,7 +193,9 @@ export async function generateSectionedHTMLContent(
   const currentLanguage = getCurrentLanguage();
 
   // 基本情報
-  const title = checklist.title || t('app.title');
+  const appTitle = t('app.title');
+  const checklistTitle = checklist.title;
+  const title = checklistTitle ? `${appTitle} - ${checklistTitle}` : appTitle;
   const description = checklist.description || t('app.description');
   const createdAt = checklist.createdAt ? new Date(checklist.createdAt).toLocaleDateString() : '';
   const score = checklist.score;
@@ -205,7 +208,7 @@ export async function generateSectionedHTMLContent(
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${title}</title>
+  <title>${t('app.title')} - ${title}</title>
   <style>
     * {
       margin: 0;
@@ -235,6 +238,14 @@ export async function generateSectionedHTMLContent(
       font-weight: bold;
       color: #2c3e50;
       margin-bottom: 10px;
+    }
+    
+    .subtitle {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #34495e;
+      margin-bottom: 15px;
+      font-style: italic;
     }
     
     .description {
@@ -514,7 +525,8 @@ export async function generateSectionedHTMLContent(
 </head>
 <body>
   <div class="header">
-    <div class="title">${title}</div>
+    <div class="title">${appTitle}</div>
+    ${checklistTitle ? `<div class="subtitle">${checklistTitle}</div>` : ''}
     <div class="description">${description}</div>
     
     <div class="metadata">
@@ -543,12 +555,8 @@ export async function generateSectionedHTMLContent(
     <div class="section">
       <div class="section-header">
         <div class="section-title">
-          <span>${section.category.emoji}</span>
-          <span>${
-            factChecklistI18n.getCategoryTitle
-              ? factChecklistI18n.getCategoryTitle(section.category.id)
-              : section.category.name
-          }</span>
+          <span>${t(`categories.${section.category.id}.emoji`)}</span>
+          <span>${t(`categories.${section.category.id}.name`)}</span>
         </div>
         <div class="section-stats">
           <div class="completion-rate">${section.completionRate}% ${t('export.completed')}</div>
@@ -556,7 +564,7 @@ export async function generateSectionedHTMLContent(
         </div>
       </div>
       <div class="section-items">
-        ${section.items.map(item => renderCheckItem(item, options, factChecklistI18n)).join('')}
+        ${section.items.map(item => renderCheckItem(item, options, factChecklistI18n, t)).join('')}
       </div>
     </div>
   `
@@ -643,7 +651,7 @@ export async function generateMarkdownContent(
         : section.category.name
     }\n\n`;
 
-    markdown += `**${t('export.progress')}**: ${section.completionRate}% (${section.checkedItems.length}/${section.items.length})\n\n`;
+    markdown += `**${t('export.completionStatus')}**: ${section.completionRate}% (${section.checkedItems.length}/${section.items.length})\n\n`;
 
     for (const item of section.items) {
       markdown += `### ${item.checked ? '✅' : '❌'} ${

@@ -175,22 +175,26 @@ export const translations: TranslationKeys = {
     critical: {
       name: 'Evaluasi Kritis (Diperlukan)',
       description: 'Item paling penting untuk menentukan keandalan dasar informasi',
-      emoji: '🚨'
+      emoji: '🚨',
+      short: 'Kritis'
     },
     detailed: {
       name: 'Evaluasi Detail (Penting)',
       description: 'Item untuk mengevaluasi kualitas dan keahlian informasi',
-      emoji: '📝'
+      emoji: '📝',
+      short: 'Detail'
     },
     verification: {
       name: 'Verifikasi & Pemeriksaan Silang',
       description: 'Item untuk mengkonfirmasi kemampuan verifikasi dan dukungan informasi',
-      emoji: '🔍'
+      emoji: '🔍',
+      short: 'Verifikasi'
     },
     context: {
       name: 'Evaluasi Konteks & Bias',
       description: 'Item untuk mengevaluasi kesesuaian bias dan konteks',
-      emoji: '🌐'
+      emoji: '🌐',
+      short: 'Konteks'
     }
   },
   export: {
@@ -222,6 +226,7 @@ export const translations: TranslationKeys = {
       initializing: 'Menginisialisasi...',
       generating: 'Menghasilkan...',
       processing: 'Memproses...',
+      saving: 'Menyimpan...',
       finalizing: 'Menyelesaikan...',
       completed: 'Selesai',
       failed: 'Gagal'
@@ -238,22 +243,49 @@ export const translations: TranslationKeys = {
     },
     sectionCompletionRates: 'Tingkat Penyelesaian per Bagian',
     achievementStatus: 'Status Pencapaian',
+    completionStatus: 'Status Penyelesaian',
     goodExamples: 'Contoh Baik',
     badExamples: 'Contoh Buruk',
     completed: 'Selesai',
+    notCompleted: 'Belum Selesai',
     items: 'Item',
+    examples: 'Contoh',
     metadata: {
+      title: 'Metadata',
       created: 'Dibuat',
       score: 'Skor',
       confidence: 'Kepercayaan',
-      language: 'Bahasa'
+      language: 'Bahasa',
+      judgment: 'Penilaian Akhir'
     },
     summary: {
       title: 'Ringkasan Evaluasi',
       totalScore: 'Skor Total',
       completionRate: 'Tingkat Penyelesaian',
       confidenceLevel: 'Tingkat Kepercayaan',
-      checkedItems: 'Item yang Diperiksa'
+      checkedItems: 'Item yang Diperiksa',
+      result: 'Hasil Evaluasi',
+      confidenceText: 'Teks Kepercayaan',
+      judgmentAdvice: 'Saran Penilaian'
+    },
+    clipboardTitle: 'Hasil Evaluasi Pemeriksaan Fakta',
+    sectionCompletion: 'Tingkat Penyelesaian per Bagian',
+    notes: 'Catatan Evaluasi',
+    judgment: {
+      accept: 'Direkomendasikan',
+      caution: 'Perhatian Diperlukan',
+      reject: 'Tidak Direkomendasikan',
+      notEvaluated: 'Tidak Dievaluasi'
+    },
+    csv: {
+      id: 'ID',
+      title: 'Judul',
+      description: 'Deskripsi',
+      checked: 'Diperiksa',
+      category: 'Kategori'
+    },
+    error: {
+      pdfGeneration: 'Pembuatan PDF gagal'
     }
   },
   history: {

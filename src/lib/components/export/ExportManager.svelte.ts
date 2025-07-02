@@ -242,7 +242,7 @@ export class ExportManager {
     try {
       ExportProgressHelper.updateStandardProgress(this.progressManager, 'GENERATING', t);
 
-      const csvContent = ExportContentGenerator.generateCSVData(checklist, options);
+      const csvContent = ExportContentGenerator.generateCSVData(checklist, options, t);
 
       ExportProgressHelper.updateStandardProgress(this.progressManager, 'SAVING', t);
 

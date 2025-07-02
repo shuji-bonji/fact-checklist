@@ -199,13 +199,27 @@ export class ExportContentGenerator {
    * CSVデータを生成する
    * @param checklist チェックリスト結果
    * @param options エクスポートオプション
+   * @param t 翻訳関数（オプション）
    * @returns CSV文字列
    */
-  static generateCSVData(checklist: ChecklistResult, options: ExportOptions): string {
-    const headers = ['ID', 'Title', 'Description', 'Checked', 'Category'];
+  static generateCSVData(
+    checklist: ChecklistResult,
+    options: ExportOptions,
+    t?: TranslationFunction
+  ): string {
+    const headers = [
+      t ? t('export.csv.id') : 'ID',
+      t ? t('export.csv.title') : 'Title',
+      t ? t('export.csv.description') : 'Description',
+      t ? t('export.csv.checked') : 'Checked',
+      t ? t('export.csv.category') : 'Category'
+    ];
 
     if (options.includeGuides) {
-      headers.push('Guide Title', 'Guide Content');
+      headers.push(
+        t ? `${t('common.guide')} ${t('export.csv.title')}` : 'Guide Title',
+        t ? `${t('common.guide')} ${t('export.csv.description')}` : 'Guide Content'
+      );
     }
 
     const rows = [headers.join(',')];
@@ -213,16 +227,16 @@ export class ExportContentGenerator {
     checklist.items.forEach(item => {
       const row = [
         `"${item.id}"`,
-        `"${item.title.replace(/"/g, '""')}"`,
-        `"${item.description.replace(/"/g, '""')}"`,
+        `"${(t ? t(item.title) : item.title).replace(/"/g, '""')}"`,
+        `"${(t ? t(item.description) : item.description).replace(/"/g, '""')}"`,
         item.checked ? 'TRUE' : 'FALSE',
-        `"${item.category.name.replace(/"/g, '""')}"`
+        `"${(t ? t(item.category.name) : item.category.name).replace(/"/g, '""')}"`
       ];
 
       if (options.includeGuides) {
         row.push(
-          `"${item.guideContent?.title?.replace(/"/g, '""') ?? ''}"`,
-          `"${item.guideContent?.content?.replace(/"/g, '""') ?? ''}"`
+          `"${(t && item.guideContent?.title ? t(item.guideContent.title) : (item.guideContent?.title ?? '')).replace(/"/g, '""')}"`,
+          `"${(t && item.guideContent?.content ? t(item.guideContent.content) : (item.guideContent?.content ?? '')).replace(/"/g, '""')}"`
         );
       }
 
