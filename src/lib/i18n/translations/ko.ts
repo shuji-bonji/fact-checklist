@@ -199,10 +199,14 @@ export const translations: TranslationKeys = {
     includeNotes: '노트 포함',
     includeSummary: '요약 포함',
     sectionBreaks: '섹션 구분',
+    pdfMode: 'PDF 생성 모드',
     pdfModes: {
       pixelPerfect: '픽셀 완벽',
+      pixelPerfectDescription: '브라우저 화면과 정확히 일치',
       reliableFont: '폰트 신뢰성 우선',
-      textBased: '텍스트 기반'
+      reliableFontDescription: '신뢰할 수 있는 다국어 폰트 임베딩',
+      textBased: '텍스트 기반',
+      textBasedDescription: '검색 가능한 경량 PDF'
     },
     formats: {
       pdf: 'PDF',
@@ -211,6 +215,7 @@ export const translations: TranslationKeys = {
       markdown: 'Markdown'
     },
     progress: {
+      starting: '시작 중...',
       initializing: '초기화 중...',
       generating: '생성 중...',
       processing: '처리 중...',
@@ -231,7 +236,22 @@ export const translations: TranslationKeys = {
     sectionCompletionRates: '섹션별 완료율',
     achievementStatus: '달성 상태',
     goodExamples: '좋은 예시',
-    badExamples: '나쁜 예시'
+    badExamples: '나쁜 예시',
+    completed: '완료됨',
+    items: '항목',
+    metadata: {
+      created: '생성됨',
+      score: '점수',
+      confidence: '신뢰도',
+      language: '언어'
+    },
+    summary: {
+      title: '평가 요약',
+      totalScore: '총 점수',
+      completionRate: '완료율',
+      confidenceLevel: '신뢰 수준',
+      checkedItems: '확인된 항목'
+    }
   },
   history: {
     title: '평가 기록',

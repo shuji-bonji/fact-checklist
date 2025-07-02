@@ -157,8 +157,8 @@ export const translations: TranslationKeys = {
     },
     // 詳細ページ用の新しいキー
     evaluationCompleted: '評価が完了しました！',
-    evaluationCompletedDescription: 'チェックリストの評価結果を確認できます。',
     evaluationResults: '評価結果',
+    evaluationCompletedDescription: 'チェックリストの評価結果を確認できます。',
     totalScore: '総合スコア',
     itemsDetail: 'チェック項目詳細',
     recommendedActions: '推奨アクション',
@@ -211,10 +211,14 @@ export const translations: TranslationKeys = {
     includeNotes: 'メモを含める',
     includeSummary: 'サマリーを含める',
     sectionBreaks: 'セクション区切り',
+    pdfMode: 'PDF生成モード',
     pdfModes: {
       pixelPerfect: 'ピクセルパーフェクト',
+      pixelPerfectDescription: 'ブラウザ表示と完全一致',
       reliableFont: 'フォント信頼性重視',
-      textBased: 'テキストベース'
+      reliableFontDescription: '多言語対応の確実なフォント埋め込み',
+      textBased: 'テキストベース',
+      textBasedDescription: '検索可能な軽量PDF'
     },
     formats: {
       pdf: 'PDF',
@@ -223,6 +227,7 @@ export const translations: TranslationKeys = {
       markdown: 'Markdown'
     },
     progress: {
+      starting: '開始中...',
       initializing: '初期化中...',
       generating: '生成中...',
       processing: '処理中...',
@@ -243,7 +248,22 @@ export const translations: TranslationKeys = {
     sectionCompletionRates: 'セクション別達成率',
     achievementStatus: '達成状況',
     goodExamples: '良い例',
-    badExamples: '悪い例'
+    badExamples: '悪い例',
+    completed: '完了',
+    items: '項目',
+    metadata: {
+      created: '作成日',
+      score: 'スコア',
+      confidence: '信頼度',
+      language: '言語'
+    },
+    summary: {
+      title: '評価結果サマリー',
+      totalScore: '総合スコア',
+      completionRate: '達成率',
+      confidenceLevel: '信頼度レベル',
+      checkedItems: 'チェック済み項目'
+    }
   },
 
   // 履歴

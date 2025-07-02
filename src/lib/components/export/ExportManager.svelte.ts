@@ -8,7 +8,7 @@ import type {
   GetCurrentLanguageFunction,
   GetSupportedLanguagesFunction
 } from '$lib/types/i18n.js';
-import { ExportOptionsManager } from './ExportOptions.svelte.js';
+import { ExportOptionsManager, type ExportOptions } from './ExportOptions.svelte.js';
 import { ExportProgressManager } from './ExportProgress.svelte.js';
 import {
   PDFExportHandler,
@@ -28,6 +28,7 @@ import { ExportErrorHandler } from './utils/ExportErrorHandler.js';
 import { ExportProgressHelper } from './utils/ExportProgressHelper.js';
 import { ExportI18nLoader } from './utils/ExportI18nLoader.js';
 import { ExportContentGenerator } from './utils/ExportContentGenerator.js';
+import { ExportFilenameGenerator } from './utils/ExportFilenameGenerator.js';
 
 /**
  * エクスポート機能を統合管理するクラス
@@ -84,7 +85,7 @@ export class ExportManager {
             checklist,
             options,
             this.progressManager,
-            this.generateHTMLContentWrapper.bind(this),
+            await this.generateHTMLContentWrapper(checklist, options, t),
             checklistStoreTitle,
             t
           );
@@ -95,7 +96,7 @@ export class ExportManager {
             checklist,
             options,
             this.progressManager,
-            this.generateHTMLContentWrapperSimple.bind(this),
+            await this.generateHTMLContentWrapperSimple(checklist, options, t),
             checklistStoreTitle,
             t
           );
@@ -116,10 +117,18 @@ export class ExportManager {
             checklist,
             options,
             this.progressManager,
-            this.generateMarkdownContentWrapper.bind(this),
+            await this.generateMarkdownContentWrapper(checklist, options, t),
             checklistStoreTitle,
             t
           );
+          break;
+
+        case 'csv':
+          await this.exportCSV(checklist, options, checklistStoreTitle, t);
+          break;
+
+        case 'xml':
+          await this.exportXML(checklist, options, checklistStoreTitle, t);
           break;
 
         default:
@@ -134,39 +143,64 @@ export class ExportManager {
    * HTMLコンテンツ生成のラッパー（完全版）
    */
   private async generateHTMLContentWrapper(
-    _factChecklistI18n: FactChecklistI18n,
-    _getCurrentLanguage: GetCurrentLanguageFunction,
-    _getSupportedLanguages: GetSupportedLanguagesFunction
-  ): Promise<string> {
-    // This would need access to the current checklist, which we'd need to pass through
-    // For now, we'll throw an error indicating this needs to be refactored
-    throw new Error(
-      'HTML content generation needs checklist context - this requires further refactoring'
-    );
+    checklist: ChecklistResult,
+    options: ExportOptions,
+    t: TranslationFunction
+  ): Promise<
+    (
+      factChecklistI18n: FactChecklistI18n,
+      getCurrentLanguage: GetCurrentLanguageFunction,
+      getSupportedLanguages: GetSupportedLanguagesFunction
+    ) => Promise<string>
+  > {
+    return async (
+      factChecklistI18n: FactChecklistI18n,
+      getCurrentLanguage: GetCurrentLanguageFunction,
+      getSupportedLanguages: GetSupportedLanguagesFunction
+    ) => {
+      return generateSectionedHTMLContent(
+        checklist,
+        options,
+        factChecklistI18n,
+        t,
+        getCurrentLanguage,
+        getSupportedLanguages
+      );
+    };
   }
 
   /**
    * HTMLコンテンツ生成のラッパー（簡単版）
    */
   private async generateHTMLContentWrapperSimple(
-    _factChecklistI18n: FactChecklistI18n
-  ): Promise<string> {
-    // This would need access to the current checklist, which we'd need to pass through
-    throw new Error(
-      'HTML content generation needs checklist context - this requires further refactoring'
-    );
+    checklist: ChecklistResult,
+    options: ExportOptions,
+    t: TranslationFunction
+  ): Promise<(factChecklistI18n: FactChecklistI18n) => Promise<string>> {
+    return async (factChecklistI18n: FactChecklistI18n) => {
+      const i18nResult = await ExportI18nLoader.loadFullI18n();
+      return generateSectionedHTMLContent(
+        checklist,
+        options,
+        factChecklistI18n,
+        t,
+        i18nResult.getCurrentLanguage!,
+        i18nResult.getSupportedLanguages!
+      );
+    };
   }
 
   /**
    * Markdownコンテンツ生成のラッパー
    */
   private async generateMarkdownContentWrapper(
-    _factChecklistI18n: FactChecklistI18n
-  ): Promise<string> {
-    // This would need access to the current checklist, which we'd need to pass through
-    throw new Error(
-      'Markdown content generation needs checklist context - this requires further refactoring'
-    );
+    checklist: ChecklistResult,
+    options: ExportOptions,
+    t: TranslationFunction
+  ): Promise<(factChecklistI18n: FactChecklistI18n) => Promise<string>> {
+    return async (factChecklistI18n: FactChecklistI18n) => {
+      return generateMarkdownContent(checklist, options, factChecklistI18n, t);
+    };
   }
 
   /**
@@ -190,6 +224,70 @@ export class ExportManager {
   reset(): void {
     this.progressManager.reset();
     this.optionsManager.resetToDefaults();
+  }
+
+  /**
+   * CSVエクスポートを実行する
+   * @param checklist チェックリスト結果
+   * @param options エクスポートオプション
+   * @param checklistStoreTitle チェックリストタイトル
+   * @param t 翻訳関数
+   */
+  private async exportCSV(
+    checklist: ChecklistResult,
+    options: ExportOptions,
+    checklistStoreTitle: string,
+    t: TranslationFunction
+  ): Promise<void> {
+    try {
+      ExportProgressHelper.updateStandardProgress(this.progressManager, 'GENERATING', t);
+
+      const csvContent = ExportContentGenerator.generateCSVData(checklist, options);
+
+      ExportProgressHelper.updateStandardProgress(this.progressManager, 'SAVING', t);
+
+      const filename = ExportFilenameGenerator.generateCSVFilename(checklistStoreTitle, t);
+      const { downloadText } = await import('$lib/utils/download.js');
+      downloadText(csvContent, filename, 'text/csv');
+
+      ExportProgressHelper.completeExport(this.progressManager, 'CSV', t);
+    } catch (error) {
+      ExportErrorHandler.handleExportError(error, 'CSV', this.progressManager);
+    }
+  }
+
+  /**
+   * XMLエクスポートを実行する
+   * @param checklist チェックリスト結果
+   * @param options エクスポートオプション
+   * @param checklistStoreTitle チェックリストタイトル
+   * @param t 翻訳関数
+   */
+  private async exportXML(
+    checklist: ChecklistResult,
+    options: ExportOptions,
+    checklistStoreTitle: string,
+    t: TranslationFunction
+  ): Promise<void> {
+    try {
+      ExportProgressHelper.updateStandardProgress(this.progressManager, 'GENERATING', t);
+
+      const xmlContent = ExportContentGenerator.generateXMLData(
+        checklist,
+        options,
+        checklistStoreTitle
+      );
+
+      ExportProgressHelper.updateStandardProgress(this.progressManager, 'SAVING', t);
+
+      const filename = ExportFilenameGenerator.generateXMLFilename(checklistStoreTitle, t);
+      const { downloadText } = await import('$lib/utils/download.js');
+      downloadText(xmlContent, filename, 'application/xml');
+
+      ExportProgressHelper.completeExport(this.progressManager, 'XML', t);
+    } catch (error) {
+      ExportErrorHandler.handleExportError(error, 'XML', this.progressManager);
+    }
   }
 
   /**

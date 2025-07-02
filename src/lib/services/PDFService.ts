@@ -115,7 +115,8 @@ export class PDFService {
         options,
         options.mode,
         htmlContent,
-        filename
+        filename,
+        t
       );
 
       if (result.success) {
@@ -127,7 +128,14 @@ export class PDFService {
       }
 
       // 失敗時はフォールバックチェーンを試行
-      return await this.tryFallbackGeneration(checklist, options, htmlContent, filename, startTime);
+      return await this.tryFallbackGeneration(
+        checklist,
+        options,
+        htmlContent,
+        filename,
+        startTime,
+        t
+      );
     } catch (error) {
       console.error('❌ PDF generation failed completely:', error);
       return {
@@ -148,7 +156,8 @@ export class PDFService {
     options: PDFServiceOptions,
     mode: PDFGenerationMode,
     htmlContent?: string,
-    filename?: string
+    filename?: string,
+    t?: TranslationFunction
   ): Promise<PDFGenerationResult> {
     const generator = this.generators.get(mode);
     if (!generator) {
@@ -168,7 +177,7 @@ export class PDFService {
           options.onProgress?.(50, 'Generating with reliable fonts...');
           const reliableBlob = await generator.generatePDF?.(
             checklist,
-            this.convertOptionsForReliable(options)
+            this.convertOptionsForReliable(options, t)
           );
           if (filename && reliableBlob) downloadBlob(reliableBlob, filename);
           return {
@@ -184,7 +193,7 @@ export class PDFService {
           options.onProgress?.(50, 'Generating text-based PDF...');
           const textBlob = await generator.generatePDF?.(
             checklist,
-            this.convertOptionsForText(options)
+            this.convertOptionsForText(options, t)
           );
           if (filename && textBlob) downloadBlob(textBlob, filename);
           return {
@@ -264,7 +273,8 @@ export class PDFService {
     options: PDFServiceOptions,
     htmlContent?: string,
     filename?: string,
-    startTime?: number
+    startTime?: number,
+    t?: TranslationFunction
   ): Promise<PDFGenerationResult> {
     const errors: string[] = [];
 
@@ -279,7 +289,8 @@ export class PDFService {
         { ...options, mode: fallbackMode },
         fallbackMode,
         htmlContent,
-        filename
+        filename,
+        t
       );
 
       if (result.success) {
@@ -323,26 +334,28 @@ export class PDFService {
   /**
    * ReliablePDFGenerator用のオプション変換
    */
-  private convertOptionsForReliable(options: PDFServiceOptions) {
+  private convertOptionsForReliable(options: PDFServiceOptions, t?: TranslationFunction) {
     return {
       includeGuides: options.includeGuides,
       includeNotes: options.includeNotes,
       includeSummary: options.includeSummary,
       sectionBreaks: options.sectionBreaks,
-      advancedMode: options.advancedMode
+      advancedMode: options.advancedMode,
+      t
     };
   }
 
   /**
    * TextBasedPDFGenerator用のオプション変換
    */
-  private convertOptionsForText(options: PDFServiceOptions) {
+  private convertOptionsForText(options: PDFServiceOptions, t?: TranslationFunction) {
     return {
       includeGuides: options.includeGuides,
       includeNotes: options.includeNotes,
       includeSummary: options.includeSummary,
       sectionBreaks: options.sectionBreaks,
-      optimizeForMobile: options.optimizeForMobile
+      optimizeForMobile: options.optimizeForMobile,
+      t
     };
   }
 

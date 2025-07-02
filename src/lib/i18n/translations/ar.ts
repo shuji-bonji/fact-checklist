@@ -201,10 +201,14 @@ export const translations: TranslationKeys = {
     includeNotes: 'تضمين الملاحظات',
     includeSummary: 'تضمين الملخص',
     sectionBreaks: 'فواصل الأقسام',
+    pdfMode: 'وضع إنتاج PDF',
     pdfModes: {
       pixelPerfect: 'مثالي البكسل',
+      pixelPerfectDescription: 'مطابقة دقيقة لعرض المتصفح',
       reliableFont: 'تركيز موثوقية الخط',
-      textBased: 'مبني على النص'
+      reliableFontDescription: 'تضمين خط موثوق متعدد اللغات',
+      textBased: 'مبني على النص',
+      textBasedDescription: 'PDF خفيف قابل للبحث'
     },
     formats: {
       pdf: 'PDF',
@@ -213,6 +217,7 @@ export const translations: TranslationKeys = {
       markdown: 'Markdown'
     },
     progress: {
+      starting: 'جارٍ البدء...',
       initializing: 'جارٍ التهيئة...',
       generating: 'جارٍ الإنشاء...',
       processing: 'جارٍ المعالجة...',
@@ -233,7 +238,22 @@ export const translations: TranslationKeys = {
     sectionCompletionRates: 'معدلات إكمال الأقسام',
     achievementStatus: 'حالة الإنجاز',
     goodExamples: 'أمثلة جيدة',
-    badExamples: 'أمثلة سيئة'
+    badExamples: 'أمثلة سيئة',
+    completed: 'مكتمل',
+    items: 'عناصر',
+    metadata: {
+      created: 'تم الإنشاء',
+      score: 'النتيجة',
+      confidence: 'الثقة',
+      language: 'اللغة'
+    },
+    summary: {
+      title: 'ملخص التقييم',
+      totalScore: 'النتيجة الإجمالية',
+      completionRate: 'معدل الإكمال',
+      confidenceLevel: 'مستوى الثقة',
+      checkedItems: 'العناصر المحققة'
+    }
   },
   history: {
     title: 'تاريخ التقييم',

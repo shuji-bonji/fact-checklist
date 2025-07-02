@@ -7,6 +7,8 @@
 import type jsPDF from 'jspdf';
 import type { ChecklistResult, CheckItem } from '$lib/types/checklist.js';
 import { CATEGORIES } from '$lib/data/checklist-items.js';
+import { loadFontAsBase64 } from '$lib/i18n/fonts.js';
+import type { TranslationFunction } from '$lib/types/i18n.js';
 
 export interface TextPDFOptions {
   includeGuides: boolean;
@@ -15,6 +17,7 @@ export interface TextPDFOptions {
   sectionBreaks: boolean;
   fontFamily?: string;
   optimizeForMobile?: boolean;
+  t?: TranslationFunction;
 }
 
 export class TextBasedPDFGenerator {
@@ -25,6 +28,7 @@ export class TextBasedPDFGenerator {
   private readonly margin: number = 15;
   private readonly lineHeight: number = 7;
   private readonly maxLineWidth: number;
+  private fontLoaded: boolean = false;
 
   constructor() {
     // jsPDFインスタンスは外部で作成されたものを受け取る
@@ -34,17 +38,45 @@ export class TextBasedPDFGenerator {
     this.maxLineWidth = this.pageWidth - this.margin * 2;
   }
 
+  /**
+   * PDFServiceで使用される標準generatePDFメソッド
+   * @param checklist チェックリスト結果
+   * @param options 生成オプション
+   * @returns 生成されたPDFのBlob
+   */
+  async generatePDF(checklist: ChecklistResult, options: TextPDFOptions): Promise<Blob> {
+    try {
+      console.log('🔤 TextBasedPDFGenerator: Starting PDF generation...');
+      const pdfInstance = await this.generateFromChecklist(checklist, options);
+      const blob = pdfInstance.output('blob');
+      console.log('✅ TextBasedPDFGenerator: PDF generated successfully');
+      return blob;
+    } catch (error) {
+      console.error('❌ TextBasedPDFGenerator: Failed to generate PDF:', error);
+      throw error;
+    }
+  }
+
   async generateFromChecklist(checklist: ChecklistResult, options: TextPDFOptions): Promise<jsPDF> {
     // jsPDFを動的インポート
     const { default: jsPDF } = await import('jspdf');
     this.pdf = new jsPDF('p', 'mm', 'a4');
 
-    // 確実に動作するフォントを使用（Courier - 等幅フォント）
-    this.pdf.setFont('courier', 'normal');
-    this.pdf.setFontSize(11);
-
     console.log('🔤 Starting text-based PDF generation...');
-    console.log('📝 Using font: courier (Unicode support)');
+
+    // 日本語フォントを設定
+    try {
+      await this.setupJapaneseFont();
+      this.fontLoaded = true;
+      console.log('📝 Using font: NotoSansJP (Japanese support)');
+    } catch (error) {
+      console.warn('⚠️ Failed to load Japanese font, using fallback:', error);
+      this.fontLoaded = false;
+      this.setFontWeight('normal');
+      console.log('📝 Using font: courier (fallback)');
+    }
+
+    this.pdf.setFontSize(11);
 
     // PDF構築
     this.addHeader(checklist);
@@ -67,14 +99,14 @@ export class TextBasedPDFGenerator {
 
   private addHeader(checklist: ChecklistResult): void {
     this.pdf.setFontSize(16);
-    this.pdf.setFont('courier', 'bold');
+    this.setFontWeight('bold');
     this.addText('========================================');
     this.addText('📋 事実確認チェックシート');
     this.addText('========================================');
     this.currentY += 3;
 
     this.pdf.setFontSize(12);
-    this.pdf.setFont('courier', 'normal');
+    this.setFontWeight('normal');
     this.addText(`タイトル: ${checklist.title}`);
     this.currentY += 2;
 
@@ -108,13 +140,13 @@ export class TextBasedPDFGenerator {
     this.checkPageBreak(40);
 
     this.pdf.setFontSize(14);
-    this.pdf.setFont('courier', 'bold');
+    this.setFontWeight('bold');
     this.addText('📊 評価結果サマリー');
     this.addText('----------------------------------------');
     this.currentY += 2;
 
     this.pdf.setFontSize(11);
-    this.pdf.setFont('courier', 'normal');
+    this.setFontWeight('normal');
 
     const summaryData = [
       `総合スコア: ${checklist.score.total}/${checklist.score.maxScore} ポイント`,
@@ -131,9 +163,9 @@ export class TextBasedPDFGenerator {
 
     // セクション別達成率
     this.currentY += 3;
-    this.pdf.setFont('courier', 'bold');
+    this.setFontWeight('bold');
     this.addText('セクション別達成率:');
-    this.pdf.setFont('courier', 'normal');
+    this.setFontWeight('normal');
 
     const sections = this.groupItemsByCategory(checklist.items);
     sections.forEach(section => {
@@ -162,7 +194,7 @@ export class TextBasedPDFGenerator {
 
     // セクションヘッダー
     this.pdf.setFontSize(14);
-    this.pdf.setFont('courier', 'bold');
+    this.setFontWeight('bold');
     this.addText('');
     this.addText('========================================');
     this.addText(`${section.category.emoji} ${section.category.name}`);
@@ -170,12 +202,12 @@ export class TextBasedPDFGenerator {
     this.currentY += 1;
 
     this.pdf.setFontSize(10);
-    this.pdf.setFont('courier', 'italic');
+    this.setFontWeight('normal');
     this.addWrappedText(section.category.description);
     this.currentY += 2;
 
     this.pdf.setFontSize(11);
-    this.pdf.setFont('courier', 'normal');
+    this.setFontWeight('normal');
     this.addText(
       `達成状況: ${section.completionRate}% (${section.checkedItems.length}/${section.items.length} 項目完了)`
     );
@@ -193,7 +225,7 @@ export class TextBasedPDFGenerator {
     this.checkPageBreak(25);
 
     this.pdf.setFontSize(12);
-    this.pdf.setFont('courier', 'bold');
+    this.setFontWeight('bold');
 
     const status = item.checked ? '✓ 完了' : '✗ 未完了';
     const riskIcon = this.getRiskIcon(item.category.id);
@@ -202,13 +234,13 @@ export class TextBasedPDFGenerator {
     this.currentY += 1;
 
     this.pdf.setFontSize(11);
-    this.pdf.setFont('courier', 'bold');
+    this.setFontWeight('bold');
     this.addWrappedText(`   題目: ${item.title}`);
     this.currentY += 1;
 
     // 説明
     this.pdf.setFontSize(10);
-    this.pdf.setFont('courier', 'normal');
+    this.setFontWeight('normal');
     this.addWrappedText(`   説明: ${item.description}`);
     this.currentY += 2;
 
@@ -222,7 +254,7 @@ export class TextBasedPDFGenerator {
 
   private addGuideContent(guideContent: NonNullable<CheckItem['guideContent']>): void {
     this.pdf.setFontSize(9);
-    this.pdf.setFont('courier', 'italic');
+    this.setFontWeight('normal');
 
     this.addText('   ----------------------------------------');
     this.addWrappedText(`   💡 ガイド: ${guideContent.title}`);
@@ -257,7 +289,7 @@ export class TextBasedPDFGenerator {
     this.checkPageBreak(30);
 
     this.pdf.setFontSize(14);
-    this.pdf.setFont('courier', 'bold');
+    this.setFontWeight('bold');
     this.addText('');
     this.addText('========================================');
     this.addText('📝 評価メモ');
@@ -265,7 +297,7 @@ export class TextBasedPDFGenerator {
     this.currentY += 3;
 
     this.pdf.setFontSize(11);
-    this.pdf.setFont('courier', 'normal');
+    this.setFontWeight('normal');
     this.addWrappedText(notes);
     this.currentY += 5;
   }
@@ -279,7 +311,7 @@ export class TextBasedPDFGenerator {
       // フッター情報
       const footerY = this.pageHeight - 15;
       this.pdf.setFontSize(8);
-      this.pdf.setFont('courier', 'normal');
+      this.setFontWeight('normal');
 
       // 左側：生成情報
       this.pdf.text('実用的事実確認チェックシートによる評価結果', this.margin, footerY);
@@ -338,6 +370,53 @@ export class TextBasedPDFGenerator {
         return '🟣 文脈';
       default:
         return '⚪ 一般';
+    }
+  }
+
+  /**
+   * 日本語フォントをセットアップ
+   */
+  private async setupJapaneseFont(): Promise<void> {
+    try {
+      // NotoSansJPフォントを読み込み
+      const fontBase64 = await loadFontAsBase64('/fonts/NotoSansJP-Regular.ttf');
+      if (fontBase64) {
+        this.pdf.addFileToVFS('NotoSansJP-Regular.ttf', fontBase64);
+        this.pdf.addFont('NotoSansJP-Regular.ttf', 'NotoSansJP', 'normal');
+
+        // Boldフォントも試行
+        try {
+          const boldFontBase64 = await loadFontAsBase64('/fonts/NotoSansJP-Bold.ttf');
+          if (boldFontBase64) {
+            this.pdf.addFileToVFS('NotoSansJP-Bold.ttf', boldFontBase64);
+            this.pdf.addFont('NotoSansJP-Bold.ttf', 'NotoSansJP', 'bold');
+          }
+        } catch {
+          console.warn('⚠️ Bold font not available, using normal font for bold text');
+        }
+
+        this.pdf.setFont('NotoSansJP', 'normal');
+      } else {
+        throw new Error('Failed to load font data');
+      }
+    } catch (error) {
+      console.warn('⚠️ Japanese font setup failed:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * フォントウェイトを設定
+   */
+  private setFontWeight(weight: 'normal' | 'bold' | 'italic'): void {
+    if (this.fontLoaded) {
+      if (weight === 'bold') {
+        this.pdf.setFont('NotoSansJP', 'bold');
+      } else {
+        this.pdf.setFont('NotoSansJP', 'normal');
+      }
+    } else {
+      this.pdf.setFont('courier', weight === 'bold' ? 'bold' : 'normal');
     }
   }
 

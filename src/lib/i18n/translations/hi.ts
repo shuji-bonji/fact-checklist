@@ -203,10 +203,14 @@ export const translations: TranslationKeys = {
     includeNotes: 'नोट्स शामिल करें',
     includeSummary: 'सारांश शामिल करें',
     sectionBreaks: 'सेक्शन ब्रेक',
+    pdfMode: 'PDF जेनरेशन मोड',
     pdfModes: {
       pixelPerfect: 'पिक्सेल परफेक्ट',
+      pixelPerfectDescription: 'ब्राउज़र डिस्प्ले का सटीक मिलान',
       reliableFont: 'फ़ॉन्ट विश्वसनीयता फोकस',
-      textBased: 'टेक्स्ट आधारित'
+      reliableFontDescription: 'विश्वसनीय बहुभाषी फॉन्ट एम्बेडिंग',
+      textBased: 'टेक्स्ट आधारित',
+      textBasedDescription: 'खोजयोग्य हल्का PDF'
     },
     formats: {
       pdf: 'PDF',
@@ -215,6 +219,7 @@ export const translations: TranslationKeys = {
       markdown: 'Markdown'
     },
     progress: {
+      starting: 'शुरू हो रहा है...',
       initializing: 'प्रारंभ हो रहा है...',
       generating: 'जेनरेट हो रहा है...',
       processing: 'प्रोसेसिंग...',
@@ -235,7 +240,22 @@ export const translations: TranslationKeys = {
     sectionCompletionRates: 'खंड पूर्णता दरें',
     achievementStatus: 'उपलब्धि स्थिति',
     goodExamples: 'अच्छे उदाहरण',
-    badExamples: 'बुरे उदाहरण'
+    badExamples: 'बुरे उदाहरण',
+    completed: 'पूर्ण',
+    items: 'आइटम',
+    metadata: {
+      created: 'बनाया गया',
+      score: 'स्कोर',
+      confidence: 'विश्वास',
+      language: 'भाषा'
+    },
+    summary: {
+      title: 'मूल्यांकन सारांश',
+      totalScore: 'कुल स्कोर',
+      completionRate: 'पूर्णता दर',
+      confidenceLevel: 'विश्वास स्तर',
+      checkedItems: 'जांचे गए आइटम'
+    }
   },
   history: {
     title: 'मूल्यांकन इतिहास',

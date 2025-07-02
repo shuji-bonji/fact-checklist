@@ -202,10 +202,14 @@ export const translations: TranslationKeys = {
     includeNotes: 'Sertakan Catatan',
     includeSummary: 'Sertakan Ringkasan',
     sectionBreaks: 'Jeda Bagian',
+    pdfMode: 'Mode Generasi PDF',
     pdfModes: {
       pixelPerfect: 'Piksel Sempurna',
+      pixelPerfectDescription: 'Kecocokan tampilan browser yang tepat',
       reliableFont: 'Fokus Keandalan Font',
-      textBased: 'Berbasis Teks'
+      reliableFontDescription: 'Penyematan font multibahasa yang andal',
+      textBased: 'Berbasis Teks',
+      textBasedDescription: 'PDF ringan yang dapat dicari'
     },
     formats: {
       pdf: 'PDF',
@@ -214,6 +218,7 @@ export const translations: TranslationKeys = {
       markdown: 'Markdown'
     },
     progress: {
+      starting: 'Memulai...',
       initializing: 'Menginisialisasi...',
       generating: 'Menghasilkan...',
       processing: 'Memproses...',
@@ -234,7 +239,22 @@ export const translations: TranslationKeys = {
     sectionCompletionRates: 'Tingkat Penyelesaian per Bagian',
     achievementStatus: 'Status Pencapaian',
     goodExamples: 'Contoh Baik',
-    badExamples: 'Contoh Buruk'
+    badExamples: 'Contoh Buruk',
+    completed: 'Selesai',
+    items: 'Item',
+    metadata: {
+      created: 'Dibuat',
+      score: 'Skor',
+      confidence: 'Kepercayaan',
+      language: 'Bahasa'
+    },
+    summary: {
+      title: 'Ringkasan Evaluasi',
+      totalScore: 'Skor Total',
+      completionRate: 'Tingkat Penyelesaian',
+      confidenceLevel: 'Tingkat Kepercayaan',
+      checkedItems: 'Item yang Diperiksa'
+    }
   },
   history: {
     title: 'Riwayat Evaluasi',

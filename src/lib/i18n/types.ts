@@ -252,10 +252,14 @@ export interface TranslationKeys {
     includeNotes: string;
     includeSummary: string;
     sectionBreaks: string;
+    pdfMode: string;
     pdfModes: {
       pixelPerfect: string;
+      pixelPerfectDescription: string;
       reliableFont: string;
+      reliableFontDescription: string;
       textBased: string;
+      textBasedDescription: string;
     };
     formats: {
       pdf: string;
@@ -264,6 +268,7 @@ export interface TranslationKeys {
       markdown: string;
     };
     progress: {
+      starting: string;
       initializing: string;
       generating: string;
       processing: string;
@@ -285,6 +290,21 @@ export interface TranslationKeys {
     achievementStatus: string;
     goodExamples: string;
     badExamples: string;
+    completed: string;
+    items: string;
+    metadata: {
+      created: string;
+      score: string;
+      confidence: string;
+      language: string;
+    };
+    summary: {
+      title: string;
+      totalScore: string;
+      completionRate: string;
+      confidenceLevel: string;
+      checkedItems: string;
+    };
   };
 
   // 履歴

@@ -112,6 +112,34 @@ export class ExportFilenameGenerator {
   }
 
   /**
+   * CSVファイル名を生成する
+   * @param checklistTitle チェックリストタイトル
+   * @param t 翻訳関数
+   * @param options 生成オプション
+   */
+  static generateCSVFilename(
+    checklistTitle: string,
+    t: (key: string) => string,
+    options?: Omit<FilenameGenerationOptions, 'includeExtension'>
+  ): string {
+    return this.generate('csv', checklistTitle, t, { ...options, includeExtension: true });
+  }
+
+  /**
+   * XMLファイル名を生成する
+   * @param checklistTitle チェックリストタイトル
+   * @param t 翻訳関数
+   * @param options 生成オプション
+   */
+  static generateXMLFilename(
+    checklistTitle: string,
+    t: (key: string) => string,
+    options?: Omit<FilenameGenerationOptions, 'includeExtension'>
+  ): string {
+    return this.generate('xml', checklistTitle, t, { ...options, includeExtension: true });
+  }
+
+  /**
    * ファイル名をバリデーションする
    * @param filename ファイル名
    * @returns バリデーション結果

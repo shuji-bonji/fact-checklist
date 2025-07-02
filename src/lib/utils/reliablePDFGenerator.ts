@@ -380,13 +380,15 @@ export class ReliablePDFGenerator {
 
     // アイコンとステータス
     const statusIcon = item.checked ? '✅' : '⚠️';
+    this.pdf.setFontSize(16);
     this.addText(`${statusIcon}`);
+    this.currentY += 3; // Clear separation after icon
 
-    // タイトル
+    // タイトル（番号付き）
     this.pdf.setFontSize(11);
     this.setFontWeight('bold');
-    this.addWrappedText(`   ${this.getLocalizedText(item.title)}`);
-    this.currentY += 2;
+    this.addWrappedText(`${itemNumber}. ${this.getLocalizedText(item.title)}`);
+    this.currentY += 3;
 
     // 説明
     this.pdf.setFontSize(10);
@@ -400,43 +402,54 @@ export class ReliablePDFGenerator {
       this.addGuideContent(item.guideContent);
     }
 
-    this.currentY += 3;
+    this.currentY += 5;
   }
 
   private addGuideContent(guideContent: NonNullable<CheckItem['guideContent']>): void {
+    this.currentY += 3; // Add significant space before guide section
     this.pdf.setFontSize(9);
     this.setFontWeight('italic');
 
     this.addText('   ----------------------------------------');
-    const guideLabel = this.useFallbackFont ? 'Guide' : 'ガイド';
-    this.addWrappedText(`   💡 ${guideLabel}: ${this.getLocalizedText(guideContent.title)}`);
     this.currentY += 1;
 
+    const guideLabel = this.useFallbackFont ? 'Guide' : 'ガイド';
+    this.addWrappedText(`   💡 ${guideLabel}: ${this.getLocalizedText(guideContent.title)}`);
+    this.currentY += 2;
+
     this.addWrappedText(`   ${this.getLocalizedText(guideContent.content)}`);
-    this.currentY += 1;
+    this.currentY += 3;
 
     // 良い例
     if (guideContent.examples?.good?.length) {
       const goodLabel = this.useFallbackFont ? 'Good examples' : '良い例';
       this.addText(`   ✅ ${goodLabel}:`);
+      this.currentY += 2; // Ensure very clear separation
       guideContent.examples.good.forEach(example => {
         this.addWrappedText(`     - ${this.getLocalizedText(example)}`);
+        this.currentY += 1; // Clear gap between examples
       });
-      this.currentY += 1;
+      this.currentY += 2;
     }
 
     // 悪い例
     if (guideContent.examples?.bad?.length) {
       const badLabel = this.useFallbackFont ? 'Bad examples' : '悪い例';
       this.addText(`   ❌ ${badLabel}:`);
+      this.currentY += 2; // Ensure very clear separation
       guideContent.examples.bad.forEach(example => {
         this.addWrappedText(`     - ${this.getLocalizedText(example)}`);
+        this.currentY += 1; // Clear gap between examples
       });
-      this.currentY += 1;
+      this.currentY += 2;
     }
 
     this.addText('   ----------------------------------------');
-    this.currentY += 1;
+    this.currentY += 3;
+
+    // Restore normal font settings for next item
+    this.pdf.setFontSize(10);
+    this.setFontWeight('normal');
   }
 
   private addNotes(notes: string): void {
@@ -508,41 +521,62 @@ export class ReliablePDFGenerator {
     options?: { align?: 'left' | 'center' | 'right' }
   ): void {
     const textX = x ?? this.margin;
-    const textY = y ?? this.currentY;
+
+    // For automatic positioning, use current Y and ensure it's safe
+    const actualY = y ?? this.currentY;
 
     if (this.fontManager.isRTL()) {
       // For RTL languages, adjust text position
       const textWidth = this.pdf.getTextWidth(text);
       const adjustedX = options?.align === 'center' ? textX : this.pageWidth - textX - textWidth;
-      this.pdf.text(text, adjustedX, textY);
+      this.pdf.text(text, adjustedX, actualY);
     } else {
       // LTR text rendering
       if (options?.align === 'center') {
         const textWidth = this.pdf.getTextWidth(text);
         const centerX = textX + textWidth / 2;
-        this.pdf.text(text, centerX - textWidth / 2, textY);
+        this.pdf.text(text, centerX - textWidth / 2, actualY);
       } else {
-        this.pdf.text(text, textX, textY);
+        this.pdf.text(text, textX, actualY);
       }
     }
 
+    // Only advance Y position if we're using automatic positioning
     if (!x && !y) {
-      this.currentY += this.lineHeight;
-      this.checkPageBreak();
+      this.currentY = actualY + this.lineHeight + 0.5; // Ensure clear spacing
     }
   }
 
   private addText(text: string): void {
+    this.checkPageBreak();
     this.addInternationalText(text);
   }
 
   private addWrappedText(text: string): void {
-    // Use international font manager for text wrapping with RTL support
-    const lines = this.fontManager.splitTextToFit(text, this.maxLineWidth - 10);
-    lines.forEach((line: string) => {
-      this.checkPageBreak();
-      this.addInternationalText(line);
-    });
+    // Use safer text wrapping to prevent overlap issues
+    try {
+      const lines = this.fontManager.splitTextToFit(text, this.maxLineWidth - 10);
+      lines.forEach((line: string, index: number) => {
+        this.checkPageBreak();
+        this.addInternationalText(line);
+        // Add minimal spacing between wrapped lines for readability
+        if (index < lines.length - 1) {
+          this.currentY += 0.5;
+        }
+      });
+    } catch (error) {
+      // Fallback to jsPDF's native splitTextToSize if fontManager fails
+      console.warn('FontManager splitTextToFit failed, using fallback:', error);
+      const lines = this.pdf.splitTextToSize(text, this.maxLineWidth - 10);
+      lines.forEach((line: string, index: number) => {
+        this.checkPageBreak();
+        this.addInternationalText(line);
+        // Add minimal spacing between wrapped lines for readability
+        if (index < lines.length - 1) {
+          this.currentY += 0.5;
+        }
+      });
+    }
   }
 
   // Helper method to get locale string from language code
@@ -1112,6 +1146,103 @@ export class ReliablePDFGenerator {
     } catch (error) {
       console.warn('⚠️ Failed to update page numbers after TOC:', error);
     }
+  }
+
+  /**
+   * メインのPDF生成メソッド
+   * @param checklist チェックリスト結果
+   * @param options 生成オプション
+   * @returns 生成されたPDFのBlob
+   */
+  async generatePDF(checklist: ChecklistResult, options: ReliablePDFOptions): Promise<Blob> {
+    try {
+      this.options = options;
+
+      // 翻訳関数を設定
+      if (options.t) {
+        this.t = options.t;
+      } else {
+        // フォールバック翻訳関数
+        this.t = (key: string) => key.split('.').pop() ?? key;
+      }
+
+      // PDFの初期化
+      await this.initializePDF();
+
+      // コンテンツ生成
+      await this.generateContent(checklist);
+
+      // PDFを出力
+      const output = this.pdf.output('blob');
+      console.log('✅ ReliablePDFGenerator: PDF generated successfully');
+      return output;
+    } catch (error) {
+      console.error('❌ ReliablePDFGenerator: Failed to generate PDF:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * PDFの初期化
+   */
+  private async initializePDF(): Promise<void> {
+    const { jsPDF } = await import('jspdf');
+    this.pdf = new jsPDF();
+    this.currentY = 20;
+    this.fontManager = new InternationalFontManager(this.pdf, this.options.language ?? 'en');
+
+    try {
+      // フォント初期化
+      await this.fontManager.setupFontsForLanguage(this.options.language ?? 'en');
+      this.fontLoaded = true;
+    } catch (error) {
+      console.warn('⚠️ Font loading failed, using fallback:', error);
+      this.fontLoaded = false;
+      this.useFallbackFont = true;
+    }
+  }
+
+  /**
+   * PDFコンテンツ生成
+   */
+  private async generateContent(checklist: ChecklistResult): Promise<void> {
+    // タイトル追加
+    this.addDocumentTitle(checklist.title || this.t('checklist.title'));
+
+    // サマリー追加
+    if (this.options.includeSummary) {
+      this.addSummary(checklist);
+    }
+
+    // カテゴリ別セクション追加
+    const sections = this.groupItemsByCategory(checklist.items);
+    for (const section of sections) {
+      if (this.options.sectionBreaks) {
+        this.checkPageBreak(50);
+      }
+      this.addSection(section, this.options);
+    }
+
+    // メタデータ設定
+    this.addPDFMetadata(checklist);
+  }
+
+  /**
+   * ドキュメントタイトルを追加
+   */
+  private addDocumentTitle(title: string): void {
+    this.pdf.setFontSize(18);
+    this.setFontWeight('bold');
+
+    // タイトルテキストを中央揃えで追加
+    const titleWidth = this.pdf.getTextWidth(title);
+    const centerX = this.pageWidth / 2 - titleWidth / 2;
+    this.pdf.text(title, centerX, this.currentY);
+    this.currentY += 15;
+
+    // 区切り線
+    this.pdf.line(this.margin, this.currentY, this.pageWidth - this.margin, this.currentY);
+    this.currentY += 10;
   }
 
   private groupItemsByCategory(items: CheckItem[]): SectionData[] {

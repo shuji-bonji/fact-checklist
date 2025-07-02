@@ -208,10 +208,14 @@ export const translations: TranslationKeys = {
     includeNotes: 'Notizen einbeziehen',
     includeSummary: 'Zusammenfassung einbeziehen',
     sectionBreaks: 'Abschnittsumbrüche',
+    pdfMode: 'PDF-Generierungsmodus',
     pdfModes: {
       pixelPerfect: 'Pixel Perfect',
+      pixelPerfectDescription: 'Exakte Browser-Anzeige-Übereinstimmung',
       reliableFont: 'Schrift-Zuverlässigkeitsfokus',
-      textBased: 'Textbasiert'
+      reliableFontDescription: 'Zuverlässige mehrsprachige Schrift-Einbettung',
+      textBased: 'Textbasiert',
+      textBasedDescription: 'Durchsuchbares leichtgewichtiges PDF'
     },
     formats: {
       pdf: 'PDF',
@@ -220,6 +224,7 @@ export const translations: TranslationKeys = {
       markdown: 'Markdown'
     },
     progress: {
+      starting: 'Wird gestartet...',
       initializing: 'Initialisierung...',
       generating: 'Generierung...',
       processing: 'Verarbeitung...',
@@ -240,7 +245,22 @@ export const translations: TranslationKeys = {
     sectionCompletionRates: 'Abschnitts-Fertigstellungsgrade',
     achievementStatus: 'Erfolgsstatus',
     goodExamples: 'Gute Beispiele',
-    badExamples: 'Schlechte Beispiele'
+    badExamples: 'Schlechte Beispiele',
+    completed: 'Abgeschlossen',
+    items: 'Elemente',
+    metadata: {
+      created: 'Erstellt',
+      score: 'Punktzahl',
+      confidence: 'Vertrauen',
+      language: 'Sprache'
+    },
+    summary: {
+      title: 'Bewertungszusammenfassung',
+      totalScore: 'Gesamtpunktzahl',
+      completionRate: 'Fertigstellungsgrad',
+      confidenceLevel: 'Vertrauensniveau',
+      checkedItems: 'Geprüfte Elemente'
+    }
   },
   history: {
     title: 'Bewertungsverlauf',
