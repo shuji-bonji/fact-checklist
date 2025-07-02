@@ -1,7 +1,7 @@
 <!-- src/lib/components/ExportModal.svelte -->
 <script lang="ts">
   import type { ChecklistResult } from '$lib/types/checklist.js';
-  import { CATEGORIES } from '$lib/data/checklist-items.js';
+  import { getCategories } from '$lib/data/checklist-items.js';
   import { refactoredChecklistStore } from '$lib/stores/refactoredChecklistStore.svelte.js';
   import { ExportService } from '$lib/services/ExportService.js';
   import {
@@ -42,10 +42,10 @@
     }
   }
 
-  // セクション別にアイテムを分類（リアクティブ）
+  // セクション別にアイテムを分類（リアクティブ、動的翻訳対応）
   const sections = $derived(
     checklist
-      ? CATEGORIES.map(category => {
+      ? getCategories(t as (key: string) => string).map(category => {
           const items = checklist.items.filter(item => item.category.id === category.id);
           const checkedItems = items.filter(item => item.checked);
           const uncheckedItems = items.filter(item => !item.checked);
@@ -135,13 +135,13 @@
   function getJudgmentText(judgment: string | null): string {
     switch (judgment) {
       case 'accept':
-        return '📗 採用';
+        return `📗 ${t('export.judgment.accept')}`;
       case 'caution':
-        return '📙 要注意';
+        return `📙 ${t('export.judgment.caution')}`;
       case 'reject':
-        return '📕 不採用';
+        return `📕 ${t('export.judgment.reject')}`;
       default:
-        return '❓ 未判定';
+        return `❓ ${t('export.judgment.notEvaluated')}`;
     }
   }
 
@@ -149,18 +149,18 @@
     if (!checklist) return;
 
     const text = `
-📋 事実確認評価結果
+📋 ${t('export.clipboardTitle')}
 
-タイトル: ${refactoredChecklistStore.effectiveTitle}
-作成日: ${checklist.createdAt.toLocaleDateString('ja-JP')}
-総合スコア: ${checklist.score.total}/${checklist.score.maxScore} (${checklist.confidenceLevel}%)
-信頼度: ${checklist.confidenceText}
-最終判定: ${getJudgmentText(checklist.judgment)}
+${t('export.metadata.title')}: ${refactoredChecklistStore.effectiveTitle}
+${t('export.metadata.created')}: ${checklist.createdAt.toLocaleDateString()}
+${t('export.metadata.score')}: ${checklist.score.total}/${checklist.score.maxScore} (${checklist.confidenceLevel}%)
+${t('export.metadata.confidence')}: ${checklist.confidenceText}
+${t('export.metadata.judgment')}: ${getJudgmentText(checklist.judgment)}
 
-📊 セクション別達成率:
-${sections.map(s => `${s.category.emoji} ${s.category.name}: ${s.completionRate}% (${s.checkedItems.length}/${s.items.length})`).join('\n')}
+📊 ${t('export.sectionCompletion')}:
+${sections.map(s => `${s.category.emoji} ${s.category.name}: ${s.completionRate}% (${s.checkedItems.length}/${s.items.length} ${t('export.items')})`).join('\n')}
 
-${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
+${checklist.notes ? `📝 ${t('export.notes')}:\n${checklist.notes}` : ''}
 		`.trim();
 
     try {

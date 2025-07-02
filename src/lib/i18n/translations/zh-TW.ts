@@ -177,22 +177,26 @@ export const translations: TranslationKeys = {
     critical: {
       name: '關鍵評估（必需）',
       description: '判斷基本資訊可靠性的最重要項目',
-      emoji: '🚨'
+      emoji: '🚨',
+      short: '關鍵'
     },
     detailed: {
       name: '詳細評估（重要）',
       description: '評估資訊質量和專業性的項目',
-      emoji: '📝'
+      emoji: '📝',
+      short: '詳細'
     },
     verification: {
       name: '驗證與交叉檢查',
       description: '確認資訊可驗證性和支持的項目',
-      emoji: '🔍'
+      emoji: '🔍',
+      short: '驗證'
     },
     context: {
       name: '背景與偏見評估',
       description: '評估偏見適當性和背景的項目',
-      emoji: '🌐'
+      emoji: '🌐',
+      short: '背景'
     }
   },
 
@@ -226,6 +230,7 @@ export const translations: TranslationKeys = {
       initializing: '初始化中...',
       generating: '產生中...',
       processing: '處理中...',
+      saving: '儲存中...',
       finalizing: '完成中...',
       completed: '完成',
       failed: '失敗'
@@ -242,22 +247,49 @@ export const translations: TranslationKeys = {
     },
     sectionCompletionRates: '章節完成率',
     achievementStatus: '達成狀態',
+    completionStatus: '完成狀態',
     goodExamples: '良好範例',
     badExamples: '不良範例',
     completed: '已完成',
+    notCompleted: '未完成',
     items: '項目',
+    examples: '範例',
     metadata: {
+      title: '詮釋資料',
       created: '建立時間',
       score: '分數',
       confidence: '信心',
-      language: '語言'
+      language: '語言',
+      judgment: '最終判斷'
     },
     summary: {
       title: '評估摘要',
       totalScore: '總分',
       completionRate: '完成率',
       confidenceLevel: '信心水準',
-      checkedItems: '已檢查項目'
+      checkedItems: '已檢查項目',
+      result: '評估結果',
+      confidenceText: '信心文字',
+      judgmentAdvice: '判斷建議'
+    },
+    clipboardTitle: '事實查核評估結果',
+    sectionCompletion: '章節完成率',
+    notes: '評估筆記',
+    judgment: {
+      accept: '建議',
+      caution: '謹慎應用',
+      reject: '不建議',
+      notEvaluated: '未評估'
+    },
+    csv: {
+      id: 'ID',
+      title: '標題',
+      description: '描述',
+      checked: '已檢查',
+      category: '類別'
+    },
+    error: {
+      pdfGeneration: 'PDF 生成失敗'
     }
   },
 

@@ -179,22 +179,26 @@ export const translations: TranslationKeys = {
       name: 'Valutazione Critica (Richiesta)',
       description:
         "Elementi più importanti per determinare l'affidabilità di base delle informazioni",
-      emoji: '🚨'
+      emoji: '🚨',
+      short: 'Critica'
     },
     detailed: {
       name: 'Valutazione Dettagliata (Importante)',
       description: 'Elementi per valutare la qualità e competenza delle informazioni',
-      emoji: '📝'
+      emoji: '📝',
+      short: 'Dettagliata'
     },
     verification: {
       name: 'Verifica & Controllo Incrociato',
       description: 'Elementi per confermare la verificabilità e supporto delle informazioni',
-      emoji: '🔍'
+      emoji: '🔍',
+      short: 'Verifica'
     },
     context: {
       name: 'Valutazione Contesto & Bias',
       description: "Elementi per valutare l'appropriatezza del bias e contesto",
-      emoji: '🌐'
+      emoji: '🌐',
+      short: 'Contesto'
     }
   },
   export: {
@@ -226,6 +230,7 @@ export const translations: TranslationKeys = {
       initializing: 'Inizializzazione...',
       generating: 'Generazione...',
       processing: 'Elaborazione...',
+      saving: 'Salvataggio...',
       finalizing: 'Finalizzazione...',
       completed: 'Completato',
       failed: 'Fallito'
@@ -242,22 +247,49 @@ export const translations: TranslationKeys = {
     },
     sectionCompletionRates: 'Tassi di Completamento Sezioni',
     achievementStatus: 'Stato di Completamento',
+    completionStatus: 'Stato di Completamento',
     goodExamples: 'Buoni Esempi',
     badExamples: 'Cattivi Esempi',
     completed: 'Completato',
+    notCompleted: 'Non Completato',
     items: 'Elementi',
+    examples: 'Esempi',
     metadata: {
+      title: 'Metadati',
       created: 'Creato',
       score: 'Punteggio',
       confidence: 'Fiducia',
-      language: 'Lingua'
+      language: 'Lingua',
+      judgment: 'Giudizio Finale'
     },
     summary: {
       title: 'Riepilogo Valutazione',
       totalScore: 'Punteggio Totale',
       completionRate: 'Tasso di Completamento',
       confidenceLevel: 'Livello di Fiducia',
-      checkedItems: 'Elementi Verificati'
+      checkedItems: 'Elementi Verificati',
+      result: 'Risultato Valutazione',
+      confidenceText: 'Testo di Fiducia',
+      judgmentAdvice: 'Consiglio di Giudizio'
+    },
+    clipboardTitle: 'Risultati di Valutazione del Controllo dei Fatti',
+    sectionCompletion: 'Tasso di Completamento per Sezione',
+    notes: 'Note di Valutazione',
+    judgment: {
+      accept: 'Raccomandato',
+      caution: 'Cautela Richiesta',
+      reject: 'Non Raccomandato',
+      notEvaluated: 'Non Valutato'
+    },
+    csv: {
+      id: 'ID',
+      title: 'Titolo',
+      description: 'Descrizione',
+      checked: 'Verificato',
+      category: 'Categoria'
+    },
+    error: {
+      pdfGeneration: 'Generazione PDF fallita'
     }
   },
   history: {

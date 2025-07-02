@@ -5,9 +5,9 @@
  */
 
 import type jsPDF from 'jspdf';
-import type { ChecklistResult, CheckItem } from '$lib/types/checklist.js';
-import { CATEGORIES } from '$lib/data/checklist-items.js';
-import type { TranslationFunction, LanguageCode } from '$lib/i18n/types.js';
+import type { ChecklistResult, CheckItem, CheckCategory } from '$lib/types/checklist.js';
+import { getCategories } from '$lib/data/checklist-items.js';
+import type { SafeTranslationFunction, LanguageCode } from '$lib/i18n/types.js';
 import { InternationalFontManager } from '$lib/i18n/fonts.js';
 // Font registration is now handled internally with caching
 // import { registerJapaneseFonts } from './fontToBase64.js';
@@ -29,7 +29,7 @@ export interface ReliablePDFOptions {
   documentAuthor?: string; // 文書作成者
   documentSubject?: string; // 文書の件名
   // i18n support
-  t?: TranslationFunction; // 翻訳関数
+  t?: SafeTranslationFunction; // 翻訳関数
   language?: LanguageCode; // 言語コード
 }
 
@@ -47,7 +47,7 @@ export class ReliablePDFGenerator {
   // Phase 3: 高度なPDF機能用プロパティ
   private tableOfContents: Array<{ title: string; page: number; level: number }> = [];
   private options: ReliablePDFOptions = {} as ReliablePDFOptions;
-  private t!: TranslationFunction;
+  private t!: (key: string) => string;
   private fontManager!: InternationalFontManager;
 
   // パフォーマンス最適化: フォントキャッシュ
@@ -226,7 +226,7 @@ export class ReliablePDFGenerator {
 
     // タイトルを文字化けしにくい形式で表示
     const mainTitle = this.useFallbackFont
-      ? '📋 Fact Checking Checklist'
+      ? `📋 ${this.t ? this.t('app.title') : 'Fact Checking Checklist'}`
       : `📋 ${this.t('app.title')}`;
 
     this.addText(mainTitle);
@@ -278,7 +278,11 @@ export class ReliablePDFGenerator {
       month: '2-digit',
       day: '2-digit'
     });
-    const outputLabel = this.useFallbackFont ? 'Generated' : this.t('export.generatedAt');
+    const outputLabel = this.useFallbackFont
+      ? this.t
+        ? this.t('export.generatedAt')
+        : 'Generated'
+      : this.t('export.generatedAt');
     this.addText(`${outputLabel}: ${outputDate}`);
     this.currentY += 15;
   }
@@ -332,9 +336,7 @@ export class ReliablePDFGenerator {
     this.addSectionHeader(section);
 
     // Phase 3: TOCエントリー追加
-    const sectionTitle = this.useFallbackFont
-      ? `${section.category.emoji} ${this.getCategoryNameEn(section.category.id)}`
-      : `${section.category.emoji} ${section.category.name}`;
+    const sectionTitle = `${this.getLocalizedText(section.category.emoji)} ${this.getLocalizedText(section.category.name)}`;
     this.addToTableOfContents(sectionTitle, 2);
 
     this.currentY += 5;
@@ -346,9 +348,7 @@ export class ReliablePDFGenerator {
     this.pdf.setFontSize(10);
     this.setFontWeight('italic');
     this.pdf.setTextColor(85, 85, 85); // #555
-    const description = this.useFallbackFont
-      ? this.getCategoryDescEn(section.category.id)
-      : section.category.description;
+    const description = this.getLocalizedText(section.category.description);
     this.addWrappedText(description);
     this.currentY += 4;
 
@@ -413,7 +413,7 @@ export class ReliablePDFGenerator {
     this.addText('   ----------------------------------------');
     this.currentY += 1;
 
-    const guideLabel = this.useFallbackFont ? 'Guide' : 'ガイド';
+    const guideLabel = this.t('common.guide');
     this.addWrappedText(`   💡 ${guideLabel}: ${this.getLocalizedText(guideContent.title)}`);
     this.currentY += 2;
 
@@ -422,7 +422,7 @@ export class ReliablePDFGenerator {
 
     // 良い例
     if (guideContent.examples?.good?.length) {
-      const goodLabel = this.useFallbackFont ? 'Good examples' : '良い例';
+      const goodLabel = this.t('export.goodExamples');
       this.addText(`   ✅ ${goodLabel}:`);
       this.currentY += 2; // Ensure very clear separation
       guideContent.examples.good.forEach(example => {
@@ -434,7 +434,7 @@ export class ReliablePDFGenerator {
 
     // 悪い例
     if (guideContent.examples?.bad?.length) {
-      const badLabel = this.useFallbackFont ? 'Bad examples' : '悪い例';
+      const badLabel = this.t('export.badExamples');
       this.addText(`   ❌ ${badLabel}:`);
       this.currentY += 2; // Ensure very clear separation
       guideContent.examples.bad.forEach(example => {
@@ -466,7 +466,7 @@ export class ReliablePDFGenerator {
     this.setFontWeight('bold');
     this.pdf.setTextColor(44, 62, 80); // #2c3e50
 
-    const notesTitle = this.useFallbackFont ? '📝 Evaluation Notes' : '📝 評価メモ';
+    const notesTitle = `📝 ${this.t('export.notes')}`;
     this.addText(notesTitle);
 
     // Phase 3: TOCエントリー追加
@@ -497,12 +497,10 @@ export class ReliablePDFGenerator {
       this.setFontWeight('normal');
 
       // 左側：生成情報
-      const appName = this.useFallbackFont
-        ? 'Fact Checking Checklist Evaluation Report'
-        : '実用的事実確認チェックシートによる評価結果';
+      const appName = `${this.t('app.title')} - ${this.t('checklist.evaluationResults')}`;
       this.pdf.text(appName, this.margin, footerY);
 
-      const genLabel = this.useFallbackFont ? 'Generated' : '生成日時';
+      const genLabel = this.t('export.generatedAt');
       this.pdf.text(`${genLabel}: ${new Date().toLocaleString('ja-JP')}`, this.margin, footerY + 4);
 
       // 右側：ページ番号
@@ -619,15 +617,19 @@ export class ReliablePDFGenerator {
   }
 
   private getLocalizedText(text: string): string {
+    // 翻訳キーではない実際のテキストの判定
+    const isTranslationKey = this.isValidTranslationKey(text);
+    const finalText = isTranslationKey ? this.t(text) : text;
+
     if (this.fontLoaded && !this.useFallbackFont) {
-      // 日本語フォントが利用可能な場合、そのまま返す
-      return text;
+      // 日本語フォントが利用可能な場合、テキストを返す
+      return finalText;
     } else if (this.useFallbackFont) {
       // ASCII安全モード：英数字のみの安全なテキストに変換
-      return this.sanitizeText(text);
+      return this.sanitizeText(finalText);
     }
     // 標準モード：日本語文字が文字化けする可能性があるがそのまま返す
-    return text;
+    return finalText;
   }
 
   private sanitizeText(text: string): string {
@@ -637,75 +639,47 @@ export class ReliablePDFGenerator {
       .substring(0, 100); // 長さ制限
   }
 
+  private isValidTranslationKey(text: string): boolean {
+    // 翻訳キーの形式をチェックする（英数字とドットのみ）
+    return /^[a-zA-Z0-9._-]+$/.test(text) && text.includes('.');
+  }
+
   private getJudgmentText(judgment: string | null): string {
-    if (this.useFallbackFont) {
-      switch (judgment) {
-        case 'accept':
-          return '✅ Recommended';
-        case 'caution':
-          return '⚠️ Caution';
-        case 'reject':
-          return '❌ Not Recommended';
-        default:
-          return '❓ Not Evaluated';
-      }
-    } else {
-      switch (judgment) {
-        case 'accept':
-          return '✅ 採用推奨';
-        case 'caution':
-          return '⚠️ 要注意';
-        case 'reject':
-          return '❌ 不採用推奨';
-        default:
-          return '❓ 判定未実施';
-      }
+    switch (judgment) {
+      case 'accept':
+        return `✅ ${this.t('export.judgment.accept')}`;
+      case 'caution':
+        return `⚠️ ${this.t('export.judgment.caution')}`;
+      case 'reject':
+        return `❌ ${this.t('export.judgment.reject')}`;
+      default:
+        return `❓ ${this.t('export.judgment.notEvaluated')}`;
     }
   }
 
   private getRiskIcon(categoryId: string): string {
     switch (categoryId) {
       case 'critical':
-        return this.useFallbackFont ? '🔴 Critical' : '🔴 重要';
+        return `🔴 ${this.t('categories.critical.short')}`;
       case 'detailed':
-        return this.useFallbackFont ? '🟠 Detailed' : '🟠 詳細';
+        return `🟠 ${this.t('categories.detailed.short')}`;
       case 'verification':
-        return this.useFallbackFont ? '🔵 Verification' : '🔵 検証';
+        return `🔵 ${this.t('categories.verification.short')}`;
       case 'context':
-        return this.useFallbackFont ? '🟣 Context' : '🟣 文脈';
+        return `🟣 ${this.t('categories.context.short')}`;
       default:
-        return this.useFallbackFont ? '⚪ General' : '⚪ 一般';
+        return '⚪';
     }
   }
 
   private getCategoryNameEn(categoryId: string): string {
-    switch (categoryId) {
-      case 'critical':
-        return 'Critical Information';
-      case 'detailed':
-        return 'Detailed Verification';
-      case 'verification':
-        return 'Source Verification';
-      case 'context':
-        return 'Context Analysis';
-      default:
-        return 'General';
-    }
+    // 翻訳関数を使用
+    return this.t(`categories.${categoryId}.name`);
   }
 
   private getCategoryDescEn(categoryId: string): string {
-    switch (categoryId) {
-      case 'critical':
-        return 'Essential elements for information credibility assessment';
-      case 'detailed':
-        return 'In-depth verification and consistency checks';
-      case 'verification':
-        return 'Source reliability and evidence validation';
-      case 'context':
-        return 'Contextual factors and bias analysis';
-      default:
-        return 'General verification items';
-    }
+    // 翻訳関数を使用
+    return this.t(`categories.${categoryId}.description`);
   }
 
   // パフォーマンス最適化: キャッシュ付きフォント登録
@@ -905,19 +879,12 @@ export class ReliablePDFGenerator {
 
   // スコアグリッドを描画（HTML版のscore-gridスタイル相当）
   private addScoreGrid(checklist: ChecklistResult): void {
-    const summaryLabels = this.useFallbackFont
-      ? {
-          totalScore: 'Total Score',
-          confidenceLevel: 'Confidence Level',
-          result: 'Evaluation Result',
-          judgment: 'Final Judgment'
-        }
-      : {
-          totalScore: '総合スコア',
-          confidenceLevel: '信頼度レベル',
-          result: '評価結果',
-          judgment: '最終判定'
-        };
+    const summaryLabels = {
+      totalScore: this.t('export.summary.totalScore'),
+      confidenceLevel: this.t('export.summary.confidenceLevel'),
+      result: this.t('export.summary.result'),
+      judgment: this.t('export.metadata.judgment')
+    };
 
     // スコアカードを2x2グリッドで配置
     const cardWidth = (this.maxLineWidth - 10) / 2;
@@ -931,7 +898,10 @@ export class ReliablePDFGenerator {
         value: `${checklist.score.total}/${checklist.score.maxScore}`
       },
       { label: summaryLabels.confidenceLevel, value: `${checklist.confidenceLevel}%` },
-      { label: summaryLabels.result, value: this.getLocalizedText(checklist.confidenceText) },
+      {
+        label: summaryLabels.result,
+        value: checklist.confidenceText || this.t('checklist.confidence.poor')
+      },
       { label: summaryLabels.judgment, value: this.getJudgmentText(checklist.judgment) }
     ];
 
@@ -976,9 +946,7 @@ export class ReliablePDFGenerator {
     this.setFontWeight('bold');
     this.pdf.setTextColor(255, 255, 255); // 白文字
 
-    const sectionTitle = this.useFallbackFont
-      ? `${section.category.emoji} ${this.getCategoryNameEn(section.category.id)}`
-      : `${section.category.emoji} ${section.category.name}`;
+    const sectionTitle = `${this.getLocalizedText(section.category.emoji)} ${this.getLocalizedText(section.category.name)}`;
 
     this.pdf.text(sectionTitle, this.margin + 10, this.currentY + 12);
 
@@ -1012,11 +980,9 @@ export class ReliablePDFGenerator {
   // PDFメタデータの設定
   private addPDFMetadata(checklist: ChecklistResult): void {
     try {
-      const title = this.options.documentTitle ?? `事実確認チェックシート - ${checklist.title}`;
-      const author = this.options.documentAuthor ?? 'Fact Checklist Generator';
-      const subject =
-        this.options.documentSubject ??
-        '情報の信頼性を科学的・体系的に評価するための実用的事実確認チェックシート';
+      const title = this.options.documentTitle ?? `${this.t('app.title')} - ${checklist.title}`;
+      const author = this.options.documentAuthor ?? this.t('app.author');
+      const subject = this.options.documentSubject ?? this.t('app.description');
 
       // jsPDFのメタデータ設定
       this.pdf.setProperties({
@@ -1246,7 +1212,10 @@ export class ReliablePDFGenerator {
   }
 
   private groupItemsByCategory(items: CheckItem[]): SectionData[] {
-    return CATEGORIES.map(category => {
+    // Use the translation function to get categories in the correct language
+    const categories = getCategories(this.t);
+    
+    return categories.map(category => {
       const categoryItems = items.filter(item => item.category.id === category.id);
       const checkedItems = categoryItems.filter(item => item.checked);
 
@@ -1266,7 +1235,7 @@ export class ReliablePDFGenerator {
 
 // 型定義
 interface SectionData {
-  category: (typeof CATEGORIES)[0];
+  category: CheckCategory;
   items: CheckItem[];
   checkedItems: CheckItem[];
   uncheckedItems: CheckItem[];

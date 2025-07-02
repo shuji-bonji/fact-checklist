@@ -182,22 +182,26 @@ export const translations: TranslationKeys = {
     critical: {
       name: 'クリティカル評価（必須）',
       description: '情報の基本的信頼性を判断する最重要項目',
-      emoji: '🚨'
+      emoji: '🚨',
+      short: '重要'
     },
     detailed: {
       name: '詳細評価（重要）',
       description: '情報の質と専門性を評価する項目',
-      emoji: '📝'
+      emoji: '📝',
+      short: '詳細'
     },
     verification: {
       name: '検証・照合',
       description: '情報の検証可能性と裏付けを確認する項目',
-      emoji: '🔍'
+      emoji: '🔍',
+      short: '検証'
     },
     context: {
       name: '文脈・バイアス評価',
       description: 'バイアスと文脈の適切性を評価する項目',
-      emoji: '🌐'
+      emoji: '🌐',
+      short: '文脈'
     }
   },
 
@@ -231,6 +235,7 @@ export const translations: TranslationKeys = {
       initializing: '初期化中...',
       generating: '生成中...',
       processing: '処理中...',
+      saving: '保存中...',
       finalizing: '完了処理中...',
       completed: '完了',
       failed: '失敗'
@@ -247,22 +252,49 @@ export const translations: TranslationKeys = {
     },
     sectionCompletionRates: 'セクション別達成率',
     achievementStatus: '達成状況',
+    completionStatus: '完了状況',
     goodExamples: '良い例',
     badExamples: '悪い例',
     completed: '完了',
+    notCompleted: '未完了',
     items: '項目',
+    examples: '例',
     metadata: {
+      title: 'メタデータ',
       created: '作成日',
       score: 'スコア',
       confidence: '信頼度',
-      language: '言語'
+      language: '言語',
+      judgment: '最終判定'
     },
     summary: {
       title: '評価結果サマリー',
       totalScore: '総合スコア',
       completionRate: '達成率',
       confidenceLevel: '信頼度レベル',
-      checkedItems: 'チェック済み項目'
+      checkedItems: 'チェック済み項目',
+      result: '評価結果',
+      confidenceText: '信頼度テキスト',
+      judgmentAdvice: '判定アドバイス'
+    },
+    clipboardTitle: '事実確認評価結果',
+    sectionCompletion: 'セクション別達成率',
+    notes: '評価メモ',
+    judgment: {
+      accept: '採用',
+      caution: '要注意',
+      reject: '不採用',
+      notEvaluated: '未判定'
+    },
+    csv: {
+      id: 'ID',
+      title: 'タイトル',
+      description: '説明',
+      checked: 'チェック済み',
+      category: 'カテゴリ'
+    },
+    error: {
+      pdfGeneration: 'PDF生成に失敗しました'
     }
   },
 

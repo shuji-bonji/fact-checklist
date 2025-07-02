@@ -6,7 +6,7 @@
 
 import type jsPDF from 'jspdf';
 import type { ChecklistResult, CheckItem } from '$lib/types/checklist.js';
-import { CATEGORIES } from '$lib/data/checklist-items.js';
+import { getCategories } from '$lib/data/checklist-items.js';
 import {
   addJapaneseFontToPDF,
   setFontSize,
@@ -544,8 +544,8 @@ function addFooter(pdf: jsPDF, layout: PageLayout, fontConfig: FontConfig): void
 
 // ヘルパー関数
 
-function groupItemsByCategory(checklist: ChecklistResult) {
-  return CATEGORIES.map(category => {
+function groupItemsByCategory(checklist: ChecklistResult, translationFunction?: (key: string) => string) {
+  return getCategories(translationFunction).map(category => {
     const items = checklist.items.filter(item => item.category.id === category.id);
     const checkedItems = items.filter(item => item.checked);
 
