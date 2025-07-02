@@ -158,6 +158,7 @@ export interface TranslationKeys {
   // チェックリスト関連
   checklist: {
     title: string;
+    defaultFileName: string;
     description: string;
     newChecklist: string;
     createChecklist: string;

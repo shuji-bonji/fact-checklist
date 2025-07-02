@@ -113,6 +113,7 @@ export const translations: TranslationKeys = {
   },
   checklist: {
     title: 'चेकलिस्ट जानकारी',
+    defaultFileName: 'चेकलिस्ट जानकारी',
     description: 'चेकलिस्ट विवरण',
     newChecklist: 'नई चेकलिस्ट',
     createChecklist: 'चेकलिस्ट बनाएं',

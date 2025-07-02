@@ -110,6 +110,7 @@ export const translations: TranslationKeys = {
   },
   checklist: {
     title: '체크리스트 정보',
+    defaultFileName: '체크리스트 정보',
     description: '체크리스트 세부사항',
     newChecklist: '새 체크리스트',
     createChecklist: '체크리스트 생성',
