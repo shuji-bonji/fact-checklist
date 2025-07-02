@@ -258,7 +258,7 @@ benchmark/
 sw.js
 workbox-*.js
 pwa-*.png
-apple-*.png
+#apple-*.png
 maskable-*.png
 
 # Generated files
