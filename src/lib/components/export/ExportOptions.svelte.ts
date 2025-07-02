@@ -25,8 +25,8 @@ export class ExportOptionsManager {
   sectionBreaks = $state(true);
   textMode = $state(false); // テキストベースPDF（レガシー）
   advancedMode = $state(false); // 高度なモード
-  reliableMode = $state(true); // 確実な日本語フォント対応（デフォルト）
-  pixelPerfectMode = $state(false); // HTML→印刷→PDF
+  reliableMode = $state(false); // 確実な日本語フォント対応
+  pixelPerfectMode = $state(true); // HTML→印刷→PDF（デフォルト）
 
   // リアクティブなエクスポートオプション
   readonly options = $derived<ExportOptions>({
@@ -120,8 +120,8 @@ export class ExportOptionsManager {
     this.sectionBreaks = true;
     this.textMode = false;
     this.advancedMode = false;
-    this.reliableMode = true;
-    this.pixelPerfectMode = false;
+    this.reliableMode = false;
+    this.pixelPerfectMode = true;
   }
 
   /**

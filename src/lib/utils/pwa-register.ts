@@ -56,14 +56,17 @@ export function registerPWA(): Promise<PWAUpdateInfo> {
     });
 
     // Service Worker登録（GitHub Pages対応）
-    const isGitHubPages = window.location.hostname === 'shuji-bonji.github.io' || 
-                         window.location.pathname.startsWith('/fact-checklist/');
+    const isGitHubPages =
+      window.location.hostname === 'shuji-bonji.github.io' ||
+      window.location.pathname.startsWith('/fact-checklist/');
     const swPath = isGitHubPages ? '/fact-checklist/sw.js' : '/sw.js';
     const scope = isGitHubPages ? '/fact-checklist/' : '/';
-    
-    console.log(`🔧 PWA Registration: hostname=${window.location.hostname}, pathname=${window.location.pathname}`);
+
+    console.log(
+      `🔧 PWA Registration: hostname=${window.location.hostname}, pathname=${window.location.pathname}`
+    );
     console.log(`🔧 PWA Registration: swPath=${swPath}, scope=${scope}`);
-    
+
     navigator.serviceWorker
       .register(swPath, { scope })
       .then(reg => {
