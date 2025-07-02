@@ -1,17 +1,17 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
   import { base } from '$app/paths';
-  import { checklistStore } from '$lib/stores/checklistStore.svelte.js';
+  import { refactoredChecklistStore } from '$lib/stores/refactoredChecklistStore.svelte.js';
   import type { ChecklistHistoryItem, JudgmentType } from '$lib/types/checklist.js';
   import { t } from '$lib/i18n/index.js';
 
   // ストアから履歴を取得
-  const history = $derived(checklistStore.history);
+  const history = $derived(refactoredChecklistStore.history);
   let showAllHistory = $state(false);
 
   // 表示する履歴項目（最新5件 or 全件）
   const displayedHistory = $derived(
-    showAllHistory ? checklistStore.getAllHistory() : history.slice(0, 5)
+    showAllHistory ? refactoredChecklistStore.getAllHistory() : history.slice(0, 5)
   );
 
   function loadHistoryItem(item: ChecklistHistoryItem) {
@@ -21,7 +21,7 @@
   async function deleteHistoryItem(item: ChecklistHistoryItem, event: Event) {
     event.stopPropagation(); // 親要素のクリックイベントを防ぐ
     if (confirm(`${t('confirmations.delete')}: ${item.title}`)) {
-      await checklistStore.deleteFromHistory(item.id);
+      await refactoredChecklistStore.deleteFromHistory(item.id);
     }
   }
 
@@ -29,8 +29,8 @@
     showAllHistory = !showAllHistory;
   }
 
-  function createNewChecklist() {
-    const id = checklistStore.createNewChecklist();
+  async function createNewChecklist() {
+    const id = await refactoredChecklistStore.createNewChecklist();
     goto(`${base}/?id=${id}`);
   }
 
