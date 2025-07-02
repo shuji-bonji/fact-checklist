@@ -16,41 +16,91 @@ export interface SimplePDFOptions {
 }
 
 export class SimplePDFGenerator {
-  async generateFromHTML(htmlContent: string, _filename: string): Promise<void> {
+  async generateFromHTML(
+    htmlContent: string,
+    _filename: string
+  ): Promise<{ success: boolean; cancelled?: boolean }> {
     console.log('🎨 Starting simple HTML to PDF conversion...');
 
-    try {
-      // 新しいウィンドウでHTMLを開く
-      const printWindow = window.open('', '_blank', 'width=800,height=600');
-      if (!printWindow) {
-        throw new Error('ポップアップがブロックされました。ポップアップを許可してください。');
-      }
+    return new Promise((resolve, reject) => {
+      try {
+        // 新しいウィンドウでHTMLを開く
+        const printWindow = window.open('', '_blank', 'width=800,height=600');
+        if (!printWindow) {
+          reject(new Error('ポップアップがブロックされました。ポップアップを許可してください。'));
+          return;
+        }
 
-      // HTMLコンテンツを書き込む
-      printWindow.document.write(htmlContent);
-      printWindow.document.close();
+        // HTMLコンテンツを書き込む
+        printWindow.document.write(htmlContent);
+        printWindow.document.close();
 
-      // コンテンツが読み込まれるまで待機
-      await new Promise<void>(resolve => {
+        // コンテンツが読み込まれるまで待機
         printWindow.onload = () => {
           // さらに少し待機（レンダリング完了のため）
-          setTimeout(() => resolve(), 500);
+          setTimeout(() => {
+            // 印刷ダイアログを開く（PDFとして保存可能）
+            printWindow.print();
+
+            // 印刷ダイアログの結果を監視
+            let dialogClosed = false;
+            let timeoutId: number = 0;
+            let cancelCheckInterval: number = 0;
+
+            // ウィンドウのフォーカス変化を監視してキャンセル検出
+            const checkPrintStatus = () => {
+              setTimeout(() => {
+                if (!dialogClosed) {
+                  // ウィンドウが閉じられていない場合は成功とみなす
+                  dialogClosed = true;
+                  clearTimeout(timeoutId);
+                  clearInterval(cancelCheckInterval);
+                  printWindow.close();
+                  console.log('✅ Print dialog completed');
+                  resolve({ success: true });
+                }
+              }, 1500); // 1.5秒後にチェック
+            };
+
+            // ウィンドウがすぐに閉じられた場合はキャンセルとみなす
+            const checkCancel = () => {
+              if (printWindow.closed && !dialogClosed) {
+                dialogClosed = true;
+                clearTimeout(timeoutId);
+                clearInterval(cancelCheckInterval);
+                console.log('❌ Print dialog was cancelled');
+                resolve({ success: false, cancelled: true });
+              }
+            };
+
+            // 定期的にキャンセルをチェック
+            cancelCheckInterval = setInterval(() => {
+              checkCancel();
+              if (dialogClosed) {
+                clearInterval(cancelCheckInterval);
+              }
+            }, 100);
+
+            // タイムアウト設定（30秒）
+            timeoutId = window.setTimeout(() => {
+              if (!dialogClosed) {
+                dialogClosed = true;
+                clearInterval(cancelCheckInterval);
+                printWindow.close();
+                console.log('✅ Print dialog timeout - assuming success');
+                resolve({ success: true });
+              }
+            }, 30000);
+
+            // 印刷状態をチェック
+            checkPrintStatus();
+          }, 500);
         };
-      });
-
-      // 印刷ダイアログを開く（PDFとして保存可能）
-      printWindow.print();
-
-      // 印刷後にウィンドウを閉じる
-      setTimeout(() => {
-        printWindow.close();
-      }, 1000);
-
-      console.log('✅ Print dialog opened successfully');
-    } catch (error) {
-      console.error('❌ PDF generation failed:', error);
-      throw error;
-    }
+      } catch (error) {
+        console.error('❌ PDF generation failed:', error);
+        reject(error);
+      }
+    });
   }
 
   /**
