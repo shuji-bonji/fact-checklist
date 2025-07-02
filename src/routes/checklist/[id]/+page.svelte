@@ -231,7 +231,15 @@
       <!-- 🧪 PWA デバッグ情報表示 -->
       <div
         class="pwa-debug-panel"
-        style:background="#000" style:color="#00ff00" style:margin="20px 0" style:border="3px solid #ff0000" style:z-index="9999" style:border-radius="8px" style:position="relative" style:font-family="monospace" style:padding="20px"
+        style:background="#000"
+        style:color="#00ff00"
+        style:margin="20px 0"
+        style:border="3px solid #ff0000"
+        style:z-index="9999"
+        style:border-radius="8px"
+        style:position="relative"
+        style:font-family="monospace"
+        style:padding="20px"
       >
         <h3 style:color="#ffff00" style:margin-top="0">🧪 PWA Debug Panel</h3>
 
@@ -268,7 +276,12 @@
       <!-- 既存のPWAインストールプロンプト -->
       {#if showPWAPrompt()}
         <div style:border="3px solid #00ff00" style:padding="10px" style:margin="10px 0">
-          <div style:background="#00ff00" style:color="#000" style:margin-bottom="10px" style:padding="5px">
+          <div
+            style:background="#00ff00"
+            style:color="#000"
+            style:margin-bottom="10px"
+            style:padding="5px"
+          >
             ✅ PWA Prompt Should Be Visible (Normal Conditions Met)
           </div>
           <PWAInstallPrompt
@@ -280,8 +293,18 @@
           />
         </div>
       {:else}
-        <div style:border="3px solid #ff0000" style:padding="10px" style:background="#ffeeee" style:margin="10px 0">
-          <div style:background="#ff0000" style:color="#fff" style:margin-bottom="10px" style:padding="5px">
+        <div
+          style:border="3px solid #ff0000"
+          style:padding="10px"
+          style:background="#ffeeee"
+          style:margin="10px 0"
+        >
+          <div
+            style:background="#ff0000"
+            style:color="#fff"
+            style:margin-bottom="10px"
+            style:padding="5px"
+          >
             ❌ PWA Prompt Hidden - showPWAPrompt() returned false
           </div>
           <div style:color="#000">Debug: 表示条件が満たされていません</div>
@@ -289,7 +312,12 @@
       {/if}
 
       <!-- 🔧 強制表示テスト -->
-      <div style:border="3px solid #0066ff" style:padding="20px" style:background="#f0f8ff" style:margin="20px 0">
+      <div
+        style:border="3px solid #0066ff"
+        style:padding="20px"
+        style:background="#f0f8ff"
+        style:margin="20px 0"
+      >
         <h4 style:color="#0066ff" style:margin-top="0">🔧 Force PWA Test (Always Visible)</h4>
         <p style:color="#000">この部分は条件に関係なく常に表示されます：</p>
 
