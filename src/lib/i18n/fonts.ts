@@ -13,10 +13,72 @@ export interface FontConfig {
   fallback?: string;
 }
 
-// Font configurations for different language groups
+/**
+ * Get the correct base path for font URLs based on environment
+ */
+export function getFontBasePath(): string {
+  if (typeof window === 'undefined') return '/fonts/'; // SSR
+  
+  // Check for GitHub Pages environment
+  const isGitHubPages = window.location.hostname === 'shuji-bonji.github.io' || 
+                       window.location.pathname.startsWith('/fact-checklist/') ||
+                       window.location.origin.includes('github.io');
+  
+  console.log(`🔧 Font path detection: hostname=${window.location.hostname}, pathname=${window.location.pathname}, isGitHubPages=${isGitHubPages}`);
+  
+  return isGitHubPages ? '/fact-checklist/fonts/' : '/fonts/';
+}
+
+/**
+ * Get font configurations with correct paths for current environment
+ */
+export function getFontConfigs(): Record<string, FontConfig> {
+  const basePath = getFontBasePath();
+  
+  return {
+    // Latin script languages (English, French, Spanish, Portuguese, German, Italian, Indonesian)
+    // Use NotoSansJP as universal font since it supports both Latin and Japanese
+    latin: {
+      fontFamily: 'NotoSansJP',
+      fontFile: `${basePath}NotoSansJP-Regular.ttf`,
+      fontName: 'NotoSansJP',
+      supports: ['en', 'fr', 'es', 'pt', 'de', 'it', 'id'],
+      fallback: 'helvetica'
+    },
+
+    // CJK languages (Japanese, Korean, Chinese Traditional)
+    // Use existing NotoSansJP font
+    cjk: {
+      fontFamily: 'NotoSansJP',
+      fontFile: `${basePath}NotoSansJP-Regular.ttf`,
+      fontName: 'NotoSansJP',
+      supports: ['ja', 'ko', 'zh-TW'],
+      fallback: 'helvetica'
+    },
+
+    // Devanagari script (Hindi) - Fallback to NotoSansJP
+    devanagari: {
+      fontFamily: 'NotoSansJP',
+      fontFile: `${basePath}NotoSansJP-Regular.ttf`,
+      fontName: 'NotoSansJP',
+      supports: ['hi'],
+      fallback: 'helvetica'
+    },
+
+    // Arabic script - Fallback to NotoSansJP
+    arabic: {
+      fontFamily: 'NotoSansJP',
+      fontFile: `${basePath}NotoSansJP-Regular.ttf`,
+      fontName: 'NotoSansJP',
+      supports: ['ar'],
+      fallback: 'helvetica'
+    }
+  };
+}
+
+// Legacy export for backward compatibility (use getFontConfigs() instead)
 export const FONT_CONFIGS: Record<string, FontConfig> = {
-  // Latin script languages (English, French, Spanish, Portuguese, German, Italian, Indonesian)
-  // Use NotoSansJP as universal font since it supports both Latin and Japanese
+  // These will be updated at runtime by InternationalFontManager
   latin: {
     fontFamily: 'NotoSansJP',
     fontFile: '/fonts/NotoSansJP-Regular.ttf',
@@ -24,9 +86,6 @@ export const FONT_CONFIGS: Record<string, FontConfig> = {
     supports: ['en', 'fr', 'es', 'pt', 'de', 'it', 'id'],
     fallback: 'helvetica'
   },
-
-  // CJK languages (Japanese, Korean, Chinese Traditional)
-  // Use existing NotoSansJP font
   cjk: {
     fontFamily: 'NotoSansJP',
     fontFile: '/fonts/NotoSansJP-Regular.ttf',
@@ -34,8 +93,6 @@ export const FONT_CONFIGS: Record<string, FontConfig> = {
     supports: ['ja', 'ko', 'zh-TW'],
     fallback: 'helvetica'
   },
-
-  // Devanagari script (Hindi) - Fallback to NotoSansJP
   devanagari: {
     fontFamily: 'NotoSansJP',
     fontFile: '/fonts/NotoSansJP-Regular.ttf',
@@ -43,8 +100,6 @@ export const FONT_CONFIGS: Record<string, FontConfig> = {
     supports: ['hi'],
     fallback: 'helvetica'
   },
-
-  // Arabic script - Fallback to NotoSansJP
   arabic: {
     fontFamily: 'NotoSansJP',
     fontFile: '/fonts/NotoSansJP-Regular.ttf',
@@ -74,10 +129,12 @@ export const LANGUAGE_FONT_MAP: Record<LanguageCode, string> = {
 export async function loadFontAsBase64(fontUrl: string): Promise<string | null> {
   try {
     console.log(`🔤 Loading font file: ${fontUrl}`);
+    console.log(`🔤 Current location: ${window.location.origin}${window.location.pathname}`);
 
     const response = await fetch(fontUrl);
     if (!response.ok) {
-      throw new Error(`Font file not found: ${fontUrl}`);
+      console.error(`❌ Font fetch failed: ${response.status} ${response.statusText} for ${fontUrl}`);
+      throw new Error(`Font file not found: ${fontUrl} (${response.status} ${response.statusText})`);
     }
 
     const arrayBuffer = await response.arrayBuffer();
@@ -115,7 +172,8 @@ export class InternationalFontManager {
   async setupFontsForLanguage(language: LanguageCode): Promise<boolean> {
     this.currentLanguage = language;
     const fontConfigKey = LANGUAGE_FONT_MAP[language];
-    const fontConfig = FONT_CONFIGS[fontConfigKey];
+    const fontConfigs = getFontConfigs();
+    const fontConfig = fontConfigs[fontConfigKey];
 
     if (!fontConfig) {
       console.warn(`⚠️ No font configuration found for language: ${language}`);
@@ -165,7 +223,8 @@ export class InternationalFontManager {
 
   setFont(style: 'normal' | 'bold' = 'normal'): void {
     const fontConfigKey = LANGUAGE_FONT_MAP[this.currentLanguage];
-    const fontConfig = FONT_CONFIGS[fontConfigKey];
+    const fontConfigs = getFontConfigs();
+    const fontConfig = fontConfigs[fontConfigKey];
 
     if (fontConfig && this.loadedFonts.has(fontConfig.fontName)) {
       this.pdf.setFont(fontConfig.fontName, style);
