@@ -134,10 +134,22 @@ export async function addJapaneseFontToPDF(
  */
 export async function loadLocalJapaneseFont(pdf: jsPDF): Promise<string> {
   try {
+    // GitHub Pages対応の動的フォントパス取得
+    const getFontBasePath = () => {
+      if (typeof window === 'undefined') return '/fonts/'; // SSR
+      
+      const isGitHubPages = window.location.hostname === 'shuji-bonji.github.io' || 
+                           window.location.pathname.startsWith('/fact-checklist/') ||
+                           window.location.origin.includes('github.io');
+      return isGitHubPages ? '/fact-checklist/fonts/' : '/fonts/';
+    };
+    
+    const fontPath = `${getFontBasePath()}NotoSansJP-Regular.ttf`;
+    
     // 静的ファイルから読み込み
-    const response = await fetch('/fonts/NotoSansJP-Regular.ttf');
+    const response = await fetch(fontPath);
     if (!response.ok) {
-      throw new Error('ローカルフォント読み込み失敗');
+      throw new Error(`ローカルフォント読み込み失敗: ${fontPath}`);
     }
 
     const fontBuffer = await response.arrayBuffer();
