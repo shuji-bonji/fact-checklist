@@ -570,3 +570,161 @@ async function generatePDF(
 This document serves as a comprehensive guide for maintaining and developing the
 Fact Checklist application. Always prioritize code quality, type safety, and
 user experience across all 12 supported languages.
+
+---
+
+## Testing Strategy & Environment
+
+### Test Architecture Overview
+
+This project implements a comprehensive testing strategy with multiple layers:
+
+1. **Unit Tests**: Individual service and utility function testing
+2. **Integration Tests**: Service interaction and data flow testing
+3. **Component Tests**: Svelte 5 component behavior testing (planned)
+4. **E2E Tests**: Complete user workflow testing (planned)
+
+### Current Testing Status
+
+- ✅ **Integration Tests**: Implemented in `src/lib/tests/`
+- 🚧 **Vitest Migration**: In progress (Phase 1-2)
+- 📋 **Component Tests**: Planned (Phase 3)
+- 📋 **E2E Tests**: Future implementation
+
+### Testing Commands
+
+```bash
+# Unit & Integration Tests
+npm run test                 # Run all tests with Vitest
+npm run test:ui             # Run tests with UI interface
+npm run test:run            # Run tests once (CI mode)
+npm run test:coverage       # Run tests with coverage report
+npm run test:watch          # Run tests in watch mode
+
+# Component Tests (Phase 3)
+npm run test:component      # Run component-specific tests
+
+# E2E Tests (Future)
+npm run test:e2e           # Run Playwright E2E tests
+npm run test:e2e:ui        # Run E2E tests with UI
+npm run test:all           # Run all test suites
+```
+
+### Test File Structure
+
+```
+src/lib/tests/
+├── setup.ts                    # Vitest global setup
+├── services/                   # Unit tests for services
+│   ├── ChecklistService.test.ts
+│   ├── ScoringService.test.ts
+│   ├── SearchService.test.ts
+│   ├── StorageService.test.ts
+│   └── ExportService.test.ts
+├── integration/                # Integration tests
+│   ├── serviceIntegration.test.ts
+│   └── serviceIntegrationSimple.test.ts
+├── components/                 # Component tests (Phase 3)
+│   ├── checklist/
+│   ├── ui/
+│   └── layout/
+└── utils/                      # Utility function tests
+    ├── validation.test.ts
+    └── formatting.test.ts
+
+tests/
+└── e2e/                       # E2E tests (Future)
+    ├── checklist-workflow.spec.ts
+    ├── internationalization.spec.ts
+    └── pwa-functionality.spec.ts
+```
+
+### Test Configuration Files
+
+- `vitest.config.ts` - Main Vitest configuration
+- `vitest.component.config.ts` - Component-specific test config
+- `playwright.config.ts` - E2E test configuration (planned)
+- `src/lib/tests/setup.ts` - Global test setup and mocks
+
+### Testing Best Practices for This Project
+
+#### Svelte 5 Component Testing
+
+- Use Svelte 5 runes (`$state`, `$derived`) in test components
+- Test component props with `$bindable()` properties
+- Verify reactive state changes with runes
+
+#### Internationalization Testing
+
+- Test all 12 supported languages where applicable
+- Verify RTL layout for Arabic language
+- Test font loading for CJK languages (Japanese, Chinese, Korean)
+
+#### TypeScript Testing
+
+- Maintain strict type checking in tests
+- Use proper type assertions for mock objects
+- Test type-safe service interfaces
+
+#### PWA & Browser API Mocking
+
+```typescript
+// Example mocking patterns used in setup.ts
+vi.stubGlobal('localStorage', localStorageMock);
+vi.stubGlobal('indexedDB', indexedDBMock);
+vi.mock('jspdf', () => ({
+  /* PDF mock */
+}));
+```
+
+### Coverage Targets
+
+- **Minimum Coverage**: 70% across all metrics
+- **Services**: 90%+ coverage (business logic priority)
+- **Components**: 80%+ coverage
+- **Utilities**: 95%+ coverage
+
+### Test Data Management
+
+- Use factory functions for creating test data
+- Maintain consistent test fixtures
+- Mock external dependencies (PDF generation, storage APIs)
+
+### Continuous Integration
+
+Tests are designed to run in CI environments with:
+
+- Deterministic results (no flaky tests)
+- Fast execution (unit tests < 10s, integration tests < 30s)
+- Comprehensive error reporting
+- Automatic coverage reporting
+
+### Performance Testing
+
+Basic performance testing is included in integration tests:
+
+- Checklist creation time benchmarks
+- Score calculation performance
+- Search functionality response times
+- Memory usage validation
+
+---
+
+### Important Notes for Claude Code
+
+When working with tests in this project:
+
+1. **Always check existing test files** in `src/lib/tests/` before creating new
+   ones
+2. **Follow Svelte 5 patterns** - use runes, not legacy reactive syntax
+3. **Consider internationalization** - many components have i18n dependencies
+4. **Mock browser APIs** properly using the patterns in `setup.ts`
+5. **Maintain TypeScript strictness** - all tests must pass type checking
+6. **Test service layer first** - business logic is the highest priority
+
+### Current Implementation Phases
+
+- **Phase 1 (This Week)**: Vitest foundation setup ✅
+- **Phase 2 (Next Week)**: Migrate existing tests to Vitest
+- **Phase 3 (2-3 weeks)**: Implement component tests
+- **Phase 4 (Future)**: E2E testing with Playwright
