@@ -15,9 +15,8 @@ dist/
 static/
 public/
 
-# Service worker
-src/service-worker.js
-static/service-worker.js
+# Service worker (Vite PWA自動生成のみ)
+build/sw.js
 
 # Package manager files
 package-lock.json
