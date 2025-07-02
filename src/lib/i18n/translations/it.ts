@@ -206,10 +206,14 @@ export const translations: TranslationKeys = {
     includeNotes: 'Includi Note',
     includeSummary: 'Includi Riassunto',
     sectionBreaks: 'Interruzioni Sezione',
+    pdfMode: 'Modalità Generazione PDF',
     pdfModes: {
       pixelPerfect: 'Pixel Perfect',
+      pixelPerfectDescription: 'Corrispondenza esatta con la visualizzazione del browser',
       reliableFont: 'Focus Affidabilità Font',
-      textBased: 'Basato su Testo'
+      reliableFontDescription: 'Incorporamento font multilingue affidabile',
+      textBased: 'Basato su Testo',
+      textBasedDescription: 'PDF leggero con ricerca abilitata'
     },
     formats: {
       pdf: 'PDF',
@@ -218,6 +222,7 @@ export const translations: TranslationKeys = {
       markdown: 'Markdown'
     },
     progress: {
+      starting: 'Avvio...',
       initializing: 'Inizializzazione...',
       generating: 'Generazione...',
       processing: 'Elaborazione...',
@@ -238,7 +243,22 @@ export const translations: TranslationKeys = {
     sectionCompletionRates: 'Tassi di Completamento Sezioni',
     achievementStatus: 'Stato di Completamento',
     goodExamples: 'Buoni Esempi',
-    badExamples: 'Cattivi Esempi'
+    badExamples: 'Cattivi Esempi',
+    completed: 'Completato',
+    items: 'Elementi',
+    metadata: {
+      created: 'Creato',
+      score: 'Punteggio',
+      confidence: 'Fiducia',
+      language: 'Lingua'
+    },
+    summary: {
+      title: 'Riepilogo Valutazione',
+      totalScore: 'Punteggio Totale',
+      completionRate: 'Tasso di Completamento',
+      confidenceLevel: 'Livello di Fiducia',
+      checkedItems: 'Elementi Verificati'
+    }
   },
   history: {
     title: 'Cronologia Valutazione',

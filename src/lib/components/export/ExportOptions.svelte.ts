@@ -2,7 +2,7 @@
 // エクスポートオプション管理
 
 export interface ExportOptions {
-  format: 'pdf' | 'html' | 'json' | 'markdown';
+  format: 'pdf' | 'html' | 'json' | 'markdown' | 'csv' | 'xml';
   includeGuides: boolean;
   includeNotes: boolean;
   includeSummary: boolean;
@@ -18,15 +18,15 @@ export interface ExportOptions {
  */
 export class ExportOptionsManager {
   // エクスポートオプション（個別の状態として管理）
-  format = $state<'pdf' | 'html' | 'json' | 'markdown'>('pdf');
+  format = $state<'pdf' | 'html' | 'json' | 'markdown' | 'csv' | 'xml'>('pdf');
   includeGuides = $state(true);
   includeNotes = $state(true);
   includeSummary = $state(true);
   sectionBreaks = $state(true);
   textMode = $state(false); // テキストベースPDF（レガシー）
   advancedMode = $state(false); // 高度なモード
-  reliableMode = $state(false); // 確実な日本語フォント対応
-  pixelPerfectMode = $state(true); // HTML→印刷→PDF（デフォルト）
+  reliableMode = $state(true); // 確実な日本語フォント対応（デフォルト）
+  pixelPerfectMode = $state(false); // HTML→印刷→PDF
 
   // リアクティブなエクスポートオプション
   readonly options = $derived<ExportOptions>({
@@ -49,7 +49,7 @@ export class ExportOptionsManager {
   updateOption<K extends keyof ExportOptions>(key: K, value: ExportOptions[K]) {
     switch (key) {
       case 'format':
-        this.format = value as 'pdf' | 'html' | 'json' | 'markdown';
+        this.format = value as 'pdf' | 'html' | 'json' | 'markdown' | 'csv' | 'xml';
         break;
       case 'includeGuides':
         this.includeGuides = value as boolean;
@@ -94,6 +94,22 @@ export class ExportOptionsManager {
   }
 
   /**
+   * 全てのオプションを一度に設定する
+   * @param options エクスポートオプション
+   */
+  setOptions(options: ExportOptions) {
+    this.format = options.format;
+    this.includeGuides = options.includeGuides;
+    this.includeNotes = options.includeNotes;
+    this.includeSummary = options.includeSummary;
+    this.sectionBreaks = options.sectionBreaks;
+    this.textMode = options.textMode;
+    this.advancedMode = options.advancedMode;
+    this.reliableMode = options.reliableMode;
+    this.pixelPerfectMode = options.pixelPerfectMode;
+  }
+
+  /**
    * デフォルト設定にリセットする
    */
   resetToDefaults() {
@@ -104,8 +120,8 @@ export class ExportOptionsManager {
     this.sectionBreaks = true;
     this.textMode = false;
     this.advancedMode = false;
-    this.reliableMode = false;
-    this.pixelPerfectMode = true;
+    this.reliableMode = true;
+    this.pixelPerfectMode = false;
   }
 
   /**

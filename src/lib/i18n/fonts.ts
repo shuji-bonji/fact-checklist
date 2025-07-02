@@ -16,43 +16,46 @@ export interface FontConfig {
 // Font configurations for different language groups
 export const FONT_CONFIGS: Record<string, FontConfig> = {
   // Latin script languages (English, French, Spanish, Portuguese, German, Italian, Indonesian)
+  // Use NotoSansJP as universal font since it supports both Latin and Japanese
   latin: {
-    fontFamily: 'Roboto',
-    fontFile: '/fonts/Roboto-Regular.ttf',
-    fontName: 'Roboto',
+    fontFamily: 'NotoSansJP',
+    fontFile: '/fonts/NotoSansJP-Regular.ttf',
+    fontName: 'NotoSansJP',
     supports: ['en', 'fr', 'es', 'pt', 'de', 'it', 'id'],
     fallback: 'helvetica'
   },
 
   // CJK languages (Japanese, Korean, Chinese Traditional)
+  // Use existing NotoSansJP font
   cjk: {
-    fontFamily: 'NotoSansCJK',
-    fontFile: '/fonts/NotoSansCJK-Regular.ttf',
-    fontName: 'NotoSansCJK',
+    fontFamily: 'NotoSansJP',
+    fontFile: '/fonts/NotoSansJP-Regular.ttf',
+    fontName: 'NotoSansJP',
     supports: ['ja', 'ko', 'zh-TW'],
     fallback: 'helvetica'
   },
 
-  // Devanagari script (Hindi)
+  // Devanagari script (Hindi) - Fallback to NotoSansJP
   devanagari: {
-    fontFamily: 'NotoSansDevanagari',
-    fontFile: '/fonts/NotoSansDevanagari-Regular.ttf',
-    fontName: 'NotoSansDevanagari',
+    fontFamily: 'NotoSansJP',
+    fontFile: '/fonts/NotoSansJP-Regular.ttf',
+    fontName: 'NotoSansJP',
     supports: ['hi'],
     fallback: 'helvetica'
   },
 
-  // Arabic script
+  // Arabic script - Fallback to NotoSansJP
   arabic: {
-    fontFamily: 'NotoSansArabic',
-    fontFile: '/fonts/NotoSansArabic-Regular.ttf',
-    fontName: 'NotoSansArabic',
+    fontFamily: 'NotoSansJP',
+    fontFile: '/fonts/NotoSansJP-Regular.ttf',
+    fontName: 'NotoSansJP',
     supports: ['ar'],
     fallback: 'helvetica'
   }
 };
 
 // Mapping of language codes to font configurations
+// All languages use NotoSansJP as it's the only available font
 export const LANGUAGE_FONT_MAP: Record<LanguageCode, string> = {
   ja: 'cjk',
   en: 'latin',

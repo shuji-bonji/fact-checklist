@@ -221,10 +221,14 @@ export const translations: TranslationKeys = {
     includeNotes: 'Inclure les Notes',
     includeSummary: 'Inclure le Résumé',
     sectionBreaks: 'Sauts de Section',
+    pdfMode: 'Mode de Génération PDF',
     pdfModes: {
       pixelPerfect: 'Pixel Perfect',
+      pixelPerfectDescription: "Correspondance exacte avec l'affichage du navigateur",
       reliableFont: 'Focus Fiabilité Police',
-      textBased: 'Basé sur le Texte'
+      reliableFontDescription: 'Intégration fiable de police multilingue',
+      textBased: 'Basé sur le Texte',
+      textBasedDescription: 'PDF léger avec recherche activée'
     },
     formats: {
       pdf: 'PDF',
@@ -233,6 +237,7 @@ export const translations: TranslationKeys = {
       markdown: 'Markdown'
     },
     progress: {
+      starting: 'Démarrage...',
       initializing: 'Initialisation...',
       generating: 'Génération...',
       processing: 'Traitement...',
@@ -253,7 +258,22 @@ export const translations: TranslationKeys = {
     sectionCompletionRates: 'Taux de Complétion par Section',
     achievementStatus: 'Statut de Réalisation',
     goodExamples: 'Bons Exemples',
-    badExamples: 'Mauvais Exemples'
+    badExamples: 'Mauvais Exemples',
+    completed: 'Terminé',
+    items: 'Éléments',
+    metadata: {
+      created: 'Créé',
+      score: 'Score',
+      confidence: 'Confiance',
+      language: 'Langue'
+    },
+    summary: {
+      title: "Résumé d'Évaluation",
+      totalScore: 'Score Total',
+      completionRate: 'Taux de Complétion',
+      confidenceLevel: 'Niveau de Confiance',
+      checkedItems: 'Éléments Vérifiés'
+    }
   },
 
   // Historique

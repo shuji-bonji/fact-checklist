@@ -109,49 +109,50 @@ export class ExportService {
       progressHandler(10, 'Starting export...');
 
       // エクスポート実行
-      let result: Blob | string;
+      // i18n関数を取得（ExportManagerで必要）
+      const { t } = await this.loadI18n();
 
-      if (options.format === 'pdf') {
-        // PDF エクスポート (placeholder)
-        result = new Blob(['PDF content placeholder'], { type: 'application/pdf' });
-      } else {
-        // その他の形式 (placeholder)
-        result = 'Export content placeholder';
+      // ExportManagerのオプションを設定
+      this.exportManager.optionsManager.setOptions(options);
+
+      // ExportManagerのプログレスを監視
+      let lastProgress = 0;
+      const progressInterval = setInterval(() => {
+        const progress = this.exportManager.progressManager.progress;
+        if (progress.percentage !== undefined && progress.percentage !== lastProgress) {
+          lastProgress = progress.percentage;
+          progressHandler(progress.percentage, progress.message || progress.stage);
+        }
+      }, 100);
+
+      try {
+        // ExportManagerを使用してエクスポート
+        // Note: ExportManager expects checklist title as second parameter
+        const checklistTitle = checklist.title || 'Checklist';
+
+        await this.exportManager.exportChecklist(checklist, checklistTitle, t);
+
+        progressHandler(100, 'Export completed');
+
+        const duration = Date.now() - startTime;
+        const exportResult: ExportResult = {
+          success: true,
+          format: options.format,
+          filename: finalFilename,
+          duration
+        };
+
+        // Note: ExportManager handles the download internally, so we don't need to get the blob
+        // But we can estimate the size based on the format
+        exportResult.size = this.estimateExportSize(checklist, options.format);
+
+        // 統計を更新
+        this.updateStatistics(exportResult);
+
+        return exportResult;
+      } finally {
+        clearInterval(progressInterval);
       }
-
-      progressHandler(100, 'Export completed');
-
-      const duration = Date.now() - startTime;
-      const exportResult: ExportResult = {
-        success: true,
-        format: options.format,
-        filename: finalFilename,
-        duration
-      };
-
-      // Blobの場合はサイズとダウンロード情報を追加
-      if (result instanceof Blob) {
-        exportResult.blob = result;
-        exportResult.size = result.size;
-
-        // 自動ダウンロード
-        this.downloadBlob(result, finalFilename);
-      } else if (typeof result === 'string') {
-        // 文字列データの場合はBlobに変換
-        const blob = new Blob([result], {
-          type: this.getMimeType(options.format)
-        });
-        exportResult.blob = blob;
-        exportResult.size = blob.size;
-
-        // 自動ダウンロード
-        this.downloadBlob(blob, finalFilename);
-      }
-
-      // 統計を更新
-      this.updateStatistics(exportResult);
-
-      return exportResult;
     } catch (error) {
       const errorMessage = `Export error: ${error}`;
       const duration = Date.now() - startTime;
@@ -425,6 +426,44 @@ export class ExportService {
       averageDuration: 0,
       errorRate: 0
     };
+  }
+
+  /**
+   * i18n関数をロード
+   * @returns 翻訳関数
+   */
+  private async loadI18n(): Promise<{ t: (key: string) => string }> {
+    // Dynamic import to avoid circular dependencies
+    const i18nModule = await import('$lib/i18n/index.js');
+    // Create a wrapper that accepts any string
+    const t = (key: string): string => {
+      return (i18nModule.t as unknown as (key: string) => string | undefined)(key) ?? key;
+    };
+    return { t };
+  }
+
+  /**
+   * エクスポートサイズを推定
+   * @param checklist チェックリスト結果
+   * @param format エクスポート形式
+   * @returns 推定サイズ（バイト）
+   */
+  private estimateExportSize(checklist: ChecklistResult, format: string): number {
+    // Base size estimation based on checklist content
+    const baseSize = JSON.stringify(checklist).length;
+
+    // Format-specific multipliers
+    const multipliers: Record<string, number> = {
+      json: 1.2, // JSON includes formatting
+      csv: 0.5, // CSV is more compact
+      html: 3.0, // HTML includes styling and structure
+      markdown: 1.5, // Markdown includes formatting
+      xml: 2.0, // XML includes tags
+      pdf: 5.0 // PDF includes fonts and formatting
+    };
+
+    const multiplier = multipliers[format] ?? 1.0;
+    return Math.round(baseSize * multiplier);
   }
 
   /**

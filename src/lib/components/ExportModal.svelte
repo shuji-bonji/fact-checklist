@@ -300,39 +300,57 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
 
           {#if exportOptions.format === 'pdf'}
             <div class="pdf-mode-section">
-              <div class="section-label">{t('export.pdfModes.pixelPerfect')}</div>
+              <div class="section-label">{t('export.pdfMode')}</div>
 
-              <label class="checkbox-option">
+              <label class="radio-option">
                 <input
-                  type="checkbox"
-                  checked={exportOptions.pixelPerfectMode}
-                  onchange={e =>
-                    updateExportOption('pixelPerfectMode', (e.target as HTMLInputElement).checked)}
+                  type="radio"
+                  name="pdfMode"
+                  checked={exportOptions.pixelPerfectMode &&
+                    !exportOptions.reliableMode &&
+                    !exportOptions.textMode}
+                  onchange={() => {
+                    updateExportOption('pixelPerfectMode', true);
+                    updateExportOption('reliableMode', false);
+                    updateExportOption('textMode', false);
+                  }}
                 />
                 <span>🎨 {t('export.pdfModes.pixelPerfect')}</span>
-                <small>{t('export.pdfModes.pixelPerfect')}</small>
+                <small>{t('export.pdfModes.pixelPerfectDescription')}</small>
               </label>
 
-              <label class="checkbox-option">
+              <label class="radio-option">
                 <input
-                  type="checkbox"
-                  checked={exportOptions.reliableMode}
-                  onchange={e =>
-                    updateExportOption('reliableMode', (e.target as HTMLInputElement).checked)}
+                  type="radio"
+                  name="pdfMode"
+                  checked={exportOptions.reliableMode &&
+                    !exportOptions.pixelPerfectMode &&
+                    !exportOptions.textMode}
+                  onchange={() => {
+                    updateExportOption('pixelPerfectMode', false);
+                    updateExportOption('reliableMode', true);
+                    updateExportOption('textMode', false);
+                  }}
                 />
                 <span>🔥 {t('export.pdfModes.reliableFont')}</span>
-                <small>{t('export.pdfModes.reliableFont')}</small>
+                <small>{t('export.pdfModes.reliableFontDescription')}</small>
               </label>
 
-              <label class="checkbox-option">
+              <label class="radio-option">
                 <input
-                  type="checkbox"
-                  checked={exportOptions.textMode}
-                  onchange={e =>
-                    updateExportOption('textMode', (e.target as HTMLInputElement).checked)}
+                  type="radio"
+                  name="pdfMode"
+                  checked={exportOptions.textMode &&
+                    !exportOptions.pixelPerfectMode &&
+                    !exportOptions.reliableMode}
+                  onchange={() => {
+                    updateExportOption('pixelPerfectMode', false);
+                    updateExportOption('reliableMode', false);
+                    updateExportOption('textMode', true);
+                  }}
                 />
                 <span>🔤 {t('export.pdfModes.textBased')}</span>
-                <small>{t('export.pdfModes.textBased')}</small>
+                <small>{t('export.pdfModes.textBasedDescription')}</small>
               </label>
             </div>
 
@@ -660,12 +678,18 @@ ${checklist.notes ? `📝 評価メモ:\n${checklist.notes}` : ''}
     letter-spacing: 0.5px;
   }
 
-  .pdf-mode-section .checkbox-option {
+  .pdf-mode-section .radio-option {
     margin-bottom: 8px;
+    background: #f8f9fa;
   }
 
-  .pdf-mode-section .checkbox-option:last-child {
+  .pdf-mode-section .radio-option:last-child {
     margin-bottom: 0;
+  }
+
+  .pdf-mode-section .radio-option input[type='radio']:checked + span {
+    color: #667eea;
+    font-weight: 600;
   }
 
   /* 進捗インジケータスタイル */

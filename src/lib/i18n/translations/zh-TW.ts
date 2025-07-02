@@ -206,10 +206,14 @@ export const translations: TranslationKeys = {
     includeNotes: '包含筆記',
     includeSummary: '包含摘要',
     sectionBreaks: '章節分隔',
+    pdfMode: 'PDF 生成模式',
     pdfModes: {
       pixelPerfect: '像素完美',
+      pixelPerfectDescription: '與瀏覽器顯示的精確匹配',
       reliableFont: '字體可靠性優先',
-      textBased: '基於文字'
+      reliableFontDescription: '可靠的多語言字體嵌入',
+      textBased: '基於文字',
+      textBasedDescription: '可搜尋的輕量 PDF'
     },
     formats: {
       pdf: 'PDF',
@@ -218,6 +222,7 @@ export const translations: TranslationKeys = {
       markdown: 'Markdown'
     },
     progress: {
+      starting: '開始中...',
       initializing: '初始化中...',
       generating: '產生中...',
       processing: '處理中...',
@@ -238,7 +243,22 @@ export const translations: TranslationKeys = {
     sectionCompletionRates: '章節完成率',
     achievementStatus: '達成狀態',
     goodExamples: '良好範例',
-    badExamples: '不良範例'
+    badExamples: '不良範例',
+    completed: '已完成',
+    items: '項目',
+    metadata: {
+      created: '建立時間',
+      score: '分數',
+      confidence: '信心',
+      language: '語言'
+    },
+    summary: {
+      title: '評估摘要',
+      totalScore: '總分',
+      completionRate: '完成率',
+      confidenceLevel: '信心水準',
+      checkedItems: '已檢查項目'
+    }
   },
 
   // 歷史記錄
