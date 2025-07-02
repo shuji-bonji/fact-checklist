@@ -390,7 +390,7 @@ export class TextBasedPDFGenerator {
     try {
       // GitHub Pages対応の動的フォントパス取得
       const fontBasePath = getFontBasePath();
-      
+
       // NotoSansJPフォントを読み込み
       const fontBase64 = await loadFontAsBase64(`${fontBasePath}NotoSansJP-Regular.ttf`);
       if (fontBase64) {
