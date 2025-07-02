@@ -112,6 +112,7 @@ export const translations: TranslationKeys = {
   },
   checklist: {
     title: 'معلومات قائمة التحقق',
+    defaultFileName: 'قائمة التحقق',
     description: 'تفاصيل قائمة التحقق',
     newChecklist: 'قائمة تحقق جديدة',
     createChecklist: 'إنشاء قائمة تحقق',

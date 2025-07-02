@@ -115,6 +115,7 @@ export const translations: TranslationKeys = {
   },
   checklist: {
     title: 'Checklisten-Informationen',
+    defaultFileName: 'Checkliste',
     description: 'Checklisten-Details',
     newChecklist: 'Neue Checkliste',
     createChecklist: 'Checkliste erstellen',

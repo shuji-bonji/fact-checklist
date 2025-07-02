@@ -121,6 +121,7 @@ export const translations: TranslationKeys = {
   // Relacionado con la lista de verificación
   checklist: {
     title: 'Información de la Lista de Verificación',
+    defaultFileName: 'Lista de Verificación',
     description: 'Detalles de la lista de verificación',
     newChecklist: 'Nueva Lista de Verificación',
     createChecklist: 'Crear Lista de Verificación',

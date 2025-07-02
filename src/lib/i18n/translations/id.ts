@@ -113,6 +113,7 @@ export const translations: TranslationKeys = {
   },
   checklist: {
     title: 'Informasi Daftar Periksa',
+    defaultFileName: 'Informasi Daftar Periksa',
     description: 'Detail daftar periksa',
     newChecklist: 'Daftar Periksa Baru',
     createChecklist: 'Buat Daftar Periksa',

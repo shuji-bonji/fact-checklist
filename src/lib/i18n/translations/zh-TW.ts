@@ -113,6 +113,7 @@ export const translations: TranslationKeys = {
   // 檢查表相關
   checklist: {
     title: '檢查表資訊',
+    defaultFileName: '清單資訊',
     description: '檢查表詳細資訊',
     newChecklist: '新檢查表',
     createChecklist: '建立檢查表',

@@ -48,7 +48,8 @@ export class ChecklistService {
 
     // デフォルトタイトルの生成
     const finalTitle =
-      title || (autoGenerateTitle ? `${t('checklist.title')}_${now.toLocaleDateString()}` : '');
+      title ||
+      (autoGenerateTitle ? `${t('checklist.defaultFileName')}_${now.toLocaleDateString()}` : '');
 
     // チェックアイテムのコピーを作成（未チェック状態）
     const items: CheckItem[] = getChecklistItems().map(item => ({
@@ -283,6 +284,44 @@ export class ChecklistService {
   }
 
   /**
+   * チェックリストアイテムを現在の言語で更新
+   * @param checklist 更新対象のチェックリスト
+   * @returns 言語更新されたチェックリスト
+   */
+  static refreshItemsForCurrentLanguage(checklist: ChecklistResult): ChecklistResult {
+    const updatedChecklist = { ...checklist };
+
+    // 現在の言語で新しいチェックリストアイテムを取得
+    const currentLanguageItems = getChecklistItems();
+
+    // 既存のチェック状態を保持しながらアイテムを更新
+    updatedChecklist.items = currentLanguageItems.map(newItem => {
+      // 同じIDの既存アイテムを検索
+      const existingItem = checklist.items.find(item => item.id === newItem.id);
+
+      return {
+        ...newItem,
+        // 既存のチェック状態を保持
+        checked: existingItem ? existingItem.checked : false
+      };
+    });
+
+    // デフォルトタイトルの場合は現在の言語で更新
+    if (this.isDefaultTitle(updatedChecklist.title)) {
+      updatedChecklist.title = this.generateDefaultTitle(updatedChecklist.createdAt);
+    }
+
+    // 信頼度テキストと判定アドバイスも現在の言語で更新
+    updatedChecklist.confidenceText = this.getConfidenceText(updatedChecklist.confidenceLevel);
+    updatedChecklist.judgmentAdvice = this.getJudgmentAdvice(updatedChecklist.confidenceLevel);
+
+    // 更新日時を設定
+    updatedChecklist.updatedAt = new Date();
+
+    return updatedChecklist;
+  }
+
+  /**
    * チェックリストの妥当性を検証
    * @param checklist 検証対象のチェックリスト
    * @returns 検証結果
@@ -331,5 +370,32 @@ export class ChecklistService {
       isValid: errors.length === 0,
       errors
     };
+  }
+
+  /**
+   * デフォルトタイトルかどうかを判定
+   * @param title チェックするタイトル
+   * @returns デフォルトタイトルの場合true
+   */
+  static isDefaultTitle(title: string): boolean {
+    if (!title) return false;
+
+    // パターン: "翻訳文_日付" または "Translation_Date"
+    const patterns = [
+      /^.*_\d{4}\/\d{1,2}\/\d{1,2}$/, // YYYY/M/D形式
+      /^.*_\d{1,2}\/\d{1,2}\/\d{4}$/, // M/D/YYYY形式
+      /^.*_\d{4}-\d{1,2}-\d{1,2}$/ // YYYY-M-D形式
+    ];
+
+    return patterns.some(pattern => pattern.test(title));
+  }
+
+  /**
+   * デフォルトタイトルを生成
+   * @param createdAt 作成日時
+   * @returns 現在の言語でのデフォルトタイトル
+   */
+  static generateDefaultTitle(createdAt: Date): string {
+    return `${t('checklist.defaultFileName')}_${createdAt.toLocaleDateString()}`;
   }
 }

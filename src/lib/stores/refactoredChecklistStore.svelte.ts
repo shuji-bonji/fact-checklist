@@ -15,6 +15,7 @@ import {
   type SearchCriteria,
   type SortCriteria
 } from '../services/SearchService.js';
+import { i18nStore } from '../i18n/store.svelte.js';
 
 /**
  * ストア操作結果
@@ -35,6 +36,7 @@ class RefactoredChecklistStore {
   private _history = $state<ChecklistHistoryItem[]>([]);
   private _isLoading = $state(false);
   private _error = $state<string | null>(null);
+  private _initialized = $state(false);
 
   // Services
   private storageService: StorageService;
@@ -47,6 +49,7 @@ class RefactoredChecklistStore {
 
     if (this.isBrowser) {
       this.initializeAsync();
+      this.setupLanguageChangeListener();
     }
   }
 
@@ -213,6 +216,9 @@ class RefactoredChecklistStore {
 
       // 国際化マイグレーション適用
       checklist = ChecklistService.migrateToI18n(checklist);
+
+      // 現在の言語でアイテムを更新
+      checklist = ChecklistService.refreshItemsForCurrentLanguage(checklist);
 
       this._currentChecklist = checklist;
       console.log('RefactoredChecklistStore: Checklist loaded:', id);
@@ -468,6 +474,90 @@ class RefactoredChecklistStore {
     return ScoringService.getRecommendedJudgment(this.confidenceLevel, analysis.categories);
   }
 
+  // === LANGUAGE MANAGEMENT ===
+
+  /**
+   * 言語変更リスナーを設定
+   */
+  private setupLanguageChangeListener(): void {
+    // i18nストアの変更を定期的にチェック
+    let lastLanguage = i18nStore.currentLanguage;
+
+    const checkLanguageChange = () => {
+      const currentLanguage = i18nStore.currentLanguage;
+      if (currentLanguage !== lastLanguage && this._initialized && this._currentChecklist) {
+        console.log(
+          'RefactoredChecklistStore: Language changed from',
+          lastLanguage,
+          'to',
+          currentLanguage
+        );
+        lastLanguage = currentLanguage;
+        this.refreshCurrentChecklistItems();
+      }
+    };
+
+    // 定期的なチェック（軽量）
+    const intervalId = setInterval(checkLanguageChange, 500);
+
+    // ページ離脱時にクリーンアップ
+    if (typeof window !== 'undefined') {
+      window.addEventListener('beforeunload', () => {
+        clearInterval(intervalId);
+      });
+    }
+
+    console.log('RefactoredChecklistStore: Language change listener setup completed');
+  }
+
+  /**
+   * 現在のチェックリストのアイテムを現在の言語で更新
+   */
+  private refreshCurrentChecklistItems(): void {
+    if (!this._currentChecklist) return;
+
+    try {
+      const refreshedChecklist = ChecklistService.refreshItemsForCurrentLanguage(
+        this._currentChecklist
+      );
+
+      this._currentChecklist = refreshedChecklist;
+
+      // 非同期でストレージに保存
+      this.saveCurrentChecklistAsync();
+
+      console.log('RefactoredChecklistStore: Checklist items refreshed for current language');
+    } catch (error) {
+      console.error('RefactoredChecklistStore: Failed to refresh checklist items:', error);
+    }
+  }
+
+  /**
+   * 手動でチェックリストアイテムを現在の言語で更新
+   * @returns 更新成功フラグ
+   */
+  async refreshItemsForLanguage(): Promise<boolean> {
+    if (!this._currentChecklist) {
+      this._error = 'No checklist is currently loaded';
+      return false;
+    }
+
+    try {
+      this._isLoading = true;
+      this._error = null;
+
+      this.refreshCurrentChecklistItems();
+
+      return true;
+    } catch (error) {
+      this._error = `Failed to refresh items for language: ${error}`;
+      console.error('RefactoredChecklistStore:', this._error);
+      return false;
+    } finally {
+      this._isLoading = false;
+    }
+  }
+
   // === PRIVATE HELPERS ===
 
   /**
@@ -499,6 +589,9 @@ class RefactoredChecklistStore {
         // 保存されている全チェックリストの国際化マイグレーション
         const historyIds = this._history.map(h => h.id);
         await this.storageService.migrateAllChecklistsToI18n(historyIds);
+
+        // 初期化完了フラグを設定
+        this._initialized = true;
       }
     } catch (error) {
       console.warn('RefactoredChecklistStore: Failed to load history:', error);

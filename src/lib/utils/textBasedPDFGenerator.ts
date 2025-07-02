@@ -433,7 +433,7 @@ export class TextBasedPDFGenerator {
   private groupItemsByCategory(items: CheckItem[]): SectionData[] {
     // Use the translation function to get categories in the correct language
     const categories = getCategories(this.t);
-    
+
     return categories.map(category => {
       const categoryItems = items.filter(item => item.category.id === category.id);
       const checkedItems = categoryItems.filter(item => item.checked);

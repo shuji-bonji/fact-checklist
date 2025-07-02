@@ -4,8 +4,8 @@ import { factChecklistI18n, t } from '../i18n/index.js';
 // カテゴリ情報の取得関数（動的翻訳対応）
 export function getCategories(translationFunction?: (key: string) => string): CheckCategory[] {
   // 翻訳関数が提供されない場合は、現在のストアから取得
-  const translate = translationFunction || t;
-  
+  const translate = translationFunction ?? t;
+
   return [
     {
       id: 'critical',

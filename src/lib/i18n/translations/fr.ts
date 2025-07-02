@@ -122,6 +122,7 @@ export const translations: TranslationKeys = {
   // Liste de vérification
   checklist: {
     title: 'Informations de la Liste de Vérification',
+    defaultFileName: 'Liste de Contrôle',
     description: 'Détails de la liste de vérification',
     newChecklist: 'Nouvelle Liste de Vérification',
     createChecklist: 'Créer une Liste de Vérification',
