@@ -123,48 +123,6 @@
       .replace(/'/g, '&#x27;')
       .replace(/\n/g, '<br>');
   }
-
-  // PWAイベント監視用のJavaScript
-  if (typeof window !== 'undefined') {
-    // beforeinstallprompt イベントの監視
-    window.addEventListener('beforeinstallprompt', e => {
-      console.log('🎉 beforeinstallprompt received:', e);
-      const statusElement = document.getElementById('prompt-status');
-      if (statusElement) {
-        statusElement.textContent = '✅ RECEIVED';
-        statusElement.style.color = '#00ff00';
-      }
-    });
-
-    // PWA要素の存在チェック
-    const checkPWAElement = () => {
-      const pwaElement = document.querySelector('.pwa-install-prompt');
-      const statusElement = document.getElementById('pwa-element-status');
-      if (statusElement) {
-        if (pwaElement) {
-          statusElement.textContent = '✅ FOUND';
-          statusElement.style.color = '#00ff00';
-        } else {
-          statusElement.textContent = '❌ NOT FOUND';
-          statusElement.style.color = '#ff0000';
-        }
-      }
-    };
-
-    // 3秒後にチェック
-    setTimeout(() => {
-      const promptStatus = document.getElementById('prompt-status');
-      if (promptStatus && promptStatus.textContent === 'checking...') {
-        promptStatus.textContent = '❌ NOT RECEIVED';
-        promptStatus.style.color = '#ff0000';
-      }
-
-      checkPWAElement();
-    }, 3000);
-
-    // 定期的にPWA要素をチェック
-    setInterval(checkPWAElement, 1000);
-  }
 </script>
 
 <svelte:head>
