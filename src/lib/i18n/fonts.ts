@@ -18,14 +18,17 @@ export interface FontConfig {
  */
 export function getFontBasePath(): string {
   if (typeof window === 'undefined') return '/fonts/'; // SSR
-  
+
   // Check for GitHub Pages environment
-  const isGitHubPages = window.location.hostname === 'shuji-bonji.github.io' || 
-                       window.location.pathname.startsWith('/fact-checklist/') ||
-                       window.location.origin.includes('github.io');
-  
-  console.log(`🔧 Font path detection: hostname=${window.location.hostname}, pathname=${window.location.pathname}, isGitHubPages=${isGitHubPages}`);
-  
+  const isGitHubPages =
+    window.location.hostname === 'shuji-bonji.github.io' ||
+    window.location.pathname.startsWith('/fact-checklist/') ||
+    window.location.origin.includes('github.io');
+
+  console.log(
+    `🔧 Font path detection: hostname=${window.location.hostname}, pathname=${window.location.pathname}, isGitHubPages=${isGitHubPages}`
+  );
+
   return isGitHubPages ? '/fact-checklist/fonts/' : '/fonts/';
 }
 
@@ -34,7 +37,7 @@ export function getFontBasePath(): string {
  */
 export function getFontConfigs(): Record<string, FontConfig> {
   const basePath = getFontBasePath();
-  
+
   return {
     // Latin script languages (English, French, Spanish, Portuguese, German, Italian, Indonesian)
     // Use NotoSansJP as universal font since it supports both Latin and Japanese
@@ -133,8 +136,12 @@ export async function loadFontAsBase64(fontUrl: string): Promise<string | null> 
 
     const response = await fetch(fontUrl);
     if (!response.ok) {
-      console.error(`❌ Font fetch failed: ${response.status} ${response.statusText} for ${fontUrl}`);
-      throw new Error(`Font file not found: ${fontUrl} (${response.status} ${response.statusText})`);
+      console.error(
+        `❌ Font fetch failed: ${response.status} ${response.statusText} for ${fontUrl}`
+      );
+      throw new Error(
+        `Font file not found: ${fontUrl} (${response.status} ${response.statusText})`
+      );
     }
 
     const arrayBuffer = await response.arrayBuffer();
