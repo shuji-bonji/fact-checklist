@@ -228,108 +228,16 @@
         </div>
       </div>
 
-      <!-- 🧪 PWA デバッグ情報表示 -->
-      <div
-        class="pwa-debug-panel"
-        style:background="#000"
-        style:color="#00ff00"
-        style:margin="20px 0"
-        style:border="3px solid #ff0000"
-        style:z-index="9999"
-        style:border-radius="8px"
-        style:position="relative"
-        style:font-family="monospace"
-        style:padding="20px"
-      >
-        <h3 style:color="#ffff00" style:margin-top="0">🧪 PWA Debug Panel</h3>
-
-        <!-- 基本状態 -->
-        <div style:margin="10px 0">✅ isCompleted: {isCompleted}</div>
-        <div style:margin="10px 0">📋 checklist exists: {!!checklist}</div>
-        <div style:margin="10px 0">🔄 completionCountUpdated: {completionCountUpdated}</div>
-        <div style:margin="10px 0">📊 showPWAPrompt(): {showPWAPrompt()}</div>
-
-        <!-- ローカルストレージ情報 -->
-        {#if typeof window !== 'undefined'}
-          <div style:margin="10px 0">
-            💾 completedChecklistsCount: {localStorage.getItem('completedChecklistsCount')}
-          </div>
-          <div style:margin="10px 0">👥 visitCount: {localStorage.getItem('visitCount')}</div>
-          <div style:margin="10px 0">🌐 protocol: {window.location.protocol}</div>
-          <div style:margin="10px 0">🏠 hostname: {window.location.hostname}</div>
-          <div style:margin="10px 0">
-            📱 SW supported: {'serviceWorker' in navigator}
-          </div>
-        {/if}
-
-        <!-- beforeinstallprompt 状態 -->
-        <div style:margin="10px 0">
-          ⚡ beforeinstallprompt: <span id="prompt-status">checking...</span>
-        </div>
-
-        <!-- PWA要素の存在確認 -->
-        <div style:margin="10px 0">
-          🔍 PWA element: <span id="pwa-element-status">checking...</span>
-        </div>
-      </div>
-
-      <!-- 既存のPWAインストールプロンプト -->
+      <!-- PWAインストールプロンプト -->
       {#if showPWAPrompt()}
-        <div style:border="3px solid #00ff00" style:padding="10px" style:margin="10px 0">
-          <div
-            style:background="#00ff00"
-            style:color="#000"
-            style:margin-bottom="10px"
-            style:padding="5px"
-          >
-            ✅ PWA Prompt Should Be Visible (Normal Conditions Met)
-          </div>
-          <PWAInstallPrompt
-            variant="success"
-            page="checklist-result"
-            showBenefits={true}
-            title="🎉 評価完了！アプリをインストールしませんか？"
-            message="このアプリをインストールして、いつでも素早く情報評価ができるようにしませんか？"
-          />
-        </div>
-      {:else}
-        <div
-          style:border="3px solid #ff0000"
-          style:padding="10px"
-          style:background="#ffeeee"
-          style:margin="10px 0"
-        >
-          <div
-            style:background="#ff0000"
-            style:color="#fff"
-            style:margin-bottom="10px"
-            style:padding="5px"
-          >
-            ❌ PWA Prompt Hidden - showPWAPrompt() returned false
-          </div>
-          <div style:color="#000">Debug: 表示条件が満たされていません</div>
-        </div>
-      {/if}
-
-      <!-- 🔧 強制表示テスト -->
-      <div
-        style:border="3px solid #0066ff"
-        style:padding="20px"
-        style:background="#f0f8ff"
-        style:margin="20px 0"
-      >
-        <h4 style:color="#0066ff" style:margin-top="0">🔧 Force PWA Test (Always Visible)</h4>
-        <p style:color="#000">この部分は条件に関係なく常に表示されます：</p>
-
         <PWAInstallPrompt
           variant="success"
-          page="checklist-result-force"
+          page="checklist-result"
           showBenefits={true}
-          title="🔧 強制表示テスト"
-          message="これは条件を無視して強制表示されているPWAプロンプトです"
-          forceVisible={true}
+          title="🎉 評価完了！アプリをインストールしませんか？"
+          message="このアプリをインストールして、いつでも素早く情報評価ができるようにしませんか？"
         />
-      </div>
+      {/if}
     {/if}
 
     <!-- ヘッダー -->

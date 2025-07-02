@@ -12,7 +12,6 @@
     showBenefits?: boolean;
     page?: string; // 分析用
     condition?: () => boolean; // 表示条件
-    forceVisible?: boolean; // 🔧 デバッグ用：条件無視して強制表示
   }
 
   const {
@@ -21,8 +20,7 @@
     message,
     showBenefits = false,
     page = 'unknown',
-    condition,
-    forceVisible = false
+    condition
   }: Props = $props();
 
   // PWA状態管理
@@ -48,9 +46,6 @@
 
   // 表示条件の判定
   function checkVisibility(): boolean {
-    // 🔧 強制表示モード：すべての条件を無視
-    if (forceVisible) return true;
-
     if (!canInstall) return false;
     if (condition && !condition()) return false;
 
@@ -85,13 +80,6 @@
 
   onMount(() => {
     if (browser) {
-      // 🔧 強制表示モード：即座に表示
-      if (forceVisible) {
-        isVisible = true;
-        trackPWAEvent('force_prompt_shown');
-        return;
-      }
-
       // PWAインストール機能を初期化
       pwaInstall = setupPWAInstallPrompt();
 
@@ -129,22 +117,7 @@
     isInstalling = true;
     installResult = null;
 
-    // 🔧 強制表示モード：ダミー処理
-    if (forceVisible) {
-      console.log('🔧 Force mode: Simulating PWA install...');
-      setTimeout(() => {
-        installResult = 'success';
-        trackPWAEvent('force_install_success');
-        setTimeout(() => {
-          installResult = null;
-          isVisible = false;
-        }, 3000);
-        isInstalling = false;
-      }, 1000);
-      return;
-    }
-
-    if (!pwaInstall || !canInstall) {
+    if (!pwaInstall) {
       isInstalling = false;
       return;
     }
@@ -167,7 +140,7 @@
       trackPWAEvent('install_error');
     } finally {
       isInstalling = false;
-      canInstall = false;
+      // Note: Don't set canInstall = false here, as fallback mode should remain available
     }
   }
 
