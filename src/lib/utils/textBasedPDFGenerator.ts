@@ -7,7 +7,7 @@
 import type jsPDF from 'jspdf';
 import type { ChecklistResult, CheckItem, CheckCategory } from '$lib/types/checklist.js';
 import { getCategories } from '$lib/data/checklist-items.js';
-import { loadFontAsBase64 } from '$lib/i18n/fonts.js';
+import { loadFontAsBase64, getFontBasePath } from '$lib/i18n/fonts.js';
 import type { TranslationFunction } from '$lib/types/i18n.js';
 
 export interface TextPDFOptions {
@@ -388,15 +388,18 @@ export class TextBasedPDFGenerator {
    */
   private async setupJapaneseFont(): Promise<void> {
     try {
+      // GitHub Pages対応の動的フォントパス取得
+      const fontBasePath = getFontBasePath();
+      
       // NotoSansJPフォントを読み込み
-      const fontBase64 = await loadFontAsBase64('/fonts/NotoSansJP-Regular.ttf');
+      const fontBase64 = await loadFontAsBase64(`${fontBasePath}NotoSansJP-Regular.ttf`);
       if (fontBase64) {
         this.pdf.addFileToVFS('NotoSansJP-Regular.ttf', fontBase64);
         this.pdf.addFont('NotoSansJP-Regular.ttf', 'NotoSansJP', 'normal');
 
         // Boldフォントも試行
         try {
-          const boldFontBase64 = await loadFontAsBase64('/fonts/NotoSansJP-Bold.ttf');
+          const boldFontBase64 = await loadFontAsBase64(`${fontBasePath}NotoSansJP-Bold.ttf`);
           if (boldFontBase64) {
             this.pdf.addFileToVFS('NotoSansJP-Bold.ttf', boldFontBase64);
             this.pdf.addFont('NotoSansJP-Bold.ttf', 'NotoSansJP', 'bold');
