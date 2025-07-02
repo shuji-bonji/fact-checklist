@@ -35,11 +35,11 @@ across **12 languages** with full internationalization support.
 - **📊 Scientific Evaluation**: Comprehensive 20-item checklist across 4
   categories
 - **🎨 Responsive Design**: Desktop and mobile optimized with dark mode support
-- **📄 Advanced PDF Generation**: International font support for all 12
-  languages
+- **📄 Advanced PDF Generation**: Multiple export modes with international
+  support
   - Multi-language font management (Latin, CJK, Devanagari, Arabic scripts)
   - RTL text rendering for Arabic
-  - Three PDF modes (Pixel-perfect/Font-embedded/Text-based)
+  - Two primary PDF modes (Pixel-perfect/Text-based)
 - **🔄 History Management**: Save and reference past evaluation results
 - **♿ Accessibility**: WCAG-compliant universal design
 - **⚡ Performance Optimization**: Font caching, progress indicators, error
@@ -210,9 +210,8 @@ fact-checklist/
 │   │   │       ├── id.ts       # Indonesian / インドネシア語
 │   │   │       └── ko.ts       # Korean / 韓国語
 │   │   ├── utils/              # Utilities / ユーティリティ
-│   │   │   ├── reliablePDFGenerator.ts # International PDF generation
-│   │   │   ├── simplePDFGenerator.ts   # Pixel-perfect PDF
-│   │   │   ├── htmlToPDFGenerator.ts   # HTML→PDF conversion
+│   │   │   ├── simplePDFGenerator.ts   # Pixel-perfect PDF (Default)
+│   │   │   ├── textBasedPDFGenerator.ts# Text-based PDF with fonts
 │   │   │   ├── pwaAwarePDFExporter.ts  # PWA-aware PDF export
 │   │   │   ├── indexedDBStorage.ts     # Data persistence
 │   │   │   └── fontToBase64.ts         # Font conversion utility
@@ -254,19 +253,21 @@ fact-checklist/
 
 ### 2. Advanced Export Features / 高度エクスポート機能
 
-#### 📄 International PDF Generation / 国際化PDF生成（3つのモード - 排他選択）
+#### 📄 International PDF Generation / 国際化PDF生成（2つのモード - 排他選択）
 
 - **🎨 Pixel-Perfect (Default)**: Browser print function with HTML display
   perfect match
-- **🔥 International Font Support**: jsPDF with embedded fonts for all 12
-  languages
+  - Uses browser's native print dialog for highest quality output
+  - Preserves exact visual layout and styling
+  - Recommended for most users
+- **🔤 Text-Based**: Lightweight PDF with embedded international fonts
   - **Latin Script**: Roboto for English, French, Spanish, Portuguese, German,
     Italian, Indonesian
   - **CJK Script**: Noto Sans CJK for Japanese, Korean, Traditional Chinese
   - **Devanagari Script**: Noto Sans Devanagari for Hindi
   - **Arabic Script**: Noto Sans Arabic for Arabic with RTL support
-- **🔤 Text-Based**: Lightweight PDF utilizing PWA features, text searchable and
-  copyable
+  - Searchable and copyable text content
+  - Optimized for mobile devices and PWA features
 
 #### 🌐 Other Formats / その他形式
 
@@ -364,6 +365,9 @@ disableDebugMode()
 - **ベストプラクティス**: 100
 - **SEO**: 100
 - **PWA**: 100
+
+> [!NOTE]
+> エクスポート機能について: 現在、🔥 フォント信頼性重視モードは一時的に非表示となっています。🎨 ピクセルパーフェクト（デフォルト）と 🔤 テキストベースモードの2つが利用可能です。
 
 ### 技術的な特徴
 

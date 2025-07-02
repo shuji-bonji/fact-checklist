@@ -168,10 +168,25 @@ export class PDFService {
       options.onProgress?.(20, `Starting ${mode} generation...`);
 
       switch (mode) {
-        case PDFGenerationMode.PRINT_DIALOG:
+        case PDFGenerationMode.PRINT_DIALOG: {
           if (!htmlContent) throw new Error('HTML content required for print dialog mode');
-          await generator.generateFromHTML?.(htmlContent, filename);
-          return { success: true, usedMode: mode, duration: 0, filename: filename! };
+          const printResult = await generator.generateFromHTML?.(htmlContent, filename);
+          if (printResult?.cancelled) {
+            return {
+              success: false,
+              error: 'Print dialog was cancelled by user',
+              usedMode: mode,
+              duration: 0,
+              filename: filename!
+            };
+          }
+          return {
+            success: printResult?.success ?? true,
+            usedMode: mode,
+            duration: 0,
+            filename: filename!
+          };
+        }
 
         case PDFGenerationMode.RELIABLE_FONTS: {
           options.onProgress?.(50, 'Generating with reliable fonts...');

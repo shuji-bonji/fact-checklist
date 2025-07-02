@@ -99,6 +99,12 @@
     isExporting = true;
 
     try {
+      // エクスポート開始の即座の表示
+      updateProgress(5, 100, t('export.progress.starting'), 'Initializing export...');
+
+      // 少し待機してUIの更新を確実にする
+      await new Promise(resolve => setTimeout(resolve, 50));
+
       const exportService = ExportService.getInstance();
 
       const result = await exportService.exportChecklist({
@@ -117,9 +123,16 @@
         // 成功メッセージを短時間表示後にモーダルを閉じる
         setTimeout(() => {
           onClose();
-        }, 2000);
+        }, 1000);
       } else {
-        exportError = result.error || t('errors.export');
+        // ユーザーキャンセルの場合は静かに処理を終了
+        if (result.error?.includes('cancelled by user')) {
+          console.log('📄 Export cancelled by user');
+          // エクスポート状態をリセットして終了
+          resetExportState();
+        } else {
+          exportError = result.error || t('errors.export');
+        }
       }
     } catch (error) {
       console.error('エクスポートエラー:', error);
@@ -319,6 +332,7 @@ ${checklist.notes ? `📝 ${t('export.notes')}:\n${checklist.notes}` : ''}
                 <small>{t('export.pdfModes.pixelPerfectDescription')}</small>
               </label>
 
+              <!-- 🔥 フォント信頼性重視モードは一時的に非表示（文字被りやレイアウトの問題のため）
               <label class="radio-option">
                 <input
                   type="radio"
@@ -335,6 +349,7 @@ ${checklist.notes ? `📝 ${t('export.notes')}:\n${checklist.notes}` : ''}
                 <span>🔥 {t('export.pdfModes.reliableFont')}</span>
                 <small>{t('export.pdfModes.reliableFontDescription')}</small>
               </label>
+              -->
 
               <label class="radio-option">
                 <input
@@ -354,7 +369,7 @@ ${checklist.notes ? `📝 ${t('export.notes')}:\n${checklist.notes}` : ''}
               </label>
             </div>
 
-            <label class="checkbox-option">
+            <!-- <label class="checkbox-option">
               <input
                 type="checkbox"
                 checked={exportOptions.advancedMode}
@@ -363,7 +378,7 @@ ${checklist.notes ? `📝 ${t('export.notes')}:\n${checklist.notes}` : ''}
               />
               <span>⚡ {t('export.description')}</span>
               <small>{t('export.description')}</small>
-            </label>
+            </label> -->
           {/if}
         </div>
       </div>
