@@ -247,6 +247,10 @@ test-results/
 playwright-report/
 playwright/.cache/
 
+# Test coverage
+coverage/
+.vitest/
+
 # Benchmark results
 benchmark/
 
