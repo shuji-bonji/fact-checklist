@@ -9,6 +9,7 @@
   import { t, i18nStore, factChecklistI18n } from '$lib/i18n/index.js';
 
   import ExportModal from '$lib/components/ExportModal.svelte';
+  import PWAInstallPrompt from '$lib/components/PWAInstallPrompt.svelte';
 
   // i18n初期化状態を監視
   const isI18nReady = $derived(i18nStore.initialized && !!i18nStore.translations);
@@ -20,6 +21,7 @@
   let showExportModal = $state(false);
   let isCompleted = $state(false);
   let loading = $state(true);
+  let completionCountUpdated = $state(false);
 
   // Derived state from refactored store
   const checklist = $derived(refactoredChecklistStore.currentChecklist);
@@ -33,10 +35,36 @@
   const checklistId = $derived($page.params.id);
   const completedParam = $derived($page.url.searchParams.get('completed'));
 
+  // PWAプロンプト表示条件
+  const showPWAPrompt = $derived(() => {
+    // チェックリスト完了済み かつ 初回利用ではない
+    if (!isCompleted || !checklist) return false;
+
+    // 初回利用チェック
+    const completedCount = parseInt(localStorage.getItem('completedChecklistsCount') || '0');
+    // カウント更新前は0、更新後は1になるので、2回目以降（更新後カウント>=2）で表示
+    const effectiveCount = completionCountUpdated ? completedCount : completedCount;
+    const isFirstTime = effectiveCount < 2;
+
+    return !isFirstTime;
+  });
+
   onMount(() => {
     loadChecklist();
     isCompleted = completedParam === 'true';
+
+    // チェックリスト完了カウンターを更新（同じ結果ページの重複カウントを防ぐ）
+    if (isCompleted && !sessionStorage.getItem(`counted_${checklistId}`)) {
+      updateCompletedCount();
+      sessionStorage.setItem(`counted_${checklistId}`, 'true');
+    }
   });
+
+  function updateCompletedCount() {
+    const currentCount = parseInt(localStorage.getItem('completedChecklistsCount') || '0');
+    localStorage.setItem('completedChecklistsCount', (currentCount + 1).toString());
+    completionCountUpdated = true;
+  }
 
   async function loadChecklist() {
     if (!checklistId) {
@@ -157,6 +185,17 @@
           </div>
         </div>
       </div>
+
+      <!-- PWAインストールプロンプト -->
+      {#if showPWAPrompt()}
+        <PWAInstallPrompt
+          variant="success"
+          page="checklist-result"
+          showBenefits={true}
+          title="🎉 評価完了！アプリをインストールしませんか？"
+          message="このアプリをインストールして、いつでも素早く情報評価ができるようにしませんか？"
+        />
+      {/if}
     {/if}
 
     <!-- ヘッダー -->
@@ -464,6 +503,11 @@
   .banner-text p {
     margin: 4px 0 0 0;
     opacity: 0.9;
+  }
+
+  /* PWA プロンプトスタイリング */
+  .completion-banner + :global(.pwa-install-prompt) {
+    margin-bottom: var(--spacing-lg);
   }
 
   /* ヘッダー */
