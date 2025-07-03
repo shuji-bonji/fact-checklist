@@ -26,7 +26,7 @@ async function generateIntroMeta(language: LanguageCode, _url: URL) {
     const translationModule = await translationModules[language]();
     const translations = translationModule.translations;
 
-    const baseUrl = 'https://shuji-bonji.github.io/fact-checklist';
+    const baseUrl = 'https://fact-checklist.vercel.app';
     const ogImageUrl = `${baseUrl}/og-image-intro.png`;
 
     return {
@@ -78,10 +78,10 @@ async function generateIntroMeta(language: LanguageCode, _url: URL) {
           '偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート - Fact Checklist',
         ogDescription:
           '政府のSNS規制が進む中、情報の信頼性を自分の目と頭で見極めるためのシンプルなチェックリスト。AIやメディアを鵜呑みにせず、科学的・体系的に情報を評価するPWAアプリ。',
-        ogImage: 'https://shuji-bonji.github.io/fact-checklist/og-image-intro.png',
-        ogUrl: 'https://shuji-bonji.github.io/fact-checklist/intro',
-        url: 'https://shuji-bonji.github.io/fact-checklist/intro',
-        image: 'https://shuji-bonji.github.io/fact-checklist/og-image-intro.png',
+        ogImage: 'https://fact-checklist.vercel.app/og-image-intro.png',
+        ogUrl: 'https://fact-checklist.vercel.app/intro',
+        url: 'https://fact-checklist.vercel.app/intro',
+        image: 'https://fact-checklist.vercel.app/og-image-intro.png',
         type: 'article',
         locale: 'ja_JP',
         language: 'ja'
@@ -98,10 +98,10 @@ async function generateIntroMeta(language: LanguageCode, _url: URL) {
           'Practical Fact-Check Checklist for Surviving in a World Full of Misinformation - Fact Checklist',
         ogDescription:
           'A simple checklist to evaluate information reliability with your own eyes and mind as government SNS regulations advance. A PWA app to scientifically and systematically assess information without taking AI or media at face value.',
-        ogImage: 'https://shuji-bonji.github.io/fact-checklist/og-image-intro.png',
-        ogUrl: 'https://shuji-bonji.github.io/fact-checklist/intro',
-        url: 'https://shuji-bonji.github.io/fact-checklist/intro',
-        image: 'https://shuji-bonji.github.io/fact-checklist/og-image-intro.png',
+        ogImage: 'https://fact-checklist.vercel.app/og-image-intro.png',
+        ogUrl: 'https://fact-checklist.vercel.app/intro',
+        url: 'https://fact-checklist.vercel.app/intro',
+        image: 'https://fact-checklist.vercel.app/og-image-intro.png',
         type: 'article',
         locale: 'en_US',
         language: 'en'
@@ -120,11 +120,17 @@ async function generateIntroMeta(language: LanguageCode, _url: URL) {
 }
 
 export const load: PageServerLoad = async ({ url: _url, request }) => {
+  // デバッグログ（Vercel環境で確認用）
+  console.log('[SSR] Intro page server load running');
+  console.log('[SSR] URL:', _url.toString());
+  
   // 静的ビルド時はAccept-Languageヘッダーが空の場合がある
   const acceptLanguage = request.headers.get('accept-language') ?? '';
+  console.log('[SSR] Accept-Language:', acceptLanguage);
 
   // 単一言語のみ決定（重複回避）、デフォルトは日本語
   const detectedLanguage = detectLanguage(acceptLanguage);
+  console.log('[SSR] Detected language:', detectedLanguage);
 
   // 検出した言語のメタデータのみ生成
   const meta = await generateIntroMeta(detectedLanguage, _url);
