@@ -69,7 +69,7 @@ export function getLocaleString(language: LanguageCode): string {
     hi: 'hi_IN',
     de: 'de_DE',
     it: 'it_IT',
-    ar: 'ar_AR',
+    ar: 'ar_SA',
     id: 'id_ID',
     ko: 'ko_KR'
   };

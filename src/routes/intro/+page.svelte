@@ -9,7 +9,7 @@
     data?: PageData;
   }
 
-  const { data }: Props = $props();
+  const { data: _data }: Props = $props();
 
   // i18n初期化状態を監視
   const isI18nReady = $derived(i18nStore.initialized && !!i18nStore.translations);
@@ -57,75 +57,7 @@
   }
 </script>
 
-<svelte:head>
-  {#if data?.meta}
-    <!-- サーバーサイドで決定されたメタタグのみ出力（重複回避） -->
-    <title>{data.meta.title}</title>
-    <meta name="description" content={data.meta.description} />
-    <meta name="keywords" content={data.meta.keywords} />
-
-    <!-- OGP -->
-    <meta property="og:title" content={data.meta.title} />
-    <meta property="og:description" content={data.meta.description} />
-    <meta property="og:url" content={data.meta.url} />
-    <meta property="og:image" content={data.meta.image} />
-    <meta property="og:type" content={data.meta.type} />
-    <meta property="og:site_name" content={data.meta.siteName} />
-    <meta property="og:locale" content={data.meta.locale} />
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={data.meta.title} />
-    <meta name="twitter:description" content={data.meta.description} />
-    <meta name="twitter:image" content={data.meta.image} />
-  {:else}
-    <!-- 静的ビルド用フォールバック（日本語デフォルト） -->
-    <title
-      >偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート - Fact Checklist</title
-    >
-    <meta
-      name="description"
-      content="政府のSNS規制が進む中、情報の信頼性を自分の目と頭で見極めるためのシンプルなチェックリスト。AIやメディアを鵜呑みにせず、科学的・体系的に情報を評価するPWAアプリ。"
-    />
-    <meta
-      name="keywords"
-      content="事実確認,ファクトチェック,情報検証,信頼性評価,PWA,情報リテラシー,偽情報対策,SNS規制,言論統制,情報の質,AIファクトチェック"
-    />
-
-    <!-- OGP -->
-    <meta
-      property="og:title"
-      content="偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート - Fact Checklist"
-    />
-    <meta
-      property="og:description"
-      content="政府のSNS規制が進む中、情報の信頼性を自分の目と頭で見極めるためのシンプルなチェックリスト。AIやメディアを鵜呑みにせず、科学的・体系的に情報を評価するPWAアプリ。"
-    />
-    <meta property="og:url" content="https://shuji-bonji.github.io/fact-checklist/intro" />
-    <meta
-      property="og:image"
-      content="https://shuji-bonji.github.io/fact-checklist/og-image-intro.png"
-    />
-    <meta property="og:type" content="article" />
-    <meta property="og:site_name" content="実用的事実確認チェックシート" />
-    <meta property="og:locale" content="ja_JP" />
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:title"
-      content="偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート - Fact Checklist"
-    />
-    <meta
-      name="twitter:description"
-      content="政府のSNS規制が進む中、情報の信頼性を自分の目と頭で見極めるためのシンプルなチェックリスト。AIやメディアを鵜呑みにせず、科学的・体系的に情報を評価するPWAアプリ。"
-    />
-    <meta
-      name="twitter:image"
-      content="https://shuji-bonji.github.io/fact-checklist/og-image-intro.png"
-    />
-  {/if}
-</svelte:head>
+<!-- Meta tags are now handled by server-side layout only to prevent duplicates -->
 
 {#if isI18nReady}
   <div class="intro-container">
