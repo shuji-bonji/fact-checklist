@@ -25,7 +25,6 @@
     "test:watch": "vitest --watch"
   },
   "devDependencies": {
-    "@sveltejs/adapter-static": "^3.0.5",
     "@sveltejs/kit": "^2.8.0",
     "@sveltejs/vite-plugin-svelte": "^4.0.0",
     "@types/eslint": "^9.6.1",
@@ -51,6 +50,7 @@
     "vitest": "^2.1.9"
   },
   "dependencies": {
+    "@sveltejs/adapter-vercel": "^5.7.2",
     "html2canvas": "^1.4.1",
     "jspdf": "^3.0.1",
     "uuid": "^10.0.0"
