@@ -31,6 +31,8 @@
         ogUrl: string;
         language: string;
         siteName: string;
+        type: string;
+        locale: string;
       };
       detectedLanguage?: string;
     };
@@ -162,54 +164,19 @@
     <meta name="keywords" content={data.meta.keywords} />
 
     <!-- OGP -->
-    <meta property="og:title" content={data.meta.title} />
-    <meta property="og:description" content={data.meta.description} />
+    <meta property="og:title" content={data.meta.ogTitle} />
+    <meta property="og:description" content={data.meta.ogDescription} />
     <meta property="og:url" content={data.meta.ogUrl} />
     <meta property="og:image" content={data.meta.ogImage} />
-    <meta property="og:type" content={(data.meta as any).type} />
+    <meta property="og:type" content={data.meta.type} />
     <meta property="og:site_name" content={data.meta.siteName} />
-    <meta property="og:locale" content={(data.meta as any).locale} />
+    <meta property="og:locale" content={data.meta.locale} />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={data.meta.title} />
-    <meta name="twitter:description" content={data.meta.description} />
+    <meta name="twitter:title" content={data.meta.ogTitle} />
+    <meta name="twitter:description" content={data.meta.ogDescription} />
     <meta name="twitter:image" content={data.meta.ogImage} />
-  {:else}
-    <!-- 静的ビルド用フォールバック（日本語デフォルト） -->
-    <title>Fact Checklist - 実用的事実確認チェックシート</title>
-    <meta
-      name="description"
-      content="20項目のチェックリストで情報の信頼性を体系的に評価。AIや政府に頼らず、自分の目と頭で情報を見極めるPWAアプリ。"
-    />
-    <meta
-      name="keywords"
-      content="事実確認,ファクトチェック,情報検証,信頼性評価,PWA,情報リテラシー,偽情報対策"
-    />
-
-    <!-- OGP -->
-    <meta property="og:title" content="Fact Checklist - 実用的事実確認チェックシート" />
-    <meta
-      property="og:description"
-      content="20項目のチェックリストで情報の信頼性を体系的に評価。AIや政府に頼らず、自分の目と頭で情報を見極めるPWAアプリ。"
-    />
-    <meta property="og:url" content="https://shuji-bonji.github.io/fact-checklist" />
-    <meta property="og:image" content="https://shuji-bonji.github.io/fact-checklist/og-image.png" />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="実用的事実確認チェックシート" />
-    <meta property="og:locale" content="ja_JP" />
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Fact Checklist - 実用的事実確認チェックシート" />
-    <meta
-      name="twitter:description"
-      content="20項目のチェックリストで情報の信頼性を体系的に評価。AIや政府に頼らず、自分の目と頭で情報を見極めるPWAアプリ。"
-    />
-    <meta
-      name="twitter:image"
-      content="https://shuji-bonji.github.io/fact-checklist/og-image.png"
-    />
   {/if}
 
   <!-- PWA用メタタグ -->
