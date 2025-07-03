@@ -1,7 +1,7 @@
 {
   "name": "fact-checklist",
   "version": "1.0.0",
-  "description": "実用的事実確認チェックシート - 情報の信頼性を科学的・体系的に評価するためのPWA",
+  "description": "ファクトチェックリスト - 情報の信頼性を科学的・体系的に評価するファクトチェック支援PWA",
   "type": "module",
   "scripts": {
     "dev": "vite dev",

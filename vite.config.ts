@@ -58,7 +58,8 @@ export default defineConfig(({ mode }) => {
         manifest: {
           name: '実用的事実確認チェックシート',
           short_name: 'FactCheckList',
-          description: '情報の信頼性を科学的・体系的に評価するためのPWA',
+          description:
+            'ファクトチェックリスト - 情報の信頼性を科学的・体系的に評価するファクトチェック支援PWA',
           theme_color: '#2c3e50',
           background_color: '#ffffff',
           display: 'standalone',
