@@ -57,18 +57,18 @@ async function generateMetadata(language: LanguageCode) {
   try {
     // 静的インポートマップを使用（SSR対応）
     const translationModules = {
-      ja: () => import('$lib/i18n/translations/ja.js'),
-      en: () => import('$lib/i18n/translations/en.js'),
-      fr: () => import('$lib/i18n/translations/fr.js'),
-      'zh-TW': () => import('$lib/i18n/translations/zh-TW.js'),
-      es: () => import('$lib/i18n/translations/es.js'),
-      pt: () => import('$lib/i18n/translations/pt.js'),
-      hi: () => import('$lib/i18n/translations/hi.js'),
-      de: () => import('$lib/i18n/translations/de.js'),
-      it: () => import('$lib/i18n/translations/it.js'),
-      ar: () => import('$lib/i18n/translations/ar.js'),
-      id: () => import('$lib/i18n/translations/id.js'),
-      ko: () => import('$lib/i18n/translations/ko.js')
+      ja: () => import('$lib/i18n/translations/ja'),
+      en: () => import('$lib/i18n/translations/en'),
+      fr: () => import('$lib/i18n/translations/fr'),
+      'zh-TW': () => import('$lib/i18n/translations/zh-TW'),
+      es: () => import('$lib/i18n/translations/es'),
+      pt: () => import('$lib/i18n/translations/pt'),
+      hi: () => import('$lib/i18n/translations/hi'),
+      de: () => import('$lib/i18n/translations/de'),
+      it: () => import('$lib/i18n/translations/it'),
+      ar: () => import('$lib/i18n/translations/ar'),
+      id: () => import('$lib/i18n/translations/id'),
+      ko: () => import('$lib/i18n/translations/ko')
     };
 
     const translationModule = await translationModules[language]();
