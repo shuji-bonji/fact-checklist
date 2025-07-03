@@ -208,10 +208,7 @@
       name="twitter:description"
       content="20項目のチェックリストで情報の信頼性を体系的に評価。AIや政府に頼らず、自分の目と頭で情報を見極めるPWAアプリ。"
     />
-    <meta
-      name="twitter:image"
-      content="https://fact-checklist.vercel.app/og-image.png"
-    />
+    <meta name="twitter:image" content="https://fact-checklist.vercel.app/og-image.png" />
   {/if}
 
   <!-- PWA用メタタグ -->
