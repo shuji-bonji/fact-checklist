@@ -117,7 +117,7 @@ export const load: LayoutServerLoad = async ({ url: _url, request }) => {
   // デバッグログ（Vercel環境で確認用）
   console.log('[SSR] Layout server load running');
   console.log('[SSR] URL:', _url.toString());
-  
+
   // 静的ビルド時はAccept-Languageヘッダーが空の場合がある
   const acceptLanguage = request.headers.get('accept-language') ?? '';
   console.log('[SSR] Accept-Language:', acceptLanguage);
