@@ -73,8 +73,11 @@ class PlatformStore {
   isInitialized = $state(false);
 
   constructor() {
-    this.detectPlatform();
-    this.detectSystemFeatures();
+    // Only initialize in browser environment
+    if (typeof window !== 'undefined' && typeof navigator !== 'undefined') {
+      this.detectPlatform();
+      this.detectSystemFeatures();
+    }
     this.isInitialized = true;
   }
 
@@ -82,6 +85,11 @@ class PlatformStore {
    * プラットフォーム・機能の検出
    */
   private detectPlatform(): void {
+    // Skip detection in SSR
+    if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+      return;
+    }
+
     const ua = navigator.userAgent;
 
     this.capabilities = {
@@ -192,6 +200,11 @@ class PlatformStore {
    * システム機能の詳細検出
    */
   private async detectSystemFeatures(): Promise<void> {
+    // Skip detection in SSR
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
+      return;
+    }
+
     const availableFonts = await this.detectAvailableFonts();
     const pdfStrategy = this.selectOptimalPDFStrategy();
     const featureLevel = this.calculateNativeFeatureLevel();

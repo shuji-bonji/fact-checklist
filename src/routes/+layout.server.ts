@@ -114,11 +114,17 @@ async function generateSingleLanguageMeta(language: LanguageCode, _url: URL): Pr
 }
 
 export const load: LayoutServerLoad = async ({ url: _url, request }) => {
+  // デバッグログ（Vercel環境で確認用）
+  console.log('[SSR] Layout server load running');
+  console.log('[SSR] URL:', _url.toString());
+  
   // 静的ビルド時はAccept-Languageヘッダーが空の場合がある
   const acceptLanguage = request.headers.get('accept-language') ?? '';
+  console.log('[SSR] Accept-Language:', acceptLanguage);
 
   // 単一言語のみ決定（重複回避）、デフォルトは日本語
   const detectedLanguage = detectLanguage(acceptLanguage);
+  console.log('[SSR] Detected language:', detectedLanguage);
 
   // 検出した言語のメタデータのみ生成
   const meta = await generateSingleLanguageMeta(detectedLanguage, _url);

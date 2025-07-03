@@ -1,3 +1,4 @@
-export const prerender = true;
-export const ssr = false;
+// Disable prerendering to allow dynamic SSR on Vercel
+export const prerender = false;
+export const ssr = true;
 export const trailingSlash = 'always';
