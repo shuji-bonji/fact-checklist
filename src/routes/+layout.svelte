@@ -160,23 +160,35 @@
     <title>{data.meta.title}</title>
     <meta name="description" content={data.meta.description} />
     <meta name="keywords" content={data.meta.keywords} />
-    
+
     <!-- OGP -->
     <meta property="og:title" content={data.meta.ogTitle} />
     <meta property="og:description" content={data.meta.ogDescription} />
     <meta property="og:image" content={data.meta.ogImage} />
     <meta property="og:url" content={data.meta.ogUrl} />
     <meta property="og:site_name" content={data.meta.siteName} />
-    <meta property="og:locale" content={`${data.meta.language}_${data.meta.language.toUpperCase()}`} />
-    
+    <meta
+      property="og:locale"
+      content={`${data.meta.language}_${data.meta.language.toUpperCase()}`}
+    />
+
     <!-- Twitter Card -->
     <meta name="twitter:title" content={data.meta.ogTitle} />
     <meta name="twitter:description" content={data.meta.ogDescription} />
     <meta name="twitter:image" content={data.meta.ogImage} />
   {:else}
     <!-- フォールバック（クライアントサイドレンダリング時） -->
-    <title>{isI18nReady ? t('pages.home.title') : 'Fact Checklist - 実用的事実確認チェックシート'}</title>
-    <meta name="description" content={isI18nReady ? t('pages.home.description') : '情報の信頼性を科学的・体系的に評価するためのチェックシート'} />
+    <title
+      >{isI18nReady
+        ? t('pages.home.title')
+        : 'Fact Checklist - 実用的事実確認チェックシート'}</title
+    >
+    <meta
+      name="description"
+      content={isI18nReady
+        ? t('pages.home.description')
+        : '情報の信頼性を科学的・体系的に評価するためのチェックシート'}
+    />
   {/if}
 
   <!-- PWA用メタタグ -->
