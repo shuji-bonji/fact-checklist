@@ -3,6 +3,13 @@
   import { page } from '$app/stores';
   import { base } from '$app/paths';
   import LanguageSwitcher from '$lib/components/LanguageSwitcher.svelte';
+  import type { PageData } from './$types';
+
+  interface Props {
+    data?: PageData;
+  }
+
+  const { data }: Props = $props();
 
   // i18n初期化状態を監視
   const isI18nReady = $derived(i18nStore.initialized && !!i18nStore.translations);
@@ -51,7 +58,28 @@
 </script>
 
 <svelte:head>
-  {#if isI18nReady}
+  {#if data?.meta}
+    <!-- サーバーサイドで生成されたメタデータを使用 -->
+    <title>{data.meta.title}</title>
+    <meta name="description" content={data.meta.description} />
+    <meta name="keywords" content={data.meta.keywords} />
+    
+    <!-- OGP -->
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content={data.meta.ogTitle} />
+    <meta property="og:description" content={data.meta.ogDescription} />
+    <meta property="og:image" content={data.meta.ogImage} />
+    <meta property="og:url" content={data.meta.ogUrl} />
+    <meta property="og:site_name" content={data.meta.siteName} />
+    <meta property="og:locale" content={`${data.meta.language}_${data.meta.language.toUpperCase()}`} />
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={data.meta.ogTitle} />
+    <meta name="twitter:description" content={data.meta.ogDescription} />
+    <meta name="twitter:image" content={data.meta.ogImage} />
+  {:else if isI18nReady}
+    <!-- フォールバック（クライアントサイドレンダリング時） -->
     <title>{t('pages.intro.title')}</title>
     <meta name="description" content={t('pages.intro.description')} />
     <meta name="keywords" content={t('pages.intro.keywords')} />
@@ -71,11 +99,12 @@
     <meta name="twitter:description" content={t('pages.intro.description')} />
     <meta name="twitter:image" content="{$page.url.origin}{base}/og-image-intro.png" />
   {:else}
-    <title>Fact Checklist - Intro</title>
-    <meta name="description" content="Information reliability evaluation intro" />
-    <meta property="og:title" content="Fact Checklist - Intro" />
-    <meta property="og:description" content="Information reliability evaluation intro" />
-    <meta property="og:image" content="{base}/og-image-intro.png" />
+    <!-- 最終フォールバック -->
+    <title>偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート - Fact Checklist</title>
+    <meta name="description" content="政府のSNS規制が進む中、情報の信頼性を自分の目と頭で見極めるためのシンプルなチェックリスト。" />
+    <meta property="og:title" content="偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート - Fact Checklist" />
+    <meta property="og:description" content="政府のSNS規制が進む中、情報の信頼性を自分の目と頭で見極めるためのシンプルなチェックリスト。" />
+    <meta property="og:image" content="https://shuji-bonji.github.io/fact-checklist/og-image-intro.png" />
   {/if}
 </svelte:head>
 
