@@ -20,6 +20,9 @@ interface MetaData {
 
 /**
  * 単一言語のメタデータを生成（重複回避）
+ * 
+ * Note: introページなど、ページ専用のserver.tsがある場合は
+ * layout.server.tsでのメタタグ生成をスキップして重複を防ぐ
  */
 async function generateSingleLanguageMeta(language: LanguageCode, _url: URL): Promise<MetaData> {
   try {
@@ -126,11 +129,20 @@ export const load: LayoutServerLoad = async ({ url: _url, request }) => {
   const detectedLanguage = detectLanguage(acceptLanguage);
   console.log('[SSR] Detected language:', detectedLanguage);
 
-  // 検出した言語のメタデータのみ生成
+  // introページの場合はメタタグ生成をスキップ（重複回避）
+  if (_url.pathname.includes('/intro')) {
+    console.log('[SSR] Skipping meta generation for intro page - handled by page-specific server');
+    return {
+      meta: null,
+      detectedLanguage
+    };
+  }
+
+  // 他のページでは通常のメタタグ生成
   const meta = await generateSingleLanguageMeta(detectedLanguage, _url);
 
   return {
     meta,
     detectedLanguage
-  } satisfies { meta: MetaData; detectedLanguage: LanguageCode };
+  } satisfies { meta: MetaData | null; detectedLanguage: LanguageCode };
 };
