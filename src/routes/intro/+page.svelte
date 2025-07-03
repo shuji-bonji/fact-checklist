@@ -63,7 +63,7 @@
     <title>{data.meta.title}</title>
     <meta name="description" content={data.meta.description} />
     <meta name="keywords" content={data.meta.keywords} />
-    
+
     <!-- OGP -->
     <meta property="og:type" content="article" />
     <meta property="og:title" content={data.meta.ogTitle} />
@@ -71,8 +71,11 @@
     <meta property="og:image" content={data.meta.ogImage} />
     <meta property="og:url" content={data.meta.ogUrl} />
     <meta property="og:site_name" content={data.meta.siteName} />
-    <meta property="og:locale" content={`${data.meta.language}_${data.meta.language.toUpperCase()}`} />
-    
+    <meta
+      property="og:locale"
+      content={`${data.meta.language}_${data.meta.language.toUpperCase()}`}
+    />
+
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={data.meta.ogTitle} />
@@ -100,11 +103,25 @@
     <meta name="twitter:image" content="{$page.url.origin}{base}/og-image-intro.png" />
   {:else}
     <!-- 最終フォールバック -->
-    <title>偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート - Fact Checklist</title>
-    <meta name="description" content="政府のSNS規制が進む中、情報の信頼性を自分の目と頭で見極めるためのシンプルなチェックリスト。" />
-    <meta property="og:title" content="偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート - Fact Checklist" />
-    <meta property="og:description" content="政府のSNS規制が進む中、情報の信頼性を自分の目と頭で見極めるためのシンプルなチェックリスト。" />
-    <meta property="og:image" content="https://shuji-bonji.github.io/fact-checklist/og-image-intro.png" />
+    <title
+      >偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート - Fact Checklist</title
+    >
+    <meta
+      name="description"
+      content="政府のSNS規制が進む中、情報の信頼性を自分の目と頭で見極めるためのシンプルなチェックリスト。"
+    />
+    <meta
+      property="og:title"
+      content="偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート - Fact Checklist"
+    />
+    <meta
+      property="og:description"
+      content="政府のSNS規制が進む中、情報の信頼性を自分の目と頭で見極めるためのシンプルなチェックリスト。"
+    />
+    <meta
+      property="og:image"
+      content="https://shuji-bonji.github.io/fact-checklist/og-image-intro.png"
+    />
   {/if}
 </svelte:head>
 

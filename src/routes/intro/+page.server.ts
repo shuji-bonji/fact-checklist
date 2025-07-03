@@ -15,7 +15,7 @@ function parseAcceptLanguage(acceptLanguage: string | null): LanguageCode {
     .map(lang => {
       const [code, q] = lang.trim().split(';q=');
       return {
-        code: (code || '').toLowerCase(),
+        code: (code ?? '').toLowerCase(),
         quality: q ? parseFloat(q) : 1.0
       };
     })
@@ -23,21 +23,21 @@ function parseAcceptLanguage(acceptLanguage: string | null): LanguageCode {
 
   // 対応言語リスト
   const supportedLanguageCodes = Object.keys(SUPPORTED_LANGUAGES) as LanguageCode[];
-  
+
   // 対応言語を優先順位で確認
   for (const lang of languages) {
     const langCode = lang.code.split('-')[0] as LanguageCode;
-    
+
     // 完全一致をチェック
     if (supportedLanguageCodes.includes(lang.code as LanguageCode)) {
       return lang.code as LanguageCode;
     }
-    
+
     // 基本言語コードをチェック
     if (supportedLanguageCodes.includes(langCode)) {
       return langCode;
     }
-    
+
     // 特殊ケース: 中国語の地域バリエーション
     if (lang.code.startsWith('zh-tw') || lang.code.startsWith('zh-hant')) {
       return 'zh-TW';
@@ -73,10 +73,10 @@ async function generateIntroMetadata(language: LanguageCode) {
 
     const translationModule = await translationModules[language]();
     const translations = translationModule.translations;
-    
+
     const baseUrl = 'https://shuji-bonji.github.io/fact-checklist';
     const ogImageUrl = `${baseUrl}/og-image-intro.png`;
-    
+
     return {
       title: translations.pages.intro.title,
       description: translations.pages.intro.description,
@@ -85,19 +85,23 @@ async function generateIntroMetadata(language: LanguageCode) {
       ogDescription: translations.pages.intro.description,
       ogImage: ogImageUrl,
       ogUrl: `${baseUrl}/intro`,
-      language: language,
+      language,
       siteName: translations.app.title
     };
   } catch (error) {
     console.error(`Failed to load translations for ${language}:`, error);
-    
+
     // エラー時のフォールバック（日本語）
     return {
       title: '偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート - Fact Checklist',
-      description: '政府のSNS規制が進む中、情報の信頼性を自分の目と頭で見極めるためのシンプルなチェックリスト。AIやメディアを鵜呑みにせず、科学的・体系的に情報を評価するPWAアプリ。',
-      keywords: '事実確認,ファクトチェック,情報検証,信頼性評価,PWA,情報リテラシー,偽情報対策,SNS規制,言論統制,情報の質,AIファクトチェック',
-      ogTitle: '偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート - Fact Checklist',
-      ogDescription: '政府のSNS規制が進む中、情報の信頼性を自分の目と頭で見極めるためのシンプルなチェックリスト。AIやメディアを鵜呑みにせず、科学的・体系的に情報を評価するPWAアプリ。',
+      description:
+        '政府のSNS規制が進む中、情報の信頼性を自分の目と頭で見極めるためのシンプルなチェックリスト。AIやメディアを鵜呑みにせず、科学的・体系的に情報を評価するPWAアプリ。',
+      keywords:
+        '事実確認,ファクトチェック,情報検証,信頼性評価,PWA,情報リテラシー,偽情報対策,SNS規制,言論統制,情報の質,AIファクトチェック',
+      ogTitle:
+        '偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート - Fact Checklist',
+      ogDescription:
+        '政府のSNS規制が進む中、情報の信頼性を自分の目と頭で見極めるためのシンプルなチェックリスト。AIやメディアを鵜呑みにせず、科学的・体系的に情報を評価するPWAアプリ。',
       ogImage: 'https://shuji-bonji.github.io/fact-checklist/og-image-intro.png',
       ogUrl: 'https://shuji-bonji.github.io/fact-checklist/intro',
       language: 'ja',
@@ -110,7 +114,7 @@ export const load: PageServerLoad = async ({ request }) => {
   const acceptLanguage = request.headers.get('accept-language');
   const detectedLanguage = parseAcceptLanguage(acceptLanguage);
   const metadata = await generateIntroMetadata(detectedLanguage);
-  
+
   return {
     meta: metadata,
     detectedLanguage
