@@ -3,11 +3,6 @@
   "devCommand": "npm run dev",
   "installCommand": "npm ci",
   "framework": "sveltekit",
-  "functions": {
-    "src/routes/**/*.server.ts": {
-      "runtime": "nodejs18.x"
-    }
-  },
   "headers": [
     {
       "source": "/(.*)",
