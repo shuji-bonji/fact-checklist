@@ -130,7 +130,11 @@ export const load: LayoutServerLoad = async ({ url: _url, request }) => {
   console.log('[SSR] Detected language:', detectedLanguage);
 
   // introページの場合はメタタグ生成をスキップ（重複回避）
-  if (_url.pathname.includes('/intro')) {
+  console.log('[SSR] Checking pathname:', _url.pathname);
+  const isIntroPage = _url.pathname === '/intro' || _url.pathname === '/intro/';
+  console.log('[SSR] Is intro page:', isIntroPage);
+  
+  if (isIntroPage) {
     console.log('[SSR] Skipping meta generation for intro page - handled by page-specific server');
     return {
       meta: null,
