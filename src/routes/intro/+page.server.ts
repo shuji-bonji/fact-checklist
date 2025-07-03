@@ -1,59 +1,11 @@
 import type { PageServerLoad } from './$types';
-import { SUPPORTED_LANGUAGES, type LanguageCode } from '$lib/i18n/types';
+import type { LanguageCode } from '$lib/i18n/types';
+import { detectLanguage, getLocaleString } from '$lib/utils/language-detection';
 
 /**
- * Accept-Language ヘッダーを解析して最適な言語を決定
+ * intro ページ用の単一言語メタデータを生成（重複回避）
  */
-function parseAcceptLanguage(acceptLanguage: string | null): LanguageCode {
-  if (!acceptLanguage) {
-    return 'ja'; // デフォルト言語
-  }
-
-  // Accept-Language ヘッダーをパース
-  const languages = acceptLanguage
-    .split(',')
-    .map(lang => {
-      const [code, q] = lang.trim().split(';q=');
-      return {
-        code: (code ?? '').toLowerCase(),
-        quality: q ? parseFloat(q) : 1.0
-      };
-    })
-    .sort((a, b) => b.quality - a.quality);
-
-  // 対応言語リスト
-  const supportedLanguageCodes = Object.keys(SUPPORTED_LANGUAGES) as LanguageCode[];
-
-  // 対応言語を優先順位で確認
-  for (const lang of languages) {
-    const langCode = lang.code.split('-')[0] as LanguageCode;
-
-    // 完全一致をチェック
-    if (supportedLanguageCodes.includes(lang.code as LanguageCode)) {
-      return lang.code as LanguageCode;
-    }
-
-    // 基本言語コードをチェック
-    if (supportedLanguageCodes.includes(langCode)) {
-      return langCode;
-    }
-
-    // 特殊ケース: 中国語の地域バリエーション
-    if (lang.code.startsWith('zh-tw') || lang.code.startsWith('zh-hant')) {
-      return 'zh-TW';
-    }
-    if (lang.code.startsWith('zh')) {
-      return 'zh-TW'; // デフォルトで繁体字中国語
-    }
-  }
-
-  return 'ja'; // フォールバック
-}
-
-/**
- * intro ページ用のメタデータを生成
- */
-async function generateIntroMetadata(language: LanguageCode) {
+async function generateIntroMeta(language: LanguageCode, _url: URL) {
   try {
     // 静的インポートマップを使用（SSR対応）
     const translationModules = {
@@ -85,38 +37,100 @@ async function generateIntroMetadata(language: LanguageCode) {
       ogDescription: translations.pages.intro.description,
       ogImage: ogImageUrl,
       ogUrl: `${baseUrl}/intro`,
-      language,
-      siteName: translations.app.title
+      url: `${baseUrl}/intro`,
+      image: ogImageUrl,
+      type: 'article',
+      siteName: translations.app.title,
+      locale: getLocaleString(language),
+      language
     };
   } catch (error) {
     console.error(`Failed to load translations for ${language}:`, error);
 
-    // エラー時のフォールバック（日本語）
-    return {
-      title: '偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート - Fact Checklist',
-      description:
-        '政府のSNS規制が進む中、情報の信頼性を自分の目と頭で見極めるためのシンプルなチェックリスト。AIやメディアを鵜呑みにせず、科学的・体系的に情報を評価するPWAアプリ。',
-      keywords:
-        '事実確認,ファクトチェック,情報検証,信頼性評価,PWA,情報リテラシー,偽情報対策,SNS規制,言論統制,情報の質,AIファクトチェック',
-      ogTitle:
-        '偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート - Fact Checklist',
-      ogDescription:
-        '政府のSNS規制が進む中、情報の信頼性を自分の目と頭で見極めるためのシンプルなチェックリスト。AIやメディアを鵜呑みにせず、科学的・体系的に情報を評価するPWAアプリ。',
-      ogImage: 'https://shuji-bonji.github.io/fact-checklist/og-image-intro.png',
-      ogUrl: 'https://shuji-bonji.github.io/fact-checklist/intro',
-      language: 'ja',
-      siteName: '実用的事実確認チェックシート'
+    // エラー時のフォールバック（日本語または英語のみ、他言語は日本語にフォールバック）
+    const fallbackMeta: Record<
+      string,
+      {
+        title: string;
+        description: string;
+        keywords: string;
+        siteName: string;
+        ogTitle: string;
+        ogDescription: string;
+        ogImage: string;
+        ogUrl: string;
+        url: string;
+        image: string;
+        type: string;
+        locale: string;
+        language: string;
+      }
+    > = {
+      ja: {
+        title:
+          '偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート - Fact Checklist',
+        description:
+          '政府のSNS規制が進む中、情報の信頼性を自分の目と頭で見極めるためのシンプルなチェックリスト。AIやメディアを鵜呑みにせず、科学的・体系的に情報を評価するPWAアプリ。',
+        keywords:
+          '事実確認,ファクトチェック,情報検証,信頼性評価,PWA,情報リテラシー,偽情報対策,SNS規制,言論統制,情報の質,AIファクトチェック',
+        siteName: '実用的事実確認チェックシート',
+        ogTitle:
+          '偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート - Fact Checklist',
+        ogDescription:
+          '政府のSNS規制が進む中、情報の信頼性を自分の目と頭で見極めるためのシンプルなチェックリスト。AIやメディアを鵜呑みにせず、科学的・体系的に情報を評価するPWAアプリ。',
+        ogImage: 'https://shuji-bonji.github.io/fact-checklist/og-image-intro.png',
+        ogUrl: 'https://shuji-bonji.github.io/fact-checklist/intro',
+        url: 'https://shuji-bonji.github.io/fact-checklist/intro',
+        image: 'https://shuji-bonji.github.io/fact-checklist/og-image-intro.png',
+        type: 'article',
+        locale: 'ja_JP',
+        language: 'ja'
+      },
+      en: {
+        title:
+          'Practical Fact-Check Checklist for Surviving in a World Full of Misinformation - Fact Checklist',
+        description:
+          'A simple checklist to evaluate information reliability with your own eyes and mind as government SNS regulations advance. A PWA app to scientifically and systematically assess information without taking AI or media at face value.',
+        keywords:
+          'fact-check,verification,information,reliability,PWA,media literacy,misinformation,SNS regulation,information control,AI fact-checking',
+        siteName: 'Practical Fact-Check Checklist',
+        ogTitle:
+          'Practical Fact-Check Checklist for Surviving in a World Full of Misinformation - Fact Checklist',
+        ogDescription:
+          'A simple checklist to evaluate information reliability with your own eyes and mind as government SNS regulations advance. A PWA app to scientifically and systematically assess information without taking AI or media at face value.',
+        ogImage: 'https://shuji-bonji.github.io/fact-checklist/og-image-intro.png',
+        ogUrl: 'https://shuji-bonji.github.io/fact-checklist/intro',
+        url: 'https://shuji-bonji.github.io/fact-checklist/intro',
+        image: 'https://shuji-bonji.github.io/fact-checklist/og-image-intro.png',
+        type: 'article',
+        locale: 'en_US',
+        language: 'en'
+      }
     };
+
+    const fallback = fallbackMeta[language] ?? fallbackMeta.ja;
+
+    // fallbackMeta.ja は常に存在するため、fallback は never undefined
+    if (!fallback) {
+      throw new Error('Fallback metadata is missing');
+    }
+
+    return fallback;
   }
 }
 
-export const load: PageServerLoad = async ({ request }) => {
-  const acceptLanguage = request.headers.get('accept-language');
-  const detectedLanguage = parseAcceptLanguage(acceptLanguage);
-  const metadata = await generateIntroMetadata(detectedLanguage);
+export const load: PageServerLoad = async ({ url: _url, request }) => {
+  // 静的ビルド時はAccept-Languageヘッダーが空の場合がある
+  const acceptLanguage = request.headers.get('accept-language') ?? '';
+
+  // 単一言語のみ決定（重複回避）、デフォルトは日本語
+  const detectedLanguage = detectLanguage(acceptLanguage);
+
+  // 検出した言語のメタデータのみ生成
+  const meta = await generateIntroMeta(detectedLanguage, _url);
 
   return {
-    meta: metadata,
+    meta,
     detectedLanguage
   };
 };
