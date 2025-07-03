@@ -19,7 +19,7 @@ const config = {
     prerender: {
       handleHttpError: 'warn',
       handleMissingId: 'warn',
-      entries: ['/intro'], // Only prerender intro page
+      entries: [], // No prerender entries - all pages use dynamic SSR
       crawl: false
     }
   }

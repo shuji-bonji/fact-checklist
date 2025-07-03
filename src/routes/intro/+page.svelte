@@ -57,7 +57,49 @@
   }
 </script>
 
-<!-- Meta tags are now handled by server-side layout only to prevent duplicates -->
+<svelte:head>
+  {#if _data?.meta}
+    <!-- Intro page specific meta tags -->
+    <title>{_data.meta.title}</title>
+    <meta name="description" content={_data.meta.description} />
+    <meta name="keywords" content={_data.meta.keywords} />
+
+    <!-- OGP -->
+    <meta property="og:title" content={_data.meta.ogTitle} />
+    <meta property="og:description" content={_data.meta.ogDescription} />
+    <meta property="og:url" content={_data.meta.ogUrl} />
+    <meta property="og:image" content={_data.meta.ogImage} />
+    <meta property="og:type" content={_data.meta.type} />
+    <meta property="og:site_name" content={_data.meta.siteName} />
+    <meta property="og:locale" content={_data.meta.locale} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={_data.meta.ogTitle} />
+    <meta name="twitter:description" content={_data.meta.ogDescription} />
+    <meta name="twitter:image" content={_data.meta.ogImage} />
+  {:else}
+    <!-- Fallback intro meta tags -->
+    <title>偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート - Fact Checklist</title>
+    <meta name="description" content="政府のSNS規制が進む中、情報の信頼性を自分の目と頭で見極めるためのシンプルなチェックリスト。AIやメディアを鵜呑みにせず、科学的・体系的に情報を評価するPWAアプリ。" />
+    <meta name="keywords" content="事実確認,ファクトチェック,情報検証,信頼性評価,PWA,情報リテラシー,偽情報対策,SNS規制,言論統制,情報の質,AIファクトチェック" />
+
+    <!-- OGP fallback -->
+    <meta property="og:title" content="偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート - Fact Checklist" />
+    <meta property="og:description" content="政府のSNS規制が進む中、情報の信頼性を自分の目と頭で見極めるためのシンプルなチェックリスト。AIやメディアを鵜呑みにせず、科学的・体系的に情報を評価するPWAアプリ。" />
+    <meta property="og:url" content="https://fact-checklist.vercel.app/intro" />
+    <meta property="og:image" content="https://fact-checklist.vercel.app/og-image-intro.png" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="実用的事実確認チェックシート" />
+    <meta property="og:locale" content="ja_JP" />
+
+    <!-- Twitter Card fallback -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート - Fact Checklist" />
+    <meta name="twitter:description" content="政府のSNS規制が進む中、情報の信頼性を自分の目と頭で見極めるためのシンプルなチェックリスト。AIやメディアを鵜呑みにせず、科学的・体系的に情報を評価するPWAアプリ。" />
+    <meta name="twitter:image" content="https://fact-checklist.vercel.app/og-image-intro.png" />
+  {/if}
+</svelte:head>
 
 {#if isI18nReady}
   <div class="intro-container">

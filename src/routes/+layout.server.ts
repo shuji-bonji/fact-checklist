@@ -42,7 +42,7 @@ async function generateSingleLanguageMeta(language: LanguageCode, _url: URL): Pr
     const translationModule = await translationModules[language]();
     const translations = translationModule.translations;
 
-    const baseUrl = 'https://shuji-bonji.github.io/fact-checklist';
+    const baseUrl = 'https://fact-checklist.vercel.app';
     const ogImageUrl = `${baseUrl}/og-image.png`;
 
     return {
@@ -74,10 +74,10 @@ async function generateSingleLanguageMeta(language: LanguageCode, _url: URL): Pr
         ogTitle: 'Fact Checklist - 実用的事実確認チェックシート',
         ogDescription:
           '20項目のチェックリストで情報の信頼性を体系的に評価。AIや政府に頼らず、自分の目と頭で情報を見極めるPWAアプリ。',
-        ogImage: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
-        ogUrl: 'https://shuji-bonji.github.io/fact-checklist',
-        url: 'https://shuji-bonji.github.io/fact-checklist',
-        image: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
+        ogImage: 'https://fact-checklist.vercel.app/og-image.png',
+        ogUrl: 'https://fact-checklist.vercel.app',
+        url: 'https://fact-checklist.vercel.app',
+        image: 'https://fact-checklist.vercel.app/og-image.png',
         type: 'website',
         locale: 'ja_JP',
         language: 'ja'
@@ -92,10 +92,10 @@ async function generateSingleLanguageMeta(language: LanguageCode, _url: URL): Pr
         ogTitle: 'Fact Checklist - Practical Fact-Check Tool',
         ogDescription:
           'Systematically evaluate information reliability with a 20-item checklist. A PWA app to assess information with your own eyes and mind, without relying on AI or government.',
-        ogImage: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
-        ogUrl: 'https://shuji-bonji.github.io/fact-checklist',
-        url: 'https://shuji-bonji.github.io/fact-checklist',
-        image: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
+        ogImage: 'https://fact-checklist.vercel.app/og-image.png',
+        ogUrl: 'https://fact-checklist.vercel.app',
+        url: 'https://fact-checklist.vercel.app',
+        image: 'https://fact-checklist.vercel.app/og-image.png',
         type: 'website',
         locale: 'en_US',
         language: 'en'

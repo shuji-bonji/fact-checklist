@@ -195,8 +195,8 @@
       property="og:description"
       content="20項目のチェックリストで情報の信頼性を体系的に評価。AIや政府に頼らず、自分の目と頭で情報を見極めるPWAアプリ。"
     />
-    <meta property="og:url" content="https://shuji-bonji.github.io/fact-checklist" />
-    <meta property="og:image" content="https://shuji-bonji.github.io/fact-checklist/og-image.png" />
+    <meta property="og:url" content="https://fact-checklist.vercel.app" />
+    <meta property="og:image" content="https://fact-checklist.vercel.app/og-image.png" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="実用的事実確認チェックシート" />
     <meta property="og:locale" content="ja_JP" />
@@ -210,7 +210,7 @@
     />
     <meta
       name="twitter:image"
-      content="https://shuji-bonji.github.io/fact-checklist/og-image.png"
+      content="https://fact-checklist.vercel.app/og-image.png"
     />
   {/if}
 
