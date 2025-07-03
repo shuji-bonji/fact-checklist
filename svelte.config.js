@@ -6,8 +6,12 @@ const config = {
   preprocess: vitePreprocess(),
   kit: {
     adapter: adapter({
-      runtime: 'nodejs20.x', // 18.x → 20.x に変更
-      split: false
+      runtime: 'nodejs20.x',
+      split: false,
+      isr: {
+        // Enable ISR for better performance while keeping dynamic capabilities
+        expiration: 60 // Cache for 60 seconds
+      }
     }),
     serviceWorker: {
       register: false
@@ -15,8 +19,8 @@ const config = {
     prerender: {
       handleHttpError: 'warn',
       handleMissingId: 'warn',
-      entries: ['/', '/about', '/help', '/privacy', '/intro'],
-      crawl: true
+      entries: ['/intro'], // Only prerender intro page
+      crawl: false
     }
   }
 };
