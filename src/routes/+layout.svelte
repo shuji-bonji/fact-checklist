@@ -33,7 +33,7 @@
         siteName: string;
         type: string;
         locale: string;
-      };
+      } | null;
       detectedLanguage?: string;
     };
   }
