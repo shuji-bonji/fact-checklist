@@ -66,8 +66,9 @@ across **12 languages** with full internationalization support.
 
 ### オンラインで利用
 
-**👉
-[https://shuji-bonji.github.io/fact-checklist/](https://shuji-bonji.github.io/fact-checklist/)**
+**👉 [https://fact-checklist.vercel.app/](https://fact-checklist.vercel.app/)**
+
+> **Note**: GitHub Pages版も引き続き利用可能: [https://shuji-bonji.github.io/fact-checklist/](https://shuji-bonji.github.io/fact-checklist/)
 
 ### ローカル開発
 
@@ -148,12 +149,23 @@ npm run dev
 - **RTL Support** - Right-to-left text rendering for Arabic
 - **Browser Language Detection** - Automatic language detection with
   localStorage persistence
+- **SSR Meta Tag Generation** - Dynamic meta tags based on Accept-Language headers
+- **SEO Optimization** - Language-specific meta tags for all 12 languages
+
+### Server-Side Rendering / サーバーサイドレンダリング
+
+- **[SvelteKit SSR](https://kit.svelte.dev/docs/glossary#ssr)** - Dynamic server-side rendering
+- **Accept-Language Detection** - Automatic language detection from HTTP headers
+- **ISR (Incremental Static Regeneration)** - 60-second cache with dynamic updates
+- **Meta Tag Generation** - Language-specific SEO meta tags for all pages
+- **Twitter Card & OGP** - Complete social media sharing support
 
 ### PWA & Infrastructure / PWA・インフラ
 
 - **[Vite PWA Plugin](https://vite-pwa-org.netlify.app/)** - PWA functionality /
   PWA機能
-- **[GitHub Pages](https://pages.github.com/)** - Hosting / ホスティング
+- **[Vercel](https://vercel.com/)** - Primary hosting with SSR support / メインホスティング（SSR対応）
+- **[GitHub Pages](https://pages.github.com/)** - Static hosting fallback / 静的ホスティング（フォールバック）
 - **[GitHub Actions](https://github.com/features/actions)** - CI/CD pipeline /
   CI/CD
 
@@ -221,10 +233,17 @@ fact-checklist/
 │   │       └── checklist-items.ts
 │   ├── routes/                 # SvelteKit routing / SvelteKitルーティング
 │   │   ├── +layout.svelte      # Common layout / 共通レイアウト
+│   │   ├── +layout.server.ts   # SSR layout logic / SSRレイアウトロジック
+│   │   ├── +layout.ts          # Layout configuration / レイアウト設定
 │   │   ├── +page.svelte        # Main page / メインページ
+│   │   ├── intro/              # Introduction page / 紹介ページ
+│   │   │   ├── +page.svelte    # Intro page component / 紹介ページコンポーネント
+│   │   │   └── +page.server.ts # Intro page SSR / 紹介ページSSR
 │   │   ├── about/              # About page / アプリについて
 │   │   ├── help/               # Help page / ヘルプ・使い方
 │   │   ├── privacy/            # Privacy policy / プライバシーポリシー
+│   │   ├── api/                # API endpoints / APIエンドポイント
+│   │   │   └── debug-meta/     # Meta tag debugging / メタタグデバッグ
 │   │   └── checklist/[id]/     # Results page / 結果表示ページ
 │   ├── app.html                # HTML template / HTMLテンプレート
 │   └── service-worker.js       # Service worker / サービスワーカー
@@ -290,6 +309,29 @@ fact-checklist/
 - **60-79%**: 中程度の信頼性 → 追加確認推奨
 - **40-59%**: 低い信頼性 → 要注意
 - **40%未満**: 信頼性に問題 → 不採用推奨
+
+## 🌍 SSR & Internationalization Testing / SSR・国際化テスト
+
+### Accept-Language Header Testing / Accept-Languageヘッダーテスト
+
+```bash
+# Test different languages via curl
+curl -H "Accept-Language: ja-JP,ja;q=0.9" https://fact-checklist.vercel.app/
+curl -H "Accept-Language: en-US,en;q=0.9" https://fact-checklist.vercel.app/
+curl -H "Accept-Language: fr-FR,fr;q=0.9" https://fact-checklist.vercel.app/
+curl -H "Accept-Language: zh-TW,zh;q=0.9" https://fact-checklist.vercel.app/
+curl -H "Accept-Language: ar-SA,ar;q=0.9" https://fact-checklist.vercel.app/
+
+# Debug meta tag generation
+curl "https://fact-checklist.vercel.app/api/debug-meta?path=/intro"
+```
+
+### Browser Language Detection / ブラウザ言語検出
+
+The application automatically detects browser language preferences and serves appropriate meta tags for:
+- SEO optimization
+- Social media sharing (Twitter Card, OGP)
+- Cultural adaptation (date formats, text direction)
 
 ## 🔧 開発
 
@@ -509,7 +551,7 @@ Please report bugs or feature requests at
 
 **🌍 Now Available in 12 Languages / 12言語対応**
 
-[🚀 Try It Now / 今すぐ使ってみる](https://shuji-bonji.github.io/fact-checklist/)
+[🚀 Try It Now / 今すぐ使ってみる](https://fact-checklist.vercel.app/)
 | [📖 Documentation / ドキュメント](./docs) |
 [🤝 Contributing / コントリビューション](#-contributing--コントリビューション)
 
