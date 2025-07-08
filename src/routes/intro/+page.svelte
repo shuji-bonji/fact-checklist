@@ -121,116 +121,309 @@
   {/if}
 </svelte:head>
 
-{#if isI18nReady}
-  <div class="intro-container">
-    <!-- Hero Section -->
-    <header class="hero-section">
-      <div class="hero-header">
-        <div class="hero-language-switcher">
+<div class="intro-container">
+  <!-- Hero Section -->
+  <header class="hero-section">
+    <div class="hero-header">
+      <div class="hero-language-switcher">
+        {#if isI18nReady}
           <LanguageSwitcher />
+        {/if}
+      </div>
+    </div>
+    <div class="hero-content">
+      <h1 class="hero-title">
+        {#if isI18nReady}
+          {t('intro.hero.title')}
+        {:else}
+          偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート
+        {/if}
+      </h1>
+      <p class="hero-subtitle">
+        {#if isI18nReady}
+          {t('intro.hero.subtitle')}
+        {:else}
+          政府のSNS規制が進む中、情報の信頼性を自分の目と頭で見極めるためのシンプルなチェックリスト。AIやメディアを鵜呑みにせず、科学的・体系的に情報を評価するPWAアプリ。
+        {/if}
+      </p>
+      <div class="hero-cta">
+        <a href="{base}/" class="cta-button primary large">
+          <span class="cta-icon">✓</span>
+          {#if isI18nReady}
+            {t('intro.cta.startNow')}
+          {:else}
+            今すぐチェックリストを使う
+          {/if}
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="intro-content">
+    <!-- Government SNS Regulation Analysis -->
+    <section class="content-section">
+      <h2 class="section-title">
+        {#if isI18nReady}
+          {t('intro.sections.regulation.title')}
+        {:else}
+          政府のSNS規制とジレンマ
+        {/if}
+      </h2>
+      <div class="section-content">
+        <p class="highlight-text">
+          {#if isI18nReady}
+            {t('intro.sections.regulation.quote')}
+          {:else}
+            「情報の質を向上させるためには、ある程度の規制が必要かもしれません。しかし、その規制が言論統制につながるリスクも否定できません。」
+          {/if}
+        </p>
+        <p>
+          {#if isI18nReady}
+            {t('intro.sections.regulation.content1')}
+          {:else}
+            近年、政府による SNS プラットフォームへの規制が世界的に強化されています。EU の DSA（デジタルサービス法）、日本のプラットフォーム規制検討会、米国の Section 230 見直し議論など、各国が「偽情報対策」を名目に規制を進めています。
+          {/if}
+        </p>
+        <p>
+          {#if isI18nReady}
+            {t('intro.sections.regulation.content2')}
+          {:else}
+            しかし、これらの規制には大きなジレンマがあります。情報の「正確性」を誰が、どのような基準で判断するのか。政府や企業が「不適切」と判断した情報を削除することは、実質的な検閲にならないか。このような問題に対して、私たちは受け身でいるべきではありません。
+          {/if}
+        </p>
+      </div>
+    </section>
+
+    <!-- Balance Between Control and Quality -->
+    <section class="content-section alt-bg">
+      <h2 class="section-title">
+        {#if isI18nReady}
+          {t('intro.sections.balance.title')}
+        {:else}
+          統制と品質のバランス
+        {/if}
+      </h2>
+      <div class="section-content">
+        <div class="comparison-grid">
+          <div class="comparison-item">
+            <h3>
+              {#if isI18nReady}
+                {t('intro.sections.balance.control.title')}
+              {:else}
+                統制による「安全」
+              {/if}
+            </h3>
+            <p>
+              {#if isI18nReady}
+                {t('intro.sections.balance.control.content')}
+              {:else}
+                政府や企業による情報統制は、確かに明らかに有害な情報（詐欺、デマ、ヘイトスピーチなど）を迅速に除去できます。しかし、その判断基準は往々にして不透明で、時には政治的意図に左右される可能性があります。
+              {/if}
+            </p>
+          </div>
+          <div class="comparison-item">
+            <h3>
+              {#if isI18nReady}
+                {t('intro.sections.balance.quality.title')}
+              {:else}
+                個人による「判断」
+              {/if}
+            </h3>
+            <p>
+              {#if isI18nReady}
+                {t('intro.sections.balance.quality.content')}
+              {:else}
+                各個人が情報を見極める力を持つことは、民主主義社会の基盤です。しかし、すべての人が専門的な知識を持つわけではなく、感情的な判断に流されやすい面もあります。
+              {/if}
+            </p>
+          </div>
+        </div>
+        <p class="section-conclusion">
+          {#if isI18nReady}
+            {t('intro.sections.balance.conclusion')}
+          {:else}
+            この矛盾する2つの必要性のバランスを取るためには、個人の情報リテラシーを向上させながら、同時に透明性の高い仕組みを作ることが重要です。
+          {/if}
+        </p>
+      </div>
+    </section>
+
+    <!-- AI Fact-Checking Limitations -->
+    <section class="content-section">
+      <h2 class="section-title">
+        {#if isI18nReady}
+          {t('intro.sections.aiLimitations.title')}
+        {:else}
+          AIファクトチェックの限界
+        {/if}
+      </h2>
+      <div class="section-content">
+        <p class="lead-text">
+          {#if isI18nReady}
+            {t('intro.sections.aiLimitations.lead')}
+          {:else}
+            AIによる自動ファクトチェックは効率的ですが、以下のような根本的な限界があります：
+          {/if}
+        </p>
+        <ul class="limitation-list">
+          <li>
+            {#if isI18nReady}
+              {t('intro.sections.aiLimitations.point1')}
+            {:else}
+              文脈理解の限界：AIは表面的な情報を処理するのは得意ですが、微妙な文脈や皮肉、暗示を正確に理解することは困難です。
+            {/if}
+          </li>
+          <li>
+            {#if isI18nReady}
+              {t('intro.sections.aiLimitations.point2')}
+            {:else}
+              バイアスの継承：AIは学習データに含まれるバイアスを継承し、特定の視点や価値観を反映した判断を行う可能性があります。
+            {/if}
+          </li>
+          <li>
+            {#if isI18nReady}
+              {t('intro.sections.aiLimitations.point3')}
+            {:else}
+              新しい情報への対応：AIは過去のデータに基づいて判断するため、新しい情報や変化する状況に対する適応性に限界があります。
+            {/if}
+          </li>
+        </ul>
+        <p class="emphasis">
+          {#if isI18nReady}
+            {t('intro.sections.aiLimitations.conclusion')}
+          {:else}
+            だからこそ、私たち一人ひとりが情報を見極める力を持つことが重要なのです。
+          {/if}
+        </p>
+      </div>
+    </section>
+
+    <!-- App Features -->
+    <section class="content-section features-section">
+      <h2 class="section-title">
+        {#if isI18nReady}
+          {t('intro.sections.features.title')}
+        {:else}
+          この実用的チェックリストの特徴
+        {/if}
+      </h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <h3>
+            {#if isI18nReady}
+              {t('intro.features.systematic.title')}
+            {:else}
+              体系的な評価
+            {/if}
+          </h3>
+          <p>
+            {#if isI18nReady}
+              {t('intro.features.systematic.description')}
+            {:else}
+              20項目の包括的なチェックリストで、情報の信頼性を科学的・体系的に評価できます。
+            {/if}
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔐</div>
+          <h3>
+            {#if isI18nReady}
+              {t('intro.features.privacy.title')}
+            {:else}
+              完全プライバシー
+            {/if}
+          </h3>
+          <p>
+            {#if isI18nReady}
+              {t('intro.features.privacy.description')}
+            {:else}
+              すべてのデータは端末内に保存され、サーバーには一切送信されません。
+            {/if}
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📱</div>
+          <h3>
+            {#if isI18nReady}
+              {t('intro.features.pwa.title')}
+            {:else}
+              PWAアプリ
+            {/if}
+          </h3>
+          <p>
+            {#if isI18nReady}
+              {t('intro.features.pwa.description')}
+            {:else}
+              オフラインでも使用可能で、ネイティブアプリのような体験を提供します。
+            {/if}
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🌍</div>
+          <h3>
+            {#if isI18nReady}
+              {t('intro.features.multilingual.title')}
+            {:else}
+              多言語対応
+            {/if}
+          </h3>
+          <p>
+            {#if isI18nReady}
+              {t('intro.features.multilingual.description')}
+            {:else}
+              12言語に対応し、世界中の人々が利用できます。
+            {/if}
+          </p>
         </div>
       </div>
-      <div class="hero-content">
-        <h1 class="hero-title">{t('intro.hero.title')}</h1>
-        <p class="hero-subtitle">{t('intro.hero.subtitle')}</p>
-        <div class="hero-cta">
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final-cta-section">
+      <div class="cta-content">
+        <h2>
+          {#if isI18nReady}
+            {t('intro.finalCta.title')}
+          {:else}
+            今すぐ始めましょう
+          {/if}
+        </h2>
+        <p>
+          {#if isI18nReady}
+            {t('intro.finalCta.subtitle')}
+          {:else}
+            情報に惑わされない、自分だけの判断力を身につけるために。
+          {/if}
+        </p>
+        <div class="cta-buttons">
           <a href="{base}/" class="cta-button primary large">
-            <span class="cta-icon">✓</span>
-            {t('intro.cta.startNow')}
+            {#if isI18nReady}
+              {t('intro.cta.useChecklist')}
+            {:else}
+              チェックリストを使う
+            {/if}
+          </a>
+          <a href="{base}/about" class="cta-button secondary">
+            {#if isI18nReady}
+              {t('intro.cta.learnMore')}
+            {:else}
+              詳しく見る
+            {/if}
           </a>
         </div>
       </div>
-    </header>
+    </section>
 
-    <main class="intro-content">
-      <!-- Government SNS Regulation Analysis -->
-      <section class="content-section">
-        <h2 class="section-title">{t('intro.sections.regulation.title')}</h2>
-        <div class="section-content">
-          <p class="highlight-text">{t('intro.sections.regulation.quote')}</p>
-          <p>{t('intro.sections.regulation.content1')}</p>
-          <p>{t('intro.sections.regulation.content2')}</p>
-        </div>
-      </section>
-
-      <!-- Balance Between Control and Quality -->
-      <section class="content-section alt-bg">
-        <h2 class="section-title">{t('intro.sections.balance.title')}</h2>
-        <div class="section-content">
-          <div class="comparison-grid">
-            <div class="comparison-item">
-              <h3>{t('intro.sections.balance.control.title')}</h3>
-              <p>{t('intro.sections.balance.control.content')}</p>
-            </div>
-            <div class="comparison-item">
-              <h3>{t('intro.sections.balance.quality.title')}</h3>
-              <p>{t('intro.sections.balance.quality.content')}</p>
-            </div>
-          </div>
-          <p class="section-conclusion">{t('intro.sections.balance.conclusion')}</p>
-        </div>
-      </section>
-
-      <!-- AI Fact-Checking Limitations -->
-      <section class="content-section">
-        <h2 class="section-title">{t('intro.sections.aiLimitations.title')}</h2>
-        <div class="section-content">
-          <p class="lead-text">{t('intro.sections.aiLimitations.lead')}</p>
-          <ul class="limitation-list">
-            <li>{t('intro.sections.aiLimitations.point1')}</li>
-            <li>{t('intro.sections.aiLimitations.point2')}</li>
-            <li>{t('intro.sections.aiLimitations.point3')}</li>
-          </ul>
-          <p class="emphasis">{t('intro.sections.aiLimitations.conclusion')}</p>
-        </div>
-      </section>
-
-      <!-- App Features -->
-      <section class="content-section features-section">
-        <h2 class="section-title">{t('intro.sections.features.title')}</h2>
-        <div class="features-grid">
-          <div class="feature-card">
-            <div class="feature-icon">🔍</div>
-            <h3>{t('intro.features.systematic.title')}</h3>
-            <p>{t('intro.features.systematic.description')}</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">🔐</div>
-            <h3>{t('intro.features.privacy.title')}</h3>
-            <p>{t('intro.features.privacy.description')}</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">📱</div>
-            <h3>{t('intro.features.pwa.title')}</h3>
-            <p>{t('intro.features.pwa.description')}</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">🌍</div>
-            <h3>{t('intro.features.multilingual.title')}</h3>
-            <p>{t('intro.features.multilingual.description')}</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- Final CTA -->
-      <section class="final-cta-section">
-        <div class="cta-content">
-          <h2>{t('intro.finalCta.title')}</h2>
-          <p>{t('intro.finalCta.subtitle')}</p>
-          <div class="cta-buttons">
-            <a href="{base}/" class="cta-button primary large">
-              {t('intro.cta.useChecklist')}
-            </a>
-            <a href="{base}/about" class="cta-button secondary">
-              {t('intro.cta.learnMore')}
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <!-- Social Share -->
-      <section class="share-section">
-        <h3>{t('intro.share.title')}</h3>
+    <!-- Social Share -->
+    <section class="share-section">
+      <h3>
+        {#if isI18nReady}
+          {t('intro.share.title')}
+        {:else}
+          シェアする
+        {/if}
+      </h3>
         <div class="share-buttons">
           <button onclick={shareOnX} class="share-button x" aria-label="Share on X">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -273,15 +466,7 @@
         </div>
       </section>
     </main>
-  </div>
-{:else}
-  <div class="loading-container">
-    <div class="loading-content">
-      <div class="loading-spinner"></div>
-      <p>Loading...</p>
-    </div>
-  </div>
-{/if}
+</div>
 
 <style>
   .intro-container {
@@ -289,37 +474,6 @@
     background: var(--bg-color);
   }
 
-  /* Loading State */
-  .loading-container {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--bg-color);
-  }
-
-  .loading-content {
-    text-align: center;
-  }
-
-  .loading-spinner {
-    width: 48px;
-    height: 48px;
-    border: 3px solid var(--color-primary-200);
-    border-top: 3px solid var(--primary-color);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 0 auto 1rem;
-  }
-
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
 
   /* Hero Section */
   .hero-section {
