@@ -7,7 +7,7 @@ import {
   STORAGE_KEYS,
   type StorageInterface
 } from '../config/storage.js';
-import { StorageMigration } from '../utils/indexedDBStorage.js';
+import { StorageMigration, type IndexedDBStorage } from '../utils/indexedDBStorage.js';
 
 /**
  * ストレージ操作の結果
@@ -61,18 +61,18 @@ export class StorageService {
     this.initializationInProgress = true;
 
     try {
-      console.log('StorageService: Initializing storage...');
+      // console.log('StorageService: Initializing storage...');
       this.storage = await createStorageWithFallback();
-      console.log('StorageService: Storage created successfully');
+      // console.log('StorageService: Storage created successfully');
 
       // データマイグレーション実行
-      console.log('StorageService: Starting migration...');
+      // console.log('StorageService: Starting migration...');
       await this.migrateFromLocalStorage();
-      console.log('StorageService: Migration completed');
+      // console.log('StorageService: Migration completed');
 
       this.storageInitialized = true;
       this.initializationInProgress = false;
-      console.log('StorageService: Initialization completed successfully');
+      // console.log('StorageService: Initialization completed successfully');
     } catch (error) {
       console.error('StorageService: Initialization failed:', error);
       this.storageInitialized = false;
@@ -111,13 +111,16 @@ export class StorageService {
       await this.ensureReady();
 
       const key = `${STORAGE_KEYS.CHECKLIST_PREFIX}${checklist.id}`;
-      console.log('StorageService: Saving checklist with key:', key);
+      // console.log('StorageService: Saving checklist with key:', key);
 
       // Svelteプロキシをプレーンオブジェクトに変換
-      const plainChecklist = JSON.parse(JSON.stringify(checklist));
+      const plainChecklist = JSON.parse(JSON.stringify(checklist)) as ChecklistResult;
 
-      await this.storage!.setItem(key, plainChecklist);
-      console.log('StorageService: Checklist saved successfully');
+      if (!this.storage) {
+        throw new Error('Storage is not available');
+      }
+      await this.storage.setItem(key, plainChecklist);
+      // console.log('StorageService: Checklist saved successfully');
 
       return { success: true };
     } catch (error) {
@@ -137,7 +140,10 @@ export class StorageService {
       await this.ensureReady();
 
       const key = `${STORAGE_KEYS.CHECKLIST_PREFIX}${id}`;
-      const saved = await this.storage!.getItem<ChecklistResult>(key);
+      if (!this.storage) {
+        throw new Error('Storage is not available');
+      }
+      const saved = await this.storage.getItem<ChecklistResult>(key);
 
       if (!saved) {
         return { success: false, error: 'Checklist not found' };
@@ -150,7 +156,7 @@ export class StorageService {
         saved.completedAt = new Date(saved.completedAt);
       }
 
-      console.log('StorageService: Checklist loaded successfully');
+      // console.log('StorageService: Checklist loaded successfully');
       return { success: true, data: saved };
     } catch (error) {
       const errorMessage = `Failed to load checklist: ${error}`;
@@ -169,9 +175,12 @@ export class StorageService {
       await this.ensureReady();
 
       const key = `${STORAGE_KEYS.CHECKLIST_PREFIX}${id}`;
-      await this.storage!.removeItem(key);
+      if (!this.storage) {
+        throw new Error('Storage is not available');
+      }
+      await this.storage.removeItem(key);
 
-      console.log('StorageService: Checklist deleted successfully');
+      // console.log('StorageService: Checklist deleted successfully');
       return { success: true };
     } catch (error) {
       const errorMessage = `Failed to delete checklist: ${error}`;
@@ -189,13 +198,16 @@ export class StorageService {
     try {
       await this.ensureReady();
 
-      console.log('StorageService: Saving history with', history.length, 'items');
+      // console.log('StorageService: Saving history with', history.length, 'items');
 
       // Svelteプロキシをプレーンオブジェクトに変換
-      const plainHistory = JSON.parse(JSON.stringify(history));
+      const plainHistory = JSON.parse(JSON.stringify(history)) as ChecklistResult[];
 
-      await this.storage!.setItem(STORAGE_KEYS.HISTORY, plainHistory);
-      console.log('StorageService: History saved successfully');
+      if (!this.storage) {
+        throw new Error('Storage is not available');
+      }
+      await this.storage.setItem(STORAGE_KEYS.HISTORY, plainHistory);
+      // console.log('StorageService: History saved successfully');
 
       return { success: true };
     } catch (error) {
@@ -213,22 +225,25 @@ export class StorageService {
     try {
       await this.ensureReady();
 
-      console.log('StorageService: Loading history from storage');
-      const history = await this.storage!.getItem<ChecklistHistoryItem[]>(STORAGE_KEYS.HISTORY);
+      // console.log('StorageService: Loading history from storage');
+      if (!this.storage) {
+        throw new Error('Storage is not available');
+      }
+      const history = await this.storage.getItem<ChecklistHistoryItem[]>(STORAGE_KEYS.HISTORY);
 
       if (!history) {
-        console.log('StorageService: No history found in storage');
+        // console.log('StorageService: No history found in storage');
         return { success: true, data: [] };
       }
 
-      console.log('StorageService: Found history with', history.length, 'items');
+      // console.log('StorageService: Found history with', history.length, 'items');
 
       // 日付をDateオブジェクトに変換
       history.forEach(item => {
         item.completedAt = new Date(item.completedAt);
       });
 
-      console.log('StorageService: History loaded successfully');
+      // console.log('StorageService: History loaded successfully');
       return { success: true, data: history };
     } catch (error) {
       const errorMessage = `Failed to load history: ${error}`;
@@ -254,17 +269,17 @@ export class StorageService {
       ];
 
       const result = await StorageMigration.migrateFromLocalStorage(
-        this.storage as unknown as import('../utils/indexedDBStorage.js').IndexedDBStorage,
+        this.storage as unknown as IndexedDBStorage,
         keyPatterns
       );
 
       if (result.migrated > 0) {
-        console.log(`StorageService: ${result.migrated} items migrated to IndexedDB`);
+        console.warn(`StorageService: ${result.migrated} items migrated to IndexedDB`);
 
         // 移行完了後、localStorageのデータを削除
         const clearResult = StorageMigration.clearLocalStorageKeys(keyPatterns);
         if (clearResult.cleared > 0) {
-          console.log(`StorageService: ${clearResult.cleared} localStorage items cleared`);
+          console.warn(`StorageService: ${clearResult.cleared} localStorage items cleared`);
         }
 
         return {
@@ -321,12 +336,12 @@ export class StorageService {
           if (needsUpdate) {
             await this.storage.setItem(key, checklist);
             migrated++;
-            console.log(`StorageService: I18n migration completed for: ${id}`);
+            // console.log(`StorageService: I18n migration completed for: ${id}`);
           }
         }
       }
 
-      console.log(`StorageService: I18n migration completed for ${migrated} checklists`);
+      console.warn(`StorageService: I18n migration completed for ${migrated} checklists`);
       return { migrated, errors, cleared: 0 };
     } catch (error) {
       const errorMessage = `I18n migration failed: ${error}`;
@@ -364,15 +379,18 @@ export class StorageService {
         const testKey = '__storage_health_check__';
         const testValue = { timestamp: Date.now() };
 
-        await this.storage!.setItem(testKey, testValue);
+        if (!this.storage) {
+          throw new Error('Storage is not available');
+        }
+        await this.storage.setItem(testKey, testValue);
         details.canWrite = true;
 
         // 読み込みテスト
-        const retrieved = await this.storage!.getItem(testKey);
+        const retrieved = await this.storage.getItem(testKey);
         details.canRead = !!retrieved;
 
         // テストデータを削除
-        await this.storage!.removeItem(testKey);
+        await this.storage.removeItem(testKey);
       } else {
         errors.push('Storage is not available');
       }

@@ -20,7 +20,7 @@ export class SimplePDFGenerator {
     htmlContent: string,
     _filename: string
   ): Promise<{ success: boolean; cancelled?: boolean }> {
-    console.log('🎨 Starting simple HTML to PDF conversion...');
+    // console.log('🎨 Starting simple HTML to PDF conversion...');
 
     return new Promise((resolve, reject) => {
       try {
@@ -56,7 +56,7 @@ export class SimplePDFGenerator {
                   clearTimeout(timeoutId);
                   clearInterval(cancelCheckInterval);
                   printWindow.close();
-                  console.log('✅ Print dialog completed');
+                  // console.log('✅ Print dialog completed');
                   resolve({ success: true });
                 }
               }, 1500); // 1.5秒後にチェック
@@ -68,7 +68,7 @@ export class SimplePDFGenerator {
                 dialogClosed = true;
                 clearTimeout(timeoutId);
                 clearInterval(cancelCheckInterval);
-                console.log('❌ Print dialog was cancelled');
+                // console.log('❌ Print dialog was cancelled');
                 resolve({ success: false, cancelled: true });
               }
             };
@@ -87,7 +87,7 @@ export class SimplePDFGenerator {
                 dialogClosed = true;
                 clearInterval(cancelCheckInterval);
                 printWindow.close();
-                console.log('✅ Print dialog timeout - assuming success');
+                // console.log('✅ Print dialog timeout - assuming success');
                 resolve({ success: true });
               }
             }, 30000);
@@ -111,7 +111,7 @@ export class SimplePDFGenerator {
     checklist: ChecklistResult,
     options?: SimplePDFOptions
   ): Promise<Blob> {
-    console.log('📄 Generating PDF directly with jsPDF...');
+    // console.log('📄 Generating PDF directly with jsPDF...');
 
     // jsPDFを動的インポート
     const { default: jsPDF } = await import('jspdf');

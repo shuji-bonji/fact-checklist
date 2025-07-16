@@ -299,6 +299,7 @@
           {#each helpSections() as section (section.id)}
             <li class="nav-item">
               <button
+                type="button"
                 class="help-nav-link"
                 class:active={activeSection === section.id}
                 onclick={() => setActiveSection(section.id)}
@@ -326,6 +327,7 @@
 
               <div class="section-content">
                 <div class="main-content-text">
+                  <!-- eslint-disable-next-line svelte/no-at-html-tags -->
                   {@html sanitizeHtml(section.content)}
                 </div>
 
@@ -336,8 +338,10 @@
                         <h3 class="sub-section-title">{subSection.title}</h3>
                         <div class="sub-section-content">
                           {#if subSection.htmlContent}
-                            {@html subSection.htmlContent}
+                            <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+                            {@html sanitizeHtml(subSection.htmlContent)}
                           {:else}
+                            <!-- eslint-disable-next-line svelte/no-at-html-tags -->
                             {@html sanitizeHtml(subSection.content)}
                           {/if}
                         </div>

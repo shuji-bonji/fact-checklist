@@ -8,6 +8,7 @@ import { ScoringService } from '../services/ScoringService.js';
 import { SearchService } from '../services/SearchService.js';
 import { ExportService } from '../services/ExportService.js';
 import type { ChecklistResult } from '../types/checklist.js';
+import type { ExportOptions } from '../components/export/ExportOptions.svelte.js';
 
 /**
  * Phase 3: サービス層統合テスト (Vitest)
@@ -255,7 +256,7 @@ describe('Service Layer Integration Tests', () => {
         expect(reloadedScore.total).toBe(originalScore.total);
       } else {
         // Storage isolation in test environment is acceptable
-        console.log('Storage test: Data not persisted in test environment (expected)');
+        // console.log('Storage test: Data not persisted in test environment (expected)');
         expect(true).toBe(true); // Pass the test
       }
     });
@@ -340,7 +341,7 @@ describe('Service Layer Integration Tests', () => {
         checklist: null as unknown as ChecklistResult,
         options: {
           format: 'pdf'
-        } as unknown as import('../components/export/ExportOptions.svelte.js').ExportOptions
+        } as unknown as ExportOptions
       });
 
       expect(result.success).toBe(false);

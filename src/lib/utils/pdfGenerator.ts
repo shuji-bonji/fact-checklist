@@ -62,16 +62,16 @@ export async function generateTextBasedPDF(
   const fontConfig = { ...DEFAULT_FONT_CONFIG, ...options.fontConfig };
 
   // 日本語フォントを設定
-  console.log('PDF生成開始: フォント初期化中...');
+  // console.log('PDF生成開始: フォント初期化中...');
   const actualFontName = await addJapaneseFontToPDF(pdf, fontConfig);
-  console.log(`使用フォント決定: ${actualFontName}`);
+  // console.log(`使用フォント決定: ${actualFontName}`);
 
   // CSP制約により外部フォント取得が制限されている場合の警告
   if (actualFontName === 'helvetica') {
-    console.log('📋 PDF生成情報:');
-    console.log('  • ブラウザのセキュリティポリシー(CSP)により外部フォント取得が制限されています');
-    console.log('  • 日本語文字は標準フォント(Helvetica)で表示されます');
-    console.log('  • テキストは検索可能な形式で埋め込まれます');
+    // console.log('📋 PDF生成情報:');
+    // console.log('  • ブラウザのセキュリティポリシー(CSP)により外部フォント取得が制限されています');
+    // console.log('  • 日本語文字は標準フォント(Helvetica)で表示されます');
+    // console.log('  • テキストは検索可能な形式で埋め込まれます');
   }
 
   // フォント状態をデバッグ

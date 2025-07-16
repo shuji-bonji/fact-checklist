@@ -103,6 +103,7 @@
     <h3>⚖️ {t('checklist.finalJudgment')}</h3>
     <div class="judgment-buttons">
       <button
+        type="button"
         class={getJudgmentButtonClass('accept')}
         onclick={() => setJudgment('accept')}
         aria-pressed={currentJudgment === 'accept'}
@@ -110,6 +111,7 @@
         ✅ {t('checklist.judgment.accept')}
       </button>
       <button
+        type="button"
         class={getJudgmentButtonClass('caution')}
         onclick={() => setJudgment('caution')}
         aria-pressed={currentJudgment === 'caution'}
@@ -117,6 +119,7 @@
         ⚠️ {t('checklist.judgment.caution')}
       </button>
       <button
+        type="button"
         class={getJudgmentButtonClass('reject')}
         onclick={() => setJudgment('reject')}
         aria-pressed={currentJudgment === 'reject'}

@@ -7,10 +7,19 @@
   import { refactoredChecklistStore } from '$lib/stores/refactoredChecklistStore.svelte.js';
   import { getCategories } from '$lib/data/checklist-items.js';
   import type { JudgmentType } from '$lib/types/checklist.js';
-  import { t, i18nStore } from '$lib/i18n/index.js';
+  import { t, i18nStore, initializeI18n, setLanguage } from '$lib/i18n/index.js';
+  import type { PageData } from './$types';
+
+  // Svelte5の新しいprops構文
+  const { data: _data } = $props<{ data: PageData }>();
+
+  // リアクティブな状態
+  let _isLoading = $state(true);
+  let isI18nReady = $state(false);
+  let i18nError = $state<string | null>(null);
 
   // i18n初期化状態を監視
-  const _isI18nReady = $derived(i18nStore.initialized && !!i18nStore.translations);
+  const _i18nInitialized = $derived(i18nStore.initialized && !!i18nStore.translations);
 
   import CheckSection from '$lib/components/CheckSection.svelte';
   import ScoreDisplay from '$lib/components/ScoreDisplay.svelte';
@@ -34,38 +43,71 @@
   const confidenceText = $derived(refactoredChecklistStore.confidenceText);
   const judgmentAdvice = $derived(refactoredChecklistStore.judgmentAdvice);
 
-  onMount(() => {
+  onMount(async () => {
+    // i18nの初期化を確実に行う
+    try {
+      // console.log('🌍 Starting i18n initialization...');
+
+      // i18nシステムの初期化
+      await initializeI18n();
+
+      // デフォルト言語（日本語）を設定
+      await setLanguage('ja');
+
+      // i18nの初期化完了を監視
+      let attempts = 0;
+      const maxAttempts = 50; // 5秒間
+
+      while (attempts < maxAttempts) {
+        if (i18nStore.initialized && i18nStore.translations) {
+          // console.log('✅ i18n initialization complete');
+          isI18nReady = true;
+          break;
+        }
+        await new Promise(resolve => setTimeout(resolve, 100));
+        attempts++;
+      }
+
+      if (!isI18nReady) {
+        throw new Error('i18n initialization timeout');
+      }
+    } catch (error) {
+      console.error('❌ Failed to initialize i18n:', error);
+      i18nError = error instanceof Error ? error.message : 'i18n initialization failed';
+      isI18nReady = false;
+    }
+
     // ローディング画面を確実に非表示にする（ブラウザ環境でのみ）
     if (browser) {
       document.body.classList.add('app-loaded');
       const loadingElement = document.querySelector('.app-loading') as HTMLElement;
       if (loadingElement) {
         loadingElement.style.display = 'none';
-        console.log('Loading screen hidden from main page');
+        // console.log('Loading screen hidden from main page');
       }
     }
 
     // URLパラメータから既存のチェックリストIDを確認
     const checklistId = $page.url.searchParams.get('id');
-    console.log('checklistId from URL:', checklistId);
+    // console.log('checklistId from URL:', checklistId);
 
     if (checklistId) {
       // 既存のチェックリストを読み込み（非同期）
-      console.log('Loading existing checklist...');
+      // console.log('Loading existing checklist...');
       refactoredChecklistStore.loadChecklist(checklistId).then(loaded => {
-        console.log('loadChecklist result:', loaded);
-        console.log('[snapshot] currentChecklist after load:', $state.snapshot(currentChecklist));
+        // console.log('loadChecklist result:', loaded);
+        // console.log('[snapshot] currentChecklist after load:', $state.snapshot(currentChecklist));
         if (loaded && currentChecklist) {
           title = currentChecklist.title;
           description = currentChecklist.description;
           notes = currentChecklist.notes;
           currentJudgment = currentChecklist.judgment;
-          console.log('Loaded checklist data successfully');
+          // console.log('Loaded checklist data successfully');
         }
       });
     } else {
       // 新しいチェックリストを作成
-      console.log('Creating new checklist...');
+      // console.log('Creating new checklist...');
       startNewChecklist();
     }
 
@@ -75,13 +117,16 @@
         collapsedSections[category.id] = true;
       }
     });
+
+    // 最終的にローディング完了
+    _isLoading = false;
   });
 
   async function startNewChecklist() {
-    console.log('startNewChecklist called');
+    // console.log('startNewChecklist called');
     const id = await refactoredChecklistStore.createNewChecklist();
-    console.log('Created new checklist with id:', id);
-    console.log('[snapshot] currentChecklist after create:', $state.snapshot(currentChecklist));
+    // console.log('Created new checklist with id:', id);
+    // console.log('[snapshot] currentChecklist after create:', $state.snapshot(currentChecklist));
 
     // SvelteKitルーターの初期化を待つ
     await tick();
@@ -91,7 +136,7 @@
       const url = new URL(window.location.href);
       url.searchParams.set('id', id);
       replaceState(url.pathname + url.search, {});
-      console.log('URL updated to:', url.toString());
+      // console.log('URL updated to:', url.toString());
     } catch (error) {
       console.warn('Failed to update URL:', error);
       // フォールバック: 通常のhistory API
@@ -131,22 +176,22 @@
   }
 
   async function completeChecklist() {
-    console.log('completeChecklist called');
-    console.log('[snapshot] currentChecklist:', $state.snapshot(currentChecklist));
+    // console.log('completeChecklist called');
+    // console.log('[snapshot] currentChecklist:', $state.snapshot(currentChecklist));
 
     if (!currentChecklist) {
       console.error('currentChecklist is null or undefined');
       return;
     }
 
-    console.log('About to call refactoredChecklistStore.completeChecklist()');
+    // console.log('About to call refactoredChecklistStore.completeChecklist()');
 
     try {
       const success = await refactoredChecklistStore.completeChecklist();
-      console.log('completeChecklist result:', success);
+      // console.log('completeChecklist result:', success);
 
       if (success) {
-        console.log('Redirecting to:', `${base}/checklist/${currentChecklist.id}?completed=true`);
+        // console.log('Redirecting to:', `${base}/checklist/${currentChecklist.id}?completed=true`);
         // 完了ページにリダイレクト
         goto(`${base}/checklist/${currentChecklist.id}?completed=true`);
       } else {
@@ -171,119 +216,182 @@
 
 <!-- Meta tags are now handled by server-side layout only to prevent duplicates -->
 
-<div class="container">
-  <!-- ページヘッダー -->
-  <header class="page-header">
-    <h1>🔍 {t('app.title')}</h1>
-    <p class="page-subtitle">{t('app.subtitle')}</p>
-  </header>
+{#if !isI18nReady}
+  <div class="loading-container">
+    <div class="loading-content">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">
+        {#if i18nError}
+          エラーが発生しました: {i18nError}
+        {:else}
+          読み込み中...
+        {/if}
+      </p>
+    </div>
+  </div>
+{:else}
+  <div class="container">
+    <!-- ページヘッダー -->
+    <header class="page-header">
+      <h1>🔍 {t('app.title')}</h1>
+      <p class="page-subtitle">{t('app.subtitle')}</p>
+    </header>
 
-  <!-- メインコンテンツ -->
-  <div class="main-content">
-    <!-- 評価エリア -->
-    <div class="evaluation-area">
-      <!-- チェックリスト情報入力 -->
-      <div class="card">
-        <h2>📋 {t('checklist.title')}</h2>
-        <div class="form-group">
-          <label for="title" class="form-label">{t('forms.titleLabel')}</label>
-          <input
-            id="title"
-            type="text"
-            class="form-input"
-            bind:value={title}
-            oninput={handleTitleChange}
-            placeholder={t('forms.titlePlaceholder')}
-          />
+    <!-- メインコンテンツ -->
+    <div class="main-content">
+      <!-- 評価エリア -->
+      <div class="evaluation-area">
+        <!-- チェックリスト情報入力 -->
+        <div class="card">
+          <h2>📋 {t('checklist.title')}</h2>
+          <div class="form-group">
+            <label for="title" class="form-label">{t('forms.titleLabel')}</label>
+            <input
+              id="title"
+              type="text"
+              class="form-input"
+              bind:value={title}
+              oninput={handleTitleChange}
+              placeholder={t('forms.titlePlaceholder')}
+            />
+          </div>
+
+          <div class="form-group mb-0">
+            <label for="description" class="form-label">{t('forms.descriptionLabel')}</label>
+            <textarea
+              id="description"
+              class="form-input form-textarea"
+              bind:value={description}
+              oninput={handleDescriptionChange}
+              placeholder={t('forms.descriptionPlaceholder')}
+            ></textarea>
+          </div>
         </div>
 
-        <div class="form-group mb-0">
-          <label for="description" class="form-label">{t('forms.descriptionLabel')}</label>
+        <!-- クイックスタートガイド -->
+        <div class="quick-start card">
+          <p>{t('ui.quickStartGuide')}</p>
+        </div>
+
+        <!-- チェックセクション -->
+        {#each categories as category (category.id)}
+          <CheckSection
+            {category}
+            items={currentChecklist?.items.filter(item => item.category.id === category.id) || []}
+            collapsed={collapsedSections[category.id] || false}
+            {showGuideMode}
+            onToggle={() => toggleSection(category.id)}
+            onCheckItem={handleCheckItem}
+          />
+        {/each}
+
+        <!-- 評価メモ -->
+        <div class="notes-area card">
+          <h3>📝 {t('forms.notesLabel')}</h3>
           <textarea
-            id="description"
             class="form-input form-textarea"
-            bind:value={description}
-            oninput={handleDescriptionChange}
-            placeholder={t('forms.descriptionPlaceholder')}
+            bind:value={notes}
+            oninput={handleNotesChange}
+            placeholder={t('forms.notesPlaceholder')}
           ></textarea>
         </div>
       </div>
 
-      <!-- クイックスタートガイド -->
-      <div class="quick-start card">
-        <p>{t('ui.quickStartGuide')}</p>
-      </div>
+      <!-- サイドバー -->
+      <div class="sidebar">
+        <!-- ガイドモード切り替えボタン -->
+        <div class="guide-toggle-section card">
+          <button type="button" class="btn btn-secondary w-full" onclick={() => toggleGuideMode()}>
+            {showGuideMode ? t('ui.guideModeNormal') : t('ui.guideModeDetailed')}
+          </button>
+        </div>
 
-      <!-- チェックセクション -->
-      {#each categories as category (category.id)}
-        <CheckSection
-          {category}
-          items={currentChecklist?.items.filter(item => item.category.id === category.id) || []}
-          collapsed={collapsedSections[category.id] || false}
-          {showGuideMode}
-          onToggle={() => toggleSection(category.id)}
-          onCheckItem={handleCheckItem}
+        <!-- スコア表示 -->
+        <ScoreDisplay
+          {score}
+          {confidenceLevel}
+          {confidenceText}
+          {judgmentAdvice}
+          {currentJudgment}
+          onJudgmentChange={handleJudgmentChange}
         />
-      {/each}
 
-      <!-- 評価メモ -->
-      <div class="notes-area card">
-        <h3>📝 {t('forms.notesLabel')}</h3>
-        <textarea
-          class="form-input form-textarea"
-          bind:value={notes}
-          oninput={handleNotesChange}
-          placeholder={t('forms.notesPlaceholder')}
-        ></textarea>
+        <!-- アクションボタン -->
+        <div class="action-buttons card">
+          <button
+            type="button"
+            class="btn btn-primary w-full mb-2 btn-complete"
+            onclick={completeChecklist}
+            disabled={!currentChecklist}
+          >
+            {t('ui.completeEvaluation')}
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-ghost w-full"
+            onclick={exportChecklist}
+            disabled={!currentChecklist}
+          >
+            📄 {t('common.export')}
+          </button>
+        </div>
+
+        <!-- 履歴サイドバー -->
+        <HistorySidebar />
       </div>
     </div>
 
-    <!-- サイドバー -->
-    <div class="sidebar">
-      <!-- ガイドモード切り替えボタン -->
-      <div class="guide-toggle-section card">
-        <button class="btn btn-secondary w-full" onclick={() => toggleGuideMode()}>
-          {showGuideMode ? t('ui.guideModeNormal') : t('ui.guideModeDetailed')}
-        </button>
-      </div>
-
-      <!-- スコア表示 -->
-      <ScoreDisplay
-        {score}
-        {confidenceLevel}
-        {confidenceText}
-        {judgmentAdvice}
-        {currentJudgment}
-        onJudgmentChange={handleJudgmentChange}
-      />
-
-      <!-- アクションボタン -->
-      <div class="action-buttons card">
-        <button
-          class="btn btn-primary w-full mb-2 btn-complete"
-          onclick={completeChecklist}
-          disabled={!currentChecklist}
-        >
-          {t('ui.completeEvaluation')}
-        </button>
-
-        <button class="btn btn-ghost w-full" onclick={exportChecklist} disabled={!currentChecklist}>
-          📄 {t('common.export')}
-        </button>
-      </div>
-
-      <!-- 履歴サイドバー -->
-      <HistorySidebar />
-    </div>
+    <!-- エクスポートモーダル -->
+    {#if showExportModal}
+      <ExportModal checklist={currentChecklist} onClose={() => (showExportModal = false)} />
+    {/if}
   </div>
-</div>
-
-<!-- エクスポートモーダル -->
-{#if showExportModal}
-  <ExportModal checklist={currentChecklist} onClose={() => (showExportModal = false)} />
 {/if}
 
 <style>
+  /* ローディング画面 */
+  .loading-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-color);
+  }
+
+  .loading-content {
+    text-align: center;
+    padding: var(--spacing-8);
+    background: var(--surface-color);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+  }
+
+  .loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid var(--color-primary-200);
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .loading-text {
+    color: var(--text-color);
+    font-size: var(--font-size-lg);
+    margin: 0;
+  }
+
   .container {
     max-width: 1400px;
     margin: 0 auto;

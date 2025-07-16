@@ -2,7 +2,7 @@
 // エクスポートファイル名生成の共通ロジック
 
 import { formatDateForFilename } from '$lib/utils/dateFormat.js';
-import { sanitizeFilename } from '$lib/utils/download.js';
+// sanitizeFilename は必要時に動的インポート
 
 /**
  * ファイル名生成オプション
@@ -32,16 +32,17 @@ export class ExportFilenameGenerator {
    * @param options 生成オプション
    * @returns 生成されたファイル名
    */
-  static generate(
+  static async generate(
     format: string,
     checklistTitle: string,
     t: (key: string) => string,
     options?: FilenameGenerationOptions
-  ): string {
+  ): Promise<string> {
     const timestamp = options?.useCustomTimestamp
       ? (options.customTimestamp ?? formatDateForFilename())
       : formatDateForFilename();
 
+    const { sanitizeFilename } = await import('$lib/utils/download.js');
     const sanitizedTitle = sanitizeFilename(checklistTitle);
     const prefix = options?.prefix ?? t('app.title');
     const suffix = options?.suffix ?? '';
@@ -61,11 +62,11 @@ export class ExportFilenameGenerator {
    * @param t 翻訳関数
    * @param options 生成オプション
    */
-  static generatePDFFilename(
+  static async generatePDFFilename(
     checklistTitle: string,
     t: (key: string) => string,
     options?: Omit<FilenameGenerationOptions, 'includeExtension'>
-  ): string {
+  ): Promise<string> {
     return this.generate('pdf', checklistTitle, t, { ...options, includeExtension: true });
   }
 
@@ -75,11 +76,11 @@ export class ExportFilenameGenerator {
    * @param t 翻訳関数
    * @param options 生成オプション
    */
-  static generateHTMLFilename(
+  static async generateHTMLFilename(
     checklistTitle: string,
     t: (key: string) => string,
     options?: Omit<FilenameGenerationOptions, 'includeExtension'>
-  ): string {
+  ): Promise<string> {
     return this.generate('html', checklistTitle, t, { ...options, includeExtension: true });
   }
 
@@ -89,11 +90,11 @@ export class ExportFilenameGenerator {
    * @param t 翻訳関数
    * @param options 生成オプション
    */
-  static generateJSONFilename(
+  static async generateJSONFilename(
     checklistTitle: string,
     t: (key: string) => string,
     options?: Omit<FilenameGenerationOptions, 'includeExtension'>
-  ): string {
+  ): Promise<string> {
     return this.generate('json', checklistTitle, t, { ...options, includeExtension: true });
   }
 
@@ -103,11 +104,11 @@ export class ExportFilenameGenerator {
    * @param t 翻訳関数
    * @param options 生成オプション
    */
-  static generateMarkdownFilename(
+  static async generateMarkdownFilename(
     checklistTitle: string,
     t: (key: string) => string,
     options?: Omit<FilenameGenerationOptions, 'includeExtension'>
-  ): string {
+  ): Promise<string> {
     return this.generate('md', checklistTitle, t, { ...options, includeExtension: true });
   }
 
@@ -117,11 +118,11 @@ export class ExportFilenameGenerator {
    * @param t 翻訳関数
    * @param options 生成オプション
    */
-  static generateCSVFilename(
+  static async generateCSVFilename(
     checklistTitle: string,
     t: (key: string) => string,
     options?: Omit<FilenameGenerationOptions, 'includeExtension'>
-  ): string {
+  ): Promise<string> {
     return this.generate('csv', checklistTitle, t, { ...options, includeExtension: true });
   }
 
@@ -131,11 +132,11 @@ export class ExportFilenameGenerator {
    * @param t 翻訳関数
    * @param options 生成オプション
    */
-  static generateXMLFilename(
+  static async generateXMLFilename(
     checklistTitle: string,
     t: (key: string) => string,
     options?: Omit<FilenameGenerationOptions, 'includeExtension'>
-  ): string {
+  ): Promise<string> {
     return this.generate('xml', checklistTitle, t, { ...options, includeExtension: true });
   }
 
@@ -181,19 +182,19 @@ export class ExportFilenameGenerator {
    * @param options 生成オプション
    * @returns バリデーション済みファイル名
    */
-  static generateSafe(
+  static async generateSafe(
     format: string,
     checklistTitle: string,
     t: (key: string) => string,
     options?: FilenameGenerationOptions
-  ): string {
-    let filename = this.generate(format, checklistTitle, t, options);
+  ): Promise<string> {
+    let filename = await this.generate(format, checklistTitle, t, options);
 
     const validation = this.validateFilename(filename);
     if (!validation.isValid) {
       console.warn('Generated filename has issues:', validation.errors);
       // フォールバック: より安全な名前を生成
-      filename = this.generate(format, 'checklist', t, {
+      filename = await this.generate(format, 'checklist', t, {
         ...options,
         prefix: 'export'
       });

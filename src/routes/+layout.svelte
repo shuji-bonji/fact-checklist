@@ -53,21 +53,21 @@
 
   // デバッグ用
   $effect(() => {
-    console.log('Navigation debug:', {
-      currentPath,
-      isHelpPage,
-      isAboutPage,
-      isPrivacyPage,
-      isHomePage,
-      timestamp: new Date().toISOString()
-    });
+    // console.log('Navigation debug:', {
+    //   currentPath,
+    //   isHelpPage,
+    //   isAboutPage,
+    //   isPrivacyPage,
+    //   isHomePage,
+    //   timestamp: new Date().toISOString()
+    // });
 
     // DOM要素のクラス確認
     if (typeof window !== 'undefined') {
       setTimeout(() => {
         const navButtons = document.querySelectorAll('.desktop-menu .nav-link');
-        navButtons.forEach((button, index) => {
-          console.log(`Nav button ${index + 1} classes:`, button.className);
+        navButtons.forEach((_button, _index) => {
+          // console.log(`Nav button ${_index + 1} classes:`, _button.className);
         });
       }, 100);
     }
@@ -79,7 +79,7 @@
       // i18n初期化
       try {
         await initializeI18n();
-        console.log('✅ i18n initialized in layout');
+        // console.log('✅ i18n initialized in layout');
       } catch (error) {
         console.error('❌ Failed to initialize i18n:', error);
       }
@@ -90,15 +90,15 @@
         const loadingElement = document.querySelector('.app-loading') as HTMLElement;
         if (loadingElement) {
           loadingElement.style.display = 'none';
-          console.log('Loading screen hidden from layout');
+          // console.log('Loading screen hidden from layout');
         }
       }
 
       // PWA Service Worker登録（Safari対応強化版）
       if (!dev && browser) {
         try {
-          const pwaInfo = await registerPWA();
-          console.log('PWA registration:', pwaInfo);
+          const _pwaInfo = await registerPWA();
+          // console.log('PWA registration:', _pwaInfo);
 
           // PWAインストール促進設定
           setupPWAInstallPrompt();
@@ -239,7 +239,7 @@
         <!-- タブレット用２段レイアウト -->
         <div class="nav-content tablet-layout">
           <div class="nav-top">
-            <button class="nav-brand" onclick={goToHome}>
+            <button type="button" class="nav-brand" onclick={goToHome}>
               <span class="nav-icon">🔍</span>
               <div class="brand-text">
                 <span class="brand-title">事実確認チェックシート</span>
@@ -249,16 +249,21 @@
           </div>
           <div class="nav-bottom">
             <div class="nav-menu desktop-menu">
-              <button class="nav-link" class:active={isHomePage} onclick={goToHome}>
+              <button type="button" class="nav-link" class:active={isHomePage} onclick={goToHome}>
                 🏠 {t('navigation.home')}
               </button>
-              <button class="nav-link" class:active={isAboutPage} onclick={goToAbout}>
+              <button type="button" class="nav-link" class:active={isAboutPage} onclick={goToAbout}>
                 📖 {t('navigation.about')}
               </button>
-              <button class="nav-link" class:active={isHelpPage} onclick={goToHelp}>
+              <button type="button" class="nav-link" class:active={isHelpPage} onclick={goToHelp}>
                 ❓ {t('navigation.help')}
               </button>
-              <button class="nav-link" class:active={isPrivacyPage} onclick={goToPrivacy}>
+              <button
+                type="button"
+                class="nav-link"
+                class:active={isPrivacyPage}
+                onclick={goToPrivacy}
+              >
                 🔐 {t('navigation.privacy')}
               </button>
               <!-- タブレット用言語切り替え -->
@@ -271,7 +276,7 @@
 
         <!-- デスクトップ用１段レイアウト -->
         <div class="nav-content desktop-layout">
-          <button class="nav-brand" onclick={goToHome}>
+          <button type="button" class="nav-brand" onclick={goToHome}>
             <span class="nav-icon">🔍</span>
             <div class="brand-text">
               <span class="brand-title">事実確認チェックシート</span>
@@ -281,22 +286,28 @@
 
           <!-- デスクトップメニュー -->
           <div class="nav-menu desktop-menu">
-            <button class="nav-link" class:active={isHomePage} onclick={goToHome}>
+            <button type="button" class="nav-link" class:active={isHomePage} onclick={goToHome}>
               🏠 {t('navigation.home')}
             </button>
-            <button class="nav-link" class:active={isAboutPage} onclick={goToAbout}>
+            <button type="button" class="nav-link" class:active={isAboutPage} onclick={goToAbout}>
               📖 {t('navigation.about')}
             </button>
-            <button class="nav-link" class:active={isHelpPage} onclick={goToHelp}>
+            <button type="button" class="nav-link" class:active={isHelpPage} onclick={goToHelp}>
               ❓ {t('navigation.help')}
             </button>
-            <button class="nav-link" class:active={isPrivacyPage} onclick={goToPrivacy}>
+            <button
+              type="button"
+              class="nav-link"
+              class:active={isPrivacyPage}
+              onclick={goToPrivacy}
+            >
               🔐 {t('navigation.privacy')}
             </button>
           </div>
 
           <!-- モバイルメニューボタン -->
           <button
+            type="button"
             class="mobile-menu-toggle"
             onclick={toggleMenu}
             aria-label={t('accessibility.openMenu')}
@@ -314,16 +325,36 @@
         <!-- モバイルメニュー -->
         {#if isMenuOpen}
           <div class="mobile-menu">
-            <button class="mobile-nav-link" class:active={isHomePage} onclick={goToHome}>
+            <button
+              type="button"
+              class="mobile-nav-link"
+              class:active={isHomePage}
+              onclick={goToHome}
+            >
               🏠 {t('navigation.home')}
             </button>
-            <button class="mobile-nav-link" class:active={isAboutPage} onclick={goToAbout}>
+            <button
+              type="button"
+              class="mobile-nav-link"
+              class:active={isAboutPage}
+              onclick={goToAbout}
+            >
               📖 {t('navigation.about')}
             </button>
-            <button class="mobile-nav-link" class:active={isHelpPage} onclick={goToHelp}>
+            <button
+              type="button"
+              class="mobile-nav-link"
+              class:active={isHelpPage}
+              onclick={goToHelp}
+            >
               ❓ {t('navigation.help')}
             </button>
-            <button class="mobile-nav-link" class:active={isPrivacyPage} onclick={goToPrivacy}>
+            <button
+              type="button"
+              class="mobile-nav-link"
+              class:active={isPrivacyPage}
+              onclick={goToPrivacy}
+            >
               🔐 {t('navigation.privacy')}
             </button>
             <!-- モバイル用言語切り替え -->

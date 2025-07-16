@@ -299,14 +299,13 @@ export class ExportContentGenerator {
     options: ExportOptions,
     checklistStoreTitle: string
   ): string {
-    const escapeXML = (str: string): string => {
-      return str
+    const escapeXML = (str: string): string =>
+      str
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&apos;');
-    };
 
     const lines: string[] = [];
     lines.push('<?xml version="1.0" encoding="UTF-8"?>');

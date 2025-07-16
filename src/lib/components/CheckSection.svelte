@@ -33,6 +33,7 @@
 
 <div class="section">
   <button
+    type="button"
     class="section-header {categoryClass}"
     onclick={onToggle}
     aria-expanded={!collapsed}

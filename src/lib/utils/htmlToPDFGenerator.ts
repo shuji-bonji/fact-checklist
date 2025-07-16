@@ -41,34 +41,34 @@ export class HTMLToPDFGenerator {
   }
 
   async generatePDF(): Promise<Blob> {
-    console.log('🎨 Starting HTML→Canvas→PDF generation...');
+    // console.log('🎨 Starting HTML→Canvas→PDF generation...');
 
     try {
       // HTML生成（ExportModalと同じロジック）
-      console.log('📝 Generating HTML content...');
+      // console.log('📝 Generating HTML content...');
       const htmlContent = this.generateStyledHTML();
-      console.log(`📏 HTML content length: ${htmlContent.length} characters`);
+      // console.log(`📏 HTML content length: ${htmlContent.length} characters`);
 
       // DOM要素作成
-      console.log('🏗️ Creating DOM container...');
+      // console.log('🏗️ Creating DOM container...');
       const container = await this.createDOMContainer(htmlContent);
-      console.log(
-        `📦 Container created: ${container.tagName}, children: ${container.children.length}`
-      );
+      // console.log(
+      //   `📦 Container created: ${container.tagName}, children: ${container.children.length}`
+      // );
 
       // Canvas生成（高解像度）
-      console.log('🖼️ Converting to Canvas...');
+      // console.log('🖼️ Converting to Canvas...');
       const canvas = await this.htmlToCanvas(container);
 
       // PDF生成
-      console.log('📄 Generating PDF...');
+      // console.log('📄 Generating PDF...');
       const pdfBlob = await this.canvasToPDF(canvas);
 
       // クリーンアップ
-      console.log('🧹 Cleaning up...');
+      // console.log('🧹 Cleaning up...');
       this.cleanup(container);
 
-      console.log('✅ HTML→Canvas→PDF generation completed successfully');
+      // console.log('✅ HTML→Canvas→PDF generation completed successfully');
       return pdfBlob;
     } catch (error) {
       console.error('❌ HTML→Canvas→PDF generation failed:', error);
@@ -437,7 +437,7 @@ export class HTMLToPDFGenerator {
   }
 
   private async createDOMContainer(htmlContent: string): Promise<HTMLElement> {
-    console.log('🏗️ Creating DOM container for Canvas generation...');
+    // console.log('🏗️ Creating DOM container for Canvas generation...');
 
     // 新しいHTMLドキュメントを作成
     const parser = new DOMParser();
@@ -478,22 +478,22 @@ export class HTMLToPDFGenerator {
     await new Promise(resolve => setTimeout(resolve, 500));
 
     // 強制的にレイアウトを再計算
-    bodyElement.offsetHeight; // reflow trigger
+    void bodyElement.offsetHeight; // reflow trigger
 
     // デバッグ: DOM要素の内容確認
-    console.log(`📋 Body element HTML preview: ${bodyElement.innerHTML.substring(0, 200)}...`);
-    console.log('📏 Body element dimensions:', {
-      width: bodyElement.offsetWidth,
-      height: bodyElement.offsetHeight,
-      scrollWidth: bodyElement.scrollWidth,
-      scrollHeight: bodyElement.scrollHeight
-    });
+    // console.log(`📋 Body element HTML preview: ${bodyElement.innerHTML.substring(0, 200)}...`);
+    // console.log('📏 Body element dimensions:', {
+    //   width: bodyElement.offsetWidth,
+    //   height: bodyElement.offsetHeight,
+    //   scrollWidth: bodyElement.scrollWidth,
+    //   scrollHeight: bodyElement.scrollHeight
+    // });
 
     return bodyElement;
   }
 
   private async htmlToCanvas(container: HTMLElement): Promise<HTMLCanvasElement> {
-    console.log('🖼️ Converting HTML to Canvas with high resolution...');
+    // console.log('🖼️ Converting HTML to Canvas with high resolution...');
 
     // html2canvasを動的インポート
     const { default: html2canvas } = await import('html2canvas');
@@ -512,15 +512,14 @@ export class HTMLToPDFGenerator {
       imageTimeout: 15000, // 画像読み込みタイムアウトを延長
       windowWidth: HTMLToPDFGenerator.A4_WIDTH_PX,
       windowHeight: HTMLToPDFGenerator.A4_HEIGHT_PX,
-      ignoreElements: _element => {
+      ignoreElements: _element =>
         // 非表示要素を無視しない
-        return false;
-      },
+        false,
       // フォント読み込み完了を待機
       onclone: async (clonedDoc, _element) => {
         // クローンされた要素のスタイルを確認
-        console.log('🔍 Cloned element:', _element);
-        console.log('📐 Element dimensions:', _element.offsetWidth, 'x', _element.offsetHeight);
+        // console.log('🔍 Cloned element:', _element);
+        // console.log('📐 Element dimensions:', _element.offsetWidth, 'x', _element.offsetHeight);
 
         // クローンされた要素も確実に表示状態にする
         if (_element instanceof HTMLElement) {
@@ -538,8 +537,8 @@ export class HTMLToPDFGenerator {
       }
     });
 
-    console.log(`✅ Canvas generated: ${canvas.width}x${canvas.height}px`);
-    console.log(`📊 Canvas data URL length: ${canvas.toDataURL().length}`);
+    // console.log(`✅ Canvas generated: ${canvas.width}x${canvas.height}px`);
+    // console.log(`📊 Canvas data URL length: ${canvas.toDataURL().length}`);
 
     // Canvas内容確認（デバッグ用）
     const ctx = canvas.getContext('2d');
@@ -562,16 +561,16 @@ export class HTMLToPDFGenerator {
         }
       }
 
-      const hasContent = nonWhitePixels > 100; // 100ピクセル以上の非白ピクセルがあればコンテンツありと判定
-      console.log(`🖼️ Canvas has content: ${hasContent} (non-white pixels: ${nonWhitePixels})`);
+      const _hasContent = nonWhitePixels > 100; // 100ピクセル以上の非白ピクセルがあればコンテンツありと判定
+      // console.log(`🖼️ Canvas has content: ${_hasContent} (non-white pixels: ${nonWhitePixels}`);
     }
 
     return canvas;
   }
 
   private async canvasToPDF(canvas: HTMLCanvasElement): Promise<Blob> {
-    console.log('📄 Converting Canvas to PDF...');
-    console.log(`📐 Canvas dimensions for PDF: ${canvas.width}x${canvas.height}`);
+    // console.log('📄 Converting Canvas to PDF...');
+    // console.log(`📐 Canvas dimensions for PDF: ${canvas.width}x${canvas.height}`);
 
     // jsPDFを動的インポート
     const { default: jsPDF } = await import('jspdf');
@@ -587,11 +586,11 @@ export class HTMLToPDFGenerator {
     // PDFページのサイズを取得
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
-    console.log(`📄 PDF page size: ${pageWidth}x${pageHeight}mm`);
+    // console.log(`📄 PDF page size: ${pageWidth}x${pageHeight}mm`);
 
     // Canvas画像をPDFに追加（PNG形式で高品質）
     const imgData = canvas.toDataURL('image/png');
-    console.log(`🖼️ Image data URL preview: ${imgData.substring(0, 100)}...`);
+    // console.log(`🖼️ Image data URL preview: ${imgData.substring(0, 100)}...`);
 
     // 画像のアスペクト比を維持しながらA4サイズに収める
     const canvasAspectRatio = canvas.width / canvas.height;
@@ -625,7 +624,7 @@ export class HTMLToPDFGenerator {
 
     // Blobとして返す
     const pdfBlob = pdf.output('blob');
-    console.log(`✅ PDF generated: ${Math.round(pdfBlob.size / 1024)}KB`);
+    // console.log(`✅ PDF generated: ${Math.round(pdfBlob.size / 1024)}KB`);
 
     return pdfBlob;
   }

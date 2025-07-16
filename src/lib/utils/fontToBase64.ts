@@ -3,9 +3,11 @@
  * フォントファイルをBase64に変換してjsPDFで使用可能にする
  */
 
+import type jsPDF from 'jspdf';
+
 export async function loadFontAsBase64(fontUrl: string): Promise<string | null> {
   try {
-    console.log(`🔤 Loading font file: ${fontUrl}`);
+    // console.log(`🔤 Loading font file: ${fontUrl}`);
 
     const response = await fetch(fontUrl);
     if (!response.ok) {
@@ -25,7 +27,7 @@ export async function loadFontAsBase64(fontUrl: string): Promise<string | null> 
     }
 
     const base64 = btoa(binary);
-    console.log(`✅ Font converted to Base64, size: ${Math.round(base64.length / 1024)}KB`);
+    // console.log(`✅ Font converted to Base64, size: ${Math.round(base64.length / 1024)}KB`);
 
     return base64;
   } catch (error) {
@@ -34,7 +36,7 @@ export async function loadFontAsBase64(fontUrl: string): Promise<string | null> 
   }
 }
 
-export async function registerJapaneseFonts(pdf: import('jspdf').jsPDF): Promise<boolean> {
+export async function registerJapaneseFonts(pdf: jsPDF): Promise<boolean> {
   try {
     // GitHub Pages対応の動的フォントパス取得
     const getFontBasePath = () => {
@@ -54,7 +56,7 @@ export async function registerJapaneseFonts(pdf: import('jspdf').jsPDF): Promise
     if (regularBase64) {
       pdf.addFileToVFS('NotoSansJP-Regular.ttf', regularBase64);
       pdf.addFont('NotoSansJP-Regular.ttf', 'NotoSansJP', 'normal');
-      console.log('✅ Registered NotoSansJP-Regular font');
+      // console.log('✅ Registered NotoSansJP-Regular font');
     }
 
     // Noto Sans JP Bold
@@ -62,7 +64,7 @@ export async function registerJapaneseFonts(pdf: import('jspdf').jsPDF): Promise
     if (boldBase64) {
       pdf.addFileToVFS('NotoSansJP-Bold.ttf', boldBase64);
       pdf.addFont('NotoSansJP-Bold.ttf', 'NotoSansJP', 'bold');
-      console.log('✅ Registered NotoSansJP-Bold font');
+      // console.log('✅ Registered NotoSansJP-Bold font');
     }
 
     return !!(regularBase64 && boldBase64);

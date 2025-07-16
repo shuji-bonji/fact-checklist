@@ -4,6 +4,7 @@
  */
 
 import type { LanguageCode } from './types.js';
+import type jsPDF from 'jspdf';
 
 export interface FontConfig {
   fontFamily: string;
@@ -25,9 +26,9 @@ export function getFontBasePath(): string {
     window.location.pathname.startsWith('/fact-checklist/') ||
     window.location.origin.includes('github.io');
 
-  console.log(
-    `🔧 Font path detection: hostname=${window.location.hostname}, pathname=${window.location.pathname}, isGitHubPages=${isGitHubPages}`
-  );
+  // console.log(
+  //   `🔧 Font path detection: hostname=${window.location.hostname}, pathname=${window.location.pathname}, isGitHubPages=${isGitHubPages}`
+  // );
 
   return isGitHubPages ? '/fact-checklist/fonts/' : '/fonts/';
 }
@@ -131,8 +132,8 @@ export const LANGUAGE_FONT_MAP: Record<LanguageCode, string> = {
 
 export async function loadFontAsBase64(fontUrl: string): Promise<string | null> {
   try {
-    console.log(`🔤 Loading font file: ${fontUrl}`);
-    console.log(`🔤 Current location: ${window.location.origin}${window.location.pathname}`);
+    // console.log(`🔤 Loading font file: ${fontUrl}`);
+    // console.log(`🔤 Current location: ${window.location.origin}${window.location.pathname}`);
 
     const response = await fetch(fontUrl);
     if (!response.ok) {
@@ -157,7 +158,7 @@ export async function loadFontAsBase64(fontUrl: string): Promise<string | null> 
     }
 
     const base64 = btoa(binary);
-    console.log(`✅ Font converted to Base64, size: ${Math.round(base64.length / 1024)}KB`);
+    // console.log(`✅ Font converted to Base64, size: ${Math.round(base64.length / 1024)}KB`);
 
     return base64;
   } catch (error) {
@@ -167,11 +168,11 @@ export async function loadFontAsBase64(fontUrl: string): Promise<string | null> 
 }
 
 export class InternationalFontManager {
-  private pdf: import('jspdf').jsPDF;
+  private pdf: jsPDF;
   private loadedFonts: Set<string> = new Set();
   private currentLanguage: LanguageCode;
 
-  constructor(pdf: import('jspdf').jsPDF, language: LanguageCode) {
+  constructor(pdf: jsPDF, language: LanguageCode) {
     this.pdf = pdf;
     this.currentLanguage = language;
   }
@@ -215,7 +216,7 @@ export class InternationalFontManager {
         this.loadedFonts.add(fontConfig.fontName);
         this.pdf.setFont(fontConfig.fontName);
 
-        console.log(`✅ Successfully loaded font for language ${language}: ${fontConfig.fontName}`);
+        // console.log(`✅ Successfully loaded font for language ${language}: ${fontConfig.fontName}`);
         return true;
       }
     } catch (error) {
@@ -223,7 +224,7 @@ export class InternationalFontManager {
     }
 
     // Fallback to system font
-    console.log(`⚠️ Using fallback font for language ${language}: ${fontConfig.fallback}`);
+    console.warn(`⚠️ Using fallback font for language ${language}: ${fontConfig.fallback}`);
     this.pdf.setFont(fontConfig.fallback ?? 'helvetica');
     return false;
   }

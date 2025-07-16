@@ -40,26 +40,26 @@ export interface StorageInterface {
  * Create storage instance with fallback to localStorage
  */
 export async function createStorageWithFallback(): Promise<StorageInterface> {
-  console.log('createStorageWithFallback: start');
+  // console.log('createStorageWithFallback: start');
 
   // Try IndexedDB first
   if (IndexedDBStorage.isSupported()) {
-    console.log('createStorageWithFallback: IndexedDB is supported, trying to initialize...');
+    // console.log('createStorageWithFallback: IndexedDB is supported, trying to initialize...');
     try {
       const storage = createStorage();
-      console.log('createStorageWithFallback: storage instance created, initializing...');
+      // console.log('createStorageWithFallback: storage instance created, initializing...');
       await storage.init();
-      console.log('createStorageWithFallback: IndexedDB initialized successfully');
+      // console.log('createStorageWithFallback: IndexedDB initialized successfully');
       return storage;
     } catch (error) {
       console.warn('Failed to initialize IndexedDB, falling back to localStorage:', error);
     }
   } else {
-    console.log('createStorageWithFallback: IndexedDB not supported, using localStorage fallback');
+    console.warn('createStorageWithFallback: IndexedDB not supported, using localStorage fallback');
   }
 
   // Fallback to localStorage wrapper
-  console.log('createStorageWithFallback: creating localStorage wrapper');
+  // console.log('createStorageWithFallback: creating localStorage wrapper');
   return {
     async getItem<T>(key: string): Promise<T | null> {
       const value = localStorage.getItem(key);

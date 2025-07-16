@@ -11,7 +11,7 @@ import type {
   TranslationFunction
 } from '$lib/types/i18n.js';
 import { PDFService, PDFGenerationMode, type PDFServiceOptions } from '$lib/services/PDFService.js';
-import { downloadJSON, downloadText } from '$lib/utils/download.js';
+// downloadJSON, downloadText は必要時に動的インポート
 
 // 共通ユーティリティのインポート
 import { ExportErrorHandler } from './utils/ExportErrorHandler.js';
@@ -75,8 +75,8 @@ export class PDFExportHandler {
         const i18nResult = await ExportI18nLoader.loadFullI18n();
         htmlContent = await generateHTMLContent(
           i18nResult.factChecklistI18n,
-          i18nResult.getCurrentLanguage!,
-          i18nResult.getSupportedLanguages!
+          i18nResult.getCurrentLanguage ?? (() => 'en'),
+          i18nResult.getSupportedLanguages ?? (() => ({ en: { name: 'English' } }))
         );
       }
 
@@ -96,9 +96,9 @@ export class PDFExportHandler {
 
       await ExportProgressHelper.completeExport(progressManager, 'PDF', t);
 
-      console.log(
-        `✅ PDF export completed successfully using ${result.usedMode} in ${result.duration}ms`
-      );
+      // console.log(
+      //   `✅ PDF export completed successfully using ${result.usedMode} in ${result.duration}ms`
+      // );
     } catch (error) {
       ExportErrorHandler.handleExportError(error, 'PDF', progressManager);
     }
@@ -133,9 +133,10 @@ export class HTMLExportHandler {
       await ExportProgressHelper.updateStandardProgress(progressManager, 'SAVING', t);
 
       // ファイル名生成
-      const filename = ExportFilenameGenerator.generateHTMLFilename(checklistStoreTitle, t);
+      const filename = await ExportFilenameGenerator.generateHTMLFilename(checklistStoreTitle, t);
 
       // HTMLファイルとしてダウンロード
+      const { downloadText } = await import('$lib/utils/download.js');
       downloadText(htmlContent, filename, 'text/html');
 
       await ExportProgressHelper.completeExport(progressManager, 'HTML', t);
@@ -176,11 +177,12 @@ export class JSONExportHandler {
       );
 
       // ファイル名生成
-      const filename = ExportFilenameGenerator.generateJSONFilename(checklistStoreTitle, t);
+      const filename = await ExportFilenameGenerator.generateJSONFilename(checklistStoreTitle, t);
 
       await ExportProgressHelper.updateStandardProgress(progressManager, 'SAVING', t);
 
       // JSONファイルとしてダウンロード
+      const { downloadJSON } = await import('$lib/utils/download.js');
       downloadJSON(exportData, filename);
 
       await ExportProgressHelper.completeExport(progressManager, 'JSON', t);
@@ -218,9 +220,13 @@ export class MarkdownExportHandler {
       await ExportProgressHelper.updateStandardProgress(progressManager, 'SAVING', t);
 
       // ファイル名生成
-      const filename = ExportFilenameGenerator.generateMarkdownFilename(checklistStoreTitle, t);
+      const filename = await ExportFilenameGenerator.generateMarkdownFilename(
+        checklistStoreTitle,
+        t
+      );
 
       // Markdownファイルとしてダウンロード
+      const { downloadText } = await import('$lib/utils/download.js');
       downloadText(markdownContent, filename, 'text/markdown');
 
       await ExportProgressHelper.completeExport(progressManager, 'Markdown', t);

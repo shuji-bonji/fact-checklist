@@ -4,15 +4,26 @@
 import type {
   FactChecklistI18n,
   GetCurrentLanguageFunction,
-  GetSupportedLanguagesFunction
+  GetSupportedLanguagesFunction,
+  TranslationFunction
 } from '$lib/types/i18n.js';
+
+/**
+ * i18nモジュールの型定義
+ */
+interface I18nModule {
+  factChecklistI18n: FactChecklistI18n;
+  t: TranslationFunction;
+  getCurrentLanguage?: GetCurrentLanguageFunction;
+  getSupportedLanguages?: GetSupportedLanguagesFunction;
+}
 
 /**
  * i18n読み込み結果インターフェース
  */
 export interface I18nLoadResult {
   factChecklistI18n: FactChecklistI18n;
-  t: any; // eslint-disable-line @typescript-eslint/no-explicit-any -- Compatible with TranslationFunction
+  t: TranslationFunction;
   getCurrentLanguage?: GetCurrentLanguageFunction;
   getSupportedLanguages?: GetSupportedLanguagesFunction;
 }
@@ -51,18 +62,18 @@ export class ExportI18nLoader {
       let result: I18nLoadResult;
 
       if (includeLanguageFunctions) {
-        const { factChecklistI18n, t, getCurrentLanguage, getSupportedLanguages } = await import(
-          '$lib/i18n/index.js'
-        );
+        const i18nModule = (await import('$lib/i18n/index.js')) as I18nModule;
+        const { factChecklistI18n, t, getCurrentLanguage, getSupportedLanguages } = i18nModule;
 
         result = {
           factChecklistI18n,
           t,
-          getCurrentLanguage,
-          getSupportedLanguages
+          ...(getCurrentLanguage && { getCurrentLanguage }),
+          ...(getSupportedLanguages && { getSupportedLanguages })
         };
       } else {
-        const { factChecklistI18n, t } = await import('$lib/i18n/index.js');
+        const i18nModule = (await import('$lib/i18n/index.js')) as I18nModule;
+        const { factChecklistI18n, t } = i18nModule;
         result = { factChecklistI18n, t };
       }
 
@@ -81,7 +92,7 @@ export class ExportI18nLoader {
         getCategoryTitle: (key: string) => key
       };
 
-      return {
+      const fallbackResult: I18nLoadResult = {
         factChecklistI18n: fallbackI18n,
         t: (key: string) => key,
         ...(includeLanguageFunctions && {
@@ -89,6 +100,8 @@ export class ExportI18nLoader {
           getSupportedLanguages: () => ({ en: { name: 'English' } })
         })
       };
+
+      return fallbackResult;
     }
   }
 
@@ -97,15 +110,14 @@ export class ExportI18nLoader {
    */
   private static async reloadWithLanguageFunctions(): Promise<void> {
     try {
-      const { factChecklistI18n, t, getCurrentLanguage, getSupportedLanguages } = await import(
-        '$lib/i18n/index.js'
-      );
+      const i18nModule = (await import('$lib/i18n/index.js')) as I18nModule;
+      const { factChecklistI18n, t, getCurrentLanguage, getSupportedLanguages } = i18nModule;
 
       this.cachedI18n = {
         factChecklistI18n,
         t,
-        getCurrentLanguage,
-        getSupportedLanguages
+        ...(getCurrentLanguage && { getCurrentLanguage }),
+        ...(getSupportedLanguages && { getSupportedLanguages })
       };
       this.cacheTimestamp = Date.now();
     } catch (error) {
@@ -156,7 +168,7 @@ export class ExportI18nLoader {
   static clearCache(): void {
     this.cachedI18n = null;
     this.cacheTimestamp = 0;
-    console.log('i18n cache cleared');
+    // console.log('i18n cache cleared');
   }
 
   /**
@@ -203,9 +215,9 @@ export class ExportI18nLoader {
 
       // 翻訳テスト
       const testResult = await this.loadBasicI18n(true);
-      const testTranslation = testResult.t?.('app.title');
-      if (!testTranslation) {
-        errors.push('Translation function returned empty result');
+      const testTranslation = testResult.t('app.title');
+      if (!testTranslation || testTranslation === 'app.title') {
+        errors.push('Translation function returned empty or fallback result');
       }
     } catch (error) {
       errors.push(`Health check failed: ${error instanceof Error ? error.message : String(error)}`);

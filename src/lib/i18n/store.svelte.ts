@@ -11,6 +11,10 @@ import {
   type TranslationFunction,
   type NestedRecord
 } from './types.js';
+
+// 静的な翻訳インポート
+import { translations as allTranslations } from './translations/index.js';
+
 import { countTranslations, createSafeTranslator, createFlexibleTranslator } from './helpers.js';
 
 // ブラウザ環境チェック
@@ -79,7 +83,7 @@ class I18nStore {
 
   // 初期化
   private async initialize(): Promise<void> {
-    console.log('🌍 Initializing i18n store...');
+    // console.log('🌍 Initializing i18n store...');
 
     try {
       this._isLoading = true;
@@ -94,15 +98,15 @@ class I18nStore {
       // 言語を決定（保存済み > 検出 > デフォルト）
       const targetLanguage = savedLanguage ?? detectedLanguage ?? 'ja';
 
-      console.log(
-        `🌍 Language selection: saved=${savedLanguage}, detected=${detectedLanguage}, target=${targetLanguage}`
-      );
+      // console.log(
+      //   `🌍 Language selection: saved=${savedLanguage}, detected=${detectedLanguage}, target=${targetLanguage}`
+      // );
 
       // 言語を設定
       await this.setLanguage(targetLanguage);
 
       this._initialized = true;
-      console.log('✅ i18n store initialized successfully');
+      // console.log('✅ i18n store initialized successfully');
     } catch (error) {
       this._error = error instanceof Error ? error.message : 'Failed to initialize i18n';
       console.error('❌ i18n initialization failed:', error);
@@ -113,7 +117,7 @@ class I18nStore {
 
   // 言語変更
   async setLanguage(language: LanguageCode): Promise<void> {
-    console.log(`🌍 Setting language to: ${language}`);
+    // console.log(`🌍 Setting language to: ${language}`);
 
     try {
       this._isLoading = true;
@@ -126,7 +130,7 @@ class I18nStore {
 
       // 翻訳データが未読み込みの場合は読み込み
       if (!this._translations[language]) {
-        console.log(`📥 Loading translations for: ${language}`);
+        // console.log(`📥 Loading translations for: ${language}`);
         await this.loadTranslations(language);
       }
 
@@ -139,7 +143,7 @@ class I18nStore {
       // HTML要素のlang属性とdir属性を更新
       this.updateDocumentAttributes();
 
-      console.log(`✅ Language changed to: ${language}`);
+      // console.log(`✅ Language changed to: ${language}`);
     } catch (error) {
       this._error = error instanceof Error ? error.message : 'Failed to set language';
       console.error('❌ Language change failed:', error);
@@ -149,49 +153,30 @@ class I18nStore {
     }
   }
 
-  // 翻訳データの読み込み
+  // 翻訳データの読み込み（静的インポート版）
   private async loadTranslations(language: LanguageCode): Promise<void> {
     try {
-      // 動的インポートで翻訳ファイルを読み込み
-      const translationModule = await import(`./translations/${language}.ts`);
-      const baseTranslations: TranslationKeys =
-        translationModule.default ?? translationModule.translations;
+      // 静的インポートから翻訳データを取得
+      const baseTranslations = allTranslations[language];
 
       if (!baseTranslations) {
         throw new Error(`No translations found for language: ${language}`);
       }
 
-      // checklistItemsなどの追加データを統合
-      const mergedTranslations: TranslationKeys & Record<string, unknown> = {
-        ...baseTranslations
-      };
-      if (translationModule.checklistItems) {
-        (mergedTranslations as Record<string, unknown>).checklistItems =
-          translationModule.checklistItems;
-      }
-      if (translationModule.confidenceTexts) {
-        (mergedTranslations as Record<string, unknown>).confidenceTexts =
-          translationModule.confidenceTexts;
-      }
-      if (translationModule.judgmentAdvices) {
-        (mergedTranslations as Record<string, unknown>).judgmentAdvices =
-          translationModule.judgmentAdvices;
-      }
-      if (translationModule.uiTexts) {
-        (mergedTranslations as Record<string, unknown>).uiTexts = translationModule.uiTexts;
-      }
-
       // 翻訳データを保存
-      this._translations[language] = mergedTranslations;
+      this._translations[language] = baseTranslations;
 
-      console.log(`✅ Translations loaded for: ${language}`);
+      // console.log(`✅ Translations loaded for: ${language} (static import)`);
     } catch (error) {
       console.error(`❌ Failed to load translations for ${language}:`, error);
 
       // フォールバック: 日本語の翻訳を使用
       if (language !== 'ja' && this._translations['ja']) {
-        console.log(`🔄 Using Japanese fallback for: ${language}`);
+        console.warn(`🔄 Using Japanese fallback for: ${language}`);
         this._translations[language] = this._translations['ja'];
+      } else if (language !== 'ja' && allTranslations['ja']) {
+        console.warn(`🔄 Using Japanese fallback from static imports for: ${language}`);
+        this._translations[language] = allTranslations['ja'];
       } else {
         throw error;
       }
@@ -202,6 +187,12 @@ class I18nStore {
   t: TranslationFunction = (key: string, params?: Record<string, string | number>): string => {
     try {
       const translations = this.translations as NestedRecord | null;
+
+      // 翻訳がまだ読み込まれていない場合は空文字を返す
+      if (!translations) {
+        return '';
+      }
+
       const safeTranslator = createSafeTranslator(translations);
       return safeTranslator(key, params);
     } catch (error) {
@@ -214,6 +205,12 @@ class I18nStore {
   tArray = (key: string, params?: Record<string, string | number>): string | string[] => {
     try {
       const translations = this.translations as NestedRecord | null;
+
+      // 翻訳がまだ読み込まれていない場合は空文字を返す
+      if (!translations) {
+        return '';
+      }
+
       const flexibleTranslator = createFlexibleTranslator(translations);
       return flexibleTranslator(key, params);
     } catch (error) {

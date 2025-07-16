@@ -51,7 +51,7 @@ export class ExportProgressHelper {
   ): Promise<void> {
     await this.updateStandardProgress(progressManager, 'COMPLETED', t);
     progressManager.completeExport();
-    console.log(`✅ ${format} export completed successfully`);
+    // console.log(`✅ ${format} export completed successfully`);
   }
 
   /**

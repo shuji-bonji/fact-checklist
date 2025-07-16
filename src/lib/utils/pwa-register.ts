@@ -33,8 +33,8 @@ export function registerPWA(): Promise<PWAUpdateInfo> {
 
     // Service Worker更新検知
     navigator.serviceWorker.addEventListener('message', event => {
-      if (event.data && event.data.type === 'SW_UPDATED') {
-        console.log('🔄 Service Worker updated');
+      if (event.data && (event.data as { type: string }).type === 'SW_UPDATED') {
+        // console.log('🔄 Service Worker updated');
         updateAvailable = true;
 
         // Safari対応：自動リロード（設定可能）
@@ -47,8 +47,8 @@ export function registerPWA(): Promise<PWAUpdateInfo> {
         }
       }
 
-      if (event.data && event.data.type === 'SW_CONTROLLING') {
-        console.log('✅ New Service Worker is controlling');
+      if (event.data && (event.data as { type: string }).type === 'SW_CONTROLLING') {
+        // console.log('✅ New Service Worker is controlling');
         if (refreshing) return;
         refreshing = true;
         window.location.reload();
@@ -62,16 +62,16 @@ export function registerPWA(): Promise<PWAUpdateInfo> {
     const swPath = isGitHubPages ? '/fact-checklist/sw.js' : '/sw.js';
     const scope = isGitHubPages ? '/fact-checklist/' : '/';
 
-    console.log(
-      `🔧 PWA Registration: hostname=${window.location.hostname}, pathname=${window.location.pathname}`
-    );
-    console.log(`🔧 PWA Registration: swPath=${swPath}, scope=${scope}`);
+    // console.log(
+    //   `🔧 PWA Registration: hostname=${window.location.hostname}, pathname=${window.location.pathname}`
+    // );
+    // console.log(`🔧 PWA Registration: swPath=${swPath}, scope=${scope}`);
 
     navigator.serviceWorker
       .register(swPath, { scope })
       .then(reg => {
         registration = reg;
-        console.log('✅ Service Worker registered');
+        // console.log('✅ Service Worker registered');
 
         // 更新チェック
         reg.addEventListener('updatefound', () => {
@@ -79,7 +79,7 @@ export function registerPWA(): Promise<PWAUpdateInfo> {
           if (newWorker) {
             newWorker.addEventListener('statechange', () => {
               if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                console.log('🆕 New Service Worker available');
+                // console.log('🆕 New Service Worker available');
                 updateAvailable = true;
                 resolve({
                   isUpdateAvailable: true,
@@ -116,7 +116,7 @@ export function setupPWAInstallPrompt() {
   window.addEventListener('beforeinstallprompt', e => {
     e.preventDefault();
     deferredPrompt = e;
-    console.log('📱 PWA install prompt available');
+    // console.log('📱 PWA install prompt available');
   });
 
   // フォールバック：beforeinstallpromptイベントが発火しない場合の代替判定

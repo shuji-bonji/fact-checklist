@@ -47,6 +47,45 @@ export function getCategoriesCompat(): CheckCategory[] {
 // 既存コードとの互換性のために残しているが、動的な getCategories() を使用すること
 export const CATEGORIES = getCategories();
 
+// フォールバック用のカテゴリ作成関数
+function createFallbackCategory(index: number): CheckCategory {
+  const fallbackCategories: CheckCategory[] = [
+    {
+      id: 'critical',
+      name: 'Critical',
+      description: 'Critical evaluation',
+      color: '#e74c3c',
+      emoji: '🔴'
+    },
+    {
+      id: 'detailed',
+      name: 'Detailed',
+      description: 'Detailed evaluation',
+      color: '#f39c12',
+      emoji: '🟡'
+    },
+    {
+      id: 'verification',
+      name: 'Verification',
+      description: 'Verification and cross-checking',
+      color: '#3498db',
+      emoji: '🔵'
+    },
+    {
+      id: 'context',
+      name: 'Context',
+      description: 'Context and bias evaluation',
+      color: '#9b59b6',
+      emoji: '🟣'
+    }
+  ];
+  const fallbackCategory = fallbackCategories[index] ?? fallbackCategories[0];
+  if (!fallbackCategory) {
+    throw new Error(`Invalid fallback category index: ${index}`);
+  }
+  return fallbackCategory;
+}
+
 // チェックリスト項目の取得関数（動的翻訳対応）
 export function getChecklistItems(translationFunction?: (key: string) => string): CheckItem[] {
   const categories = getCategories(translationFunction);
@@ -57,7 +96,7 @@ export function getChecklistItems(translationFunction?: (key: string) => string)
       title: factChecklistI18n.getCheckItemTitle('source-authority'),
       description: factChecklistI18n.getCheckItemDescription('source-authority'),
       riskLevel: 'high',
-      category: categories[0]!,
+      category: categories[0] ?? createFallbackCategory(0),
       checked: false,
       translationKey: 'source-authority',
       guideContent: {
@@ -74,7 +113,7 @@ export function getChecklistItems(translationFunction?: (key: string) => string)
       title: factChecklistI18n.getCheckItemTitle('source-primary'),
       description: factChecklistI18n.getCheckItemDescription('source-primary'),
       riskLevel: 'high',
-      category: categories[0]!,
+      category: categories[0] ?? createFallbackCategory(0),
       checked: false,
       translationKey: 'source-primary',
       guideContent: {
@@ -91,7 +130,7 @@ export function getChecklistItems(translationFunction?: (key: string) => string)
       title: factChecklistI18n.getCheckItemTitle('source-multiple'),
       description: factChecklistI18n.getCheckItemDescription('source-multiple'),
       riskLevel: 'high',
-      category: categories[0]!,
+      category: categories[0] ?? createFallbackCategory(0),
       checked: false,
       translationKey: 'source-multiple',
       guideContent: {
@@ -108,7 +147,7 @@ export function getChecklistItems(translationFunction?: (key: string) => string)
       title: factChecklistI18n.getCheckItemTitle('warning-anonymous'),
       description: factChecklistI18n.getCheckItemDescription('warning-anonymous'),
       riskLevel: 'high',
-      category: categories[0]!,
+      category: categories[0] ?? createFallbackCategory(0),
       checked: false,
       translationKey: 'warning-anonymous',
       guideContent: {
@@ -125,7 +164,7 @@ export function getChecklistItems(translationFunction?: (key: string) => string)
       title: factChecklistI18n.getCheckItemTitle('warning-sensational'),
       description: factChecklistI18n.getCheckItemDescription('warning-sensational'),
       riskLevel: 'medium',
-      category: categories[0]!,
+      category: categories[0] ?? createFallbackCategory(0),
       checked: false,
       translationKey: 'warning-sensational',
       guideContent: {
@@ -142,7 +181,7 @@ export function getChecklistItems(translationFunction?: (key: string) => string)
       title: factChecklistI18n.getCheckItemTitle('warning-logical'),
       description: factChecklistI18n.getCheckItemDescription('warning-logical'),
       riskLevel: 'medium',
-      category: categories[0]!,
+      category: categories[0] ?? createFallbackCategory(0),
       checked: false,
       translationKey: 'warning-logical',
       guideContent: {
@@ -161,7 +200,7 @@ export function getChecklistItems(translationFunction?: (key: string) => string)
       title: factChecklistI18n.getCheckItemTitle('time-recent'),
       description: factChecklistI18n.getCheckItemDescription('time-recent'),
       riskLevel: 'medium',
-      category: categories[1]!,
+      category: categories[1] ?? createFallbackCategory(1),
       checked: false,
       translationKey: 'time-recent',
       guideContent: {
@@ -178,7 +217,7 @@ export function getChecklistItems(translationFunction?: (key: string) => string)
       title: factChecklistI18n.getCheckItemTitle('time-update'),
       description: factChecklistI18n.getCheckItemDescription('time-update'),
       riskLevel: 'low',
-      category: categories[1]!,
+      category: categories[1] ?? createFallbackCategory(1),
       checked: false,
       translationKey: 'time-update',
       guideContent: {
@@ -195,7 +234,7 @@ export function getChecklistItems(translationFunction?: (key: string) => string)
       title: factChecklistI18n.getCheckItemTitle('expert-knowledge'),
       description: factChecklistI18n.getCheckItemDescription('expert-knowledge'),
       riskLevel: 'medium',
-      category: categories[1]!,
+      category: categories[1] ?? createFallbackCategory(1),
       checked: false,
       translationKey: 'expert-knowledge',
       guideContent: {
@@ -212,7 +251,7 @@ export function getChecklistItems(translationFunction?: (key: string) => string)
       title: factChecklistI18n.getCheckItemTitle('detail-sufficient'),
       description: factChecklistI18n.getCheckItemDescription('detail-sufficient'),
       riskLevel: 'medium',
-      category: categories[1]!,
+      category: categories[1] ?? createFallbackCategory(1),
       checked: false,
       translationKey: 'detail-sufficient',
       guideContent: {
@@ -229,7 +268,7 @@ export function getChecklistItems(translationFunction?: (key: string) => string)
       title: factChecklistI18n.getCheckItemTitle('citation-proper'),
       description: factChecklistI18n.getCheckItemDescription('citation-proper'),
       riskLevel: 'medium',
-      category: categories[1]!,
+      category: categories[1] ?? createFallbackCategory(1),
       checked: false,
       translationKey: 'citation-proper',
       guideContent: {
@@ -246,7 +285,7 @@ export function getChecklistItems(translationFunction?: (key: string) => string)
       title: factChecklistI18n.getCheckItemTitle('citation-accessible'),
       description: factChecklistI18n.getCheckItemDescription('citation-accessible'),
       riskLevel: 'low',
-      category: categories[1]!,
+      category: categories[1] ?? createFallbackCategory(1),
       checked: false,
       translationKey: 'citation-accessible',
       guideContent: {
@@ -265,7 +304,7 @@ export function getChecklistItems(translationFunction?: (key: string) => string)
       title: factChecklistI18n.getCheckItemTitle('cross-check'),
       description: factChecklistI18n.getCheckItemDescription('cross-check'),
       riskLevel: 'high',
-      category: categories[2]!,
+      category: categories[2] ?? createFallbackCategory(2),
       checked: false,
       translationKey: 'cross-check',
       guideContent: {
@@ -282,7 +321,7 @@ export function getChecklistItems(translationFunction?: (key: string) => string)
       title: factChecklistI18n.getCheckItemTitle('fact-check'),
       description: factChecklistI18n.getCheckItemDescription('fact-check'),
       riskLevel: 'medium',
-      category: categories[2]!,
+      category: categories[2] ?? createFallbackCategory(2),
       checked: false,
       translationKey: 'fact-check',
       guideContent: {
@@ -299,7 +338,7 @@ export function getChecklistItems(translationFunction?: (key: string) => string)
       title: factChecklistI18n.getCheckItemTitle('data-verifiable'),
       description: factChecklistI18n.getCheckItemDescription('data-verifiable'),
       riskLevel: 'medium',
-      category: categories[2]!,
+      category: categories[2] ?? createFallbackCategory(2),
       checked: false,
       translationKey: 'data-verifiable',
       guideContent: {
@@ -316,7 +355,7 @@ export function getChecklistItems(translationFunction?: (key: string) => string)
       title: factChecklistI18n.getCheckItemTitle('methodology'),
       description: factChecklistI18n.getCheckItemDescription('methodology'),
       riskLevel: 'low',
-      category: categories[2]!,
+      category: categories[2] ?? createFallbackCategory(2),
       checked: false,
       translationKey: 'methodology',
       guideContent: {
@@ -335,7 +374,7 @@ export function getChecklistItems(translationFunction?: (key: string) => string)
       title: factChecklistI18n.getCheckItemTitle('bias-disclosure'),
       description: factChecklistI18n.getCheckItemDescription('bias-disclosure'),
       riskLevel: 'high',
-      category: categories[3]!,
+      category: categories[3] ?? createFallbackCategory(3),
       checked: false,
       translationKey: 'bias-disclosure',
       guideContent: {
@@ -352,7 +391,7 @@ export function getChecklistItems(translationFunction?: (key: string) => string)
       title: factChecklistI18n.getCheckItemTitle('balanced-view'),
       description: factChecklistI18n.getCheckItemDescription('balanced-view'),
       riskLevel: 'medium',
-      category: categories[3]!,
+      category: categories[3] ?? createFallbackCategory(3),
       checked: false,
       translationKey: 'balanced-view',
       guideContent: {
@@ -369,7 +408,7 @@ export function getChecklistItems(translationFunction?: (key: string) => string)
       title: factChecklistI18n.getCheckItemTitle('context-adequate'),
       description: factChecklistI18n.getCheckItemDescription('context-adequate'),
       riskLevel: 'medium',
-      category: categories[3]!,
+      category: categories[3] ?? createFallbackCategory(3),
       checked: false,
       translationKey: 'context-adequate',
       guideContent: {
@@ -386,7 +425,7 @@ export function getChecklistItems(translationFunction?: (key: string) => string)
       title: factChecklistI18n.getCheckItemTitle('scope-clear'),
       description: factChecklistI18n.getCheckItemDescription('scope-clear'),
       riskLevel: 'low',
-      category: categories[3]!,
+      category: categories[3] ?? createFallbackCategory(3),
       checked: false,
       translationKey: 'scope-clear',
       guideContent: {
