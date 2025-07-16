@@ -68,7 +68,8 @@ across **12 languages** with full internationalization support.
 
 **👉 [https://fact-checklist.vercel.app/](https://fact-checklist.vercel.app/)**
 
-> **Note**: GitHub Pages版も引き続き利用可能: [https://shuji-bonji.github.io/fact-checklist/](https://shuji-bonji.github.io/fact-checklist/)
+> **Note**: GitHub Pages版も引き続き利用可能:
+> [https://shuji-bonji.github.io/fact-checklist/](https://shuji-bonji.github.io/fact-checklist/)
 
 ### ローカル開発
 
@@ -149,14 +150,17 @@ npm run dev
 - **RTL Support** - Right-to-left text rendering for Arabic
 - **Browser Language Detection** - Automatic language detection with
   localStorage persistence
-- **SSR Meta Tag Generation** - Dynamic meta tags based on Accept-Language headers
+- **SSR Meta Tag Generation** - Dynamic meta tags based on Accept-Language
+  headers
 - **SEO Optimization** - Language-specific meta tags for all 12 languages
 
 ### Server-Side Rendering / サーバーサイドレンダリング
 
-- **[SvelteKit SSR](https://kit.svelte.dev/docs/glossary#ssr)** - Dynamic server-side rendering
+- **[SvelteKit SSR](https://kit.svelte.dev/docs/glossary#ssr)** - Dynamic
+  server-side rendering
 - **Accept-Language Detection** - Automatic language detection from HTTP headers
-- **ISR (Incremental Static Regeneration)** - 60-second cache with dynamic updates
+- **ISR (Incremental Static Regeneration)** - 60-second cache with dynamic
+  updates
 - **Meta Tag Generation** - Language-specific SEO meta tags for all pages
 - **Twitter Card & OGP** - Complete social media sharing support
 
@@ -164,8 +168,10 @@ npm run dev
 
 - **[Vite PWA Plugin](https://vite-pwa-org.netlify.app/)** - PWA functionality /
   PWA機能
-- **[Vercel](https://vercel.com/)** - Primary hosting with SSR support / メインホスティング（SSR対応）
-- **[GitHub Pages](https://pages.github.com/)** - Static hosting fallback / 静的ホスティング（フォールバック）
+- **[Vercel](https://vercel.com/)** - Primary hosting with SSR support
+  / メインホスティング（SSR対応）
+- **[GitHub Pages](https://pages.github.com/)** - Static hosting fallback
+  / 静的ホスティング（フォールバック）
 - **[GitHub Actions](https://github.com/features/actions)** - CI/CD pipeline /
   CI/CD
 
@@ -328,7 +334,9 @@ curl "https://fact-checklist.vercel.app/api/debug-meta?path=/intro"
 
 ### Browser Language Detection / ブラウザ言語検出
 
-The application automatically detects browser language preferences and serves appropriate meta tags for:
+The application automatically detects browser language preferences and serves
+appropriate meta tags for:
+
 - SEO optimization
 - Social media sharing (Twitter Card, OGP)
 - Cultural adaptation (date formats, text direction)
@@ -551,8 +559,8 @@ Please report bugs or feature requests at
 
 **🌍 Now Available in 12 Languages / 12言語対応**
 
-[🚀 Try It Now / 今すぐ使ってみる](https://fact-checklist.vercel.app/)
-| [📖 Documentation / ドキュメント](./docs) |
+[🚀 Try It Now / 今すぐ使ってみる](https://fact-checklist.vercel.app/) |
+[📖 Documentation / ドキュメント](./docs) |
 [🤝 Contributing / コントリビューション](#-contributing--コントリビューション)
 
 </div>

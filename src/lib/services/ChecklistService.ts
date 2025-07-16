@@ -139,7 +139,10 @@ export class ChecklistService {
       throw new Error(`Check item with ID ${itemId} not found`);
     }
 
-    const currentItem = items[itemIndex]!;
+    const currentItem = items[itemIndex];
+    if (!currentItem) {
+      throw new Error(`Item not found at index ${itemIndex}`);
+    }
     items[itemIndex] = {
       id: currentItem.id,
       title: currentItem.title,

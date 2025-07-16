@@ -22,7 +22,7 @@ export class IndexedDBStorage {
    * Initialize IndexedDB connection
    */
   async init(): Promise<void> {
-    console.log('IndexedDBStorage.init: start');
+    // console.log('IndexedDBStorage.init: start');
 
     if (typeof window === 'undefined' || !window.indexedDB) {
       const error = 'IndexedDB is not available';
@@ -30,12 +30,12 @@ export class IndexedDBStorage {
       throw new Error(error);
     }
 
-    console.log(
-      'IndexedDBStorage.init: opening database',
-      this.config.dbName,
-      'version',
-      this.config.version
-    );
+    // console.log(
+    //   'IndexedDBStorage.init: opening database',
+    //   this.config.dbName,
+    //   'version',
+    //   this.config.version
+    // );
 
     return new Promise((resolve, reject) => {
       const request = indexedDB.open(this.config.dbName, this.config.version);
@@ -47,24 +47,24 @@ export class IndexedDBStorage {
       };
 
       request.onsuccess = () => {
-        console.log('IndexedDBStorage.init: database opened successfully');
+        // console.log('IndexedDBStorage.init: database opened successfully');
         this.db = request.result;
         resolve();
       };
 
       request.onupgradeneeded = event => {
-        console.log('IndexedDBStorage.init: database upgrade needed');
+        // console.log('IndexedDBStorage.init: database upgrade needed');
         const db = (event.target as IDBOpenDBRequest).result;
 
         // Create object store if it doesn't exist
         if (!db.objectStoreNames.contains(this.config.storeName)) {
-          console.log('IndexedDBStorage.init: creating object store', this.config.storeName);
+          // console.log('IndexedDBStorage.init: creating object store', this.config.storeName);
           const store = db.createObjectStore(this.config.storeName, { keyPath: 'key' });
           // Create index for namespace filtering
           store.createIndex('namespace', 'namespace', { unique: false });
-          console.log('IndexedDBStorage.init: object store created with namespace index');
+          // console.log('IndexedDBStorage.init: object store created with namespace index');
         } else {
-          console.log('IndexedDBStorage.init: object store already exists');
+          // console.log('IndexedDBStorage.init: object store already exists');
         }
       };
     });
@@ -100,7 +100,7 @@ export class IndexedDBStorage {
       };
 
       request.onsuccess = () => {
-        const result = request.result;
+        const result = request.result as { value: T } | undefined;
         resolve(result ? result.value : null);
       };
     });
@@ -266,7 +266,7 @@ export class StorageMigration {
           try {
             const value = localStorage.getItem(key);
             if (value !== null) {
-              let parsedValue;
+              let parsedValue: unknown;
               try {
                 parsedValue = JSON.parse(value);
               } catch {

@@ -180,7 +180,10 @@ export class ExportService {
     const results: ExportResult[] = [];
 
     for (let i = 0; i < requests.length; i++) {
-      const request = requests[i]!;
+      const request = requests[i];
+      if (!request) {
+        throw new Error(`Invalid request at index ${i}`);
+      }
 
       // バッチ進捗の計算
       const batchProgress = Math.round((i / requests.length) * 100);
@@ -189,7 +192,10 @@ export class ExportService {
       const adjustedProgressHandler = request.onProgress
         ? (progress: number, message: string) => {
             const overallProgress = batchProgress + Math.round(progress / requests.length);
-            request.onProgress!(overallProgress, `${message} (${i + 1}/${requests.length})`);
+            const progressHandler = request.onProgress;
+            if (progressHandler) {
+              progressHandler(overallProgress, `${message} (${i + 1}/${requests.length})`);
+            }
           }
         : undefined;
 
@@ -436,9 +442,8 @@ export class ExportService {
     // Dynamic import to avoid circular dependencies
     const i18nModule = await import('$lib/i18n/index.js');
     // Create a wrapper that accepts any string
-    const t = (key: string): string => {
-      return (i18nModule.t as unknown as (key: string) => string | undefined)(key) ?? key;
-    };
+    const t = (key: string): string =>
+      (i18nModule.t as unknown as (key: string) => string | undefined)(key) ?? key;
     return { t };
   }
 

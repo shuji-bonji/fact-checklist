@@ -5,6 +5,7 @@
 <script lang="ts">
   import { t, setLanguage, i18nStore } from '$lib/i18n/index.js';
   import { getLanguageOptions } from '$lib/i18n/utils.js';
+  import type { LanguageCode } from '$lib/i18n/types.js';
 
   // Props
   interface Props {
@@ -31,7 +32,7 @@
   // 言語変更ハンドラー
   async function handleLanguageChange(languageCode: string) {
     try {
-      await setLanguage(languageCode as any);
+      await setLanguage(languageCode as LanguageCode);
       isOpen = false;
     } catch (error) {
       console.error('Failed to change language:', error);
@@ -72,6 +73,7 @@
 <div class="language-switcher" class:rtl={isRTL} class:mobile-mode={mobileMode}>
   <!-- 言語選択ボタン -->
   <button
+    type="button"
     class="language-button"
     onclick={toggleDropdown}
     onkeydown={e => handleKeydown(e)}
@@ -90,6 +92,7 @@
     <div class="language-dropdown" role="listbox" aria-label={t('accessibility.languageSelector')}>
       {#each languageOptions as language (language.code)}
         <button
+          type="button"
           class="language-option"
           class:current={language.code === currentLanguage}
           role="option"

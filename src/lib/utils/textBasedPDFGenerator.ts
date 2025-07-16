@@ -47,10 +47,10 @@ export class TextBasedPDFGenerator {
    */
   async generatePDF(checklist: ChecklistResult, options: TextPDFOptions): Promise<Blob> {
     try {
-      console.log('🔤 TextBasedPDFGenerator: Starting PDF generation...');
+      // console.log('🔤 TextBasedPDFGenerator: Starting PDF generation...');
       const pdfInstance = await this.generateFromChecklist(checklist, options);
       const blob = pdfInstance.output('blob');
-      console.log('✅ TextBasedPDFGenerator: PDF generated successfully');
+      // console.log('✅ TextBasedPDFGenerator: PDF generated successfully');
       return blob;
     } catch (error) {
       console.error('❌ TextBasedPDFGenerator: Failed to generate PDF:', error);
@@ -66,18 +66,18 @@ export class TextBasedPDFGenerator {
     // 翻訳関数を設定（フォールバック付き）
     this.t = options.t ?? ((key: string) => key);
 
-    console.log('🔤 Starting text-based PDF generation...');
+    // console.log('🔤 Starting text-based PDF generation...');
 
     // 日本語フォントを設定
     try {
       await this.setupJapaneseFont();
       this.fontLoaded = true;
-      console.log('📝 Using font: NotoSansJP (Japanese support)');
+      // console.log('📝 Using font: NotoSansJP (Japanese support)');
     } catch (error) {
       console.warn('⚠️ Failed to load Japanese font, using fallback:', error);
       this.fontLoaded = false;
       this.setFontWeight('normal');
-      console.log('📝 Using font: courier (fallback)');
+      console.warn('📝 Using font: courier (fallback)');
     }
 
     this.pdf.setFontSize(11);
@@ -97,7 +97,7 @@ export class TextBasedPDFGenerator {
 
     this.addFooter();
 
-    console.log('✅ Text-based PDF generation completed');
+    // console.log('✅ Text-based PDF generation completed');
     return this.pdf;
   }
 
@@ -340,7 +340,7 @@ export class TextBasedPDFGenerator {
   }
 
   private addWrappedText(text: string): void {
-    const lines = this.pdf.splitTextToSize(text, this.maxLineWidth - 10);
+    const lines = this.pdf.splitTextToSize(text, this.maxLineWidth - 10) as string[];
     lines.forEach((line: string) => {
       this.checkPageBreak();
       this.pdf.text(line, this.margin, this.currentY);

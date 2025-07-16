@@ -92,6 +92,7 @@
 
         {#if displayGuideContent() && !showGuideMode}
           <button
+            type="button"
             class="guide-toggle"
             onclick={toggleGuide}
             aria-expanded={showGuide}

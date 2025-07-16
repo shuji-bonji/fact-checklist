@@ -91,7 +91,8 @@ export class SearchService {
 
     // 判定フィルター
     if (criteria.judgment && criteria.judgment.length > 0) {
-      filteredItems = filteredItems.filter(item => criteria.judgment!.includes(item.judgment!));
+      const judgmentFilter = criteria.judgment;
+      filteredItems = filteredItems.filter(item => judgmentFilter.includes(item.judgment));
     }
 
     // 日付範囲フィルター
@@ -165,12 +166,14 @@ export class SearchService {
 
     // ステータスフィルター
     if (criteria.status && criteria.status.length > 0) {
-      filteredItems = filteredItems.filter(item => criteria.status!.includes(item.status));
+      const statusFilter = criteria.status;
+      filteredItems = filteredItems.filter(item => statusFilter.includes(item.status));
     }
 
     // 判定フィルター
     if (criteria.judgment && criteria.judgment.length > 0) {
-      filteredItems = filteredItems.filter(item => criteria.judgment!.includes(item.judgment!));
+      const judgmentFilter = criteria.judgment;
+      filteredItems = filteredItems.filter(item => judgmentFilter.includes(item.judgment));
     }
 
     // 作成日範囲フィルター
@@ -240,7 +243,8 @@ export class SearchService {
 
     // カテゴリフィルター
     if (criteria.categories && criteria.categories.length > 0) {
-      filteredItems = filteredItems.filter(item => criteria.categories!.includes(item.category.id));
+      const categoryFilter = criteria.categories;
+      filteredItems = filteredItems.filter(item => categoryFilter.includes(item.category.id));
     }
 
     // チェック状態フィルター
@@ -250,7 +254,8 @@ export class SearchService {
 
     // リスクレベルフィルター
     if (criteria.riskLevel && criteria.riskLevel.length > 0) {
-      filteredItems = filteredItems.filter(item => criteria.riskLevel!.includes(item.riskLevel));
+      const riskLevelFilter = criteria.riskLevel;
+      filteredItems = filteredItems.filter(item => riskLevelFilter.includes(item.riskLevel));
     }
 
     const executionTime = Date.now() - startTime;
@@ -512,7 +517,10 @@ export class SearchService {
         if (!index.has(word)) {
           index.set(word, new Set());
         }
-        index.get(word)!.add(itemIndex);
+        const wordSet = index.get(word);
+        if (wordSet) {
+          wordSet.add(itemIndex);
+        }
       });
 
       // 説明の単語分割
@@ -522,7 +530,10 @@ export class SearchService {
           if (!index.has(word)) {
             index.set(word, new Set());
           }
-          index.get(word)!.add(itemIndex);
+          const wordSet = index.get(word);
+          if (wordSet) {
+            wordSet.add(itemIndex);
+          }
         });
       }
     });

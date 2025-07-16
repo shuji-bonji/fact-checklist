@@ -11,7 +11,7 @@ import {
   type PlatformCapabilities,
   type DetectedSystemFeatures
 } from '$lib/stores/platformStore.svelte.js';
-import { generateTextBasedPDF, type PDFGenerationOptions } from './pdfGenerator.js';
+import type { PDFGenerationOptions } from './pdfGenerator.js';
 
 export interface EnhancedPDFOptions extends Partial<PDFGenerationOptions> {
   // プラットフォーム固有オプション
@@ -41,7 +41,7 @@ export class PlatformAwarePDFGenerator {
    * プラットフォーム対応PDF生成のメインエントリーポイント
    */
   async generatePDF(checklist: ChecklistResult, options: EnhancedPDFOptions = {}): Promise<void> {
-    console.log('🚀 Platform-aware PDF generation started');
+    // console.log('🚀 Platform-aware PDF generation started');
     platformStore.debugInfo();
 
     try {
@@ -50,7 +50,7 @@ export class PlatformAwarePDFGenerator {
 
       // 最適な生成戦略を決定
       const strategy = this.selectStrategy(enhancedOptions);
-      console.log(`📋 Selected PDF strategy: ${strategy}`);
+      // console.log(`📋 Selected PDF strategy: ${strategy}`);
 
       // 戦略に基づく生成実行
       switch (strategy) {
@@ -68,7 +68,7 @@ export class PlatformAwarePDFGenerator {
           break;
       }
 
-      console.log('✅ PDF generation completed successfully');
+      // console.log('✅ PDF generation completed successfully');
     } catch (error) {
       console.error('❌ PDF generation failed:', error);
       // エラー時のフォールバック処理
@@ -126,11 +126,11 @@ export class PlatformAwarePDFGenerator {
     checklist: ChecklistResult,
     options: EnhancedPDFOptions
   ): Promise<void> {
-    console.log('🔧 Generating PDF with native features');
+    // console.log('🔧 Generating PDF with native features');
 
     // 最適なシステムフォントを選択
     const optimalFont = this.selectOptimalFont();
-    console.log(`🎯 Using optimal font: ${optimalFont}`);
+    // console.log(`🎯 Using optimal font: ${optimalFont}`);
 
     // 高品質PDF生成
     const pdf = await this.generateOptimizedPDF(checklist, options, optimalFont);
@@ -158,10 +158,11 @@ export class PlatformAwarePDFGenerator {
     checklist: ChecklistResult,
     options: EnhancedPDFOptions
   ): Promise<void> {
-    console.log('🎨 Generating PDF with web canvas');
+    // console.log('🎨 Generating PDF with web canvas');
 
     // Canvas最適化されたPDF生成
     const pdfOptions = this.convertToGenerationOptions(options);
+    const { generateTextBasedPDF } = await import('./pdfGenerator.js');
     const pdf = await generateTextBasedPDF(checklist, pdfOptions);
 
     // 通常のダウンロード処理
@@ -175,10 +176,11 @@ export class PlatformAwarePDFGenerator {
     checklist: ChecklistResult,
     options: EnhancedPDFOptions
   ): Promise<void> {
-    console.log('📝 Generating text-based PDF (CSP compliant)');
+    // console.log('📝 Generating text-based PDF (CSP compliant)');
 
     // 既存のテキストベース生成を使用
     const pdfOptions = this.convertToGenerationOptions(options);
+    const { generateTextBasedPDF } = await import('./pdfGenerator.js');
     const pdf = await generateTextBasedPDF(checklist, pdfOptions);
 
     this.downloadPDF(pdf, checklist.title);
@@ -191,7 +193,7 @@ export class PlatformAwarePDFGenerator {
     checklist: ChecklistResult,
     options: EnhancedPDFOptions
   ): Promise<void> {
-    console.log('🔄 Generating PDF with fallback method');
+    // console.log('🔄 Generating PDF with fallback method');
 
     // 最小限の機能でPDF生成
     const fallbackOptions: PDFGenerationOptions = {
@@ -202,6 +204,7 @@ export class PlatformAwarePDFGenerator {
       useTextMode: true
     };
 
+    const { generateTextBasedPDF } = await import('./pdfGenerator.js');
     const pdf = await generateTextBasedPDF(checklist, fallbackOptions);
     this.downloadPDF(pdf, checklist.title);
   }
@@ -279,7 +282,8 @@ export class PlatformAwarePDFGenerator {
       }
     };
 
-    return await generateTextBasedPDF(checklist, optimizedOptions);
+    const { generateTextBasedPDF } = await import('./pdfGenerator.js');
+    return generateTextBasedPDF(checklist, optimizedOptions);
   }
 
   /**
@@ -323,7 +327,7 @@ export class PlatformAwarePDFGenerator {
       await writable.write(pdfBlob);
       await writable.close();
 
-      console.log('💾 PDF saved using File System Access API');
+      // console.log('💾 PDF saved using File System Access API');
     } catch (error) {
       console.warn('File System Access API failed, falling back to download:', error);
       this.downloadPDF(pdf, title);
@@ -340,14 +344,14 @@ export class PlatformAwarePDFGenerator {
         type: 'application/pdf'
       });
 
-      if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share!({
+      if (navigator.canShare?.({ files: [file] }) && navigator.share) {
+        await navigator.share({
           title: '事実確認チェックシート',
           text: `${title}の評価結果`,
           files: [file]
         });
 
-        console.log('📤 PDF shared using Web Share API');
+        // console.log('📤 PDF shared using Web Share API');
       } else {
         throw new Error('Web Share API does not support files');
       }
@@ -363,7 +367,7 @@ export class PlatformAwarePDFGenerator {
   private downloadPDF(pdf: jsPDF, title: string): void {
     const filename = `事実確認チェックシート_${title.replace(/[^\w\s]/gi, '')}_${new Date().toISOString().slice(0, 10)}.pdf`;
     pdf.save(filename);
-    console.log('⬇️ PDF downloaded using standard method');
+    // console.log('⬇️ PDF downloaded using standard method');
   }
 
   /**

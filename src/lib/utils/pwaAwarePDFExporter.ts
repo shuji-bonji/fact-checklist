@@ -39,38 +39,38 @@ export class PWAAwarePDFExporter {
     this.hasWebShare = capabilities.hasWebShare;
     this.hasWebShareFiles = capabilities.hasWebShareFiles;
 
-    console.log('🚀 PWAAwarePDFExporter initialized with capabilities:', {
-      isNativeApp: this.isNativeApp,
-      hasFileSystemAccess: this.hasFileSystemAccess,
-      hasWebShare: this.hasWebShare,
-      hasWebShareFiles: this.hasWebShareFiles
-    });
+    // console.log('🚀 PWAAwarePDFExporter initialized with capabilities:', {
+    //   isNativeApp: this.isNativeApp,
+    //   hasFileSystemAccess: this.hasFileSystemAccess,
+    //   hasWebShare: this.hasWebShare,
+    //   hasWebShareFiles: this.hasWebShareFiles
+    // });
   }
 
   async exportPDF(checklist: ChecklistResult, options: PDFExportOptions): Promise<void> {
-    console.log('📄 Starting PDF export with options:', {
-      textMode: options.textMode,
-      includeGuides: options.includeGuides,
-      sectionBreaks: options.sectionBreaks
-    });
+    // console.log('📄 Starting PDF export with options:', {
+    //   textMode: options.textMode,
+    //   includeGuides: options.includeGuides,
+    //   sectionBreaks: options.sectionBreaks
+    // });
 
     try {
       let pdf: jsPDF;
 
       if (options.textMode) {
         // テキストベース生成（文字検索・コピー可能）
-        console.log('🔤 Using text-based PDF generation');
+        // console.log('🔤 Using text-based PDF generation');
         pdf = await this.generateTextBasedPDF(checklist, options);
       } else {
         // 既存のプラットフォーム対応生成（高品質画像）
-        console.log('🎨 Using platform-aware PDF generation');
+        // console.log('🎨 Using platform-aware PDF generation');
         pdf = await this.generatePlatformAwarePDF(checklist, options);
       }
 
       // PWA機能を活用した保存/共有
       await this.saveOrSharePDF(pdf, checklist.title, options, options.t);
 
-      console.log('✅ PDF export completed successfully');
+      // console.log('✅ PDF export completed successfully');
     } catch (error) {
       console.error('❌ PDF export failed:', error);
       const errorPrefix = options.t?.('export.error.pdfGeneration') ?? 'PDF generation failed';
@@ -94,7 +94,7 @@ export class PWAAwarePDFExporter {
       })
     };
 
-    return await this.textGenerator.generateFromChecklist(checklist, textOptions);
+    return this.textGenerator.generateFromChecklist(checklist, textOptions);
   }
 
   private async generatePlatformAwarePDF(
@@ -120,7 +120,7 @@ export class PWAAwarePDFExporter {
     // プラットフォーム対応生成器からPDFインスタンスを取得
     // 注意: 既存のgeneratePDF()メソッドは直接PDFを保存するため、
     // PDFインスタンスを取得する新しいメソッドが必要
-    return await this.generateDirectPDF(checklist, enhancedOptions);
+    return this.generateDirectPDF(checklist, enhancedOptions);
   }
 
   private async generateDirectPDF(
@@ -139,7 +139,7 @@ export class PWAAwarePDFExporter {
       ...(options.fontConfig && { fontConfig: options.fontConfig })
     };
 
-    return await generateTextBasedPDF(checklist, pdfOptions);
+    return generateTextBasedPDF(checklist, pdfOptions);
   }
 
   private async saveOrSharePDF(
@@ -153,17 +153,17 @@ export class PWAAwarePDFExporter {
     const appTitle = t?.('app.title') ?? 'Fact-Checklist';
     const filename = `${appTitle}_${sanitizedTitle}_${timestamp}.pdf`;
 
-    console.log('💾 Attempting to save/share PDF:', filename);
+    // console.log('💾 Attempting to save/share PDF:', filename);
 
     // 保存方法の優先順位
     if (options.showSaveDialog && this.hasFileSystemAccess) {
-      console.log('📁 Using File System Access API');
+      // console.log('📁 Using File System Access API');
       await this.saveWithFileSystemAPI(pdf, filename);
     } else if (options.enableSharing && this.hasWebShareFiles && this.isNativeApp) {
-      console.log('📤 Using Web Share API');
+      // console.log('📤 Using Web Share API');
       await this.shareWithWebShareAPI(pdf, filename, title);
     } else {
-      console.log('⬇️ Using standard download');
+      // console.log('⬇️ Using standard download');
       this.downloadPDF(pdf, filename);
     }
   }
@@ -192,7 +192,7 @@ export class PWAAwarePDFExporter {
       await writable.write(pdfBlob);
       await writable.close();
 
-      console.log('✅ PDF saved using File System Access API');
+      // console.log('✅ PDF saved using File System Access API');
     } catch (error) {
       console.warn('⚠️ File System Access API failed, falling back to download:', error);
       this.downloadPDF(pdf, suggestedName);
@@ -204,14 +204,14 @@ export class PWAAwarePDFExporter {
       const pdfBlob = pdf.output('blob');
       const file = new File([pdfBlob], filename, { type: 'application/pdf' });
 
-      if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share!({
+      if (navigator.canShare?.({ files: [file] }) && navigator.share) {
+        await navigator.share({
           title: '事実確認チェックシート',
           text: `${title}の評価結果`,
           files: [file]
         });
 
-        console.log('✅ PDF shared using Web Share API');
+        // console.log('✅ PDF shared using Web Share API');
       } else {
         throw new Error('Web Share API does not support files');
       }
@@ -223,7 +223,7 @@ export class PWAAwarePDFExporter {
 
   private downloadPDF(pdf: jsPDF, filename: string): void {
     pdf.save(filename);
-    console.log('✅ PDF downloaded using standard method');
+    // console.log('✅ PDF downloaded using standard method');
   }
 
   /**

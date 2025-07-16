@@ -7,14 +7,19 @@ import type { NestedRecord } from './types.js';
 
 /**
  * ネストしたオブジェクトから値を安全に取得
- * anyの代わりに型安全な実装 - 配列対応版
+ * 型安全な実装 - 配列対応版
  */
-export function getNestedValue(obj: NestedRecord, path: string): string | string[] | undefined {
+export function getNestedValue(
+  obj: NestedRecord | null,
+  path: string
+): string | string[] | undefined {
+  if (!obj) return undefined;
+
   const keys = path.split('.');
   let current: unknown = obj;
 
   for (const key of keys) {
-    if (current && typeof current === 'object' && current !== null && key in current) {
+    if (isValidObject(current) && key in current) {
       current = (current as Record<string, unknown>)[key];
     } else {
       return undefined;
@@ -24,7 +29,7 @@ export function getNestedValue(obj: NestedRecord, path: string): string | string
   // 文字列、配列、または未定義を返す
   if (typeof current === 'string') {
     return current;
-  } else if (Array.isArray(current) && current.every(item => typeof item === 'string')) {
+  } else if (isStringArray(current)) {
     return current;
   }
 
@@ -32,10 +37,26 @@ export function getNestedValue(obj: NestedRecord, path: string): string | string
 }
 
 /**
+ * オブジェクトが有効かどうかを型ガードで判定
+ */
+function isValidObject(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+/**
+ * 文字列配列かどうかを型ガードで判定
+ */
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every(item => typeof item === 'string');
+}
+
+/**
  * オブジェクトの翻訳数を再帰的にカウント
  * 型安全な実装
  */
-export function countTranslations(obj: NestedRecord): number {
+export function countTranslations(obj: NestedRecord | null): number {
+  if (!obj) return 0;
+
   let count = 0;
 
   for (const key in obj) {
@@ -43,8 +64,8 @@ export function countTranslations(obj: NestedRecord): number {
       const value = obj[key];
       if (typeof value === 'string') {
         count++;
-      } else if (typeof value === 'object' && value !== null) {
-        count += countTranslations(value);
+      } else if (isValidObject(value)) {
+        count += countTranslations(value as NestedRecord);
       }
     }
   }
@@ -58,8 +79,12 @@ export function countTranslations(obj: NestedRecord): number {
  */
 export function interpolateParams(text: string, params: Record<string, string | number>): string {
   return text.replace(/\{\{(\w+)\}\}/g, (match, key) => {
-    const value = params[key];
-    return value !== undefined ? String(value) : match;
+    // Type guard to ensure key is string and safe access
+    if (typeof key === 'string' && key in params) {
+      const value = params[key];
+      return value !== undefined ? String(value) : match;
+    }
+    return match;
   });
 }
 
@@ -81,8 +106,8 @@ export function createSafeTranslator(
 ): (key: string, params?: Record<string, string | number>) => string {
   return (key: string, params?: Record<string, string | number>): string => {
     if (!translations) {
-      console.warn(`⚠️ No translations available, returning key: ${key}`);
-      return fallbackKey ?? key;
+      // 翻訳がまだ読み込まれていない場合は警告なしで空文字を返す
+      return '';
     }
 
     if (!isValidTranslationKey(key)) {
@@ -116,8 +141,8 @@ export function createFlexibleTranslator(
 ): (key: string, params?: Record<string, string | number>) => string | string[] {
   return (key: string, params?: Record<string, string | number>): string | string[] => {
     if (!translations) {
-      console.warn(`⚠️ No translations available, returning key: ${key}`);
-      return fallbackKey ?? key;
+      // 翻訳がまだ読み込まれていない場合は警告なしで空文字を返す
+      return '';
     }
 
     if (!isValidTranslationKey(key)) {

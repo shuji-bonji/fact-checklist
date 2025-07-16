@@ -74,10 +74,13 @@ declare global {
 
 	// Performance Observer API
 	interface PerformanceObserver {
-		new (callback: PerformanceObserverCallback): PerformanceObserver;
 		observe(options: PerformanceObserverInit): void;
 		disconnect(): void;
 		takeRecords(): PerformanceEntry[];
+	}
+
+	interface PerformanceObserverConstructor {
+		new (callback: PerformanceObserverCallback): PerformanceObserver;
 	}
 
 	interface PerformanceObserverCallback {
@@ -86,7 +89,7 @@ declare global {
 
 	// Notification API
 	interface Notification {
-		data?: any;
+		data?: Record<string, unknown>;
 	}
 
 	// Storage Estimate API
@@ -134,10 +137,10 @@ declare module 'svelte' {
 	}
 	
 	// $propsの型をより厳密に定義
-	export function $props<T = any>(): T;
+	export function $props<T = Record<string, unknown>>(): T;
 	
 	// $inspectの型定義
-	export function $inspect<T extends any[]>(...values: T): void;
+	export function $inspect<T extends unknown[]>(...values: T): void;
 }
 
 // HTMLElement拡張
@@ -153,7 +156,7 @@ declare global {
 }
 
 // 環境変数の型定義
-declare namespace NodeJS {
+declare namespace _NodeJS {
 	interface ProcessEnv {
 		NODE_ENV: 'development' | 'production' | 'test';
 		PUBLIC_APP_VERSION?: string;
@@ -171,22 +174,28 @@ declare module '$app/environment' {
 }
 
 declare module '$app/navigation' {
+	export interface NavigationEvent {
+		from: { url: URL; params: Record<string, string> } | null;
+		to: { url: URL; params: Record<string, string> } | null;
+		cancel: () => void;
+	}
+
 	export function goto(url: string | URL, opts?: {
 		replaceState?: boolean;
 		noScroll?: boolean;
 		keepFocus?: boolean;
 		invalidateAll?: boolean;
-		state?: any;
+		state?: Record<string, unknown>;
 	}): Promise<void>;
 	
 	export function invalidate(url: string | URL | ((url: URL) => boolean)): Promise<void>;
 	export function invalidateAll(): Promise<void>;
 	export function preloadData(href: string): Promise<void>;
 	export function preloadCode(...hrefs: string[]): Promise<void>;
-	export function beforeNavigate(fn: (navigation: any) => void): void;
-	export function afterNavigate(fn: (navigation: any) => void): void;
-	export function pushState(url: string | URL, state: any): void;
-	export function replaceState(url: string | URL, state: any): void;
+	export function beforeNavigate(fn: (navigation: NavigationEvent) => void): void;
+	export function afterNavigate(fn: (navigation: NavigationEvent) => void): void;
+	export function pushState(url: string | URL, state: Record<string, unknown>): void;
+	export function replaceState(url: string | URL, state: Record<string, unknown>): void;
 }
 
 declare module '$app/stores' {
@@ -199,10 +208,10 @@ declare module '$app/stores' {
 			id: string | null;
 		};
 		status: number;
-		error: any | null;
-		data: Record<string, any>;
-		form: any;
-		state: any;
+		error: Error | null;
+		data: Record<string, unknown>;
+		form: unknown;
+		state: Record<string, unknown>;
 	}
 	
 	export interface Navigation {
@@ -223,7 +232,7 @@ declare module '$app/paths' {
 }
 
 // Local Storage拡張（PWA用）
-interface Storage {
+interface _Storage {
 	// チェックリスト関連のキー
 	getItem(key: `checklist_${string}`): string | null;
 	setItem(key: `checklist_${string}`, value: string): void;
@@ -240,27 +249,27 @@ interface Storage {
 
 // CSS modules
 declare module '*.css' {
-	const content: any;
+	const content: Record<string, string>;
 	export default content;
 }
 
 declare module '*.scss' {
-	const content: any;
+	const content: Record<string, string>;
 	export default content;
 }
 
 declare module '*.sass' {
-	const content: any;
+	const content: Record<string, string>;
 	export default content;
 }
 
 declare module '*.less' {
-	const content: any;
+	const content: Record<string, string>;
 	export default content;
 }
 
 declare module '*.styl' {
-	const content: any;
+	const content: Record<string, string>;
 	export default content;
 }
 
@@ -273,12 +282,12 @@ interface ImportMetaEnv {
 	readonly VITE_BUILD_DATE: string;
 }
 
-interface ImportMeta {
+interface _ImportMeta {
 	readonly env: ImportMetaEnv;
 }
 
 // PWA Manifest型定義
-interface WebAppManifest {
+interface _WebAppManifest {
 	name: string;
 	short_name: string;
 	description: string;

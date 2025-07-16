@@ -129,51 +129,49 @@ export type MarkdownContentGenerator = (factChecklistI18n: FactChecklistI18n) =>
 /**
  * i18n関連のユーティリティ型
  */
-export namespace I18nTypes {
-  /** 翻訳キーの例 */
-  export type TranslationKey =
-    | 'app.title'
-    | 'app.description'
-    | 'export.progress.generating'
-    | 'export.progress.processing'
-    | 'export.progress.saving'
-    | 'export.progress.completed'
-    | 'export.metadata.created'
-    | 'export.metadata.score'
-    | 'export.metadata.confidence'
-    | 'export.metadata.language'
-    | 'export.completed'
-    | 'export.items'
-    | 'export.summary.title'
-    | 'export.summary.totalScore'
-    | 'export.summary.completionRate'
-    | 'export.summary.confidenceLevel'
-    | 'export.summary.checkedItems'
-    | 'export.judgment.title'
-    | 'export.judgment.accept'
-    | 'export.judgment.caution'
-    | 'export.judgment.reject'
-    | 'export.preview.pdfNotAvailable'
-    | 'export.preview.notAvailable';
+/** 翻訳キーの例 */
+export type TranslationKey =
+  | 'app.title'
+  | 'app.description'
+  | 'export.progress.generating'
+  | 'export.progress.processing'
+  | 'export.progress.saving'
+  | 'export.progress.completed'
+  | 'export.metadata.created'
+  | 'export.metadata.score'
+  | 'export.metadata.confidence'
+  | 'export.metadata.language'
+  | 'export.completed'
+  | 'export.items'
+  | 'export.summary.title'
+  | 'export.summary.totalScore'
+  | 'export.summary.completionRate'
+  | 'export.summary.confidenceLevel'
+  | 'export.summary.checkedItems'
+  | 'export.judgment.title'
+  | 'export.judgment.accept'
+  | 'export.judgment.caution'
+  | 'export.judgment.reject'
+  | 'export.preview.pdfNotAvailable'
+  | 'export.preview.notAvailable';
 
-  /** 言語コード */
-  export type LanguageCode =
-    | 'ja'
-    | 'en'
-    | 'fr'
-    | 'zh-TW'
-    | 'es'
-    | 'pt'
-    | 'hi'
-    | 'de'
-    | 'it'
-    | 'ar'
-    | 'id'
-    | 'ko';
+/** 言語コード */
+export type LanguageCode =
+  | 'ja'
+  | 'en'
+  | 'fr'
+  | 'zh-TW'
+  | 'es'
+  | 'pt'
+  | 'hi'
+  | 'de'
+  | 'it'
+  | 'ar'
+  | 'id'
+  | 'ko';
 
-  /** RTL言語の判定 */
-  export type RTLLanguage = 'ar';
+/** RTL言語の判定 */
+export type RTLLanguage = 'ar';
 
-  /** CJK言語の判定 */
-  export type CJKLanguage = 'ja' | 'zh-TW' | 'ko';
-}
+/** CJK言語の判定 */
+export type CJKLanguage = 'ja' | 'zh-TW' | 'ko';

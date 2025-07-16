@@ -127,7 +127,7 @@
       } else {
         // ユーザーキャンセルの場合は静かに処理を終了
         if (result.error?.includes('cancelled by user')) {
-          console.log('📄 Export cancelled by user');
+          // console.log('📄 Export cancelled by user');
           // エクスポート状態をリセットして終了
           resetExportState();
         } else {
@@ -203,7 +203,9 @@ ${checklist.notes ? `📝 ${t('export.notes')}:\n${checklist.notes}` : ''}
   <div class="modal-content">
     <div class="modal-header">
       <h2 id="modal-title">📄 {t('export.title')}</h2>
-      <button class="close-btn" onclick={onClose} aria-label={t('common.close')}> ✕ </button>
+      <button type="button" class="close-btn" onclick={onClose} aria-label={t('common.close')}>
+        ✕
+      </button>
     </div>
 
     <div class="modal-body">
@@ -411,7 +413,7 @@ ${checklist.notes ? `📝 ${t('export.notes')}:\n${checklist.notes}` : ''}
           </div>
           <div class="error-message">{exportError}</div>
           <div class="error-actions">
-            <button class="btn btn-secondary btn-small" onclick={resetExportState}>
+            <button type="button" class="btn btn-secondary btn-small" onclick={resetExportState}>
               🔄 {t('common.reset')}
             </button>
           </div>
@@ -431,6 +433,7 @@ ${checklist.notes ? `📝 ${t('export.notes')}:\n${checklist.notes}` : ''}
 
       <div class="action-buttons">
         <button
+          type="button"
           class="btn btn-secondary"
           onclick={copyToClipboard}
           disabled={!checklist || isExporting}
@@ -438,7 +441,12 @@ ${checklist.notes ? `📝 ${t('export.notes')}:\n${checklist.notes}` : ''}
           📋 {t('common.copy')}
         </button>
 
-        <button class="btn btn-primary" onclick={handleExport} disabled={!checklist || isExporting}>
+        <button
+          type="button"
+          class="btn btn-primary"
+          onclick={handleExport}
+          disabled={!checklist || isExporting}
+        >
           {isExporting ? `⏳ ${t('export.progress.generating')}` : `📤 ${t('common.export')}`}
         </button>
       </div>

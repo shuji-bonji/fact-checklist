@@ -182,11 +182,13 @@
       </div>
 
       <div class="header-actions">
-        <button class="btn btn-secondary" onclick={editChecklist}> ✏️ {t('common.edit')} </button>
-        <button class="btn btn-primary" onclick={() => (showExportModal = true)}>
+        <button type="button" class="btn btn-secondary" onclick={editChecklist}>
+          ✏️ {t('common.edit')}
+        </button>
+        <button type="button" class="btn btn-primary" onclick={() => (showExportModal = true)}>
           📄 {t('common.export')}
         </button>
-        <button class="btn btn-success" onclick={createNewChecklist}>
+        <button type="button" class="btn btn-success" onclick={createNewChecklist}>
           ➕ {t('checklist.newChecklist')}
         </button>
       </div>
@@ -314,6 +316,7 @@
           <div class="notes-display card">
             <h2>📝 {t('checklist.evaluationNotes')}</h2>
             <div class="notes-content">
+              <!-- eslint-disable-next-line svelte/no-at-html-tags -->
               {@html sanitizeHtml(checklist.notes)}
             </div>
           </div>
@@ -372,13 +375,17 @@
         <div class="action-panel card">
           <h3>🔧 {t('checklist.actions')}</h3>
           <div class="action-buttons">
-            <button class="btn btn-primary w-full" onclick={() => (showExportModal = true)}>
+            <button
+              type="button"
+              class="btn btn-primary w-full"
+              onclick={() => (showExportModal = true)}
+            >
               📄 {t('checklist.exportShare')}
             </button>
-            <button class="btn btn-secondary w-full" onclick={editChecklist}>
+            <button type="button" class="btn btn-secondary w-full" onclick={editChecklist}>
               ✏️ {t('checklist.reEdit')}
             </button>
-            <button class="btn btn-success w-full" onclick={createNewChecklist}>
+            <button type="button" class="btn btn-success w-full" onclick={createNewChecklist}>
               ➕ {t('checklist.newChecklist')}
             </button>
           </div>

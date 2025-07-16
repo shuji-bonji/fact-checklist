@@ -70,7 +70,11 @@
 <div class="history-sidebar">
   <!-- 新規作成ボタン -->
   <div class="new-checklist card">
-    <button class="btn btn-ghost w-full new-checklist-btn" onclick={createNewChecklist}>
+    <button
+      type="button"
+      class="btn btn-ghost w-full new-checklist-btn"
+      onclick={createNewChecklist}
+    >
       ➕ {t('checklist.newChecklist')}
     </button>
   </div>
@@ -80,7 +84,7 @@
     <div class="history-header">
       <h3>📚 {t('history.title')}</h3>
       {#if history.length > 5}
-        <button class="toggle-view-btn" onclick={toggleHistoryView}>
+        <button type="button" class="toggle-view-btn" onclick={toggleHistoryView}>
           {showAllHistory ? t('history.recent') : t('history.viewAll')}
         </button>
       {/if}
@@ -111,6 +115,7 @@
                 {item.title}
               </div>
               <button
+                type="button"
                 class="delete-btn"
                 onclick={e => deleteHistoryItem(item, e)}
                 title="削除"

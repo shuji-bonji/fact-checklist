@@ -70,7 +70,7 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
 export async function loadBestJapaneseFont(pdf: jsPDF): Promise<string> {
   // 既存のフォントをチェック
   const fontList = pdf.getFontList();
-  console.log('現在利用可能なフォント:', Object.keys(fontList));
+  // console.log('現在利用可能なフォント:', Object.keys(fontList));
 
   // CSP制約により外部フォント取得は無効化されているため、
   // システムフォントの中から日本語表示に最も適したものを選択
@@ -84,16 +84,16 @@ export async function loadBestJapaneseFont(pdf: jsPDF): Promise<string> {
 
   for (const fontName of preferredFonts) {
     if (fontList[fontName]) {
-      console.log(`CSP制約下でのフォント選択: ${fontName}`);
-      console.log(
-        '注意: 外部フォント取得が制限されているため、日本語文字の表示品質が制限される可能性があります'
-      );
+      // console.log(`CSP制約下でのフォント選択: ${fontName}`);
+      // console.log(
+      //   '注意: 外部フォント取得が制限されているため、日本語文字の表示品質が制限される可能性があります'
+      // );
       return fontName;
     }
   }
 
   // フォールバック
-  console.log('デフォルトフォントにフォールバック');
+  // console.log('デフォルトフォントにフォールバック');
   console.warn('⚠️ CSP制約により日本語フォントの読み込みが制限されています');
   return 'helvetica';
 }
@@ -113,7 +113,7 @@ export async function addJapaneseFontToPDF(
 
     // 成功したフォント名でfontConfigを更新
     if (fontName !== fontConfig.name) {
-      console.log(`フォント設定を更新: ${fontConfig.name} → ${fontName}`);
+      // console.log(`フォント設定を更新: ${fontConfig.name} → ${fontName}`);
     }
 
     // CSP制約の警告を表示
@@ -171,15 +171,15 @@ export async function loadLocalJapaneseFont(pdf: jsPDF): Promise<string> {
  */
 export function debugFontStatus(pdf: jsPDF): void {
   const fontList = pdf.getFontList();
-  console.log('=== フォント状態確認 ===');
-  console.log('利用可能フォント:', Object.keys(fontList));
+  // console.log('=== フォント状態確認 ===');
+  // console.log('利用可能フォント:', Object.keys(fontList));
 
   // 各フォントの詳細
-  Object.entries(fontList).forEach(([name, styles]) => {
-    console.log(`${name}:`, styles);
+  Object.entries(fontList).forEach(([_name, _styles]) => {
+    // console.log(`${_name}:`, _styles);
   });
 
-  console.log('======================');
+  // console.log('======================');
 }
 
 /**

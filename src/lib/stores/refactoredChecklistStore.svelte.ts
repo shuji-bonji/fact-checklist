@@ -148,7 +148,7 @@ class RefactoredChecklistStore {
       // 履歴データの読み込み
       await this.loadHistoryFromStorage();
 
-      console.log('RefactoredChecklistStore: Initialization completed');
+      // console.log('RefactoredChecklistStore: Initialization completed');
     } catch (error) {
       this._error = `Initialization failed: ${error}`;
       console.error('RefactoredChecklistStore:', this._error);
@@ -185,7 +185,7 @@ class RefactoredChecklistStore {
         throw new Error(saveResult.error);
       }
 
-      console.log('RefactoredChecklistStore: New checklist created:', newChecklist.id);
+      // console.log('RefactoredChecklistStore: New checklist created:', newChecklist.id);
       return newChecklist.id;
     } catch (error) {
       this._error = `Failed to create checklist: ${error}`;
@@ -221,7 +221,7 @@ class RefactoredChecklistStore {
       checklist = ChecklistService.refreshItemsForCurrentLanguage(checklist);
 
       this._currentChecklist = checklist;
-      console.log('RefactoredChecklistStore: Checklist loaded:', id);
+      // console.log('RefactoredChecklistStore: Checklist loaded:', id);
       return true;
     } catch (error) {
       this._error = `Failed to load checklist: ${error}`;
@@ -393,7 +393,7 @@ class RefactoredChecklistStore {
         throw new Error('Failed to save completed checklist or history');
       }
 
-      console.log('RefactoredChecklistStore: Checklist completed successfully');
+      // console.log('RefactoredChecklistStore: Checklist completed successfully');
       return true;
     } catch (error) {
       this._error = `Failed to complete checklist: ${error}`;
@@ -420,7 +420,7 @@ class RefactoredChecklistStore {
         this.storageService.deleteChecklist(id)
       ]);
 
-      console.log('RefactoredChecklistStore: Deleted from history:', id);
+      // console.log('RefactoredChecklistStore: Deleted from history:', id);
     } catch (error) {
       this._error = `Failed to delete from history: ${error}`;
       console.error('RefactoredChecklistStore:', this._error);
@@ -486,12 +486,12 @@ class RefactoredChecklistStore {
     const checkLanguageChange = () => {
       const currentLanguage = i18nStore.currentLanguage;
       if (currentLanguage !== lastLanguage && this._initialized && this._currentChecklist) {
-        console.log(
-          'RefactoredChecklistStore: Language changed from',
-          lastLanguage,
-          'to',
-          currentLanguage
-        );
+        // console.log(
+        //   'RefactoredChecklistStore: Language changed from',
+        //   lastLanguage,
+        //   'to',
+        //   currentLanguage
+        // );
         lastLanguage = currentLanguage;
         this.refreshCurrentChecklistItems();
       }
@@ -507,7 +507,7 @@ class RefactoredChecklistStore {
       });
     }
 
-    console.log('RefactoredChecklistStore: Language change listener setup completed');
+    // console.log('RefactoredChecklistStore: Language change listener setup completed');
   }
 
   /**
@@ -526,7 +526,7 @@ class RefactoredChecklistStore {
       // 非同期でストレージに保存
       this.saveCurrentChecklistAsync();
 
-      console.log('RefactoredChecklistStore: Checklist items refreshed for current language');
+      // console.log('RefactoredChecklistStore: Checklist items refreshed for current language');
     } catch (error) {
       console.error('RefactoredChecklistStore: Failed to refresh checklist items:', error);
     }
@@ -584,7 +584,7 @@ class RefactoredChecklistStore {
       const result = await this.storageService.loadHistory();
       if (result.success && result.data) {
         this._history = result.data as ChecklistHistoryItem[];
-        console.log('RefactoredChecklistStore: History loaded:', this._history.length, 'items');
+        // console.log('RefactoredChecklistStore: History loaded:', this._history.length, 'items');
 
         // 保存されている全チェックリストの国際化マイグレーション
         const historyIds = this._history.map(h => h.id);

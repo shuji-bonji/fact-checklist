@@ -330,10 +330,10 @@ class PlatformStore {
    * デバッグ情報の出力
    */
   debugInfo(): void {
-    console.log('=== Platform Store Debug Info ===');
-    console.log('Capabilities:', this.capabilities);
-    console.log('System Features:', this.systemFeatures);
-    console.log('================================');
+    // console.log('=== Platform Store Debug Info ===');
+    // console.log('Capabilities:', this.capabilities);
+    // console.log('System Features:', this.systemFeatures);
+    // console.log('================================');
   }
 }
 

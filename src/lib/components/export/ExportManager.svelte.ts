@@ -157,8 +157,8 @@ export class ExportManager {
       factChecklistI18n: FactChecklistI18n,
       getCurrentLanguage: GetCurrentLanguageFunction,
       getSupportedLanguages: GetSupportedLanguagesFunction
-    ) => {
-      return generateSectionedHTMLContent(
+    ) =>
+      generateSectionedHTMLContent(
         checklist,
         options,
         factChecklistI18n,
@@ -166,7 +166,6 @@ export class ExportManager {
         getCurrentLanguage,
         getSupportedLanguages
       );
-    };
   }
 
   /**
@@ -184,8 +183,8 @@ export class ExportManager {
         options,
         factChecklistI18n,
         t,
-        i18nResult.getCurrentLanguage!,
-        i18nResult.getSupportedLanguages!
+        i18nResult.getCurrentLanguage ?? (() => 'en'),
+        i18nResult.getSupportedLanguages ?? (() => ({ en: { name: 'English' } }))
       );
     };
   }
@@ -198,9 +197,8 @@ export class ExportManager {
     options: ExportOptions,
     t: TranslationFunction
   ): Promise<(factChecklistI18n: FactChecklistI18n) => Promise<string>> {
-    return async (factChecklistI18n: FactChecklistI18n) => {
-      return generateMarkdownContent(checklist, options, factChecklistI18n, t);
-    };
+    return async (factChecklistI18n: FactChecklistI18n) =>
+      generateMarkdownContent(checklist, options, factChecklistI18n, t);
   }
 
   /**
@@ -246,7 +244,7 @@ export class ExportManager {
 
       ExportProgressHelper.updateStandardProgress(this.progressManager, 'SAVING', t);
 
-      const filename = ExportFilenameGenerator.generateCSVFilename(checklistStoreTitle, t);
+      const filename = await ExportFilenameGenerator.generateCSVFilename(checklistStoreTitle, t);
       const { downloadText } = await import('$lib/utils/download.js');
       downloadText(csvContent, filename, 'text/csv');
 
@@ -280,7 +278,7 @@ export class ExportManager {
 
       ExportProgressHelper.updateStandardProgress(this.progressManager, 'SAVING', t);
 
-      const filename = ExportFilenameGenerator.generateXMLFilename(checklistStoreTitle, t);
+      const filename = await ExportFilenameGenerator.generateXMLFilename(checklistStoreTitle, t);
       const { downloadText } = await import('$lib/utils/download.js');
       downloadText(xmlContent, filename, 'application/xml');
 
@@ -330,7 +328,7 @@ export class ExportManager {
       );
       this.progressManager.completeExport('Content copied to clipboard successfully');
 
-      console.log('✅ Content copied to clipboard successfully');
+      // console.log('✅ Content copied to clipboard successfully');
     } catch (error) {
       ExportErrorHandler.handleExportError(error, 'Clipboard copy', this.progressManager, false);
     }
@@ -354,8 +352,8 @@ export class ExportManager {
             options,
             i18nResult.factChecklistI18n,
             i18nResult.t,
-            i18nResult.getCurrentLanguage!,
-            i18nResult.getSupportedLanguages!
+            i18nResult.getCurrentLanguage ?? (() => 'en'),
+            i18nResult.getSupportedLanguages ?? (() => ({ en: { name: 'English' } }))
           );
 
         case 'markdown':

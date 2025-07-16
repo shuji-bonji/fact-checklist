@@ -79,7 +79,7 @@ export class ReliablePDFGenerator {
     const language = options.language ?? 'en';
     this.fontManager = new InternationalFontManager(this.pdf, language);
 
-    console.log(`🔥 Starting international PDF generation for language: ${language}...`);
+    // console.log(`🔥 Starting international PDF generation for language: ${language}...`);
 
     // Phase 3: PDFメタデータの設定
     if (options.addMetadata !== false) {
@@ -87,7 +87,7 @@ export class ReliablePDFGenerator {
     }
 
     // 利用可能なフォントの確認
-    console.log('📝 Available fonts in jsPDF:', this.pdf.getFontList());
+    // console.log('📝 Available fonts in jsPDF:', this.pdf.getFontList());
 
     // 国際化フォント設定
     await this.setupInternationalFont(language);
@@ -117,12 +117,12 @@ export class ReliablePDFGenerator {
 
     this.addFooter();
 
-    console.log('✅ Reliable PDF generation with advanced features completed successfully');
+    // console.log('✅ Reliable PDF generation with advanced features completed successfully');
     return this.pdf;
   }
 
   private async setupInternationalFont(language: LanguageCode): Promise<void> {
-    console.log(`📝 Setting up international font for language: ${language}...`);
+    // console.log(`📝 Setting up international font for language: ${language}...`);
 
     try {
       // Try to load language-specific font
@@ -130,9 +130,9 @@ export class ReliablePDFGenerator {
 
       if (fontLoaded) {
         this.fontLoaded = true;
-        console.log(`✅ Successfully loaded international font for ${language}`);
+        // console.log(`✅ Successfully loaded international font for ${language}`);
       } else {
-        console.log(`⚠️ Using fallback font for ${language}`);
+        console.warn(`⚠️ Using fallback font for ${language}`);
         this.useFallbackFont = true;
       }
 
@@ -148,13 +148,13 @@ export class ReliablePDFGenerator {
 
   private async tryLoadStaticFont(): Promise<void> {
     try {
-      console.log('🔤 Attempting to load static Noto Sans JP font with caching...');
+      // console.log('🔤 Attempting to load static Noto Sans JP font with caching...');
 
       // jsPDFに日本語フォントを登録（キャッシュ付き）
       const fontRegistered = await ReliablePDFGenerator.registerJapaneseFontsWithCache(this.pdf);
 
       if (fontRegistered) {
-        console.log('✅ Japanese fonts successfully registered with jsPDF (cached)');
+        // console.log('✅ Japanese fonts successfully registered with jsPDF (cached)');
         this.fontLoaded = true;
         this.useFallbackFont = false;
 
@@ -173,14 +173,14 @@ export class ReliablePDFGenerator {
 
   private setupSystemFontFallback(): void {
     try {
-      console.log('🔤 Setting up system font fallback...');
+      // console.log('🔤 Setting up system font fallback...');
 
       // jsPDFで利用可能な標準フォントを使用
       // helveticaは基本的な文字に対応
       this.pdf.setFont('helvetica', 'normal');
       this.pdf.setFontSize(11);
 
-      console.log('✅ System font fallback configured - using Helvetica');
+      // console.log('✅ System font fallback configured - using Helvetica');
       this.fontLoaded = true; // システムフォントを有効として扱う
       this.useFallbackFont = false; // 標準モードとして扱う
     } catch (error) {
@@ -189,13 +189,13 @@ export class ReliablePDFGenerator {
   }
 
   private setupSafeFallback(): void {
-    console.log('🔤 Setting up safe ASCII fallback font...');
+    // console.log('🔤 Setting up safe ASCII fallback font...');
 
     // 確実に動作する基本フォント
     this.pdf.setFont('courier', 'normal');
     this.pdf.setFontSize(11);
 
-    console.log('✅ Safe fallback font configured');
+    // console.log('✅ Safe fallback font configured');
     this.useFallbackFont = true;
   }
 
@@ -565,7 +565,7 @@ export class ReliablePDFGenerator {
     } catch (error) {
       // Fallback to jsPDF's native splitTextToSize if fontManager fails
       console.warn('FontManager splitTextToFit failed, using fallback:', error);
-      const lines = this.pdf.splitTextToSize(text, this.maxLineWidth - 10);
+      const lines = this.pdf.splitTextToSize(text, this.maxLineWidth - 10) as string[];
       lines.forEach((line: string, index: number) => {
         this.checkPageBreak();
         this.addInternationalText(line);
@@ -607,7 +607,7 @@ export class ReliablePDFGenerator {
   private setFontWeight(weight: 'normal' | 'bold' | 'italic'): void {
     try {
       // Use international font manager for font setting
-      const fontStyle = weight === 'italic' ? 'normal' : (weight as 'normal' | 'bold');
+      const fontStyle = weight === 'italic' ? 'normal' : weight;
       this.fontManager.setFont(fontStyle);
     } catch (error) {
       // 最終的な安全フォールバック
@@ -683,9 +683,7 @@ export class ReliablePDFGenerator {
   }
 
   // パフォーマンス最適化: キャッシュ付きフォント登録
-  private static async registerJapaneseFontsWithCache(
-    pdf: import('jspdf').jsPDF
-  ): Promise<boolean> {
+  private static async registerJapaneseFontsWithCache(pdf: jsPDF): Promise<boolean> {
     try {
       // 既に初期化済みの場合はキャッシュされたフォントを使用
       if (ReliablePDFGenerator.initializationPromise) {
@@ -714,14 +712,14 @@ export class ReliablePDFGenerator {
 
   private static async loadAndCacheFonts(): Promise<boolean> {
     try {
-      console.log('📦 Loading and caching fonts for the first time...');
+      // console.log('📦 Loading and caching fonts for the first time...');
 
       // キャッシュチェック
       if (
         ReliablePDFGenerator.fontCache.has('NotoSansJP-Regular') &&
         ReliablePDFGenerator.fontCache.has('NotoSansJP-Bold')
       ) {
-        console.log('✅ Fonts already cached, skipping load');
+        // console.log('✅ Fonts already cached, skipping load');
         return true;
       }
 
@@ -734,12 +732,12 @@ export class ReliablePDFGenerator {
       // キャッシュに保存
       if (regularBase64) {
         ReliablePDFGenerator.fontCache.set('NotoSansJP-Regular', regularBase64);
-        console.log('📦 Cached NotoSansJP-Regular font');
+        // console.log('📦 Cached NotoSansJP-Regular font');
       }
 
       if (boldBase64) {
         ReliablePDFGenerator.fontCache.set('NotoSansJP-Bold', boldBase64);
-        console.log('📦 Cached NotoSansJP-Bold font');
+        // console.log('📦 Cached NotoSansJP-Bold font');
       }
 
       return !!(regularBase64 && boldBase64);
@@ -749,7 +747,7 @@ export class ReliablePDFGenerator {
     }
   }
 
-  private static applyFontsFromCache(pdf: import('jspdf').jsPDF): void {
+  private static applyFontsFromCache(pdf: jsPDF): void {
     try {
       const regularFont = ReliablePDFGenerator.fontCache.get('NotoSansJP-Regular');
       const boldFont = ReliablePDFGenerator.fontCache.get('NotoSansJP-Bold');
@@ -757,13 +755,13 @@ export class ReliablePDFGenerator {
       if (regularFont) {
         pdf.addFileToVFS('NotoSansJP-Regular.ttf', regularFont);
         pdf.addFont('NotoSansJP-Regular.ttf', 'NotoSansJP', 'normal');
-        console.log('⚡ Applied cached NotoSansJP-Regular font');
+        // console.log('⚡ Applied cached NotoSansJP-Regular font');
       }
 
       if (boldFont) {
         pdf.addFileToVFS('NotoSansJP-Bold.ttf', boldFont);
         pdf.addFont('NotoSansJP-Bold.ttf', 'NotoSansJP', 'bold');
-        console.log('⚡ Applied cached NotoSansJP-Bold font');
+        // console.log('⚡ Applied cached NotoSansJP-Bold font');
       }
     } catch (error) {
       console.error('❌ Failed to apply fonts from cache:', error);
@@ -772,7 +770,7 @@ export class ReliablePDFGenerator {
 
   private static async loadFontAsBase64(fontUrl: string): Promise<string | null> {
     try {
-      console.log(`🔤 Loading font file: ${fontUrl}`);
+      // console.log(`🔤 Loading font file: ${fontUrl}`);
 
       const response = await fetch(fontUrl);
       if (!response.ok) {
@@ -792,7 +790,7 @@ export class ReliablePDFGenerator {
       }
 
       const base64 = btoa(binary);
-      console.log(`✅ Font converted to Base64, size: ${Math.round(base64.length / 1024)}KB`);
+      // console.log(`✅ Font converted to Base64, size: ${Math.round(base64.length / 1024)}KB`);
 
       return base64;
     } catch (error) {
@@ -805,7 +803,7 @@ export class ReliablePDFGenerator {
   public static clearFontCache(): void {
     ReliablePDFGenerator.fontCache.clear();
     ReliablePDFGenerator.initializationPromise = null;
-    console.log('🗑️ Font cache cleared');
+    // console.log('🗑️ Font cache cleared');
   }
 
   // キャッシュサイズ取得（デバッグ用）
@@ -839,9 +837,15 @@ export class ReliablePDFGenerator {
       const steps = 5;
       for (let i = 0; i < steps; i++) {
         const ratio = i / (steps - 1);
-        const r = Math.round(startColor[0]! + (endColor[0]! - startColor[0]!) * ratio);
-        const g = Math.round(startColor[1]! + (endColor[1]! - startColor[1]!) * ratio);
-        const b = Math.round(startColor[2]! + (endColor[2]! - startColor[2]!) * ratio);
+        const r = Math.round(
+          (startColor[0] ?? 0) + ((endColor[0] ?? 0) - (startColor[0] ?? 0)) * ratio
+        );
+        const g = Math.round(
+          (startColor[1] ?? 0) + ((endColor[1] ?? 0) - (startColor[1] ?? 0)) * ratio
+        );
+        const b = Math.round(
+          (startColor[2] ?? 0) + ((endColor[2] ?? 0) - (startColor[2] ?? 0)) * ratio
+        );
 
         this.pdf.setFillColor(r, g, b);
         this.pdf.rect(
@@ -869,7 +873,7 @@ export class ReliablePDFGenerator {
       }
 
       this.pdf.saveGraphicsState();
-      this.pdf.setFillColor(color[0]!, color[1]!, color[2]!);
+      this.pdf.setFillColor(color[0] ?? 0, color[1] ?? 0, color[2] ?? 0);
       this.pdf.rect(this.margin, y, 2, height, 'F');
       this.pdf.restoreGraphicsState();
     } catch (error) {
@@ -993,7 +997,7 @@ export class ReliablePDFGenerator {
         creator: 'Fact Checklist PWA'
       });
 
-      console.log('📋 PDF metadata configured:', { title, author, subject });
+      // console.log('📋 PDF metadata configured:', { title, author, subject });
     } catch (error) {
       console.warn('⚠️ Failed to set PDF metadata:', error);
     }
@@ -1010,7 +1014,7 @@ export class ReliablePDFGenerator {
         this.addWatermarkToCurrentPage(watermarkText);
       }
 
-      console.log(`✨ Watermark added to ${pageCount} pages`);
+      // console.log(`✨ Watermark added to ${pageCount} pages`);
     } catch (error) {
       console.warn('⚠️ Failed to add watermark:', error);
     }
@@ -1096,7 +1100,7 @@ export class ReliablePDFGenerator {
       // ページ番号を更新（目次追加により全ページが1つずつずれる）
       this.updatePageNumbersAfterTOC();
 
-      console.log(`📚 Table of contents inserted with ${this.tableOfContents.length} entries`);
+      // console.log(`📚 Table of contents inserted with ${this.tableOfContents.length} entries`);
     } catch (error) {
       console.warn('⚠️ Failed to insert table of contents:', error);
     }
@@ -1140,7 +1144,7 @@ export class ReliablePDFGenerator {
 
       // PDFを出力
       const output = this.pdf.output('blob');
-      console.log('✅ ReliablePDFGenerator: PDF generated successfully');
+      // console.log('✅ ReliablePDFGenerator: PDF generated successfully');
       return output;
     } catch (error) {
       console.error('❌ ReliablePDFGenerator: Failed to generate PDF:', error);

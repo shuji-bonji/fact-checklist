@@ -728,3 +728,10 @@ When working with tests in this project:
 - **Phase 2 (Next Week)**: Migrate existing tests to Vitest
 - **Phase 3 (2-3 weeks)**: Implement component tests
 - **Phase 4 (Future)**: E2E testing with Playwright
+
+## Add an improvement plan
+
+We have added a proposal for improvement. Please check the contents of the file
+below.
+
+./improvement-plan.md

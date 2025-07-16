@@ -11,7 +11,7 @@ import { TextBasedPDFGenerator } from '$lib/utils/textBasedPDFGenerator.js';
 import { PlatformAwarePDFGenerator } from '$lib/utils/platformAwarePDFGenerator.js';
 // import { HTMLToPDFGenerator } from '$lib/utils/htmlToPDFGenerator.js';
 import { formatDateForFilename } from '$lib/utils/dateFormat.js';
-import { sanitizeFilename, downloadBlob } from '$lib/utils/download.js';
+// sanitizeFilename, downloadBlob は必要時に動的インポート
 
 /**
  * PDF生成方式
@@ -65,16 +65,29 @@ export interface PDFGenerationResult {
   filename: string;
 }
 
+// PDF生成器の共通インターフェース
+interface PDFGenerator {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  generatePDF?: (checklist: ChecklistResult, options: any) => Promise<Blob | void>;
+  generateFromHTML?: (
+    htmlContent: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    options?: any
+  ) => Promise<{ success?: boolean; cancelled?: boolean } | Blob>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  exportPDF?: (checklist: ChecklistResult, options: any) => Promise<void>;
+}
+
 /**
  * 統一PDFサービス
  * 複数のPDF生成器を統合し、最適な方式を自動選択
  */
 export class PDFService {
-  private generators: Map<PDFGenerationMode, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+  private generators: Map<PDFGenerationMode, PDFGenerator>;
   private fallbackChain: PDFGenerationMode[];
 
   constructor() {
-    this.generators = new Map<PDFGenerationMode, any>(); // eslint-disable-line @typescript-eslint/no-explicit-any
+    this.generators = new Map<PDFGenerationMode, PDFGenerator>();
     this.generators.set(PDFGenerationMode.PRINT_DIALOG, new SimplePDFGenerator());
     this.generators.set(PDFGenerationMode.TEXT_BASED, new TextBasedPDFGenerator());
     this.generators.set(PDFGenerationMode.RELIABLE_FONTS, new ReliablePDFGenerator());
@@ -106,7 +119,7 @@ export class PDFService {
     t?: TranslationFunction
   ): Promise<PDFGenerationResult> {
     const startTime = Date.now();
-    const filename = this.generateFilename(checklist, options, t);
+    const filename = await this.generateFilename(checklist, options, t);
 
     try {
       // 指定された方式で生成を試行
@@ -171,92 +184,105 @@ export class PDFService {
         case PDFGenerationMode.PRINT_DIALOG: {
           if (!htmlContent) throw new Error('HTML content required for print dialog mode');
           const printResult = await generator.generateFromHTML?.(htmlContent, filename);
-          if (printResult?.cancelled) {
+          const result = printResult as { success?: boolean; cancelled?: boolean } | undefined;
+          if (result?.cancelled) {
             return {
               success: false,
               error: 'Print dialog was cancelled by user',
               usedMode: mode,
               duration: 0,
-              filename: filename!
+              filename: filename || 'unknown.pdf'
             };
           }
           return {
-            success: printResult?.success ?? true,
+            success: result?.success ?? true,
             usedMode: mode,
             duration: 0,
-            filename: filename!
+            filename: filename || 'unknown.pdf'
           };
         }
 
         case PDFGenerationMode.RELIABLE_FONTS: {
           options.onProgress?.(50, 'Generating with reliable fonts...');
-          const reliableBlob = await generator.generatePDF?.(
+          const reliableBlob = (await generator.generatePDF?.(
             checklist,
             this.convertOptionsForReliable(options, t)
-          );
-          if (filename && reliableBlob) downloadBlob(reliableBlob, filename);
+          )) as Blob | void;
+          const blob = reliableBlob instanceof Blob ? reliableBlob : undefined;
+          if (filename && blob) {
+            const { downloadBlob } = await import('$lib/utils/download.js');
+            downloadBlob(blob, filename);
+          }
           return {
             success: true,
-            blob: reliableBlob instanceof Blob ? reliableBlob : undefined,
+            blob,
             usedMode: mode,
             duration: 0,
-            filename: filename!
+            filename: filename || 'unknown.pdf'
           };
         }
 
         case PDFGenerationMode.TEXT_BASED: {
           options.onProgress?.(50, 'Generating text-based PDF...');
-          const textBlob = await generator.generatePDF?.(
+          const textBlob = (await generator.generatePDF?.(
             checklist,
             this.convertOptionsForText(options, t)
-          );
-          if (filename && textBlob) downloadBlob(textBlob, filename);
+          )) as Blob | void;
+          const blob = textBlob instanceof Blob ? textBlob : undefined;
+          if (filename && blob) {
+            const { downloadBlob } = await import('$lib/utils/download.js');
+            downloadBlob(blob, filename);
+          }
           return {
             success: true,
-            blob: textBlob instanceof Blob ? textBlob : undefined,
+            blob,
             usedMode: mode,
             duration: 0,
-            filename: filename!
+            filename: filename || 'unknown.pdf'
           };
         }
 
         case PDFGenerationMode.HTML_TO_CANVAS: {
           if (!htmlContent) throw new Error('HTML content required for HTML to canvas mode');
           options.onProgress?.(50, 'Converting HTML to canvas...');
-          const canvasBlob = await generator.generateFromHTML?.(
+          const canvasBlob = (await generator.generateFromHTML?.(
             htmlContent,
             this.convertOptionsForHTML(options)
-          );
-          if (filename && canvasBlob) downloadBlob(canvasBlob, filename);
+          )) as Blob | { success?: boolean; cancelled?: boolean } | undefined;
+          const blob = canvasBlob instanceof Blob ? canvasBlob : undefined;
+          if (filename && blob) {
+            const { downloadBlob } = await import('$lib/utils/download.js');
+            downloadBlob(blob, filename);
+          }
           return {
             success: true,
-            blob: canvasBlob instanceof Blob ? canvasBlob : undefined,
+            blob,
             usedMode: mode,
             duration: 0,
-            filename: filename!
+            filename: filename || 'unknown.pdf'
           };
         }
 
         case PDFGenerationMode.PLATFORM_AWARE: {
           options.onProgress?.(50, 'Generating platform-aware PDF...');
-          const platformBlob = await generator.generatePDF?.(
-            checklist,
-            this.convertOptionsForPlatform(options)
-          );
-          if (filename && platformBlob) downloadBlob(platformBlob, filename);
+          await generator.generatePDF?.(checklist, this.convertOptionsForPlatform(options));
           return {
             success: true,
-            blob: platformBlob instanceof Blob ? platformBlob : undefined,
             usedMode: mode,
             duration: 0,
-            filename: filename!
+            filename: filename || 'unknown.pdf'
           };
         }
 
         case PDFGenerationMode.PWA_OPTIMIZED: {
           options.onProgress?.(50, 'Generating PWA-optimized PDF...');
           await generator.exportPDF?.(checklist, this.convertOptionsForPWA(options, t));
-          return { success: true, usedMode: mode, duration: 0, filename: filename! };
+          return {
+            success: true,
+            usedMode: mode,
+            duration: 0,
+            filename: filename || 'unknown.pdf'
+          };
         }
 
         default:
@@ -269,7 +295,7 @@ export class PDFService {
         error: error instanceof Error ? error.message : String(error),
         usedMode: mode,
         duration: 0,
-        filename: filename!
+        filename: filename || 'unknown.pdf'
       };
     }
   }
@@ -290,7 +316,7 @@ export class PDFService {
     for (const fallbackMode of this.fallbackChain) {
       if (fallbackMode === options.mode) continue; // 既に試行済み
 
-      console.log(`🔄 Trying fallback mode: ${fallbackMode}`);
+      // console.log(`🔄 Trying fallback mode: ${fallbackMode}`);
       options.onProgress?.(60, `Trying fallback: ${fallbackMode}...`);
 
       const result = await this.tryGenerateWithMode(
@@ -303,7 +329,7 @@ export class PDFService {
       );
 
       if (result.success) {
-        console.log(`✅ Fallback successful with mode: ${fallbackMode}`);
+        // console.log(`✅ Fallback successful with mode: ${fallbackMode}`);
         return {
           ...result,
           duration: startTime ? Date.now() - startTime : result.duration
@@ -319,21 +345,22 @@ export class PDFService {
       error: `All PDF generation methods failed. Errors: ${errors.join('; ')}`,
       usedMode: options.mode,
       duration: startTime ? Date.now() - startTime : 0,
-      filename: filename!
+      filename: filename || 'unknown.pdf'
     };
   }
 
   /**
    * ファイル名を生成する
    */
-  private generateFilename(
+  private async generateFilename(
     checklist: ChecklistResult,
     options: PDFServiceOptions,
     t?: TranslationFunction
-  ): string {
+  ): Promise<string> {
     if (options.filename) return options.filename;
 
     const timestamp = formatDateForFilename();
+    const { sanitizeFilename } = await import('$lib/utils/download.js');
     const sanitizedTitle = sanitizeFilename(checklist.title ?? 'fact-checklist');
     const appTitle = t?.('app.title') ?? 'FactCheckList';
 

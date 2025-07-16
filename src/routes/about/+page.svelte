@@ -221,7 +221,7 @@
           {/each}
         </div>
         <div class="hero-cta">
-          <button class="btn btn-primary btn-large" onclick={startEvaluation}>
+          <button type="button" class="btn btn-primary btn-large" onclick={startEvaluation}>
             🚀 {t('about.hero.startButton')}
           </button>
         </div>
@@ -346,10 +346,14 @@
         <h2>🌟 {t('about.cta.title')}</h2>
         <p>{t('about.cta.description')}</p>
         <div class="cta-buttons">
-          <button class="btn btn-primary btn-large" onclick={startEvaluation}>
+          <button type="button" class="btn btn-primary btn-large" onclick={startEvaluation}>
             🔍 {t('about.cta.startButton')}
           </button>
-          <button class="btn btn-secondary btn-large" onclick={() => goto(`${base}/help`)}>
+          <button
+            type="button"
+            class="btn btn-secondary btn-large"
+            onclick={() => goto(`${base}/help`)}
+          >
             📖 {t('about.cta.helpButton')}
           </button>
         </div>

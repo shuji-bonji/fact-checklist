@@ -51,19 +51,19 @@ export const DEFAULT_I18N_CONFIG: LanguageSettings = {
  * アプリケーション起動時に呼び出し
  */
 export async function initializeI18n(_config: Partial<LanguageSettings> = {}): Promise<void> {
-  console.log('🌍 Initializing i18n system...');
+  // console.log('🌍 Initializing i18n system...');
 
   try {
     // ブラウザ環境チェック
     if (typeof window === 'undefined') {
-      console.log('🌍 Server-side environment detected, skipping i18n initialization');
+      // console.log('🌍 Server-side environment detected, skipping i18n initialization');
       return;
     }
 
     // ストアの初期化は自動的に行われる
     // 必要に応じて追加の設定を適用
 
-    console.log('✅ i18n system initialized successfully');
+    // console.log('✅ i18n system initialized successfully');
   } catch (error) {
     console.error('❌ Failed to initialize i18n system:', error);
     throw error;
@@ -74,12 +74,12 @@ export async function initializeI18n(_config: Partial<LanguageSettings> = {}): P
  * 翻訳ファイルの事前読み込み（パフォーマンス最適化用）
  */
 export async function preloadTranslations(languages: LanguageCode[]): Promise<void> {
-  console.log('📥 Preloading translations for languages:', languages);
+  // console.log('📥 Preloading translations for languages:', languages);
 
   const loadPromises = languages.map(async lang => {
     try {
       await setLanguage(lang);
-      console.log(`✅ Preloaded translations for: ${lang}`);
+      // console.log(`✅ Preloaded translations for: ${lang}`);
     } catch (error) {
       console.warn(`⚠️ Failed to preload translations for ${lang}:`, error);
     }
@@ -168,7 +168,7 @@ export function updateDocumentLanguage(language: LanguageCode): void {
     // フォントファミリーの設定
     setLanguageFontCSS(language);
 
-    console.log(`🌍 Document language updated to: ${language} (${languageInfo.dir})`);
+    // console.log(`🌍 Document language updated to: ${language} (${languageInfo.dir})`);
   } catch (error) {
     console.warn('⚠️ Failed to update document language:', error);
   }

@@ -38,7 +38,7 @@
       data[key] = (data[key] || 0) + 1;
       data.lastUpdate = new Date().toISOString();
       localStorage.setItem('pwa-analytics', JSON.stringify(data));
-      console.log(`📊 PWA Event: ${key}`);
+      // console.log(`📊 PWA Event: ${key}`);
     } catch (error) {
       console.warn('PWA analytics tracking failed:', error);
     }
@@ -196,7 +196,9 @@
         <div class="pwa-header">
           <h3 id="pwa-title">{displayTitle}</h3>
           {#if variant !== 'persistent'}
-            <button class="pwa-dismiss" onclick={handleDismiss} aria-label="閉じる"> ✕ </button>
+            <button type="button" class="pwa-dismiss" onclick={handleDismiss} aria-label="閉じる">
+              ✕
+            </button>
           {/if}
         </div>
 
@@ -215,6 +217,7 @@
 
         <div class="pwa-actions">
           <button
+            type="button"
             onclick={handleInstall}
             class="pwa-install-button {variant}"
             disabled={isInstalling}
@@ -229,7 +232,9 @@
           </button>
 
           {#if variant === 'feature'}
-            <button onclick={handleDismiss} class="pwa-secondary-button"> 後で </button>
+            <button type="button" onclick={handleDismiss} class="pwa-secondary-button">
+              後で
+            </button>
           {/if}
         </div>
       </div>

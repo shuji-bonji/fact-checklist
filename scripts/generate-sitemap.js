@@ -35,7 +35,7 @@ ${routes
 
   const sitemapPath = path.join(__dirname, '../static/sitemap.xml');
   fs.writeFileSync(sitemapPath, sitemapContent);
-  console.log('✅ sitemap.xml generated successfully');
+  console.error('✅ sitemap.xml generated successfully');
 }
 
 generateSitemap();

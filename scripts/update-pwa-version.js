@@ -13,7 +13,7 @@ function updatePWAVersion() {
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
   const version = packageJson.version;
 
-  console.log(`🔄 Updating PWA version to ${version}`);
+  console.error(`🔄 Updating PWA version to ${version}`);
 
   // PWA manifest.webmanifestを更新
   const manifestPath = path.join(__dirname, '../static/manifest.webmanifest');
@@ -21,7 +21,7 @@ function updatePWAVersion() {
     const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
     manifest.version = version;
     fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
-    console.log('✅ manifest.webmanifest version updated');
+    console.error('✅ manifest.webmanifest version updated');
   }
 
   // vite.config.tsのPWA設定を更新
@@ -30,15 +30,15 @@ function updatePWAVersion() {
     let viteConfig = fs.readFileSync(viteConfigPath, 'utf8');
 
     // workboxのversion設定を更新
-    viteConfig = viteConfig.replace(/workbox:\s*{[\s\S]*?runtimeCaching:/, match => {
-      return match.replace(/\/\/ version: ['"][\d.]+['"]/, `// version: '${version}'`);
-    });
+    viteConfig = viteConfig.replace(/workbox:\s*{[\s\S]*?runtimeCaching:/, match =>
+      match.replace(/\/\/ version: ['"][\d.]+['"]/, `// version: '${version}'`)
+    );
 
     fs.writeFileSync(viteConfigPath, viteConfig);
-    console.log('✅ vite.config.ts PWA version updated');
+    console.error('✅ vite.config.ts PWA version updated');
   }
 
-  console.log(`✅ PWA version updated to ${version}`);
+  console.error(`✅ PWA version updated to ${version}`);
 }
 
 updatePWAVersion();
