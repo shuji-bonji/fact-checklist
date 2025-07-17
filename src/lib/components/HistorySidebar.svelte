@@ -30,8 +30,14 @@
   }
 
   async function createNewChecklist() {
-    const id = await refactoredChecklistStore.createNewChecklist();
-    goto(`${base}/?id=${id}`);
+    // sessionStorageをクリアして新規作成
+    const sessionService = (
+      await import('$lib/services/SessionStorageService')
+    ).SessionStorageService.getInstance();
+    sessionService.clearSession();
+
+    // UUIDなしでホームに移動（セッション一時IDで作成される）
+    goto(`${base}/`);
   }
 
   // 判定タイプに応じたアイコンとスタイル

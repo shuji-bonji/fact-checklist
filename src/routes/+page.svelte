@@ -4,7 +4,10 @@
   import { page } from '$app/stores';
   import { browser } from '$app/environment';
   import { base } from '$app/paths';
-  import { refactoredChecklistStore } from '$lib/stores/refactoredChecklistStore.svelte.js';
+  import {
+    refactoredChecklistStore,
+    saveToSessionStorage
+  } from '$lib/stores/refactoredChecklistStore.svelte.js';
   import { getCategories } from '$lib/data/checklist-items.js';
   import type { JudgmentType } from '$lib/types/checklist.js';
   import { t, i18nStore, initializeI18n } from '$lib/i18n/index.js';
@@ -105,9 +108,9 @@
         }
       });
     } else {
-      // 新しいチェックリストを作成
-      // console.log('Creating new checklist...');
-      startNewChecklist();
+      // セッションから復元または新規作成
+      // console.log('Creating or restoring from session...');
+      startOrRestoreSession();
     }
 
     // デフォルトで「クリティカル評価」以外を折りたたみ
@@ -121,27 +124,30 @@
     _isLoading = false;
   });
 
-  async function startNewChecklist() {
-    // console.log('startNewChecklist called');
-    const id = await refactoredChecklistStore.createNewChecklist();
-    // console.log('Created new checklist with id:', id);
-    // console.log('[snapshot] currentChecklist after create:', $state.snapshot(currentChecklist));
+  async function startOrRestoreSession() {
+    // console.log('startOrRestoreSession called');
+    const sessionId = await refactoredChecklistStore.createOrRestoreSession();
+    // console.log('Created/restored session with id:', sessionId);
+    // console.log('[snapshot] currentChecklist after create/restore:', $state.snapshot(currentChecklist));
 
-    // SvelteKitルーターの初期化を待つ
-    await tick();
+    // セッションIDの場合はURLに追加しない（Issue #129の要件）
+    if (sessionId !== 'session-temp') {
+      // SvelteKitルーターの初期化を待つ
+      await tick();
 
-    // URLを更新（履歴に追加せず）
-    try {
-      const url = new URL(window.location.href);
-      url.searchParams.set('id', id);
-      replaceState(url.pathname + url.search, {});
-      // console.log('URL updated to:', url.toString());
-    } catch (error) {
-      console.warn('Failed to update URL:', error);
-      // フォールバック: 通常のhistory API
-      const url = new URL(window.location.href);
-      url.searchParams.set('id', id);
-      history.replaceState(null, '', url.toString());
+      // URLを更新（履歴に追加せず）
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.set('id', sessionId);
+        replaceState(url.pathname + url.search, {});
+        // console.log('URL updated to:', url.toString());
+      } catch (error) {
+        console.warn('Failed to update URL:', error);
+        // フォールバック: 通常のhistory API
+        const url = new URL(window.location.href);
+        url.searchParams.set('id', sessionId);
+        history.replaceState(null, '', url.toString());
+      }
     }
   }
 
@@ -210,6 +216,34 @@
     if (confidenceLevel >= 80 && currentJudgment !== 'accept') {
       // 高信頼度の場合は採用を提案（ただし自動設定はしない）
     }
+  });
+
+  // 編集内容を自動的にセッションに保存
+  $effect(() => {
+    if (currentChecklist && currentChecklist.id === 'session-temp' && browser) {
+      // セッションデータを定期的に保存
+      const saveToSession = () => {
+        if (currentChecklist) {
+          saveToSessionStorage(currentChecklist);
+        }
+      };
+
+      // 初回保存
+      saveToSession();
+
+      // デバウンスタイマー（頻繁な保存を避ける）
+      let saveTimer: number = 0;
+      const _debouncedSave = () => {
+        clearTimeout(saveTimer);
+        saveTimer = window.setTimeout(saveToSession, 1000);
+      };
+
+      // 変更を監視
+      return () => {
+        clearTimeout(saveTimer);
+      };
+    }
+    return;
   });
 </script>
 
