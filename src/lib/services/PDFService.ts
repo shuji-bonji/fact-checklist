@@ -1,14 +1,14 @@
 // src/lib/services/PDFService.ts
 // 統一PDFサービス - 全PDF生成器を統合
 
-import type { ChecklistResult } from '$lib/types/checklist.js';
 import type { ExportOptions } from '$lib/components/export/ExportOptions.svelte.js';
+import type { ChecklistResult } from '$lib/types/checklist.js';
 import type { TranslationFunction } from '$lib/types/i18n.js';
+import { PlatformAwarePDFGenerator } from '$lib/utils/platformAwarePDFGenerator.js';
 import { PWAAwarePDFExporter } from '$lib/utils/pwaAwarePDFExporter.js';
 import { ReliablePDFGenerator } from '$lib/utils/reliablePDFGenerator.js';
 import { SimplePDFGenerator } from '$lib/utils/simplePDFGenerator.js';
 import { TextBasedPDFGenerator } from '$lib/utils/textBasedPDFGenerator.js';
-import { PlatformAwarePDFGenerator } from '$lib/utils/platformAwarePDFGenerator.js';
 // import { HTMLToPDFGenerator } from '$lib/utils/htmlToPDFGenerator.js';
 import { formatDateForFilename } from '$lib/utils/dateFormat.js';
 // sanitizeFilename, downloadBlob は必要時に動的インポート
@@ -65,17 +65,17 @@ export interface PDFGenerationResult {
   filename: string;
 }
 
-// PDF生成器の共通インターフェース
-interface PDFGenerator {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  generatePDF?: (checklist: ChecklistResult, options: any) => Promise<Blob | void>;
+// PDF生成器の共通インターフェース（各生成器の型を緩和）
+interface BasePDFGenerator {
+  generatePDF?: (
+    checklist: ChecklistResult,
+    options?: Record<string, unknown>
+  ) => Promise<Blob | void>;
   generateFromHTML?: (
     htmlContent: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    options?: any
+    options?: string | Record<string, unknown>
   ) => Promise<{ success?: boolean; cancelled?: boolean } | Blob>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  exportPDF?: (checklist: ChecklistResult, options: any) => Promise<void>;
+  exportPDF?: (checklist: ChecklistResult, options?: Record<string, unknown>) => Promise<void>;
 }
 
 /**
@@ -83,11 +83,11 @@ interface PDFGenerator {
  * 複数のPDF生成器を統合し、最適な方式を自動選択
  */
 export class PDFService {
-  private generators: Map<PDFGenerationMode, PDFGenerator>;
+  private generators: Map<PDFGenerationMode, unknown>;
   private fallbackChain: PDFGenerationMode[];
 
   constructor() {
-    this.generators = new Map<PDFGenerationMode, PDFGenerator>();
+    this.generators = new Map();
     this.generators.set(PDFGenerationMode.PRINT_DIALOG, new SimplePDFGenerator());
     this.generators.set(PDFGenerationMode.TEXT_BASED, new TextBasedPDFGenerator());
     this.generators.set(PDFGenerationMode.RELIABLE_FONTS, new ReliablePDFGenerator());
@@ -183,7 +183,10 @@ export class PDFService {
       switch (mode) {
         case PDFGenerationMode.PRINT_DIALOG: {
           if (!htmlContent) throw new Error('HTML content required for print dialog mode');
-          const printResult = await generator.generateFromHTML?.(htmlContent, filename);
+          const printResult = await (generator as BasePDFGenerator).generateFromHTML?.(
+            htmlContent,
+            filename
+          );
           const result = printResult as { success?: boolean; cancelled?: boolean } | undefined;
           if (result?.cancelled) {
             return {
@@ -204,7 +207,7 @@ export class PDFService {
 
         case PDFGenerationMode.RELIABLE_FONTS: {
           options.onProgress?.(50, 'Generating with reliable fonts...');
-          const reliableBlob = (await generator.generatePDF?.(
+          const reliableBlob = (await (generator as BasePDFGenerator).generatePDF?.(
             checklist,
             this.convertOptionsForReliable(options, t)
           )) as Blob | void;
@@ -224,7 +227,7 @@ export class PDFService {
 
         case PDFGenerationMode.TEXT_BASED: {
           options.onProgress?.(50, 'Generating text-based PDF...');
-          const textBlob = (await generator.generatePDF?.(
+          const textBlob = (await (generator as BasePDFGenerator).generatePDF?.(
             checklist,
             this.convertOptionsForText(options, t)
           )) as Blob | void;
@@ -245,7 +248,7 @@ export class PDFService {
         case PDFGenerationMode.HTML_TO_CANVAS: {
           if (!htmlContent) throw new Error('HTML content required for HTML to canvas mode');
           options.onProgress?.(50, 'Converting HTML to canvas...');
-          const canvasBlob = (await generator.generateFromHTML?.(
+          const canvasBlob = (await (generator as BasePDFGenerator).generateFromHTML?.(
             htmlContent,
             this.convertOptionsForHTML(options)
           )) as Blob | { success?: boolean; cancelled?: boolean } | undefined;
@@ -265,7 +268,10 @@ export class PDFService {
 
         case PDFGenerationMode.PLATFORM_AWARE: {
           options.onProgress?.(50, 'Generating platform-aware PDF...');
-          await generator.generatePDF?.(checklist, this.convertOptionsForPlatform(options));
+          await (generator as BasePDFGenerator).generatePDF?.(
+            checklist,
+            this.convertOptionsForPlatform(options)
+          );
           return {
             success: true,
             usedMode: mode,
@@ -276,7 +282,10 @@ export class PDFService {
 
         case PDFGenerationMode.PWA_OPTIMIZED: {
           options.onProgress?.(50, 'Generating PWA-optimized PDF...');
-          await generator.exportPDF?.(checklist, this.convertOptionsForPWA(options, t));
+          await (generator as BasePDFGenerator).exportPDF?.(
+            checklist,
+            this.convertOptionsForPWA(options, t)
+          );
           return {
             success: true,
             usedMode: mode,

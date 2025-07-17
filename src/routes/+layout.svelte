@@ -178,6 +178,24 @@
       <meta name="twitter:title" content={data.meta.ogTitle} />
       <meta name="twitter:description" content={data.meta.ogDescription} />
       <meta name="twitter:image" content={data.meta.ogImage} />
+
+      <!-- Structured Data (JSON-LD) - Temporarily disabled for security -->
+      <!-- TODO: Re-enable structured data with proper XSS protection -->
+
+      <!-- Alternate Language URLs (hreflang) -->
+      <link rel="alternate" hreflang="ja" href="https://fact-checklist.vercel.app/" />
+      <link rel="alternate" hreflang="en" href="https://fact-checklist.vercel.app/" />
+      <link rel="alternate" hreflang="fr" href="https://fact-checklist.vercel.app/" />
+      <link rel="alternate" hreflang="zh-TW" href="https://fact-checklist.vercel.app/" />
+      <link rel="alternate" hreflang="es" href="https://fact-checklist.vercel.app/" />
+      <link rel="alternate" hreflang="pt" href="https://fact-checklist.vercel.app/" />
+      <link rel="alternate" hreflang="hi" href="https://fact-checklist.vercel.app/" />
+      <link rel="alternate" hreflang="de" href="https://fact-checklist.vercel.app/" />
+      <link rel="alternate" hreflang="it" href="https://fact-checklist.vercel.app/" />
+      <link rel="alternate" hreflang="ar" href="https://fact-checklist.vercel.app/" />
+      <link rel="alternate" hreflang="id" href="https://fact-checklist.vercel.app/" />
+      <link rel="alternate" hreflang="ko" href="https://fact-checklist.vercel.app/" />
+      <link rel="alternate" hreflang="x-default" href="https://fact-checklist.vercel.app/" />
     {:else}
       <!-- Fallback meta tags for prerendering (non-intro pages only) -->
       <title>Fact Checklist - 実用的事実確認チェックシート</title>
@@ -210,6 +228,54 @@
         content="20項目のチェックリストで情報の信頼性を体系的に評価。AIや政府に頼らず、自分の目と頭で情報を見極めるPWAアプリ。"
       />
       <meta name="twitter:image" content="https://fact-checklist.vercel.app/og-image.png" />
+
+      <!-- Structured Data (JSON-LD) fallback -->
+      <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          "name": "Fact Checklist - 実用的事実確認チェックシート",
+          "description": "20項目のチェックリストで情報の信頼性を体系的に評価。AIや政府に頼らず、自分の目と頭で情報を見極めるPWAアプリ。",
+          "url": "https://fact-checklist.vercel.app",
+          "applicationCategory": "UtilityApplication",
+          "operatingSystem": "All",
+          "browserRequirements": "Modern browser with JavaScript enabled",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "JPY"
+          },
+          "author": {
+            "@type": "Organization",
+            "name": "Fact Checklist",
+            "url": "https://fact-checklist.vercel.app"
+          },
+          "inLanguage": "ja",
+          "potentialAction": {
+            "@type": "UseAction",
+            "target": "https://fact-checklist.vercel.app",
+            "object": {
+              "@type": "WebApplication",
+              "name": "Fact Checklist - 実用的事実確認チェックシート"
+            }
+          }
+        }
+      </script>
+
+      <!-- Alternate Language URLs (hreflang) fallback -->
+      <link rel="alternate" hreflang="ja" href="https://fact-checklist.vercel.app/" />
+      <link rel="alternate" hreflang="en" href="https://fact-checklist.vercel.app/" />
+      <link rel="alternate" hreflang="fr" href="https://fact-checklist.vercel.app/" />
+      <link rel="alternate" hreflang="zh-TW" href="https://fact-checklist.vercel.app/" />
+      <link rel="alternate" hreflang="es" href="https://fact-checklist.vercel.app/" />
+      <link rel="alternate" hreflang="pt" href="https://fact-checklist.vercel.app/" />
+      <link rel="alternate" hreflang="hi" href="https://fact-checklist.vercel.app/" />
+      <link rel="alternate" hreflang="de" href="https://fact-checklist.vercel.app/" />
+      <link rel="alternate" hreflang="it" href="https://fact-checklist.vercel.app/" />
+      <link rel="alternate" hreflang="ar" href="https://fact-checklist.vercel.app/" />
+      <link rel="alternate" hreflang="id" href="https://fact-checklist.vercel.app/" />
+      <link rel="alternate" hreflang="ko" href="https://fact-checklist.vercel.app/" />
+      <link rel="alternate" hreflang="x-default" href="https://fact-checklist.vercel.app/" />
     {/if}
   {/if}
   <!-- Note: Intro page meta tags are handled by intro/+page.svelte -->

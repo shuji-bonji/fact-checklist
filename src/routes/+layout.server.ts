@@ -16,6 +16,7 @@ interface MetaData {
   siteName: string;
   locale: string;
   language: string;
+  structuredData: string;
 }
 
 /**
@@ -48,6 +49,38 @@ async function generateSingleLanguageMeta(language: LanguageCode, _url: URL): Pr
     const baseUrl = 'https://fact-checklist.vercel.app';
     const ogImageUrl = `${baseUrl}/og-image.png`;
 
+    const structuredData = `<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "${translations.pages.home.title}",
+  "description": "${translations.pages.home.description}",
+  "url": "${baseUrl}",
+  "applicationCategory": "UtilityApplication",
+  "operatingSystem": "All",
+  "browserRequirements": "Modern browser with JavaScript enabled",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "JPY"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "Fact Checklist",
+    "url": "${baseUrl}"
+  },
+  "inLanguage": "${language}",
+  "potentialAction": {
+    "@type": "UseAction",
+    "target": "${baseUrl}",
+    "object": {
+      "@type": "WebApplication",
+      "name": "${translations.pages.home.title}"
+    }
+  }
+}
+</script>`;
+
     return {
       title: translations.pages.home.title,
       description: translations.pages.home.description,
@@ -61,7 +94,8 @@ async function generateSingleLanguageMeta(language: LanguageCode, _url: URL): Pr
       type: 'website',
       siteName: translations.app.title,
       locale: getLocaleString(language),
-      language
+      language,
+      structuredData
     };
   } catch (error) {
     console.error(`Failed to load translations for ${language}:`, error);
@@ -83,7 +117,8 @@ async function generateSingleLanguageMeta(language: LanguageCode, _url: URL): Pr
         image: 'https://fact-checklist.vercel.app/og-image.png',
         type: 'website',
         locale: 'ja_JP',
-        language: 'ja'
+        language: 'ja',
+        structuredData: ''
       },
       en: {
         title: 'Fact Checklist - Practical Fact-Check Tool',
@@ -101,7 +136,8 @@ async function generateSingleLanguageMeta(language: LanguageCode, _url: URL): Pr
         image: 'https://fact-checklist.vercel.app/og-image.png',
         type: 'website',
         locale: 'en_US',
-        language: 'en'
+        language: 'en',
+        structuredData: ''
       },
       fr: {
         title: 'Fact Checklist - Outil de Vérification des Faits',
@@ -119,7 +155,8 @@ async function generateSingleLanguageMeta(language: LanguageCode, _url: URL): Pr
         image: 'https://fact-checklist.vercel.app/og-image.png',
         type: 'website',
         locale: 'fr_FR',
-        language: 'fr'
+        language: 'fr',
+        structuredData: ''
       },
       'zh-TW': {
         title: 'Fact Checklist - 實用事實查核工具',
@@ -136,7 +173,8 @@ async function generateSingleLanguageMeta(language: LanguageCode, _url: URL): Pr
         image: 'https://fact-checklist.vercel.app/og-image.png',
         type: 'website',
         locale: 'zh_TW',
-        language: 'zh-TW'
+        language: 'zh-TW',
+        structuredData: ''
       },
       es: {
         title: 'Fact Checklist - Herramienta de Verificación de Hechos',
@@ -154,7 +192,8 @@ async function generateSingleLanguageMeta(language: LanguageCode, _url: URL): Pr
         image: 'https://fact-checklist.vercel.app/og-image.png',
         type: 'website',
         locale: 'es_ES',
-        language: 'es'
+        language: 'es',
+        structuredData: ''
       },
       pt: {
         title: 'Fact Checklist - Ferramenta de Verificação de Fatos',
@@ -172,7 +211,8 @@ async function generateSingleLanguageMeta(language: LanguageCode, _url: URL): Pr
         image: 'https://fact-checklist.vercel.app/og-image.png',
         type: 'website',
         locale: 'pt_PT',
-        language: 'pt'
+        language: 'pt',
+        structuredData: ''
       },
       hi: {
         title: 'Fact Checklist - तथ्य जांच उपकरण',
@@ -189,7 +229,8 @@ async function generateSingleLanguageMeta(language: LanguageCode, _url: URL): Pr
         image: 'https://fact-checklist.vercel.app/og-image.png',
         type: 'website',
         locale: 'hi_IN',
-        language: 'hi'
+        language: 'hi',
+        structuredData: ''
       },
       de: {
         title: 'Fact Checklist - Praktisches Faktencheck-Tool',
@@ -207,7 +248,8 @@ async function generateSingleLanguageMeta(language: LanguageCode, _url: URL): Pr
         image: 'https://fact-checklist.vercel.app/og-image.png',
         type: 'website',
         locale: 'de_DE',
-        language: 'de'
+        language: 'de',
+        structuredData: ''
       },
       it: {
         title: 'Fact Checklist - Strumento di Verifica dei Fatti',
@@ -225,7 +267,8 @@ async function generateSingleLanguageMeta(language: LanguageCode, _url: URL): Pr
         image: 'https://fact-checklist.vercel.app/og-image.png',
         type: 'website',
         locale: 'it_IT',
-        language: 'it'
+        language: 'it',
+        structuredData: ''
       },
       ar: {
         title: 'Fact Checklist - أداة التحقق من الحقائق',
@@ -242,7 +285,8 @@ async function generateSingleLanguageMeta(language: LanguageCode, _url: URL): Pr
         image: 'https://fact-checklist.vercel.app/og-image.png',
         type: 'website',
         locale: 'ar_SA',
-        language: 'ar'
+        language: 'ar',
+        structuredData: ''
       },
       id: {
         title: 'Fact Checklist - Alat Pemeriksaan Fakta',
@@ -260,7 +304,8 @@ async function generateSingleLanguageMeta(language: LanguageCode, _url: URL): Pr
         image: 'https://fact-checklist.vercel.app/og-image.png',
         type: 'website',
         locale: 'id_ID',
-        language: 'id'
+        language: 'id',
+        structuredData: ''
       },
       ko: {
         title: 'Fact Checklist - 팩트체크 도구',
@@ -277,7 +322,8 @@ async function generateSingleLanguageMeta(language: LanguageCode, _url: URL): Pr
         image: 'https://fact-checklist.vercel.app/og-image.png',
         type: 'website',
         locale: 'ko_KR',
-        language: 'ko'
+        language: 'ko',
+        structuredData: ''
       }
     };
 

@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { page } from '$app/stores';
   import { goto } from '$app/navigation';
   import { base } from '$app/paths';
-  import { refactoredChecklistStore } from '$lib/stores/refactoredChecklistStore.svelte.js';
+  import { page } from '$app/stores';
   import { getCategories } from '$lib/data/checklist-items.js';
+  import { factChecklistI18n, i18nStore, t } from '$lib/i18n/index.js';
+  import { refactoredChecklistStore } from '$lib/stores/refactoredChecklistStore.svelte.js';
   import type { JudgmentType } from '$lib/types/checklist.js';
-  import { t, i18nStore, factChecklistI18n } from '$lib/i18n/index.js';
+  import { onMount } from 'svelte';
 
   import ExportModal from '$lib/components/ExportModal.svelte';
   import PWAInstallPrompt from '$lib/components/PWAInstallPrompt.svelte';
