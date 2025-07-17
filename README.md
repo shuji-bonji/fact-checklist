@@ -21,7 +21,8 @@ across **12 languages** with full internationalization support.
 
 実用的事実確認チェックシートは、インターネット上の情報の信頼性を科学的・体系的に評価するための**企業レベル高度PWA**です。偽情報やミスリーディングな情報が氾濫する現代において、**12言語完全対応**の国際化機能で情報リテラシーの向上を支援します。
 
-> [!IMPORTANT] This "Practical Fact-Check Checklist" project is created through
+> [!IMPORTANT]
+> This "Practical Fact-Check Checklist" project is created through
 > collaboration between a human engineer (@shuji-bonji) and AI
 > (Claude). この「実用的事実確認チェックシート」プロジェクト(Github)は、人間のエンジニア（@shuji-bonji）と生成AI（Claude）との協働によって作成されています。
 
@@ -67,9 +68,6 @@ across **12 languages** with full internationalization support.
 ### オンラインで利用
 
 **👉 [https://fact-checklist.vercel.app/](https://fact-checklist.vercel.app/)**
-
-> **Note**: GitHub Pages版も引き続き利用可能:
-> [https://shuji-bonji.github.io/fact-checklist/](https://shuji-bonji.github.io/fact-checklist/)
 
 ### ローカル開発
 
