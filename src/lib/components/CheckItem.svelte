@@ -123,7 +123,7 @@
               <div class="guide-examples">
                 {#if examples?.good && examples.good.length > 0}
                   <div class="examples-section">
-                    <h5>✅ 良い例:</h5>
+                    <h5>✅ {t('export.goodExamples')}:</h5>
                     {#each examples.good as example}
                       <div class="example-item good">{example}</div>
                     {/each}
@@ -132,7 +132,7 @@
 
                 {#if examples?.bad && examples.bad.length > 0}
                   <div class="examples-section">
-                    <h5>❌ 悪い例:</h5>
+                    <h5>❌ {t('export.badExamples')}:</h5>
                     {#each examples.bad as example}
                       <div class="example-item bad">{example}</div>
                     {/each}

@@ -98,13 +98,22 @@ export function renderCheckItem(
                   ? `
                 <div class="guide-examples">
                   <div class="examples-title">${t ? t('export.examples') : 'Examples'}:</div>
+                  ${(() => {
+                    console.warn(
+                      '🔍 [PDF Debug] Processing examples for item:',
+                      item.id,
+                      item.translationKey
+                    );
+                    console.warn('🔍 [PDF Debug] Guide content:', item.guideContent);
+                    console.warn('🔍 [PDF Debug] Examples:', item.guideContent.examples);
+                    return '';
+                  })()}
                   ${
                     factChecklistI18n && item.translationKey
                       ? (() => {
                           const goodExamples =
-                            factChecklistI18n.getCheckItemGuideExamplesGood?.(
-                              item.translationKey
-                            ) ?? [];
+                            factChecklistI18n.getCheckItemExamplesGood?.(item.translationKey) ?? [];
+                          console.warn('🔍 [PDF Debug] Good examples from i18n:', goodExamples);
                           return goodExamples.length > 0
                             ? `
                           <div class="good-examples">
@@ -118,8 +127,8 @@ export function renderCheckItem(
                         })() +
                         (() => {
                           const badExamples =
-                            factChecklistI18n.getCheckItemGuideExamplesBad?.(item.translationKey) ??
-                            [];
+                            factChecklistI18n.getCheckItemExamplesBad?.(item.translationKey) ?? [];
+                          console.warn('🔍 [PDF Debug] Bad examples from i18n:', badExamples);
                           return badExamples.length > 0
                             ? `
                           <div class="bad-examples">
@@ -202,7 +211,7 @@ export async function generateSectionedHTMLContent(
   const confidenceLevel = checklist.confidenceLevel;
   const judgment = checklist.judgment;
 
-  return `
+  const htmlContent = `
 <!DOCTYPE html>
 <html lang="${currentLanguage}">
 <head>
@@ -612,6 +621,20 @@ export async function generateSectionedHTMLContent(
 </body>
 </html>
   `;
+
+  // デバッグ用: 生成されたHTMLをファイルに保存
+  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+    console.warn('🔍 [PDF Debug] Generated HTML length:', htmlContent.length);
+    console.warn('🔍 [PDF Debug] HTML contains "例:"?', htmlContent.includes('例:'));
+    console.warn('🔍 [PDF Debug] HTML contains "Examples:"?', htmlContent.includes('Examples:'));
+
+    // HTMLコンテンツをコンソールに表示（開発時のみ）
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    console.warn('🔍 [PDF Debug] Generated HTML available at:', url);
+  }
+
+  return htmlContent;
 }
 
 /**
@@ -646,8 +669,8 @@ export async function generateMarkdownContent(
   // セクション別の内容
   for (const section of sections) {
     markdown += `## ${section.category.emoji} ${
-      factChecklistI18n.getCategoryTitle
-        ? factChecklistI18n.getCategoryTitle(section.category.id)
+      factChecklistI18n.getCategoryName
+        ? factChecklistI18n.getCategoryName(section.category.id)
         : section.category.name
     }\n\n`;
 
