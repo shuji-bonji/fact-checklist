@@ -1,16 +1,18 @@
 // src/lib/utils/dateFormat.ts
 // 日付フォーマット関連のユーティリティ関数
 
+import { I18N_CONFIG } from '../config/i18n.js';
+
 /**
  * 日付を指定されたロケールでフォーマットする
  * @param date フォーマットする日付
- * @param locale ロケール（デフォルト: 'ja'）
+ * @param locale ロケール（デフォルト: 設定値）
  * @param options フォーマットオプション
  * @returns フォーマットされた日付文字列
  */
 export function formatDate(
   date: Date | string,
-  locale: string = 'ja',
+  locale: string = I18N_CONFIG.DEFAULT_LANGUAGE,
   options?: Intl.DateTimeFormatOptions
 ): string {
   const dateObj = typeof date === 'string' ? new Date(date) : date;
@@ -39,7 +41,10 @@ export function formatDate(
  * @param locale ロケール
  * @returns フォーマットされた日付文字列
  */
-export function formatDateOnly(date: Date | string, locale: string = 'ja'): string {
+export function formatDateOnly(
+  date: Date | string,
+  locale: string = I18N_CONFIG.DEFAULT_LANGUAGE
+): string {
   return formatDate(date, locale, {
     year: 'numeric',
     month: 'long',
@@ -53,7 +58,10 @@ export function formatDateOnly(date: Date | string, locale: string = 'ja'): stri
  * @param locale ロケール
  * @returns フォーマットされた時刻文字列
  */
-export function formatTimeOnly(date: Date | string, locale: string = 'ja'): string {
+export function formatTimeOnly(
+  date: Date | string,
+  locale: string = I18N_CONFIG.DEFAULT_LANGUAGE
+): string {
   return formatDate(date, locale, {
     hour: '2-digit',
     minute: '2-digit',
@@ -95,7 +103,10 @@ export function formatDateForFilename(date: Date | string = new Date()): string 
  * @param locale ロケール
  * @returns 相対時間文字列（例: "2時間前"）
  */
-export function formatRelativeTime(date: Date | string, locale: string = 'ja'): string {
+export function formatRelativeTime(
+  date: Date | string,
+  locale: string = I18N_CONFIG.DEFAULT_LANGUAGE
+): string {
   const dateObj = typeof date === 'string' ? new Date(date) : date;
   const now = new Date();
   const diffMs = now.getTime() - dateObj.getTime();
