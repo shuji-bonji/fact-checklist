@@ -729,9 +729,62 @@ When working with tests in this project:
 - **Phase 3 (2-3 weeks)**: Implement component tests
 - **Phase 4 (Future)**: E2E testing with Playwright
 
-## Add an improvement plan
+## プロジェクト改善計画
 
-We have added a proposal for improvement. Please check the contents of the file
-below.
+本プロジェクトには包括的な改善計画があります。詳細は `improvement-plan.md`
+を参照してください。
 
-./improvement-plan.md
+### 改善計画の概要
+
+- **Phase 0**: 緊急修正事項（TypeScript警告解消）- 1-2日
+- **Phase 1**: SEO基盤構築 - 3-5日
+- **Phase 2**: ユーザー体験向上 - 1週間
+- **Phase 3**: コンテンツ戦略 - 2週間
+- **Phase 4**: アーキテクチャ改善 - 2週間
+- **Phase 5**: 品質保証 - 1週間
+- **Phase 6**: 成長戦略 - 1ヶ月
+
+### 現在の進捗（2025年1月）
+
+- ✅ i18n問題修正完了
+- ✅ Svelte5移行部分完了
+- 🚧 TypeScript警告修正中
+- ❌ SEO対策未実装
+- 総合進捗率: 約35%
+
+### Claude Codeへの指示方法
+
+#### フェーズ実行の基本コマンド
+
+```bash
+# 特定のフェーズを実行
+"improvement-plan.mdのPhase [番号]を実行してください"
+
+# 例：
+"improvement-plan.mdのPhase 0を実行してください"
+"improvement-plan.mdのPhase 1のタスク1.1を実装してください"
+```
+
+#### 進捗確認
+
+```bash
+"improvement-plan.mdの現在の進捗状況を確認してください"
+"Phase [番号]の残タスクを教えてください"
+```
+
+#### 実装時の注意事項
+
+1. **小さなコミット単位で作業**すること
+2. **既存機能を壊さない**よう注意
+3. **TypeScriptの型安全性**を維持
+4. 各フェーズ完了時に**動作確認**を実施
+
+### 優先実行項目（2025年1月時点）
+
+1. **Phase 0の完了**（TypeScript警告の解消）
+2. **Phase 1の開始**（SEO基盤構築）
+   - メタタグの動的生成
+   - サイトマップの改善
+   - Google Search Console対応
+
+詳細なタスクリストと実装方法は `improvement-plan.md` を参照してください。

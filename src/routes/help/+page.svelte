@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { page as _page } from '$app/stores';
   import { base as _base } from '$app/paths';
-  import { t, i18nStore } from '$lib/i18n/index.js';
+  import { page as _page } from '$app/stores';
+  import { i18nStore, t } from '$lib/i18n/index.js';
 
   // Svelte 5 runesでi18n初期化状態を監視
   const isInitialized = $derived(i18nStore.initialized && !!i18nStore.translations);

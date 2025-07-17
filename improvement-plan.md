@@ -1,575 +1,363 @@
-# 事実確認チェックシート改善計画書
+# Fact Checklist 包括的改善計画
 
-## 1. 技術的な問題の修正
+## 概要
 
-### 1.1 i18n問題の修正
+このドキュメントは、Fact
+Checklistプロジェクトの技術的改善とマーケティング戦略を統合した包括的な改善計画です。Claude
+Codeが各フェーズを順次実行できるよう、具体的なタスクに分解しています。
 
-現在メインページで翻訳が表示されていない問題を修正します。
+````markdown
+# Claude Code実行ガイド
 
-#### src/routes/+page.svelte の修正例
+このドキュメントは、Fact Checklistプロジェクトの改善計画です。Claude
+Codeは各フェーズを順番に実行してください。
 
-```svelte
-<script lang="ts">
-  import { t, getCurrentLanguage } from '$lib/i18n/store.svelte';
-  import { onMount } from 'svelte';
+## 🎯 現在の優先事項（2025年7月）
 
-  // Svelte5のpropsの新しい書き方
-  let { data } = $props<{ data: any }>();
+1. **Phase 0を完了させる**（TypeScript警告の解消）
+2. **Phase 1を開始する**（SEO対策）
 
-  // i18nの初期化を確認
-  onMount(async () => {
-    // 翻訳が読み込まれているか確認
-    const currentLang = getCurrentLanguage();
-    console.log('Current language:', currentLang);
-  });
-</script>
+## 📋 実行方法
 
-<!-- 翻訳関数を正しく使用 -->
-<h1>📋 {$t('checklist.title')}</h1>
-<p>{$t('ui.quickStartGuide')}</p>
+### 基本コマンド
+
+- 「Phase 0を実行してください」
+- 「Phase 1のタスク1.1を実装してください」
+- 「現在の進捗を確認してください」
+
+### 実行ルール
+
+1. **必ず順番に実行**（Phase 0 → 1 → 2...）
+2. **小さな単位でコミット**
+3. **各タスク後に動作確認**
+4. **ビルドエラーが出たら即修正**
+
+## ⚡ クイックスタート
+
+```bash
+# 最初に実行すべきコマンド
+npm install
+npm run lint  # 現在の警告を確認
+npm run dev   # 開発環境で動作確認
 ```
+````
 
-### 1.2 Svelte5への完全移行
+その後、Phase 0から順番に実行してください。
 
-#### 状態管理をRunesに更新
+---
+
+以下、詳細な改善計画が続きます。
+
+## 現在の状況（2025年７月時点）
+
+- **総合進捗率**: 約30-35%
+- **技術基盤**: Svelte5 + TypeScript + PWA（堅実）
+- **主要課題**: SEO対策不足、アクセス数の低迷（3ヶ月で表示回数3回）
+
+## フェーズ構成
+
+### 🚨 Phase 0: 緊急修正事項（1-2日）
+
+**目的**: 本番環境での致命的な問題を解決
+
+#### タスクリスト
+
+- [ ] TypeScript警告の解消（51件）
+  - `src/lib/services/PDFService.ts`の型定義追加
+  - `@typescript-eslint/no-unsafe-*`警告の修正
+  - 非nullアサーション（`!`）の適切な置き換え
+- [ ] ESLintエラーを0にする
+  - `npm run lint:ci`が成功するまで修正
+- [ ] プロダクションビルドの最終確認
+  - `npm run build && npm run preview`で翻訳表示を確認
+
+### 🎯 Phase 1: SEO基盤構築（3-5日）
+
+**目的**: 検索エンジンでの可視性を向上させる
+
+#### 1.1 メタタグ・OGP最適化
 
 ```typescript
-// 旧: Svelte4
-export let title: string = '';
-let count = 0;
-$: doubled = count * 2;
-
-// 新: Svelte5
-let { title = '' } = $props<{ title?: string }>();
-let count = $state(0);
-const doubled = $derived(count * 2);
+// src/routes/+layout.server.ts
+- 動的なメタタグ生成
+- 多言語対応のhreflangタグ
+- Twitter Card対応
+- 構造化データ（JSON-LD）の実装
 ```
 
-#### コンポーネントの更新例
-
-```svelte
-<script lang="ts">
-  import type { ChecklistResult } from '$lib/types/checklist';
-
-  // Svelte5のprops
-  let {
-    checklist,
-    onUpdate,
-    readonly = false
-  } = $props<{
-    checklist: ChecklistResult;
-    onUpdate?: (checklist: ChecklistResult) => void;
-    readonly?: boolean;
-  }>();
-
-  // リアクティブな状態
-  let editMode = $state(false);
-  let localNotes = $state(checklist.notes || '');
-
-  // 派生状態
-  const completionRate = $derived(() => {
-    const total = checklist.items.length;
-    const checked = checklist.items.filter(item => item.checked).length;
-    return total > 0 ? Math.round((checked / total) * 100) : 0;
-  });
-
-  // 副作用
-  $effect(() => {
-    if (localNotes !== checklist.notes) {
-      onUpdate?.({ ...checklist, notes: localNotes });
-    }
-  });
-</script>
-```
-
-## 2. SEO/アクセス向上施策
-
-### 2.1 メタタグの最適化
-
-#### src/app.html の改善
-
-```html
-<!DOCTYPE html>
-<html lang="%lang%" dir="%dir%">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <!-- 基本メタタグ -->
-    <meta name="description" content="%sveltekit.head.description%" />
-    <meta name="keywords" content="%sveltekit.head.keywords%" />
-
-    <!-- OGP -->
-    <meta property="og:title" content="%sveltekit.head.title%" />
-    <meta property="og:description" content="%sveltekit.head.description%" />
-    <meta property="og:image" content="%sveltekit.head.ogImage%" />
-    <meta property="og:type" content="website" />
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="%sveltekit.head.title%" />
-    <meta name="twitter:description" content="%sveltekit.head.description%" />
-
-    <!-- 構造化データ -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "Fact Checklist",
-        "description": "情報の信頼性を科学的・体系的に評価する実用的ファクトチェックツール",
-        "applicationCategory": "UtilityApplication",
-        "operatingSystem": "All",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "JPY"
-        }
-      }
-    </script>
-
-    %sveltekit.head%
-  </head>
-  <body data-sveltekit-preload-data="hover">
-    <div style="display: contents">%sveltekit.body%</div>
-  </body>
-</html>
-```
-
-### 2.2 サイトマップの追加
-
-#### src/routes/sitemap.xml/+server.ts
+#### 1.2 技術的SEO改善
 
 ```typescript
-import type { RequestHandler } from './$types';
-import { SUPPORTED_LANGUAGES } from '$lib/i18n/constants';
-
-export const GET: RequestHandler = async () => {
-  const baseUrl = 'https://fact-checklist.vercel.app';
-  const pages = ['', 'about', 'help', 'privacy', 'intro'];
-  const languages = Object.values(SUPPORTED_LANGUAGES).map(lang => lang.code);
-
-  const urls = pages.flatMap(page =>
-    languages.map(lang => ({
-      loc: `${baseUrl}${lang !== 'ja' ? `/${lang}` : ''}${page ? `/${page}` : ''}`,
-      lastmod: new Date().toISOString().split('T')[0],
-      changefreq: 'weekly',
-      priority: page === '' ? '1.0' : page === 'intro' ? '0.9' : '0.8'
-    }))
-  );
-
-  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  ${urls
-    .map(
-      url => `
-  <url>
-    <loc>${url.loc}</loc>
-    <lastmod>${url.lastmod}</lastmod>
-    <changefreq>${url.changefreq}</changefreq>
-    <priority>${url.priority}</priority>
-  </url>`
-    )
-    .join('')}
-</urlset>`;
-
-  return new Response(sitemap, {
-    headers: {
-      'Content-Type': 'application/xml',
-      'Cache-Control': 'max-age=3600'
-    }
-  });
-};
+// static/sitemap.xml → src/routes/sitemap.xml/+server.ts
+-動的サイトマップ生成 - 多言語URL対応 - lastmod自動更新;
 ```
 
-### 2.3 robots.txtの追加
-
-#### static/robots.txt
-
-```
-User-agent: *
-Allow: /
-Sitemap: https://fact-checklist.vercel.app/sitemap.xml
-
-# 開発用ディレクトリをクロール対象外に
-Disallow: /.svelte-kit/
-Disallow: /node_modules/
+```typescript
+// static/robots.txt
+-クロール最適化 - サイトマップ参照追加;
 ```
 
-## 3. コンテンツ戦略
+#### 1.3 Google Search Console設定
 
-### 3.1 ランディングページの改善
+- サイトマップ送信
+- インデックス登録リクエスト
+- エラーの確認と修正
 
-#### 魅力的なヒーローセクション
+### 💫 Phase 2: ユーザー体験向上（1週間）
+
+**目的**: 訪問者を惹きつけ、利用を促進する
+
+#### 2.1 ランディングページの改善
 
 ```svelte
-<script lang="ts">
-  import { fade, fly } from 'svelte/transition';
-  import { t } from '$lib/i18n/store.svelte';
-
-  let isVisible = $state(false);
-
-  onMount(() => {
-    isVisible = true;
-  });
-</script>
-
-<section class="hero">
-  {#if isVisible}
-    <div class="hero-content" in:fly={{ y: 50, duration: 800 }}>
-      <h1 class="hero-title">
-        <span class="gradient-text">偽情報に惑わされない</span>
-        <br />
-        あなたの判断力を支える
-      </h1>
-
-      <p class="hero-subtitle" in:fade={{ delay: 300, duration: 600 }}>
-        AIやメディアを鵜呑みにせず、20項目のチェックリストで
-        <br />
-        情報の信頼性を科学的に評価
-      </p>
-
-      <div class="cta-buttons" in:fade={{ delay: 600, duration: 600 }}>
-        <a href="/intro" class="btn btn-primary">
-          <span>今すぐ始める</span>
-          <svg><!-- arrow icon --></svg>
-        </a>
-        <a href="/demo" class="btn btn-secondary">
-          <span>デモを見る</span>
-          <svg><!-- play icon --></svg>
-        </a>
-      </div>
-
-      <div class="features-preview" in:fade={{ delay: 900, duration: 600 }}>
-        <div class="feature">
-          <span class="feature-icon">🔒</span>
-          <span>完全プライバシー保護</span>
-        </div>
-        <div class="feature">
-          <span class="feature-icon">📱</span>
-          <span>オフライン対応PWA</span>
-        </div>
-        <div class="feature">
-          <span class="feature-icon">🌍</span>
-          <span>12言語対応</span>
-        </div>
-      </div>
-    </div>
-  {/if}
-</section>
-
-<style>
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--gradient-hero);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: url('/grid-pattern.svg') repeat;
-    opacity: 0.05;
-  }
-
-  .gradient-text {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .hero-title {
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    font-weight: 900;
-    line-height: 1.2;
-    margin-bottom: 1.5rem;
-  }
-
-  .cta-buttons {
-    display: flex;
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 1rem 2rem;
-    border-radius: 0.75rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    text-decoration: none;
-  }
-
-  .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-  }
-
-  .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
-  }
-
-  .features-preview {
-    display: flex;
-    gap: 2rem;
-    margin-top: 4rem;
-    padding: 2rem;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-  }
-</style>
+<!-- src/lib/components/HeroSection.svelte -->
+- モダンなヒーローセクション実装 - アニメーション追加（Svelte transition） - CTAボタンの最適化
+- 信頼性指標の表示（利用者数、評価等）
 ```
 
-### 3.2 ソーシャル共有機能の追加
+#### 2.2 ソーシャル共有機能
+
+```typescript
+// src/lib/components/ShareButtons.svelte
+-Twitter / X共有 -
+  Facebook共有 -
+  LinkedIn共有 -
+  ネイティブ共有API対応 -
+  OGP画像の自動生成;
+```
+
+#### 2.3 パフォーマンス最適化
+
+```typescript
+// vite.config.ts
+- コード分割の最適化
+- 画像の最適化（WebP対応）
+- Critical CSSの実装
+- Web Vitalsの改善
+```
+
+#### 2.4 PWAインストール促進
 
 ```svelte
-<script lang="ts">
-  function shareOnTwitter() {
-    const text = encodeURIComponent(
-      '情報の信頼性を科学的に評価するツール「Fact Checklist」を使ってみました！'
-    );
-    const url = encodeURIComponent('https://fact-checklist.vercel.app');
-    window.open(
-      `https://twitter.com/intent/tweet?text=${text}&url=${url}`,
-      '_blank'
-    );
-  }
-
-  function shareOnFacebook() {
-    const url = encodeURIComponent('https://fact-checklist.vercel.app');
-    window.open(
-      `https://www.facebook.com/sharer/sharer.php?u=${url}`,
-      '_blank'
-    );
-  }
-
-  async function shareNative() {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: 'Fact Checklist',
-          text: '情報の信頼性を科学的に評価するツール',
-          url: 'https://fact-checklist.vercel.app'
-        });
-      } catch (err) {
-        console.log('Share cancelled');
-      }
-    }
-  }
-</script>
+<!-- src/lib/components/InstallPrompt.svelte -->
+- カスタムインストールバナー - インストール後の特典表示 - オフライン機能の説明
 ```
 
-## 4. パフォーマンス最適化
+### 📊 Phase 3: コンテンツ戦略（2週間）
 
-### 4.1 画像の最適化
+**目的**: SEOトラフィックとユーザーエンゲージメントを増加
 
-```svelte
-<script>
-  import { onMount } from 'svelte';
+#### 3.1 ブログセクション構築
 
-  let imageLoaded = $state(false);
-
-  onMount(() => {
-    // 遅延読み込み
-    const img = new Image();
-    img.src = '/hero-illustration.webp';
-    img.onload = () => (imageLoaded = true);
-  });
-</script>
-
-{#if imageLoaded}
-  <picture in:fade={{ duration: 600 }}>
-    <source srcset="/hero-illustration.webp" type="image/webp" />
-    <source srcset="/hero-illustration.jpg" type="image/jpeg" />
-    <img
-      src="/hero-illustration.jpg"
-      alt="Fact Checklist illustration"
-      loading="lazy"
-      decoding="async"
-    />
-  </picture>
-{/if}
+```
+src/routes/blog/
+├── +page.svelte          # 記事一覧
+├── [slug]/+page.svelte   # 記事詳細
+├── _posts/               # Markdown記事
+└── rss.xml/+server.ts    # RSSフィード
 ```
 
-### 4.2 Critical CSSの実装
+**初期記事案**:
 
-```html
-<!-- app.html -->
-<style>
-  /* Critical CSS for above-the-fold content */
-  :root {
-    --color-primary: #667eea;
-    --color-secondary: #764ba2;
-    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  }
+1. 「SNS時代のファクトチェック：なぜ今必要なのか」
+2. 「ChatGPTの回答は信頼できる？AIとファクトチェック」
+3. 「フェイクニュース事例研究：2024年の教訓」
+4. 「子供に教えたい情報リテラシー：家庭でできる5つの方法」
 
-  body {
-    margin: 0;
-    font-family: var(--font-sans);
-    -webkit-font-smoothing: antialiased;
-  }
+#### 3.2 事例・ガイドページ
 
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
-</style>
+```
+src/routes/guides/
+├── for-students/     # 学生向けガイド
+├── for-journalists/  # ジャーナリスト向け
+├── for-business/     # 企業向け
+└── case-studies/     # 実践事例
 ```
 
-## 5. マーケティング施策
+#### 3.3 多言語コンテンツ充実
 
-### 5.1 コンテンツマーケティング
+- 各言語での独自コンテンツ作成
+- ローカライズされたキーワード対策
+- 地域別の事例追加
 
-- ブログセクションの追加
-- 「フェイクニュース事例研究」シリーズ
-- 「情報リテラシー向上ガイド」の公開
+### 🏗️ Phase 4: アーキテクチャ改善（2週間）
 
-### 5.2 SEO強化記事の例
+**目的**: 保守性と拡張性の向上
 
-```markdown
-# SNS時代の情報検証：なぜファクトチェックが重要なのか
+#### 4.1 コード構造の最適化
 
-## はじめに
-
-2025年現在、私たちは日々膨大な情報に晒されています。特にSNSの普及により、誤情報や偽情報が瞬時に拡散される時代となりました。
-
-## なぜファクトチェックが必要か
-
-1. **情報の速度と正確性のトレードオフ**
-   - 速報性を重視するあまり、検証が不十分な情報が拡散
-   - 訂正情報は元の誤情報ほど拡散されない
-
-2. **エコーチェンバー現象**
-   - アルゴリズムによる情報の偏り
-   - 確証バイアスの強化
-
-3. **AIによる偽情報の精巧化**
-   - ディープフェイク技術の進化
-   - AI生成テキストの自然さ
-
-## Fact Checklistの活用方法
-
-[具体的な使用例と効果を記載]
+```
+src/
+├── domain/           # ビジネスロジック分離
+│   ├── models/
+│   ├── services/
+│   └── validators/
+├── infrastructure/   # 外部依存の抽象化
+│   ├── storage/
+│   └── pdf/
+└── presentation/     # UI層の整理
+    ├── components/
+    ├── stores/
+    └── routes/
 ```
 
-### 5.3 SNS戦略
+#### 4.2 PDF生成の統合
 
-- X（Twitter）での定期的な情報リテラシーTips投稿
-- LinkedInでのビジネス向けコンテンツ
-- YouTubeでの使い方動画
-
-## 6. 技術的な追加機能
-
-### 6.1 PWA機能の強化
-
-```javascript
-// service-worker.js の改善
-const CACHE_NAME = 'fact-checklist-v2';
-const urlsToCache = [
-  '/',
-  '/manifest.json',
-  '/favicon.ico',
-  // 各言語の翻訳ファイルもキャッシュ
-  '/i18n/ja.json',
-  '/i18n/en.json',
-  // オフラインページ
-  '/offline.html'
-];
-
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
-  );
-});
+```typescript
+// src/lib/pdf/index.ts
+- 重複コードの削除
+- 統一インターフェース実装
+- プラットフォーム別戦略パターン
+- ファイルサイズ削減（568行→300行以下）
 ```
 
-### 6.2 分析ダッシュボード
+#### 4.3 状態管理の改善
 
-```svelte
-<script lang="ts">
-  import { Chart } from 'chart.js/auto';
-  import { getChecklistStats } from '$lib/stores/analytics';
-
-  let stats = $derived(getChecklistStats());
-
-  onMount(() => {
-    const ctx = document.getElementById('usage-chart');
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: stats.dates,
-        datasets: [
-          {
-            label: 'チェックリスト作成数',
-            data: stats.counts,
-            borderColor: 'rgb(102, 126, 234)',
-            tension: 0.1
-          }
-        ]
-      }
-    });
-  });
-</script>
-
-<div class="analytics-dashboard">
-  <h2>利用統計</h2>
-  <canvas id="usage-chart"></canvas>
-
-  <div class="stats-grid">
-    <div class="stat-card">
-      <h3>総チェックリスト数</h3>
-      <p class="stat-value">{stats.totalChecklists}</p>
-    </div>
-    <div class="stat-card">
-      <h3>平均スコア</h3>
-      <p class="stat-value">{stats.averageScore}%</p>
-    </div>
-  </div>
-</div>
+```typescript
+// src/lib/stores/app.store.ts
+-統合ストア実装 - 永続化ミドルウェア - 開発者ツール対応;
 ```
 
-## 7. 実装優先順位
+### 🧪 Phase 5: 品質保証（1週間）
 
-### Phase 1（即座に実装すべき）
+**目的**: バグの削減と信頼性の向上
 
-1. i18n問題の修正
-2. メタタグの最適化
-3. サイトマップの追加
-4. ヒーローセクションの改善
+#### 5.1 テスト実装
 
-### Phase 2（1週間以内）
+```
+src/__tests__/
+├── unit/           # 単体テスト
+├── integration/    # 統合テスト
+└── e2e/           # E2Eテスト（Playwright）
+```
 
-1. Svelte5への完全移行
-2. PWA機能の強化
-3. ソーシャル共有機能
-4. パフォーマンス最適化
+**優先テスト対象**:
 
-### Phase 3（1ヶ月以内）
+- チェックリスト作成フロー
+- スコア計算ロジック
+- PDF生成機能
+- 多言語切り替え
 
-1. ブログセクションの追加
-2. 分析ダッシュボード
-3. 多言語コンテンツの充実
-4. A/Bテストの実施
+#### 5.2 CI/CD強化
 
-## まとめ
+```yaml
+# .github/workflows/ci.yml
+- 型チェック
+- Lintチェック
+- テスト実行
+- ビルド検証
+- Lighthouse CI
+- 自動デプロイ
+```
 
-これらの改善により、以下の効果が期待できます：
+### 📈 Phase 6: 成長戦略（1ヶ月）
 
-- **技術面**: 最新のSvelte5機能を活用した高速で安定したアプリ
-- **SEO面**: 検索エンジンでの可視性向上
-- **UX面**: より魅力的で使いやすいインターフェース
-- **マーケティング面**: コンテンツによる自然な集客
+**目的**: ユーザー獲得と定着
 
-特に重要なのは、**価値のあるツールであることを効果的に伝える**ことです。現在の社会情勢（偽情報問題、AI規制など）を踏まえて、このツールの必要性を訴求していきましょう。
+#### 6.1 分析基盤構築
+
+```typescript
+// src/lib/analytics/
+-プライバシー重視の分析実装 - 利用統計ダッシュボード - A / Bテスト基盤;
+```
+
+#### 6.2 マーケティング施策
+
+- プレスリリース配信
+- 技術記事の投稿（Qiita、Zenn）
+- SNSアカウント運用
+- インフルエンサー連携
+
+#### 6.3 API公開
+
+```typescript
+// src/routes/api/v1/
+- REST API実装
+- 開発者向けドキュメント
+- SDKの提供
+```
+
+### 🚀 Phase 7: スケール対応（将来）
+
+**目的**: 大規模利用への対応
+
+#### 7.1 エンタープライズ機能
+
+- チーム機能
+- 管理者ダッシュボード
+- カスタマイズ機能
+- SLA対応
+
+#### 7.2 収益化検討
+
+- プレミアムプラン
+- API利用料
+- カスタマイズサービス
+- 教育機関向けライセンス
+
+## 実行スケジュール
+
+```mermaid
+gantt
+    title Fact Checklist改善スケジュール
+    dateFormat  YYYY-MM-DD
+    section Phase 0-2
+    緊急修正           :2025-01-20, 2d
+    SEO基盤            :2025-01-22, 5d
+    UX向上             :2025-01-27, 7d
+    section Phase 3-4
+    コンテンツ戦略      :2025-02-03, 14d
+    アーキテクチャ      :2025-02-17, 14d
+    section Phase 5-6
+    品質保証           :2025-03-03, 7d
+    成長戦略           :2025-03-10, 30d
+```
+
+## 成功指標（KPI）
+
+### 短期目標（1ヶ月）
+
+- [ ] Google Search Console表示回数: 1,000回/月
+- [ ] 月間訪問者数: 500人
+- [ ] Lighthouseスコア: 全項目90以上
+- [ ] チェックリスト作成数: 100件/月
+
+### 中期目標（3ヶ月）
+
+- [ ] 月間訪問者数: 5,000人
+- [ ] オーガニック流入: 70%以上
+- [ ] リピート率: 30%以上
+- [ ] 被リンク数: 50件
+
+### 長期目標（6ヶ月）
+
+- [ ] 月間訪問者数: 20,000人
+- [ ] 多言語利用率: 20%以上
+- [ ] API利用開発者: 100人
+- [ ] メディア掲載: 10件以上
+
+## Claude Codeへの実行指示
+
+各フェーズの開始時に以下のコマンドを実行：
+
+```bash
+# Phase 0の開始
+claude-code execute --phase 0 --file improvement.md
+
+# 進捗確認
+claude-code status --phase 0
+
+# 次のフェーズへ
+claude-code execute --phase 1 --file improvement.md
+```
+
+## 注意事項
+
+1. **各フェーズは前のフェーズの完了を前提**とする
+2. **小さなPRで段階的に実装**（大きな変更は避ける）
+3. **既存機能を壊さない**ことを最優先
+4. **ユーザーフィードバックを随時反映**
+5. **パフォーマンスを常に監視**
+
+この計画に従って着実に実装を進めることで、Fact
+Checklistを価値あるサービスに成長させることができます。

@@ -1,0 +1,44 @@
+# robots.txt for Fact Checklist (実用的事実確認チェックシート)
+# https://fact-checklist.vercel.app/
+
+# Allow all web crawlers
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://fact-checklist.vercel.app/sitemap.xml
+
+# Crawl-delay for polite crawling (optional)
+# Crawl-delay: 1
+
+# Specific rules for major search engines
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+# Disallow admin/debug endpoints (if they exist in the future)
+Disallow: /admin/
+Disallow: /api/debug*/
+Disallow: /.well-known/
+
+# Allow important PWA files
+Allow: /manifest.webmanifest
+Allow: /sw.js
+Allow: /favicon.ico
+Allow: /robots.txt
+Allow: /sitemap.xml
+
+# Additional information
+# This PWA application is designed for fact-checking and information verification
+# All public pages are safe for indexing and provide educational value
