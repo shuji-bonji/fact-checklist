@@ -406,6 +406,8 @@ export class ReliablePDFGenerator {
   }
 
   private addGuideContent(guideContent: NonNullable<CheckItem['guideContent']>): void {
+    console.warn('🔍 [PDF Debug - Reliable] addGuideContent called with:', guideContent);
+    console.warn('🔍 [PDF Debug - Reliable] guideContent.examples:', guideContent.examples);
     this.currentY += 3; // Add significant space before guide section
     this.pdf.setFontSize(9);
     this.setFontWeight('italic');
@@ -422,14 +424,19 @@ export class ReliablePDFGenerator {
 
     // 良い例
     if (guideContent.examples?.good?.length) {
+      console.warn('🔍 [PDF Debug - Reliable] Good examples found:', guideContent.examples.good);
       const goodLabel = this.t('export.goodExamples');
+      console.warn('🔍 [PDF Debug - Reliable] Good label:', goodLabel);
       this.addText(`   ✅ ${goodLabel}:`);
       this.currentY += 2; // Ensure very clear separation
       guideContent.examples.good.forEach(example => {
+        console.warn('🔍 [PDF Debug - Reliable] Adding good example:', example);
         this.addWrappedText(`     - ${this.getLocalizedText(example)}`);
         this.currentY += 1; // Clear gap between examples
       });
       this.currentY += 2;
+    } else {
+      console.warn('🔍 [PDF Debug - Reliable] No good examples found');
     }
 
     // 悪い例

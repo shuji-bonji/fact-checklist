@@ -207,6 +207,11 @@ export class PDFService {
 
         case PDFGenerationMode.RELIABLE_FONTS: {
           options.onProgress?.(50, 'Generating with reliable fonts...');
+          console.warn('🔍 [PDF Debug - Service] Checklist items:', checklist.items.slice(0, 3));
+          console.warn(
+            '🔍 [PDF Debug - Service] First item guideContent:',
+            checklist.items[0]?.guideContent
+          );
           const reliableBlob = (await (generator as BasePDFGenerator).generatePDF?.(
             checklist,
             this.convertOptionsForReliable(options, t)
