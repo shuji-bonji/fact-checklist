@@ -21,9 +21,26 @@ import { countTranslations, createSafeTranslator, createFlexibleTranslator } fro
 // ブラウザ環境チェック
 const isBrowser = typeof window !== 'undefined';
 
+// 初期言語を決定する関数（クラス外で定義）
+function getInitialLanguage(): LanguageCode {
+  if (!isBrowser) return I18N_CONFIG.DEFAULT_LANGUAGE;
+
+  try {
+    const saved = localStorage.getItem('fact-checklist-language');
+    if (saved && saved in SUPPORTED_LANGUAGES) {
+      console.log(`🌍 Loaded saved language from localStorage: ${saved}`);
+      return saved as LanguageCode;
+    }
+  } catch (error) {
+    console.warn('⚠️ Failed to load language from localStorage on init:', error);
+  }
+
+  return I18N_CONFIG.DEFAULT_LANGUAGE;
+}
+
 class I18nStore {
   // Svelte 5 runesを使用した状態管理
-  private _currentLanguage = $state<LanguageCode>(I18N_CONFIG.DEFAULT_LANGUAGE);
+  private _currentLanguage = $state<LanguageCode>(getInitialLanguage());
   private _translations = $state<Record<LanguageCode, TranslationKeys>>(
     {} as Record<LanguageCode, TranslationKeys>
   );
@@ -85,37 +102,47 @@ class I18nStore {
 
   // 公開初期化メソッド（SSR検出言語を受け取る）
   async initializeWithLanguage(ssrDetectedLanguage?: LanguageCode): Promise<void> {
-    if (this._initialized) return;
+    if (this._initialized) {
+      console.log('🌍 i18n store already initialized, skipping...');
+      return;
+    }
 
     try {
       this._isLoading = true;
       this._error = null;
 
-      // 保存された言語設定を読み込み
+      // 現在の言語が既に正しく設定されているか確認
+      const currentLang = this._currentLanguage;
+      console.log(`🌍 Current language on initialization: ${currentLang}`);
+
+      // 保存された言語設定を再確認（既に初期化時に読み込まれているはず）
       const savedLanguage = this.loadLanguageFromStorage();
 
-      // 言語を決定（保存済み > SSR検出 > ブラウザ検出 > デフォルト）
-      let targetLanguage = savedLanguage;
+      // 言語を決定（保存済み > 現在の言語 > SSR検出 > ブラウザ検出 > デフォルト）
+      let targetLanguage = savedLanguage || currentLang;
 
-      if (!targetLanguage && ssrDetectedLanguage) {
-        targetLanguage = ssrDetectedLanguage;
-      }
-
-      if (!targetLanguage && isBrowser) {
-        targetLanguage = this.detectBrowserLanguage();
+      if (!targetLanguage || targetLanguage === I18N_CONFIG.DEFAULT_LANGUAGE) {
+        if (ssrDetectedLanguage && ssrDetectedLanguage !== I18N_CONFIG.DEFAULT_LANGUAGE) {
+          targetLanguage = ssrDetectedLanguage;
+        } else if (isBrowser) {
+          const browserLang = this.detectBrowserLanguage();
+          if (browserLang) {
+            targetLanguage = browserLang;
+          }
+        }
       }
 
       targetLanguage = targetLanguage ?? I18N_CONFIG.DEFAULT_LANGUAGE;
 
-      // console.log(
-      //   `🌍 Language selection: saved=${savedLanguage}, ssrDetected=${ssrDetectedLanguage}, target=${targetLanguage}`
-      // );
+      console.log(
+        `🌍 Language selection: saved=${savedLanguage}, current=${currentLang}, ssrDetected=${ssrDetectedLanguage}, target=${targetLanguage}`
+      );
 
-      // 言語を設定
+      // 言語を設定（既に設定されている場合でも翻訳データの読み込みのため実行）
       await this.setLanguage(targetLanguage);
 
       this._initialized = true;
-      // console.log('✅ i18n store initialized');
+      console.log('✅ i18n store initialized');
     } catch (error) {
       this._error = error instanceof Error ? error.message : '初期化エラー';
       console.error('❌ Failed to initialize i18n store:', error);

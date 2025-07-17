@@ -10,7 +10,7 @@
   } from '$lib/stores/refactoredChecklistStore.svelte.js';
   import { getCategories } from '$lib/data/checklist-items.js';
   import type { JudgmentType } from '$lib/types/checklist.js';
-  import { t, i18nStore, initializeI18n } from '$lib/i18n/index.js';
+  import { t, i18nStore } from '$lib/i18n/index.js';
   import type { PageData } from './$types';
 
   // Svelte5の新しいprops構文
@@ -47,14 +47,9 @@
   const judgmentAdvice = $derived(refactoredChecklistStore.judgmentAdvice);
 
   onMount(async () => {
-    // i18nの初期化を確実に行う
+    // i18nの初期化状態を確認（+layout.svelteで既に初期化済み）
     try {
-      // console.log('🌍 Starting i18n initialization...');
-
-      // i18nシステムの初期化
-      await initializeI18n();
-
-      // デフォルト言語の設定を削除 - +layout.svelteで設定された言語を使用
+      // console.log('🌍 Checking i18n initialization state...');
 
       // i18nの初期化完了を監視
       let attempts = 0;
@@ -62,7 +57,7 @@
 
       while (attempts < maxAttempts) {
         if (i18nStore.initialized && i18nStore.translations) {
-          // console.log('✅ i18n initialization complete');
+          // console.log('✅ i18n is ready');
           isI18nReady = true;
           break;
         }
@@ -74,7 +69,7 @@
         throw new Error('i18n initialization timeout');
       }
     } catch (error) {
-      console.error('❌ Failed to initialize i18n:', error);
+      console.error('❌ i18n not ready:', error);
       i18nError = error instanceof Error ? error.message : 'i18n initialization failed';
       isI18nReady = false;
     }
