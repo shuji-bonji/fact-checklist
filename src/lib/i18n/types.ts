@@ -95,6 +95,8 @@ export interface TranslationKeys {
   app: {
     title: string;
     subtitle: string;
+    brandTitle: string;
+    brandSubtitle: string;
     description: string;
     version: string;
     author: string;

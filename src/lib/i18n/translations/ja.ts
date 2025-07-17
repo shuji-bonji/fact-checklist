@@ -60,6 +60,8 @@ export const translations: TranslationKeys = {
   app: {
     title: '実用的事実確認チェックシート',
     subtitle: '情報の信頼性を科学的・体系的に評価するための統合システム',
+    brandTitle: 'ファクトチェックリスト',
+    brandSubtitle: '情報の信頼性を体系的に評価',
     description: '情報の信頼性を科学的・体系的に評価するためのチェックシート',
     version: '1.0.0',
     author: 'Fact Checklist Team',

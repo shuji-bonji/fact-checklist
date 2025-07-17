@@ -314,8 +314,8 @@
             <button type="button" class="nav-brand" onclick={goToHome}>
               <span class="nav-icon">🔍</span>
               <div class="brand-text">
-                <span class="brand-title">事実確認チェックシート</span>
-                <span class="brand-subtitle">情報の信頼性を科学的評価</span>
+                <span class="brand-title">{t('app.brandTitle')}</span>
+                <span class="brand-subtitle">{t('app.brandSubtitle')}</span>
               </div>
             </button>
           </div>
@@ -351,8 +351,8 @@
           <button type="button" class="nav-brand" onclick={goToHome}>
             <span class="nav-icon">🔍</span>
             <div class="brand-text">
-              <span class="brand-title">事実確認チェックシート</span>
-              <span class="brand-subtitle">情報の信頼性を科学的評価</span>
+              <span class="brand-title">{t('app.brandTitle')}</span>
+              <span class="brand-subtitle">{t('app.brandSubtitle')}</span>
             </div>
           </button>
 
@@ -441,8 +441,8 @@
           <div class="nav-brand-loading">
             <span class="nav-icon">🔍</span>
             <div class="brand-text">
-              <span class="brand-title">事実確認チェックシート</span>
-              <span class="brand-subtitle">情報の信頼性を科学的評価</span>
+              <span class="brand-title">{t('app.brandTitle')}</span>
+              <span class="brand-subtitle">{t('app.brandSubtitle')}</span>
             </div>
           </div>
           <div class="nav-loading">Loading...</div>

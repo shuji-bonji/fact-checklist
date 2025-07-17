@@ -57,6 +57,8 @@ export const translations: TranslationKeys = {
   app: {
     title: '실용적 팩트체크 체크리스트',
     subtitle: '정보의 신뢰성을 과학적으로 평가하는 종합 시스템',
+    brandTitle: '팩트체크 체크리스트',
+    brandSubtitle: '정보 신뢰성의 체계적 평가',
     description: '정보의 신뢰성을 과학적이고 체계적으로 평가하기 위한 체크리스트',
     version: '1.0.0',
     author: '팩트체크 체크리스트 팀',

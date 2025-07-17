@@ -654,11 +654,7 @@ export async function generateMarkdownContent(
 
   // セクション別の内容
   for (const section of sections) {
-    markdown += `## ${section.category.emoji} ${
-      factChecklistI18n.getCategoryName
-        ? factChecklistI18n.getCategoryName(section.category.id)
-        : section.category.name
-    }\n\n`;
+    markdown += `## ${t(`categories.${section.category.id}.emoji`)} ${t(`categories.${section.category.id}.name`)}\n\n`;
 
     markdown += `**${t('export.completionStatus')}**: ${section.completionRate}% (${section.checkedItems.length}/${section.items.length})\n\n`;
 

@@ -58,6 +58,8 @@ export const translations: TranslationKeys = {
     title: 'Praktische Faktencheck-Checkliste',
     subtitle:
       'Ein umfassendes System zur wissenschaftlichen Bewertung der Informationszuverlässigkeit',
+    brandTitle: 'Faktencheck-Checkliste',
+    brandSubtitle: 'Systematische Bewertung der Informationszuverlässigkeit',
     description:
       'Eine Checkliste zur wissenschaftlichen und systematischen Bewertung der Informationszuverlässigkeit',
     version: '1.0.0',

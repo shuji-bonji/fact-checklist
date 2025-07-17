@@ -17,6 +17,7 @@ import { I18N_CONFIG } from '../config/i18n.js';
 import { translations as allTranslations } from './translations/index.js';
 
 import { countTranslations, createSafeTranslator, createFlexibleTranslator } from './helpers.js';
+import { dev } from '$app/environment';
 
 // ブラウザ環境チェック
 const isBrowser = typeof window !== 'undefined';
@@ -28,7 +29,7 @@ function getInitialLanguage(): LanguageCode {
   try {
     const saved = localStorage.getItem('fact-checklist-language');
     if (saved && saved in SUPPORTED_LANGUAGES) {
-      console.log(`🌍 Loaded saved language from localStorage: ${saved}`);
+      if (dev) console.warn(`🌍 Loaded saved language from localStorage: ${saved}`);
       return saved as LanguageCode;
     }
   } catch (error) {
@@ -103,7 +104,7 @@ class I18nStore {
   // 公開初期化メソッド（SSR検出言語を受け取る）
   async initializeWithLanguage(ssrDetectedLanguage?: LanguageCode): Promise<void> {
     if (this._initialized) {
-      console.log('🌍 i18n store already initialized, skipping...');
+      if (dev) console.warn('🌍 i18n store already initialized, skipping...');
       return;
     }
 
@@ -113,7 +114,7 @@ class I18nStore {
 
       // 現在の言語が既に正しく設定されているか確認
       const currentLang = this._currentLanguage;
-      console.log(`🌍 Current language on initialization: ${currentLang}`);
+      if (dev) console.warn(`🌍 Current language on initialization: ${currentLang}`);
 
       // 保存された言語設定を再確認（既に初期化時に読み込まれているはず）
       const savedLanguage = this.loadLanguageFromStorage();
@@ -134,53 +135,21 @@ class I18nStore {
 
       targetLanguage = targetLanguage ?? I18N_CONFIG.DEFAULT_LANGUAGE;
 
-      console.log(
-        `🌍 Language selection: saved=${savedLanguage}, current=${currentLang}, ssrDetected=${ssrDetectedLanguage}, target=${targetLanguage}`
-      );
+      if (dev) {
+        console.warn(
+          `🌍 Language selection: saved=${savedLanguage}, current=${currentLang}, ssrDetected=${ssrDetectedLanguage}, target=${targetLanguage}`
+        );
+      }
 
       // 言語を設定（既に設定されている場合でも翻訳データの読み込みのため実行）
       await this.setLanguage(targetLanguage);
 
       this._initialized = true;
-      console.log('✅ i18n store initialized');
+      if (dev) console.warn('✅ i18n store initialized');
     } catch (error) {
       this._error = error instanceof Error ? error.message : '初期化エラー';
       console.error('❌ Failed to initialize i18n store:', error);
       throw error;
-    } finally {
-      this._isLoading = false;
-    }
-  }
-
-  // 初期化（レガシー）
-  private async initialize(): Promise<void> {
-    // console.log('🌍 Initializing i18n store...');
-
-    try {
-      this._isLoading = true;
-      this._error = null;
-
-      // 保存された言語設定を読み込み
-      const savedLanguage = this.loadLanguageFromStorage();
-
-      // ブラウザ言語の自動検出
-      const detectedLanguage = this.detectBrowserLanguage();
-
-      // 言語を決定（保存済み > 検出 > デフォルト）
-      const targetLanguage = savedLanguage ?? detectedLanguage ?? I18N_CONFIG.DEFAULT_LANGUAGE;
-
-      // console.log(
-      //   `🌍 Language selection: saved=${savedLanguage}, detected=${detectedLanguage}, target=${targetLanguage}`
-      // );
-
-      // 言語を設定
-      await this.setLanguage(targetLanguage);
-
-      this._initialized = true;
-      // console.log('✅ i18n store initialized successfully');
-    } catch (error) {
-      this._error = error instanceof Error ? error.message : 'Failed to initialize i18n';
-      console.error('❌ i18n initialization failed:', error);
     } finally {
       this._isLoading = false;
     }

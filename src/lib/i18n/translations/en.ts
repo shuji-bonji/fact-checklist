@@ -60,6 +60,8 @@ export const translations: TranslationKeys = {
   app: {
     title: 'Practical Fact-Check Checklist',
     subtitle: 'A comprehensive system for scientifically evaluating information reliability',
+    brandTitle: 'Fact Checklist',
+    brandSubtitle: 'Systematic evaluation of information reliability',
     description:
       'A checklist for scientifically and systematically evaluating information reliability',
     version: '1.0.0',

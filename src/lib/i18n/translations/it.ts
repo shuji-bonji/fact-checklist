@@ -57,6 +57,8 @@ export const translations: TranslationKeys = {
   app: {
     title: 'Lista di Controllo Pratica per Fact-Check',
     subtitle: "Un sistema completo per valutare scientificamente l'affidabilità delle informazioni",
+    brandTitle: 'Lista di Controllo Fact-Check',
+    brandSubtitle: "Valutazione sistematica dell'affidabilità delle informazioni",
     description:
       "Una lista di controllo per valutare scientificamente e sistematicamente l'affidabilità delle informazioni",
     version: '1.0.0',
