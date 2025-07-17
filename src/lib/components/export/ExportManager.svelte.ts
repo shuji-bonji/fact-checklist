@@ -176,12 +176,12 @@ export class ExportManager {
     options: ExportOptions,
     t: TranslationFunction
   ): Promise<(factChecklistI18n: FactChecklistI18n) => Promise<string>> {
-    return async (factChecklistI18n: FactChecklistI18n) => {
+    return async (_factChecklistI18n: FactChecklistI18n) => {
       const i18nResult = await ExportI18nLoader.loadFullI18n();
       return generateSectionedHTMLContent(
         checklist,
         options,
-        factChecklistI18n,
+        i18nResult.factChecklistI18n, // Use the loaded i18n instead of the passed one
         t,
         i18nResult.getCurrentLanguage ?? (() => 'en'),
         i18nResult.getSupportedLanguages ?? (() => ({ en: { name: 'English' } }))
