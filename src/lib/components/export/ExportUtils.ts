@@ -98,22 +98,11 @@ export function renderCheckItem(
                   ? `
                 <div class="guide-examples">
                   <div class="examples-title">${t ? t('export.examples') : 'Examples'}:</div>
-                  ${(() => {
-                    console.warn(
-                      '🔍 [PDF Debug] Processing examples for item:',
-                      item.id,
-                      item.translationKey
-                    );
-                    console.warn('🔍 [PDF Debug] Guide content:', item.guideContent);
-                    console.warn('🔍 [PDF Debug] Examples:', item.guideContent.examples);
-                    return '';
-                  })()}
                   ${
                     factChecklistI18n && item.translationKey
                       ? (() => {
                           const goodExamples =
                             factChecklistI18n.getCheckItemExamplesGood?.(item.translationKey) ?? [];
-                          console.warn('🔍 [PDF Debug] Good examples from i18n:', goodExamples);
                           return goodExamples.length > 0
                             ? `
                           <div class="good-examples">
@@ -128,7 +117,6 @@ export function renderCheckItem(
                         (() => {
                           const badExamples =
                             factChecklistI18n.getCheckItemExamplesBad?.(item.translationKey) ?? [];
-                          console.warn('🔍 [PDF Debug] Bad examples from i18n:', badExamples);
                           return badExamples.length > 0
                             ? `
                           <div class="bad-examples">
@@ -405,6 +393,16 @@ export async function generateSectionedHTMLContent(
       margin-bottom: 10px;
     }
     
+    .good-examples ul, .bad-examples ul {
+      margin: 0;
+      padding-left: 0;
+      list-style-position: inside;
+    }
+    
+    .good-examples li, .bad-examples li {
+      margin-bottom: 4px;
+    }
+    
     .example-type {
       font-weight: bold;
       margin-bottom: 5px;
@@ -621,18 +619,6 @@ export async function generateSectionedHTMLContent(
 </body>
 </html>
   `;
-
-  // デバッグ用: 生成されたHTMLをファイルに保存
-  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
-    console.warn('🔍 [PDF Debug] Generated HTML length:', htmlContent.length);
-    console.warn('🔍 [PDF Debug] HTML contains "例:"?', htmlContent.includes('例:'));
-    console.warn('🔍 [PDF Debug] HTML contains "Examples:"?', htmlContent.includes('Examples:'));
-
-    // HTMLコンテンツをコンソールに表示（開発時のみ）
-    const blob = new Blob([htmlContent], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    console.warn('🔍 [PDF Debug] Generated HTML available at:', url);
-  }
 
   return htmlContent;
 }
