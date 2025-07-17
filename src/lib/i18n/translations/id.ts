@@ -57,6 +57,8 @@ export const translations: TranslationKeys = {
   app: {
     title: 'Daftar Periksa Fakta Praktis',
     subtitle: 'Sistem komprehensif untuk mengevaluasi keandalan informasi secara ilmiah',
+    brandTitle: 'Daftar Periksa Fakta',
+    brandSubtitle: 'Evaluasi sistematis keandalan informasi',
     description:
       'Daftar periksa untuk mengevaluasi keandalan informasi secara ilmiah dan sistematis',
     version: '1.0.0',

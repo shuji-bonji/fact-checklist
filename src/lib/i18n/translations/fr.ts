@@ -60,6 +60,8 @@ export const translations: TranslationKeys = {
   app: {
     title: 'Liste de Vérification Factuelle Pratique',
     subtitle: 'Un système complet pour évaluer scientifiquement la fiabilité des informations',
+    brandTitle: 'Liste de Vérification Factuelle',
+    brandSubtitle: 'Évaluation systématique de la fiabilité des informations',
     description:
       'Une liste de vérification pour évaluer scientifiquement et systématiquement la fiabilité des informations',
     version: '1.0.0',

@@ -60,6 +60,8 @@ export const translations: TranslationKeys = {
   app: {
     title: '實用事實查核檢查表',
     subtitle: '科學評估資訊可靠性的綜合系統',
+    brandTitle: '事實查核檢查表',
+    brandSubtitle: '系統性評估資訊可靠性',
     description: '科學系統性評估資訊可靠性的檢查表',
     version: '1.0.0',
     author: '事實查核檢查表團隊',

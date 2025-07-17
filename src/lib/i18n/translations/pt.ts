@@ -59,6 +59,8 @@ export const translations: TranslationKeys = {
   app: {
     title: 'Lista de Verificação Prática de Fatos',
     subtitle: 'Um sistema abrangente para avaliar cientificamente a confiabilidade das informações',
+    brandTitle: 'Lista de Verificação de Fatos',
+    brandSubtitle: 'Avaliação sistemática da confiabilidade das informações',
     description:
       'Uma lista de verificação para avaliar científica e sistematicamente a confiabilidade das informações',
     version: '1.0.0',
