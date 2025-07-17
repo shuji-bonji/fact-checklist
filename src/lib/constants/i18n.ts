@@ -1,6 +1,8 @@
 // src/lib/constants/i18n.ts
 // 国際化関連の定数・設定
 
+import { I18N_CONFIG } from '../config/i18n.js';
+
 /**
  * サポート言語設定
  */
@@ -97,7 +99,7 @@ export const LANGUAGE_CODES = Object.values(SUPPORTED_LANGUAGES).map(lang => lan
 /**
  * デフォルト言語設定
  */
-export const DEFAULT_LANGUAGE = 'ja';
+export const DEFAULT_LANGUAGE = I18N_CONFIG.DEFAULT_LANGUAGE;
 export const FALLBACK_LANGUAGE = 'en';
 
 /**
@@ -105,7 +107,7 @@ export const FALLBACK_LANGUAGE = 'en';
  */
 export const SCRIPT_FAMILIES = {
   LATIN: ['en', 'fr', 'es', 'pt', 'de', 'it', 'id'],
-  CJK: ['ja', 'zh-TW', 'ko'],
+  CJK: [...I18N_CONFIG.CJK_LANGUAGES],
   ARABIC: ['ar'],
   DEVANAGARI: ['hi']
 } as const;
@@ -227,11 +229,11 @@ export const TRANSLATION_NAMESPACES = {
  * 言語検出設定
  */
 export const LANGUAGE_DETECTION = {
-  BROWSER_LANGUAGE: true,
-  LOCAL_STORAGE_KEY: 'fact-checklist-language',
+  BROWSER_LANGUAGE: I18N_CONFIG.PREFER_BROWSER_LANGUAGE,
+  LOCAL_STORAGE_KEY: I18N_CONFIG.STORAGE_KEY,
   URL_PARAMETER: 'lang',
   COOKIE_NAME: 'language',
-  FALLBACK_CHAIN: ['ja', 'en'],
+  FALLBACK_CHAIN: [...I18N_CONFIG.FALLBACK_CHAIN],
   AUTO_DETECT: true
 } as const;
 

@@ -11,6 +11,7 @@ import {
   type TranslationFunction,
   type NestedRecord
 } from './types.js';
+import { I18N_CONFIG } from '../config/i18n.js';
 
 // 静的な翻訳インポート
 import { translations as allTranslations } from './translations/index.js';
@@ -22,7 +23,7 @@ const isBrowser = typeof window !== 'undefined';
 
 class I18nStore {
   // Svelte 5 runesを使用した状態管理
-  private _currentLanguage = $state<LanguageCode>('ja');
+  private _currentLanguage = $state<LanguageCode>(I18N_CONFIG.DEFAULT_LANGUAGE);
   private _translations = $state<Record<LanguageCode, TranslationKeys>>(
     {} as Record<LanguageCode, TranslationKeys>
   );
@@ -31,9 +32,10 @@ class I18nStore {
   private _initialized = $state<boolean>(false);
 
   constructor() {
-    if (isBrowser) {
-      this.initialize();
-    }
+    // 自動初期化を無効化 - 明示的な初期化を待つ
+    // if (isBrowser) {
+    //   this.initialize();
+    // }
   }
 
   // 現在の言語（読み取り専用）
@@ -81,7 +83,49 @@ class I18nStore {
     return this._translations[this._currentLanguage] || null;
   }
 
-  // 初期化
+  // 公開初期化メソッド（SSR検出言語を受け取る）
+  async initializeWithLanguage(ssrDetectedLanguage?: LanguageCode): Promise<void> {
+    if (this._initialized) return;
+
+    try {
+      this._isLoading = true;
+      this._error = null;
+
+      // 保存された言語設定を読み込み
+      const savedLanguage = this.loadLanguageFromStorage();
+
+      // 言語を決定（保存済み > SSR検出 > ブラウザ検出 > デフォルト）
+      let targetLanguage = savedLanguage;
+
+      if (!targetLanguage && ssrDetectedLanguage) {
+        targetLanguage = ssrDetectedLanguage;
+      }
+
+      if (!targetLanguage && isBrowser) {
+        targetLanguage = this.detectBrowserLanguage();
+      }
+
+      targetLanguage = targetLanguage ?? I18N_CONFIG.DEFAULT_LANGUAGE;
+
+      // console.log(
+      //   `🌍 Language selection: saved=${savedLanguage}, ssrDetected=${ssrDetectedLanguage}, target=${targetLanguage}`
+      // );
+
+      // 言語を設定
+      await this.setLanguage(targetLanguage);
+
+      this._initialized = true;
+      // console.log('✅ i18n store initialized');
+    } catch (error) {
+      this._error = error instanceof Error ? error.message : '初期化エラー';
+      console.error('❌ Failed to initialize i18n store:', error);
+      throw error;
+    } finally {
+      this._isLoading = false;
+    }
+  }
+
+  // 初期化（レガシー）
   private async initialize(): Promise<void> {
     // console.log('🌍 Initializing i18n store...');
 
@@ -96,7 +140,7 @@ class I18nStore {
       const detectedLanguage = this.detectBrowserLanguage();
 
       // 言語を決定（保存済み > 検出 > デフォルト）
-      const targetLanguage = savedLanguage ?? detectedLanguage ?? 'ja';
+      const targetLanguage = savedLanguage ?? detectedLanguage ?? I18N_CONFIG.DEFAULT_LANGUAGE;
 
       // console.log(
       //   `🌍 Language selection: saved=${savedLanguage}, detected=${detectedLanguage}, target=${targetLanguage}`
@@ -170,13 +214,21 @@ class I18nStore {
     } catch (error) {
       console.error(`❌ Failed to load translations for ${language}:`, error);
 
-      // フォールバック: 日本語の翻訳を使用
-      if (language !== 'ja' && this._translations['ja']) {
-        console.warn(`🔄 Using Japanese fallback for: ${language}`);
-        this._translations[language] = this._translations['ja'];
-      } else if (language !== 'ja' && allTranslations['ja']) {
-        console.warn(`🔄 Using Japanese fallback from static imports for: ${language}`);
-        this._translations[language] = allTranslations['ja'];
+      // フォールバック: デフォルト言語の翻訳を使用
+      if (
+        language !== I18N_CONFIG.DEFAULT_LANGUAGE &&
+        this._translations[I18N_CONFIG.DEFAULT_LANGUAGE]
+      ) {
+        console.warn(`🔄 Using ${I18N_CONFIG.DEFAULT_LANGUAGE} fallback for: ${language}`);
+        this._translations[language] = this._translations[I18N_CONFIG.DEFAULT_LANGUAGE];
+      } else if (
+        language !== I18N_CONFIG.DEFAULT_LANGUAGE &&
+        allTranslations[I18N_CONFIG.DEFAULT_LANGUAGE]
+      ) {
+        console.warn(
+          `🔄 Using ${I18N_CONFIG.DEFAULT_LANGUAGE} fallback from static imports for: ${language}`
+        );
+        this._translations[language] = allTranslations[I18N_CONFIG.DEFAULT_LANGUAGE];
       } else {
         throw error;
       }

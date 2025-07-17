@@ -9,7 +9,8 @@
   import { page } from '$app/stores';
 
   // i18n
-  import { initializeI18n, t, i18nStore } from '$lib/i18n/index.js';
+  import { t, i18nStore } from '$lib/i18n/index.js';
+  import type { LanguageCode } from '$lib/i18n/types.js';
   import LanguageSwitcher from '$lib/components/LanguageSwitcher.svelte';
 
   // PWA
@@ -76,10 +77,15 @@
   onMount(() => {
     // 非同期初期化処理
     (async () => {
-      // i18n初期化
+      // i18n初期化（SSRで検出された言語を使用）
       try {
-        await initializeI18n();
-        // console.log('✅ i18n initialized in layout');
+        // SSRで検出された言語を使用
+        const detectedLanguage = data?.detectedLanguage;
+
+        // SSR検出言語を使用してi18nストアを初期化
+        await i18nStore.initializeWithLanguage(detectedLanguage as LanguageCode);
+
+        // console.log('✅ i18n initialized with SSR-detected language');
       } catch (error) {
         console.error('❌ Failed to initialize i18n:', error);
       }

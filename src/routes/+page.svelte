@@ -7,7 +7,7 @@
   import { refactoredChecklistStore } from '$lib/stores/refactoredChecklistStore.svelte.js';
   import { getCategories } from '$lib/data/checklist-items.js';
   import type { JudgmentType } from '$lib/types/checklist.js';
-  import { t, i18nStore, initializeI18n, setLanguage } from '$lib/i18n/index.js';
+  import { t, i18nStore, initializeI18n } from '$lib/i18n/index.js';
   import type { PageData } from './$types';
 
   // Svelte5の新しいprops構文
@@ -51,8 +51,7 @@
       // i18nシステムの初期化
       await initializeI18n();
 
-      // デフォルト言語（日本語）を設定
-      await setLanguage('ja');
+      // デフォルト言語の設定を削除 - +layout.svelteで設定された言語を使用
 
       // i18nの初期化完了を監視
       let attempts = 0;

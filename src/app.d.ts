@@ -2,11 +2,14 @@
 // for information about these interfaces
 
 import '@sveltejs/kit';
+import type { LanguageCode } from '$lib/i18n/types';
 
 declare global {
 	namespace App {
 		// interface Error {}
-		// interface Locals {}
+		interface Locals {
+			language: LanguageCode;
+		}
 		// interface PageData {}
 		// interface PageState {}
 		// interface Platform {}

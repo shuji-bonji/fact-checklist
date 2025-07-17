@@ -1,12 +1,19 @@
 import type { LanguageCode } from '$lib/i18n/types';
+import { I18N_CONFIG } from '$lib/config/i18n.js';
 
 /**
  * Accept-Language ヘッダーから単一の言語を決定する
  * 重複メタタグを避けるため、必ず1つの言語のみを返す
+ * Issue #131: ブラウザ言語を優先する設定に対応
  */
 export function detectLanguage(acceptLanguage: string): LanguageCode {
+  // ブラウザ言語を優先しない場合は、デフォルト言語を返す
+  if (!I18N_CONFIG.PREFER_BROWSER_LANGUAGE) {
+    return I18N_CONFIG.DEFAULT_LANGUAGE;
+  }
+
   if (!acceptLanguage) {
-    return 'ja'; // デフォルト言語
+    return I18N_CONFIG.DEFAULT_LANGUAGE; // 設定ファイルから取得
   }
 
   // Accept-Language: ja,en;q=0.9,fr;q=0.8 を解析
@@ -21,9 +28,9 @@ export function detectLanguage(acceptLanguage: string): LanguageCode {
     })
     .sort((a, b) => b.quality - a.quality);
 
-  // 対応言語リスト
+  // 対応言語リスト（設定ファイルから動的取得）
   const supportedLanguages: LanguageCode[] = [
-    'ja',
+    I18N_CONFIG.DEFAULT_LANGUAGE,
     'en',
     'fr',
     'zh-TW',
@@ -52,7 +59,7 @@ export function detectLanguage(acceptLanguage: string): LanguageCode {
     }
   }
 
-  return 'ja'; // フォールバック
+  return I18N_CONFIG.DEFAULT_LANGUAGE; // 設定からフォールバック
 }
 
 /**
@@ -74,5 +81,5 @@ export function getLocaleString(language: LanguageCode): string {
     ko: 'ko_KR'
   };
 
-  return localeMap[language] ?? 'ja_JP';
+  return localeMap[language] ?? `${I18N_CONFIG.DEFAULT_LANGUAGE}_JP`;
 }
