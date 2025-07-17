@@ -16,6 +16,7 @@ import {
   type SortCriteria
 } from '../services/SearchService.js';
 import { i18nStore } from '../i18n/store.svelte.js';
+import { SessionStorageService } from '../services/SessionStorageService.js';
 
 /**
  * ストア操作結果
@@ -40,12 +41,14 @@ class RefactoredChecklistStore {
 
   // Services
   private storageService: StorageService;
+  private sessionStorageService: SessionStorageService;
 
   // Browser check
   private readonly isBrowser = typeof window !== 'undefined';
 
   constructor() {
     this.storageService = new StorageService();
+    this.sessionStorageService = SessionStorageService.getInstance();
 
     if (this.isBrowser) {
       this.initializeAsync();
@@ -160,7 +163,69 @@ class RefactoredChecklistStore {
   // === CHECKLIST OPERATIONS ===
 
   /**
-   * 新しいチェックリストを作成
+   * セッションからチェックリストを作成または復元
+   * @returns 一時的なセッションID（UUIDではない）
+   */
+  async createOrRestoreSession(): Promise<string> {
+    try {
+      this._isLoading = true;
+      this._error = null;
+
+      // SessionStorageから既存データを復元
+      const sessionData = this.sessionStorageService.loadSession();
+
+      if (sessionData) {
+        // セッションデータからチェックリストを復元
+        const score = ScoringService.calculateScore(sessionData.items);
+        const confidenceLevel = score.percentage;
+        const confidenceText = ScoringService.getConfidenceText(confidenceLevel);
+        const judgmentAdvice = ScoringService.getJudgmentAdvice(confidenceLevel);
+
+        const restoredChecklist: ChecklistResult = {
+          id: 'session-temp', // 一時的なID
+          title: sessionData.title,
+          description: sessionData.description,
+          notes: sessionData.notes,
+          items: sessionData.items,
+          judgment: sessionData.judgment,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          status: 'draft',
+          score,
+          confidenceLevel,
+          confidenceText,
+          judgmentAdvice
+        };
+
+        this._currentChecklist = restoredChecklist;
+        return 'session-temp';
+      } else {
+        // 新規セッションを作成（UUIDなし）
+        const newChecklist = ChecklistService.createChecklist({
+          autoGenerateTitle: false
+        });
+
+        // UUIDを一時的なIDに置き換え
+        newChecklist.id = 'session-temp';
+        this._currentChecklist = newChecklist;
+
+        // セッションに保存
+        this.sessionStorageService.saveSession(newChecklist);
+
+        return 'session-temp';
+      }
+    } catch (error) {
+      this._error = `Failed to create/restore session: ${error}`;
+      console.error('RefactoredChecklistStore:', this._error);
+      throw error;
+    } finally {
+      this._isLoading = false;
+    }
+  }
+
+  /**
+   * 新しいチェックリストを作成（レガシー）
+   * @deprecated Use createOrRestoreSession instead - このメソッドは不要なIndexedDBレコードを作成します
    * @param title タイトル
    * @param description 説明
    * @returns 作成されたチェックリストID
@@ -363,6 +428,27 @@ class RefactoredChecklistStore {
       this._isLoading = true;
       this._error = null;
 
+      // セッション一時IDの場合、正式なUUIDを生成
+      if (this._currentChecklist.id === 'session-temp') {
+        // 新しいUUIDを生成してチェックリストを作成
+        const newChecklist = ChecklistService.createChecklist({
+          title: this._currentChecklist.title,
+          description: this._currentChecklist.description,
+          autoGenerateTitle: false
+        });
+
+        // 既存のデータを新しいチェックリストにコピー
+        newChecklist.items = this._currentChecklist.items;
+        newChecklist.notes = this._currentChecklist.notes;
+        newChecklist.judgment = this._currentChecklist.judgment;
+        newChecklist.score = this._currentChecklist.score;
+        newChecklist.confidenceLevel = this._currentChecklist.confidenceLevel;
+        newChecklist.confidenceText = this._currentChecklist.confidenceText;
+        newChecklist.judgmentAdvice = this._currentChecklist.judgmentAdvice;
+
+        this._currentChecklist = newChecklist;
+      }
+
       // サービス層で完了処理
       const completedChecklist = ChecklistService.completeChecklist(this._currentChecklist);
       this._currentChecklist = completedChecklist;
@@ -383,7 +469,7 @@ class RefactoredChecklistStore {
         this._history = this._history.slice(0, 5);
       }
 
-      // 保存処理を並行実行
+      // 保存処理を並行実行（IndexedDBに保存）
       const [checklistResult, historyResult] = await Promise.all([
         this.storageService.saveChecklist(completedChecklist),
         this.storageService.saveHistory(this._history)
@@ -392,6 +478,9 @@ class RefactoredChecklistStore {
       if (!checklistResult.success || !historyResult.success) {
         throw new Error('Failed to save completed checklist or history');
       }
+
+      // 完了後、sessionStorageをクリア
+      this.sessionStorageService.clearSession();
 
       // console.log('RefactoredChecklistStore: Checklist completed successfully');
       return true;
@@ -567,9 +656,16 @@ class RefactoredChecklistStore {
     if (!this._currentChecklist) return;
 
     try {
-      const result = await this.storageService.saveChecklist(this._currentChecklist);
-      if (!result.success) {
-        console.warn('RefactoredChecklistStore: Failed to save checklist:', result.error);
+      // セッションまたはIndexedDBに保存
+      if (this._currentChecklist.id === 'session-temp') {
+        // セッションストレージに保存
+        this.sessionStorageService.saveSession(this._currentChecklist);
+      } else {
+        // IndexedDBに保存
+        const result = await this.storageService.saveChecklist(this._currentChecklist);
+        if (!result.success) {
+          console.warn('RefactoredChecklistStore: Failed to save checklist:', result.error);
+        }
       }
     } catch (error) {
       console.warn('RefactoredChecklistStore: Save error:', error);
@@ -644,3 +740,14 @@ class RefactoredChecklistStore {
 
 // シングルトンインスタンス
 export const refactoredChecklistStore = new RefactoredChecklistStore();
+
+// Session storage helpers
+export const saveToSessionStorage = (checklist: ChecklistResult) => {
+  const sessionService = SessionStorageService.getInstance();
+  return sessionService.saveSession(checklist);
+};
+
+export const clearSessionStorage = () => {
+  const sessionService = SessionStorageService.getInstance();
+  sessionService.clearSession();
+};
