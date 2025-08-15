@@ -185,10 +185,14 @@ src/lib/components/
 
 - `/src/routes/+page.svelte` - Main application interface with i18n
 - `/src/routes/+layout.svelte` - Common page layout with language switcher
+- `/src/routes/+layout.server.ts` - Server-side SEO metadata generation
 - `/src/routes/checklist/[id]/` - Dynamic result pages with multilingual support
 - `/src/routes/about/` - About page (internationalized)
 - `/src/routes/help/` - Help page (internationalized)
 - `/src/routes/privacy/` - Privacy policy (internationalized)
+- `/src/routes/sitemap.xml/` - Dynamic sitemap generation with hreflang
+- `/src/routes/robots.txt/` - Dynamic robots.txt generation
+- `/src/hooks.server.ts` - Server hooks for language detection
 
 ## Privacy & Security Notes
 
@@ -327,6 +331,8 @@ runes:
 - **Browser Detection**: Automatically detects and uses browser language on
   first visit
 - **RTL Support**: Full support for right-to-left languages (Arabic)
+- **Language Persistence**: Synchronized storage using localStorage and cookies
+- **SSR Support**: Server-side language detection via Accept-Language headers
 
 ### Translation Key Structure
 
@@ -433,6 +439,57 @@ To add a new language:
 - Safari 14+
 - Edge 90+
 - Must gracefully degrade for older browsers
+
+## 🚀 SEO & Server-Side Rendering Implementation
+
+### Recent SEO Improvements (2025年1月)
+
+The application now includes comprehensive SEO optimization with server-side
+rendering:
+
+#### Server-Side Language Detection Hierarchy
+
+```typescript
+// src/routes/+layout.server.ts
+// Detection priority:
+1. URL path segment (e.g., /en/, /ja/)
+2. Cookie value (language cookie)
+3. Accept-Language header
+4. Default language (ja)
+```
+
+#### Dynamic Meta Tag Generation
+
+- 12 language-specific meta tags for all pages
+- OGP (Open Graph Protocol) tags for social sharing
+- Twitter Card meta tags
+- JSON-LD structured data for search engines
+- hreflang tags for international SEO
+
+#### Language Persistence Strategy
+
+```typescript
+// Synchronized storage approach:
+localStorage.setItem('fact-checklist-language', language);
+document.cookie = `language=${language}; max-age=31536000; path=/; SameSite=Lax`;
+```
+
+#### Dynamic Routes
+
+- `/sitemap.xml` - Auto-generated with all language URLs
+- `/robots.txt` - Dynamic generation with sitemap reference
+- `/api/debug-meta` - Debug endpoint for meta tag testing
+
+#### Shared Type Definitions
+
+```typescript
+// src/lib/types/layout.ts
+export interface LayoutServerData {
+  currentLang: Language;
+  metaData: MetaData;
+  availableLanguages: Language[];
+}
+```
 
 ## 📚 Common Development Patterns & Knowledge
 
@@ -748,9 +805,11 @@ When working with tests in this project:
 
 - ✅ i18n問題修正完了
 - ✅ Svelte5移行部分完了
+- ✅ SEO対策実装完了（メタタグ、sitemap、robots.txt）
+- ✅ 言語永続化とlocalStorage/Cookie同期実装
+- ✅ TypeScript型定義の共有化実装
 - 🚧 TypeScript警告修正中
-- ❌ SEO対策未実装
-- 総合進捗率: 約35%
+- 総合進捗率: 約50%
 
 ### Claude Codeへの指示方法
 
@@ -782,9 +841,31 @@ When working with tests in this project:
 ### 優先実行項目（2025年1月時点）
 
 1. **Phase 0の完了**（TypeScript警告の解消）
-2. **Phase 1の開始**（SEO基盤構築）
-   - メタタグの動的生成
-   - サイトマップの改善
-   - Google Search Console対応
+2. ~~**Phase 1の開始**（SEO基盤構築）~~ ✅ 完了
+   - ✅ メタタグの動的生成（12言語対応）
+   - ✅ サイトマップの改善（hreflang対応）
+   - ✅ robots.txt動的生成
+   - ✅ 言語永続化とSSR/CSR同期
+3. **Phase 2の開始**（ユーザー体験向上）
+
+## 📝 注意事項
+
+### Svelte5対応
+
+- 必ずruntime runesを使用（`$state()`, `$derived()`, `$effect()`）
+- `$props()`と`$bindable()`でコンポーネントプロパティを定義
+- レガシーな`export let`は使用しない
+
+### TypeScript厳格モード
+
+- `strict: true`を維持
+- 型安全性を確保
+- `any`型の使用を避ける
+
+### 国際化対応
+
+- 12言語すべてでSEO最適化
+- hreflangタグの正確な設定
+- RTL言語（アラビア語）の適切な処理
 
 詳細なタスクリストと実装方法は `improvement-plan.md` を参照してください。

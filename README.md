@@ -21,8 +21,7 @@ across **12 languages** with full internationalization support.
 
 実用的事実確認チェックシートは、インターネット上の情報の信頼性を科学的・体系的に評価するための**企業レベル高度PWA**です。偽情報やミスリーディングな情報が氾濫する現代において、**12言語完全対応**の国際化機能で情報リテラシーの向上を支援します。
 
-> [!IMPORTANT]
-> This "Practical Fact-Check Checklist" project is created through
+> [!IMPORTANT] This "Practical Fact-Check Checklist" project is created through
 > collaboration between a human engineer (@shuji-bonji) and AI
 > (Claude). この「実用的事実確認チェックシート」プロジェクト(Github)は、人間のエンジニア（@shuji-bonji）と生成AI（Claude）との協働によって作成されています。
 
@@ -62,6 +61,17 @@ across **12 languages** with full internationalization support.
 | العربية (Arabic)               | ar    | Arabic     | ✅ Complete (RTL) |
 | Bahasa Indonesia               | id    | Latin      | ✅ Complete       |
 | 한국어 (Korean)                | ko    | CJK        | ✅ Complete       |
+
+## 🆕 Recent Updates (2025年1月)
+
+### SEO & Internationalization Improvements
+
+- ✅ **Complete SEO Implementation**: Dynamic meta tags for 12 languages
+- ✅ **Server-Side Rendering**: Full SSR support with language detection
+- ✅ **Language Persistence**: Synchronized localStorage and cookie storage
+- ✅ **International Sitemap**: Auto-generated with hreflang tags
+- ✅ **Type Safety**: Shared TypeScript definitions for SSR/CSR
+- ✅ **Accept-Language Support**: Automatic language detection from browser
 
 ## 🚀 クイックスタート
 
@@ -151,6 +161,10 @@ npm run dev
 - **SSR Meta Tag Generation** - Dynamic meta tags based on Accept-Language
   headers
 - **SEO Optimization** - Language-specific meta tags for all 12 languages
+- **Language Persistence** - Synchronized localStorage and cookie storage for
+  consistent language preferences across SSR/CSR
+- **hreflang Support** - Complete international SEO with alternate language
+  links
 
 ### Server-Side Rendering / サーバーサイドレンダリング
 
@@ -161,6 +175,10 @@ npm run dev
   updates
 - **Meta Tag Generation** - Language-specific SEO meta tags for all pages
 - **Twitter Card & OGP** - Complete social media sharing support
+- **Dynamic Sitemap** - Auto-generated sitemap.xml with all language URLs and
+  hreflang tags
+- **Robots.txt** - Dynamic generation with proper sitemap references
+- **Language Persistence** - Cookie-based language storage for SSR consistency
 
 ### PWA & Infrastructure / PWA・インフラ
 
@@ -237,7 +255,7 @@ fact-checklist/
 │   │       └── checklist-items.ts
 │   ├── routes/                 # SvelteKit routing / SvelteKitルーティング
 │   │   ├── +layout.svelte      # Common layout / 共通レイアウト
-│   │   ├── +layout.server.ts   # SSR layout logic / SSRレイアウトロジック
+│   │   ├── +layout.server.ts   # SSR layout logic with SEO / SEO対応SSRロジック
 │   │   ├── +layout.ts          # Layout configuration / レイアウト設定
 │   │   ├── +page.svelte        # Main page / メインページ
 │   │   ├── intro/              # Introduction page / 紹介ページ
@@ -248,7 +266,9 @@ fact-checklist/
 │   │   ├── privacy/            # Privacy policy / プライバシーポリシー
 │   │   ├── api/                # API endpoints / APIエンドポイント
 │   │   │   └── debug-meta/     # Meta tag debugging / メタタグデバッグ
-│   │   └── checklist/[id]/     # Results page / 結果表示ページ
+│   │   ├── checklist/[id]/     # Results page / 結果表示ページ
+│   │   ├── sitemap.xml/        # Dynamic sitemap generation / 動的サイトマップ
+│   │   └── robots.txt/         # Dynamic robots.txt / 動的robots.txt
 │   ├── app.html                # HTML template / HTMLテンプレート
 │   └── service-worker.js       # Service worker / サービスワーカー
 ├── static/                     # Static files / 静的ファイル

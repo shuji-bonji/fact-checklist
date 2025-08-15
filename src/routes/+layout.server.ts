@@ -1,374 +1,447 @@
 import type { LayoutServerLoad } from './$types';
-import type { LanguageCode } from '$lib/i18n/types';
-import { detectLanguage, getLocaleString } from '$lib/utils/language-detection';
+import { availableLanguages } from '$lib/i18n';
+import type { LanguageCode as Language } from '$lib/i18n';
+import type { MetaData, LayoutServerData } from '$lib/types/layout';
 
-interface MetaData {
-  title: string;
-  description: string;
-  keywords: string;
-  ogTitle: string;
-  ogDescription: string;
-  ogImage: string;
-  ogUrl: string;
-  url: string;
-  image: string;
-  type: string;
-  siteName: string;
-  locale: string;
-  language: string;
-  structuredData: string;
-}
-
-/**
- * 単一言語のメタデータを生成（重複回避）
- *
- * Note: introページなど、ページ専用のserver.tsがある場合は
- * layout.server.tsでのメタタグ生成をスキップして重複を防ぐ
- */
-async function generateSingleLanguageMeta(language: LanguageCode, _url: URL): Promise<MetaData> {
-  try {
-    // 静的インポートマップを使用（SSR対応）
-    const translationModules = {
-      ja: () => import('$lib/i18n/translations/ja'),
-      en: () => import('$lib/i18n/translations/en'),
-      fr: () => import('$lib/i18n/translations/fr'),
-      'zh-TW': () => import('$lib/i18n/translations/zh-TW'),
-      es: () => import('$lib/i18n/translations/es'),
-      pt: () => import('$lib/i18n/translations/pt'),
-      hi: () => import('$lib/i18n/translations/hi'),
-      de: () => import('$lib/i18n/translations/de'),
-      it: () => import('$lib/i18n/translations/it'),
-      ar: () => import('$lib/i18n/translations/ar'),
-      id: () => import('$lib/i18n/translations/id'),
-      ko: () => import('$lib/i18n/translations/ko')
-    };
-
-    const translationModule = await translationModules[language]();
-    const translations = translationModule.translations;
-
-    const baseUrl = 'https://fact-checklist.vercel.app';
-    const ogImageUrl = `${baseUrl}/og-image.png`;
-
-    const structuredData = `<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "${translations.pages.home.title}",
-  "description": "${translations.pages.home.description}",
-  "url": "${baseUrl}",
-  "applicationCategory": "UtilityApplication",
-  "operatingSystem": "All",
-  "browserRequirements": "Modern browser with JavaScript enabled",
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "JPY"
+// SEO最適化されたメタデータ（12言語対応）
+const metaDataByLanguage: Record<Language, MetaData> = {
+  ja: {
+    title: 'Fact Checklist - 実用的事実確認チェックシート | 信頼性評価ツール',
+    description:
+      '20項目の科学的チェックリストで情報の信頼性を体系的に評価。AIや政府に頼らず、自分の目と頭で情報を見極める無料PWAアプリ。偽情報対策・情報リテラシー向上に。',
+    keywords:
+      '事実確認,ファクトチェック,情報検証,信頼性評価,PWA,情報リテラシー,偽情報対策,フェイクニュース対策,メディアリテラシー,批判的思考',
+    ogTitle: 'Fact Checklist - 実用的事実確認チェックシート',
+    ogDescription:
+      '20項目のチェックリストで情報の信頼性を科学的に評価。偽情報から身を守るための無料ツール。',
+    ogImage: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
+    ogUrl: 'https://shuji-bonji.github.io/fact-checklist/',
+    twitterCard: 'summary_large_image',
+    twitterTitle: 'Fact Checklist - 事実確認チェックシート',
+    twitterDescription: '偽情報から身を守る！20項目の科学的チェックリストで情報の信頼性を評価',
+    twitterImage: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
+    canonicalUrl: 'https://shuji-bonji.github.io/fact-checklist/',
+    alternateLinks: [],
+    structuredData: JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: 'Fact Checklist',
+      description: '情報の信頼性を評価する実用的チェックリストツール',
+      url: 'https://shuji-bonji.github.io/fact-checklist',
+      applicationCategory: 'UtilityApplication',
+      operatingSystem: 'All',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'JPY'
+      },
+      author: {
+        '@type': 'Person',
+        name: 'shuji-bonji'
+      },
+      datePublished: '2024-01-01',
+      dateModified: new Date().toISOString().split('T')[0]
+    })
   },
-  "author": {
-    "@type": "Organization",
-    "name": "Fact Checklist",
-    "url": "${baseUrl}"
-  },
-  "inLanguage": "${language}",
-  "potentialAction": {
-    "@type": "UseAction",
-    "target": "${baseUrl}",
-    "object": {
-      "@type": "WebApplication",
-      "name": "${translations.pages.home.title}"
-    }
-  }
-}
-</script>`;
-
-    return {
-      title: translations.pages.home.title,
-      description: translations.pages.home.description,
-      keywords: translations.pages.home.keywords,
-      ogTitle: translations.pages.home.title,
-      ogDescription: translations.pages.home.description,
-      ogImage: ogImageUrl,
-      ogUrl: baseUrl,
-      url: baseUrl,
-      image: ogImageUrl,
-      type: 'website',
-      siteName: translations.app.title,
-      locale: getLocaleString(language),
-      language,
-      structuredData
-    };
-  } catch (error) {
-    console.error(`Failed to load translations for ${language}:`, error);
-
-    // エラー時のフォールバック（全12言語対応）
-    const fallbackMeta: Record<string, MetaData> = {
-      ja: {
-        title: 'Fact Checklist - 実用的事実確認チェックシート',
-        description:
-          '20項目のチェックリストで情報の信頼性を体系的に評価。AIや政府に頼らず、自分の目と頭で情報を見極めるPWAアプリ。',
-        keywords: '事実確認,ファクトチェック,情報検証,信頼性評価,PWA,情報リテラシー,偽情報対策',
-        siteName: '実用的事実確認チェックシート',
-        ogTitle: 'Fact Checklist - 実用的事実確認チェックシート',
-        ogDescription:
-          '20項目のチェックリストで情報の信頼性を体系的に評価。AIや政府に頼らず、自分の目と頭で情報を見極めるPWAアプリ。',
-        ogImage: 'https://fact-checklist.vercel.app/og-image.png',
-        ogUrl: 'https://fact-checklist.vercel.app',
-        url: 'https://fact-checklist.vercel.app',
-        image: 'https://fact-checklist.vercel.app/og-image.png',
-        type: 'website',
-        locale: 'ja_JP',
-        language: 'ja',
-        structuredData: ''
-      },
-      en: {
-        title: 'Fact Checklist - Practical Fact-Check Tool',
-        description:
-          'Systematically evaluate information reliability with a 20-item checklist. A PWA app to assess information with your own eyes and mind, without relying on AI or government.',
-        keywords:
-          'fact-check,verification,information,reliability,PWA,media literacy,misinformation',
-        siteName: 'Practical Fact-Check Checklist',
-        ogTitle: 'Fact Checklist - Practical Fact-Check Tool',
-        ogDescription:
-          'Systematically evaluate information reliability with a 20-item checklist. A PWA app to assess information with your own eyes and mind, without relying on AI or government.',
-        ogImage: 'https://fact-checklist.vercel.app/og-image.png',
-        ogUrl: 'https://fact-checklist.vercel.app',
-        url: 'https://fact-checklist.vercel.app',
-        image: 'https://fact-checklist.vercel.app/og-image.png',
-        type: 'website',
-        locale: 'en_US',
-        language: 'en',
-        structuredData: ''
-      },
-      fr: {
-        title: 'Fact Checklist - Outil de Vérification des Faits',
-        description:
-          'Évaluez systématiquement la fiabilité des informations avec une liste de contrôle de 20 éléments. Une application PWA pour évaluer les informations avec vos propres yeux et votre esprit.',
-        keywords:
-          'vérification-faits,vérification,information,fiabilité,PWA,littératie-médiatique,désinformation',
-        siteName: 'Liste de Contrôle de Vérification des Faits',
-        ogTitle: 'Fact Checklist - Outil de Vérification des Faits',
-        ogDescription:
-          'Évaluez systématiquement la fiabilité des informations avec une liste de contrôle de 20 éléments. Une application PWA pour évaluer les informations avec vos propres yeux et votre esprit.',
-        ogImage: 'https://fact-checklist.vercel.app/og-image.png',
-        ogUrl: 'https://fact-checklist.vercel.app',
-        url: 'https://fact-checklist.vercel.app',
-        image: 'https://fact-checklist.vercel.app/og-image.png',
-        type: 'website',
-        locale: 'fr_FR',
-        language: 'fr',
-        structuredData: ''
-      },
-      'zh-TW': {
-        title: 'Fact Checklist - 實用事實查核工具',
-        description:
-          '使用20項檢查清單系統性地評估資訊可靠性。一個PWA應用程式，用自己的眼睛和頭腦來評估資訊，不依賴AI或政府。',
-        keywords: '事實查核,驗證,資訊,可靠性,PWA,媒體素養,錯誤資訊',
-        siteName: '實用事實查核清單',
-        ogTitle: 'Fact Checklist - 實用事實查核工具',
-        ogDescription:
-          '使用20項檢查清單系統性地評估資訊可靠性。一個PWA應用程式，用自己的眼睛和頭腦來評估資訊，不依賴AI或政府。',
-        ogImage: 'https://fact-checklist.vercel.app/og-image.png',
-        ogUrl: 'https://fact-checklist.vercel.app',
-        url: 'https://fact-checklist.vercel.app',
-        image: 'https://fact-checklist.vercel.app/og-image.png',
-        type: 'website',
-        locale: 'zh_TW',
-        language: 'zh-TW',
-        structuredData: ''
-      },
-      es: {
-        title: 'Fact Checklist - Herramienta de Verificación de Hechos',
-        description:
-          'Evalúa sistemáticamente la fiabilidad de la información con una lista de verificación de 20 elementos. Una aplicación PWA para evaluar información con tus propios ojos y mente.',
-        keywords:
-          'verificación-hechos,verificación,información,fiabilidad,PWA,alfabetización-mediática,desinformación',
-        siteName: 'Lista de Verificación de Hechos Práctica',
-        ogTitle: 'Fact Checklist - Herramienta de Verificación de Hechos',
-        ogDescription:
-          'Evalúa sistemáticamente la fiabilidad de la información con una lista de verificación de 20 elementos. Una aplicación PWA para evaluar información con tus propios ojos y mente.',
-        ogImage: 'https://fact-checklist.vercel.app/og-image.png',
-        ogUrl: 'https://fact-checklist.vercel.app',
-        url: 'https://fact-checklist.vercel.app',
-        image: 'https://fact-checklist.vercel.app/og-image.png',
-        type: 'website',
-        locale: 'es_ES',
-        language: 'es',
-        structuredData: ''
-      },
-      pt: {
-        title: 'Fact Checklist - Ferramenta de Verificação de Fatos',
-        description:
-          'Avalie sistematicamente a confiabilidade das informações com uma lista de verificação de 20 itens. Um aplicativo PWA para avaliar informações com seus próprios olhos e mente.',
-        keywords:
-          'verificação-fatos,verificação,informação,confiabilidade,PWA,alfabetização-midiática,desinformação',
-        siteName: 'Lista de Verificação de Fatos Prática',
-        ogTitle: 'Fact Checklist - Ferramenta de Verificação de Fatos',
-        ogDescription:
-          'Avalie sistematicamente a confiabilidade das informações com uma lista de verificação de 20 itens. Um aplicativo PWA para avaliar informações com seus próprios olhos e mente.',
-        ogImage: 'https://fact-checklist.vercel.app/og-image.png',
-        ogUrl: 'https://fact-checklist.vercel.app',
-        url: 'https://fact-checklist.vercel.app',
-        image: 'https://fact-checklist.vercel.app/og-image.png',
-        type: 'website',
-        locale: 'pt_PT',
-        language: 'pt',
-        structuredData: ''
-      },
-      hi: {
-        title: 'Fact Checklist - तथ्य जांच उपकरण',
-        description:
-          '20-आइटम चेकलिस्ट के साथ जानकारी की विश्वसनीयता का व्यवस्थित मूल्यांकन करें। अपनी आंखों और दिमाग से जानकारी का आकलन करने के लिए एक PWA ऐप।',
-        keywords: 'तथ्य-जांच,सत्यापन,जानकारी,विश्वसनीयता,PWA,मीडिया-साक्षरता,गलत-जानकारी',
-        siteName: 'व्यावहारिक तथ्य जांच चेकलिस्ट',
-        ogTitle: 'Fact Checklist - तथ्य जांच उपकरण',
-        ogDescription:
-          '20-आइटम चेकलिस्ट के साथ जानकारी की विश्वसनीयता का व्यवस्थित मूल्यांकन करें। अपनी आंखों और दिमाग से जानकारी का आकलन करने के लिए एक PWA ऐप।',
-        ogImage: 'https://fact-checklist.vercel.app/og-image.png',
-        ogUrl: 'https://fact-checklist.vercel.app',
-        url: 'https://fact-checklist.vercel.app',
-        image: 'https://fact-checklist.vercel.app/og-image.png',
-        type: 'website',
-        locale: 'hi_IN',
-        language: 'hi',
-        structuredData: ''
-      },
-      de: {
-        title: 'Fact Checklist - Praktisches Faktencheck-Tool',
-        description:
-          'Bewerten Sie systematisch die Zuverlässigkeit von Informationen mit einer 20-Punkte-Checkliste. Eine PWA-App zur Bewertung von Informationen mit den eigenen Augen und dem eigenen Verstand.',
-        keywords:
-          'faktencheck,überprüfung,information,zuverlässigkeit,PWA,medienkompetenz,desinformation',
-        siteName: 'Praktische Faktencheck-Checkliste',
-        ogTitle: 'Fact Checklist - Praktisches Faktencheck-Tool',
-        ogDescription:
-          'Bewerten Sie systematisch die Zuverlässigkeit von Informationen mit einer 20-Punkte-Checkliste. Eine PWA-App zur Bewertung von Informationen mit den eigenen Augen und dem eigenen Verstand.',
-        ogImage: 'https://fact-checklist.vercel.app/og-image.png',
-        ogUrl: 'https://fact-checklist.vercel.app',
-        url: 'https://fact-checklist.vercel.app',
-        image: 'https://fact-checklist.vercel.app/og-image.png',
-        type: 'website',
-        locale: 'de_DE',
-        language: 'de',
-        structuredData: ''
-      },
-      it: {
-        title: 'Fact Checklist - Strumento di Verifica dei Fatti',
-        description:
-          "Valuta sistematicamente l'affidabilità delle informazioni con una checklist di 20 elementi. Un'app PWA per valutare le informazioni con i propri occhi e la propria mente.",
-        keywords:
-          'verifica-fatti,verifica,informazione,affidabilità,PWA,alfabetizzazione-mediatica,disinformazione',
-        siteName: 'Checklist di Verifica dei Fatti Pratica',
-        ogTitle: 'Fact Checklist - Strumento di Verifica dei Fatti',
-        ogDescription:
-          "Valuta sistematicamente l'affidabilità delle informazioni con una checklist di 20 elementi. Un'app PWA per valutare le informazioni con i propri occhi e la propria mente.",
-        ogImage: 'https://fact-checklist.vercel.app/og-image.png',
-        ogUrl: 'https://fact-checklist.vercel.app',
-        url: 'https://fact-checklist.vercel.app',
-        image: 'https://fact-checklist.vercel.app/og-image.png',
-        type: 'website',
-        locale: 'it_IT',
-        language: 'it',
-        structuredData: ''
-      },
-      ar: {
-        title: 'Fact Checklist - أداة التحقق من الحقائق',
-        description:
-          'قم بتقييم موثوقية المعلومات بشكل منهجي باستخدام قائمة تحقق من 20 عنصرًا. تطبيق PWA لتقييم المعلومات بعينيك وعقلك.',
-        keywords: 'تحقق-الحقائق,تحقق,معلومات,موثوقية,PWA,محو-أمية-إعلامية,معلومات-مضللة',
-        siteName: 'قائمة التحقق من الحقائق العملية',
-        ogTitle: 'Fact Checklist - أداة التحقق من الحقائق',
-        ogDescription:
-          'قم بتقييم موثوقية المعلومات بشكل منهجي باستخدام قائمة تحقق من 20 عنصرًا. تطبيق PWA لتقييم المعلومات بعينيك وعقلك.',
-        ogImage: 'https://fact-checklist.vercel.app/og-image.png',
-        ogUrl: 'https://fact-checklist.vercel.app',
-        url: 'https://fact-checklist.vercel.app',
-        image: 'https://fact-checklist.vercel.app/og-image.png',
-        type: 'website',
-        locale: 'ar_SA',
-        language: 'ar',
-        structuredData: ''
-      },
-      id: {
-        title: 'Fact Checklist - Alat Pemeriksaan Fakta',
-        description:
-          'Evaluasi keandalan informasi secara sistematis dengan daftar periksa 20 item. Aplikasi PWA untuk menilai informasi dengan mata dan pikiran Anda sendiri.',
-        keywords:
-          'pemeriksaan-fakta,verifikasi,informasi,keandalan,PWA,literasi-media,disinformasi',
-        siteName: 'Daftar Periksa Fakta Praktis',
-        ogTitle: 'Fact Checklist - Alat Pemeriksaan Fakta',
-        ogDescription:
-          'Evaluasi keandalan informasi secara sistematis dengan daftar periksa 20 item. Aplikasi PWA untuk menilai informasi dengan mata dan pikiran Anda sendiri.',
-        ogImage: 'https://fact-checklist.vercel.app/og-image.png',
-        ogUrl: 'https://fact-checklist.vercel.app',
-        url: 'https://fact-checklist.vercel.app',
-        image: 'https://fact-checklist.vercel.app/og-image.png',
-        type: 'website',
-        locale: 'id_ID',
-        language: 'id',
-        structuredData: ''
-      },
-      ko: {
-        title: 'Fact Checklist - 팩트체크 도구',
-        description:
-          '20개 항목의 체크리스트로 정보의 신뢰성을 체계적으로 평가하세요. 자신의 눈과 두뇌로 정보를 평가하는 PWA 앱입니다.',
-        keywords: '팩트체크,검증,정보,신뢰성,PWA,미디어리터러시,잘못된정보',
-        siteName: '실용적 팩트체크 체크리스트',
-        ogTitle: 'Fact Checklist - 팩트체크 도구',
-        ogDescription:
-          '20개 항목의 체크리스트로 정보의 신뢰성을 체계적으로 평가하세요. 자신의 눈과 두뇌로 정보를 평가하는 PWA 앱입니다.',
-        ogImage: 'https://fact-checklist.vercel.app/og-image.png',
-        ogUrl: 'https://fact-checklist.vercel.app',
-        url: 'https://fact-checklist.vercel.app',
-        image: 'https://fact-checklist.vercel.app/og-image.png',
-        type: 'website',
-        locale: 'ko_KR',
-        language: 'ko',
-        structuredData: ''
+  en: {
+    title: 'Fact Checklist - Practical Fact-Checking Tool | Information Reliability Assessment',
+    description:
+      'Systematically evaluate information reliability with a 20-item scientific checklist. Free PWA app to identify misinformation without relying on AI or government fact-checkers.',
+    keywords:
+      'fact checking,information verification,reliability assessment,PWA,information literacy,misinformation prevention,fake news detection,media literacy,critical thinking,fact verification',
+    ogTitle: 'Fact Checklist - Practical Fact-Checking Tool',
+    ogDescription:
+      'Evaluate information reliability with a 20-item scientific checklist. Free tool to protect yourself from misinformation.',
+    ogImage: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
+    ogUrl: 'https://shuji-bonji.github.io/fact-checklist/en',
+    twitterCard: 'summary_large_image',
+    twitterTitle: 'Fact Checklist - Information Verification Tool',
+    twitterDescription:
+      'Protect yourself from misinformation! Evaluate information reliability with a 20-item scientific checklist',
+    twitterImage: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
+    canonicalUrl: 'https://shuji-bonji.github.io/fact-checklist/en',
+    alternateLinks: [],
+    structuredData: JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: 'Fact Checklist',
+      description: 'Practical tool for evaluating information reliability',
+      url: 'https://shuji-bonji.github.io/fact-checklist',
+      applicationCategory: 'UtilityApplication',
+      operatingSystem: 'All',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'USD'
       }
-    };
-
-    const fallback = fallbackMeta[language] ?? fallbackMeta.ja;
-
-    // fallbackMeta.ja は常に存在するため、fallback は never undefined
-    if (!fallback) {
-      throw new Error('Fallback metadata is missing');
-    }
-
-    return fallback;
+    })
+  },
+  fr: {
+    title: 'Fact Checklist - Outil de Vérification des Faits | Évaluation de la Fiabilité',
+    description:
+      'Évaluez systématiquement la fiabilité des informations avec une liste de 20 critères scientifiques. Application PWA gratuite pour identifier la désinformation.',
+    keywords:
+      'vérification des faits,vérification information,évaluation fiabilité,PWA,littératie informationnelle,prévention désinformation,détection fake news,éducation aux médias,pensée critique',
+    ogTitle: 'Fact Checklist - Outil de Vérification des Faits',
+    ogDescription:
+      'Évaluez la fiabilité des informations avec 20 critères scientifiques. Outil gratuit contre la désinformation.',
+    ogImage: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
+    ogUrl: 'https://shuji-bonji.github.io/fact-checklist/fr',
+    twitterCard: 'summary_large_image',
+    twitterTitle: 'Fact Checklist - Vérification des Faits',
+    twitterDescription:
+      'Protégez-vous de la désinformation! Évaluez la fiabilité avec 20 critères scientifiques',
+    twitterImage: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
+    canonicalUrl: 'https://shuji-bonji.github.io/fact-checklist/fr',
+    alternateLinks: [],
+    structuredData: JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: 'Fact Checklist',
+      description: 'Outil pratique pour évaluer la fiabilité des informations',
+      url: 'https://shuji-bonji.github.io/fact-checklist',
+      applicationCategory: 'UtilityApplication',
+      operatingSystem: 'All',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'EUR'
+      }
+    })
+  },
+  'zh-TW': {
+    title: 'Fact Checklist - 實用事實查核工具 | 資訊可靠性評估',
+    description:
+      '使用20項科學檢查清單系統性評估資訊可靠性。免費PWA應用程式，無需依賴AI或政府查核，協助識別錯誤資訊。',
+    keywords:
+      '事實查核,資訊驗證,可靠性評估,PWA,資訊素養,防止錯誤資訊,假新聞偵測,媒體素養,批判性思考,事實驗證',
+    ogTitle: 'Fact Checklist - 實用事實查核工具',
+    ogDescription: '使用20項科學檢查清單評估資訊可靠性。免費工具保護您免受錯誤資訊影響。',
+    ogImage: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
+    ogUrl: 'https://shuji-bonji.github.io/fact-checklist/zh-TW',
+    twitterCard: 'summary_large_image',
+    twitterTitle: 'Fact Checklist - 事實查核工具',
+    twitterDescription: '保護自己免受錯誤資訊！使用20項科學檢查清單評估資訊可靠性',
+    twitterImage: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
+    canonicalUrl: 'https://shuji-bonji.github.io/fact-checklist/zh-TW',
+    alternateLinks: [],
+    structuredData: JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: 'Fact Checklist',
+      description: '評估資訊可靠性的實用工具',
+      url: 'https://shuji-bonji.github.io/fact-checklist',
+      applicationCategory: 'UtilityApplication',
+      operatingSystem: 'All',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'TWD'
+      }
+    })
+  },
+  es: {
+    title: 'Fact Checklist - Herramienta de Verificación de Hechos | Evaluación de Fiabilidad',
+    description:
+      'Evalúa sistemáticamente la fiabilidad de la información con una lista de 20 criterios científicos. App PWA gratuita para identificar desinformación.',
+    keywords:
+      'verificación de hechos,verificación información,evaluación fiabilidad,PWA,alfabetización informacional,prevención desinformación,detección noticias falsas,alfabetización mediática,pensamiento crítico',
+    ogTitle: 'Fact Checklist - Herramienta de Verificación de Hechos',
+    ogDescription:
+      'Evalúa la fiabilidad de la información con 20 criterios científicos. Herramienta gratuita contra la desinformación.',
+    ogImage: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
+    ogUrl: 'https://shuji-bonji.github.io/fact-checklist/es',
+    twitterCard: 'summary_large_image',
+    twitterTitle: 'Fact Checklist - Verificación de Hechos',
+    twitterDescription:
+      '¡Protégete de la desinformación! Evalúa la fiabilidad con 20 criterios científicos',
+    twitterImage: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
+    canonicalUrl: 'https://shuji-bonji.github.io/fact-checklist/es',
+    alternateLinks: [],
+    structuredData: JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: 'Fact Checklist',
+      description: 'Herramienta práctica para evaluar la fiabilidad de la información',
+      url: 'https://shuji-bonji.github.io/fact-checklist',
+      applicationCategory: 'UtilityApplication',
+      operatingSystem: 'All',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'EUR'
+      }
+    })
+  },
+  pt: {
+    title: 'Fact Checklist - Ferramenta de Verificação de Fatos | Avaliação de Confiabilidade',
+    description:
+      'Avalie sistematicamente a confiabilidade das informações com uma lista de 20 critérios científicos. App PWA gratuito para identificar desinformação.',
+    keywords:
+      'verificação de fatos,verificação informação,avaliação confiabilidade,PWA,literacia informacional,prevenção desinformação,detecção notícias falsas,literacia mediática,pensamento crítico',
+    ogTitle: 'Fact Checklist - Ferramenta de Verificação de Fatos',
+    ogDescription:
+      'Avalie a confiabilidade das informações com 20 critérios científicos. Ferramenta gratuita contra desinformação.',
+    ogImage: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
+    ogUrl: 'https://shuji-bonji.github.io/fact-checklist/pt',
+    twitterCard: 'summary_large_image',
+    twitterTitle: 'Fact Checklist - Verificação de Fatos',
+    twitterDescription:
+      'Proteja-se da desinformação! Avalie a confiabilidade com 20 critérios científicos',
+    twitterImage: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
+    canonicalUrl: 'https://shuji-bonji.github.io/fact-checklist/pt',
+    alternateLinks: [],
+    structuredData: JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: 'Fact Checklist',
+      description: 'Ferramenta prática para avaliar a confiabilidade das informações',
+      url: 'https://shuji-bonji.github.io/fact-checklist',
+      applicationCategory: 'UtilityApplication',
+      operatingSystem: 'All',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'BRL'
+      }
+    })
+  },
+  hi: {
+    title: 'Fact Checklist - तथ्य जांच उपकरण | सूचना विश्वसनीयता मूल्यांकन',
+    description:
+      '20-बिंदु वैज्ञानिक चेकलिस्ट के साथ सूचना विश्वसनीयता का व्यवस्थित मूल्यांकन करें। गलत सूचना की पहचान के लिए मुफ्त PWA ऐप।',
+    keywords:
+      'तथ्य जांच,सूचना सत्यापन,विश्वसनीयता मूल्यांकन,PWA,सूचना साक्षरता,गलत सूचना रोकथाम,फेक न्यूज़ पहचान,मीडिया साक्षरता,आलोचनात्मक सोच',
+    ogTitle: 'Fact Checklist - तथ्य जांच उपकरण',
+    ogDescription:
+      '20 वैज्ञानिक मानदंडों के साथ सूचना विश्वसनीयता का मूल्यांकन करें। गलत सूचना से बचने का मुफ्त उपकरण।',
+    ogImage: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
+    ogUrl: 'https://shuji-bonji.github.io/fact-checklist/hi',
+    twitterCard: 'summary_large_image',
+    twitterTitle: 'Fact Checklist - तथ्य जांच',
+    twitterDescription:
+      'गलत सूचना से बचें! 20 वैज्ञानिक मानदंडों के साथ विश्वसनीयता का मूल्यांकन करें',
+    twitterImage: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
+    canonicalUrl: 'https://shuji-bonji.github.io/fact-checklist/hi',
+    alternateLinks: [],
+    structuredData: JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: 'Fact Checklist',
+      description: 'सूचना विश्वसनीयता का मूल्यांकन करने के लिए व्यावहारिक उपकरण',
+      url: 'https://shuji-bonji.github.io/fact-checklist',
+      applicationCategory: 'UtilityApplication',
+      operatingSystem: 'All',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'INR'
+      }
+    })
+  },
+  de: {
+    title: 'Fact Checklist - Faktencheck-Tool | Bewertung der Informationszuverlässigkeit',
+    description:
+      'Bewerten Sie systematisch die Zuverlässigkeit von Informationen mit einer 20-Punkte-Checkliste. Kostenlose PWA-App zur Identifizierung von Fehlinformationen.',
+    keywords:
+      'Faktencheck,Informationsverifikation,Zuverlässigkeitsbewertung,PWA,Informationskompetenz,Fehlinformationsprävention,Fake News Erkennung,Medienkompetenz,kritisches Denken',
+    ogTitle: 'Fact Checklist - Faktencheck-Tool',
+    ogDescription:
+      'Bewerten Sie die Informationszuverlässigkeit mit 20 wissenschaftlichen Kriterien. Kostenloses Tool gegen Fehlinformationen.',
+    ogImage: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
+    ogUrl: 'https://shuji-bonji.github.io/fact-checklist/de',
+    twitterCard: 'summary_large_image',
+    twitterTitle: 'Fact Checklist - Faktencheck',
+    twitterDescription:
+      'Schützen Sie sich vor Fehlinformationen! Bewerten Sie Zuverlässigkeit mit 20 wissenschaftlichen Kriterien',
+    twitterImage: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
+    canonicalUrl: 'https://shuji-bonji.github.io/fact-checklist/de',
+    alternateLinks: [],
+    structuredData: JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: 'Fact Checklist',
+      description: 'Praktisches Tool zur Bewertung der Informationszuverlässigkeit',
+      url: 'https://shuji-bonji.github.io/fact-checklist',
+      applicationCategory: 'UtilityApplication',
+      operatingSystem: 'All',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'EUR'
+      }
+    })
+  },
+  it: {
+    title: 'Fact Checklist - Strumento di Verifica dei Fatti | Valutazione Affidabilità',
+    description:
+      "Valuta sistematicamente l'affidabilità delle informazioni con una checklist scientifica di 20 punti. App PWA gratuita per identificare la disinformazione.",
+    keywords:
+      'verifica fatti,verifica informazioni,valutazione affidabilità,PWA,alfabetizzazione informativa,prevenzione disinformazione,rilevamento fake news,alfabetizzazione mediatica,pensiero critico',
+    ogTitle: 'Fact Checklist - Strumento di Verifica dei Fatti',
+    ogDescription:
+      "Valuta l'affidabilità delle informazioni con 20 criteri scientifici. Strumento gratuito contro la disinformazione.",
+    ogImage: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
+    ogUrl: 'https://shuji-bonji.github.io/fact-checklist/it',
+    twitterCard: 'summary_large_image',
+    twitterTitle: 'Fact Checklist - Verifica dei Fatti',
+    twitterDescription:
+      "Proteggiti dalla disinformazione! Valuta l'affidabilità con 20 criteri scientifici",
+    twitterImage: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
+    canonicalUrl: 'https://shuji-bonji.github.io/fact-checklist/it',
+    alternateLinks: [],
+    structuredData: JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: 'Fact Checklist',
+      description: "Strumento pratico per valutare l'affidabilità delle informazioni",
+      url: 'https://shuji-bonji.github.io/fact-checklist',
+      applicationCategory: 'UtilityApplication',
+      operatingSystem: 'All',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'EUR'
+      }
+    })
+  },
+  ar: {
+    title: 'Fact Checklist - أداة التحقق من الحقائق | تقييم موثوقية المعلومات',
+    description:
+      'قيّم موثوقية المعلومات بشكل منهجي باستخدام قائمة تحقق علمية من 20 نقطة. تطبيق PWA مجاني لتحديد المعلومات المضللة.',
+    keywords:
+      'التحقق من الحقائق,التحقق من المعلومات,تقييم الموثوقية,PWA,محو الأمية المعلوماتية,منع المعلومات المضللة,كشف الأخبار الكاذبة,محو الأمية الإعلامية,التفكير النقدي',
+    ogTitle: 'Fact Checklist - أداة التحقق من الحقائق',
+    ogDescription:
+      'قيّم موثوقية المعلومات باستخدام 20 معيارًا علميًا. أداة مجانية ضد المعلومات المضللة.',
+    ogImage: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
+    ogUrl: 'https://shuji-bonji.github.io/fact-checklist/ar',
+    twitterCard: 'summary_large_image',
+    twitterTitle: 'Fact Checklist - التحقق من الحقائق',
+    twitterDescription: 'احم نفسك من المعلومات المضللة! قيّم الموثوقية باستخدام 20 معيارًا علميًا',
+    twitterImage: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
+    canonicalUrl: 'https://shuji-bonji.github.io/fact-checklist/ar',
+    alternateLinks: [],
+    structuredData: JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: 'Fact Checklist',
+      description: 'أداة عملية لتقييم موثوقية المعلومات',
+      url: 'https://shuji-bonji.github.io/fact-checklist',
+      applicationCategory: 'UtilityApplication',
+      operatingSystem: 'All',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'AED'
+      }
+    })
+  },
+  id: {
+    title: 'Fact Checklist - Alat Pemeriksaan Fakta | Penilaian Keandalan Informasi',
+    description:
+      'Evaluasi keandalan informasi secara sistematis dengan daftar periksa ilmiah 20 poin. Aplikasi PWA gratis untuk mengidentifikasi misinformasi.',
+    keywords:
+      'pemeriksaan fakta,verifikasi informasi,penilaian keandalan,PWA,literasi informasi,pencegahan misinformasi,deteksi berita palsu,literasi media,pemikiran kritis',
+    ogTitle: 'Fact Checklist - Alat Pemeriksaan Fakta',
+    ogDescription:
+      'Evaluasi keandalan informasi dengan 20 kriteria ilmiah. Alat gratis melawan misinformasi.',
+    ogImage: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
+    ogUrl: 'https://shuji-bonji.github.io/fact-checklist/id',
+    twitterCard: 'summary_large_image',
+    twitterTitle: 'Fact Checklist - Pemeriksaan Fakta',
+    twitterDescription:
+      'Lindungi diri dari misinformasi! Evaluasi keandalan dengan 20 kriteria ilmiah',
+    twitterImage: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
+    canonicalUrl: 'https://shuji-bonji.github.io/fact-checklist/id',
+    alternateLinks: [],
+    structuredData: JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: 'Fact Checklist',
+      description: 'Alat praktis untuk mengevaluasi keandalan informasi',
+      url: 'https://shuji-bonji.github.io/fact-checklist',
+      applicationCategory: 'UtilityApplication',
+      operatingSystem: 'All',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'IDR'
+      }
+    })
+  },
+  ko: {
+    title: 'Fact Checklist - 실용적 팩트체크 도구 | 정보 신뢰성 평가',
+    description:
+      '20개 항목의 과학적 체크리스트로 정보의 신뢰성을 체계적으로 평가합니다. AI나 정부에 의존하지 않고 잘못된 정보를 식별하는 무료 PWA 앱.',
+    keywords:
+      '팩트체크,정보 검증,신뢰성 평가,PWA,정보 리터러시,잘못된 정보 예방,가짜뉴스 탐지,미디어 리터러시,비판적 사고',
+    ogTitle: 'Fact Checklist - 실용적 팩트체크 도구',
+    ogDescription:
+      '20개 과학적 기준으로 정보 신뢰성을 평가합니다. 잘못된 정보로부터 보호하는 무료 도구.',
+    ogImage: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
+    ogUrl: 'https://shuji-bonji.github.io/fact-checklist/ko',
+    twitterCard: 'summary_large_image',
+    twitterTitle: 'Fact Checklist - 팩트체크 도구',
+    twitterDescription: '잘못된 정보로부터 자신을 보호하세요! 20개 과학적 기준으로 신뢰성 평가',
+    twitterImage: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',
+    canonicalUrl: 'https://shuji-bonji.github.io/fact-checklist/ko',
+    alternateLinks: [],
+    structuredData: JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: 'Fact Checklist',
+      description: '정보 신뢰성을 평가하는 실용적인 도구',
+      url: 'https://shuji-bonji.github.io/fact-checklist',
+      applicationCategory: 'UtilityApplication',
+      operatingSystem: 'All',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'KRW'
+      }
+    })
   }
-}
+};
 
-export const load: LayoutServerLoad = async ({ url: _url, request }) => {
-  // デバッグログ（Vercel環境で確認用）
-  // console.log('[SSR] Layout server load running');
-  // console.log('[SSR] URL:', _url.toString());
+export const load: LayoutServerLoad<LayoutServerData> = async ({ url, cookies, locals }) => {
+  // 言語の決定（優先順位）
+  // 1. URLパス（/en/、/fr/ など）
+  // 2. Cookie（ユーザーが選択した言語）
+  // 3. ブラウザ言語設定（Accept-Language）
+  // 4. デフォルト（ja）
+  const pathLang = url.pathname.split('/')[1] as Language;
+  const cookieLang = cookies.get('language') as Language;
+  const browserLang = locals.language; // hooks.serverから
 
-  // 静的ビルド時はAccept-Languageヘッダーが空の場合がある
-  const acceptLanguage = request.headers.get('accept-language') ?? '';
-  // console.log('[SSR] Accept-Language:', acceptLanguage);
+  const currentLang: Language =
+    pathLang && availableLanguages.includes(pathLang)
+      ? pathLang
+      : cookieLang && availableLanguages.includes(cookieLang)
+        ? cookieLang
+        : browserLang && availableLanguages.includes(browserLang)
+          ? browserLang
+          : 'ja';
 
-  // 単一言語のみ決定（重複回避）、デフォルトは日本語
-  const detectedLanguage = detectLanguage(acceptLanguage);
-  // console.log('[SSR] Detected language:', detectedLanguage);
+  // メタデータを取得
+  const meta = metaDataByLanguage[currentLang];
 
-  // introページの場合はメタタグ生成をスキップ（重複回避）
-  // console.log('[SSR] Checking pathname:', _url.pathname);
-  const isIntroPage = _url.pathname === '/intro' || _url.pathname === '/intro/';
-  // console.log('[SSR] Is intro page:', isIntroPage);
+  // alternate linksを生成
+  meta.alternateLinks = availableLanguages.map((lang: Language) => ({
+    lang: lang === 'zh-TW' ? 'zh-Hant' : lang,
+    url: `https://shuji-bonji.github.io/fact-checklist${lang === 'ja' ? '' : `/${lang}`}`
+  }));
 
-  if (isIntroPage) {
-    // console.log('[SSR] Skipping meta generation for intro page - handled by page-specific server');
-    return {
-      meta: null,
-      detectedLanguage
-    };
-  }
+  // URLを更新
+  const currentPath = url.pathname === '/' ? '' : url.pathname;
+  meta.canonicalUrl = `https://shuji-bonji.github.io/fact-checklist${currentPath}`;
+  meta.ogUrl = meta.canonicalUrl;
 
-  // 他のページでは通常のメタタグ生成
-  const meta = await generateSingleLanguageMeta(detectedLanguage, _url);
-
-  return {
+  const result: LayoutServerData = {
     meta,
-    detectedLanguage
-  } satisfies { meta: MetaData | null; detectedLanguage: LanguageCode };
+    currentLang,
+    currentUrl: url.href
+  };
+
+  return result;
 };

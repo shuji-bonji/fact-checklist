@@ -50,7 +50,7 @@ export const DEFAULT_I18N_CONFIG: LanguageSettings = {
  * i18nシステムの初期化
  * アプリケーション起動時に呼び出し
  */
-export async function initializeI18n(_config: Partial<LanguageSettings> = {}): Promise<void> {
+export async function initializeI18n(config: Partial<LanguageSettings> = {}): Promise<void> {
   // console.log('🌍 Initializing i18n system...');
 
   try {
@@ -60,10 +60,13 @@ export async function initializeI18n(_config: Partial<LanguageSettings> = {}): P
       return;
     }
 
-    // ストアの初期化は自動的に行われる
-    // 必要に応じて追加の設定を適用
+    // 設定から言語を取得、または自動検出
+    const languageToSet = config.currentLanguage || detectPreferredLanguage();
 
-    // console.log('✅ i18n system initialized successfully');
+    // ストアの初期化メソッドを呼び出す（これが _initialized フラグを設定する）
+    await i18nStore.initializeWithLanguage(languageToSet);
+
+    // console.log('✅ i18n system initialized successfully with language:', languageToSet);
   } catch (error) {
     console.error('❌ Failed to initialize i18n system:', error);
     throw error;
@@ -231,6 +234,12 @@ export function conditionalTranslate(
   return safeTranslator(key, params);
 }
 
+// エクスポート用エイリアス
+export const availableLanguages = Object.keys(SUPPORTED_LANGUAGES) as LanguageCode[];
+
+// initializeのエクスポート
+export const init = initializeI18n;
+
 // メインエクスポート（便利な関数群）
 export {
   // ストア関連
@@ -257,6 +266,9 @@ export {
   getLanguageOptions,
   getLanguageFontFamily,
   setLanguageFontCSS,
+
+  // 定数
+  SUPPORTED_LANGUAGES,
 
   // 型定義
   type LanguageCode,

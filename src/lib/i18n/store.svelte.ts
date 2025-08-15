@@ -116,24 +116,34 @@ class I18nStore {
       const currentLang = this._currentLanguage;
       if (dev) console.warn(`🌍 Current language on initialization: ${currentLang}`);
 
-      // 保存された言語設定を再確認（既に初期化時に読み込まれているはず）
-      const savedLanguage = this.loadLanguageFromStorage();
+      // 保存された言語設定を再確認（初回のみCookieと同期）
+      const savedLanguage = this.loadLanguageFromStorage(true);
 
-      // 言語を決定（保存済み > 現在の言語 > SSR検出 > ブラウザ検出 > デフォルト）
-      let targetLanguage = savedLanguage || currentLang;
+      // 言語を決定（優先順位）
+      // 1. LocalStorageに保存された言語（ユーザーが明示的に選択した場合）
+      // 2. 現在の言語（初期化時に設定されている場合）
+      // 3. SSR検出言語（サーバーサイドで検出された場合）
+      // 4. ブラウザ言語（初回アクセス時のみ）
+      // 5. デフォルト言語
+      let targetLanguage: LanguageCode;
 
-      if (!targetLanguage || targetLanguage === I18N_CONFIG.DEFAULT_LANGUAGE) {
-        if (ssrDetectedLanguage && ssrDetectedLanguage !== I18N_CONFIG.DEFAULT_LANGUAGE) {
-          targetLanguage = ssrDetectedLanguage;
-        } else if (isBrowser) {
-          const browserLang = this.detectBrowserLanguage();
-          if (browserLang) {
-            targetLanguage = browserLang;
-          }
-        }
+      if (savedLanguage) {
+        // LocalStorageに保存されている = ユーザーが明示的に選択した
+        targetLanguage = savedLanguage;
+      } else if (currentLang && currentLang !== I18N_CONFIG.DEFAULT_LANGUAGE) {
+        // 既に設定されている言語がデフォルト以外
+        targetLanguage = currentLang;
+      } else if (ssrDetectedLanguage) {
+        // サーバーサイドで検出された言語
+        targetLanguage = ssrDetectedLanguage;
+      } else if (isBrowser) {
+        // ブラウザ言語を検出（初回のみ）
+        const browserLang = this.detectBrowserLanguage();
+        targetLanguage = browserLang || I18N_CONFIG.DEFAULT_LANGUAGE;
+      } else {
+        // フォールバック
+        targetLanguage = I18N_CONFIG.DEFAULT_LANGUAGE;
       }
-
-      targetLanguage = targetLanguage ?? I18N_CONFIG.DEFAULT_LANGUAGE;
 
       if (dev) {
         console.warn(
@@ -289,13 +299,18 @@ class I18nStore {
     return null;
   }
 
-  // localStorageから言語設定を読み込み
-  private loadLanguageFromStorage(): LanguageCode | null {
+  // localStorageから言語設定を読み込み（Cookieとの同期オプション付き）
+  private loadLanguageFromStorage(syncToCookie = false): LanguageCode | null {
     if (!isBrowser) return null;
 
     try {
       const saved = localStorage.getItem('fact-checklist-language');
       if (saved && saved in SUPPORTED_LANGUAGES) {
+        if (syncToCookie) {
+          // LocalStorageに保存されている場合、Cookieにも同期
+          // （PWAで LocalStorageに保存されたがCookieがない場合の対策）
+          document.cookie = `language=${saved}; max-age=31536000; path=/; SameSite=Lax`;
+        }
         return saved as LanguageCode;
       }
     } catch (error) {
@@ -305,12 +320,17 @@ class I18nStore {
     return null;
   }
 
-  // localStorageに言語設定を保存
+  // localStorageに言語設定を保存（Cookieとも同期）
   private saveLanguageToStorage(language: LanguageCode): void {
     if (!isBrowser) return;
 
     try {
+      // LocalStorageに保存
       localStorage.setItem('fact-checklist-language', language);
+
+      // Cookieにも保存（サーバー側で読めるように）
+      // max-age=31536000 (1年), SameSite=Lax, Path=/
+      document.cookie = `language=${language}; max-age=31536000; path=/; SameSite=Lax`;
     } catch (error) {
       console.warn('⚠️ Failed to save language to localStorage:', error);
     }

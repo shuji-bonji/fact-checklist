@@ -9,9 +9,11 @@
   import { page } from '$app/stores';
 
   // i18n
-  import { t, i18nStore } from '$lib/i18n/index.js';
+  import { t, i18nStore, init } from '$lib/i18n/index.js';
   import type { LanguageCode } from '$lib/i18n/types.js';
   import LanguageSwitcher from '$lib/components/LanguageSwitcher.svelte';
+  import type { LayoutData } from './$types';
+  import type { LayoutServerData } from '$lib/types/layout.js';
 
   // PWA
   import { registerPWA, setupPWAInstallPrompt } from '$lib/utils/pwa-register.js';
@@ -19,24 +21,10 @@
   // i18n初期化状態を監視
   const isI18nReady = $derived(i18nStore.initialized && !!i18nStore.translations);
 
+  // Extend LayoutData with our server data
   interface Props {
     children: import('svelte').Snippet;
-    data?: {
-      meta?: {
-        title: string;
-        description: string;
-        keywords: string;
-        ogTitle: string;
-        ogDescription: string;
-        ogImage: string;
-        ogUrl: string;
-        language: string;
-        siteName: string;
-        type: string;
-        locale: string;
-      } | null;
-      detectedLanguage?: string;
-    };
+    data: LayoutData & Partial<LayoutServerData>;
   }
 
   const { children, data }: Props = $props();
@@ -77,15 +65,15 @@
   onMount(() => {
     // 非同期初期化処理
     (async () => {
-      // i18n初期化（SSRで検出された言語を使用）
+      // i18n初期化（サーバーサイドで決定された言語を使用）
       try {
-        // SSRで検出された言語を使用
-        const detectedLanguage = data?.detectedLanguage;
+        // サーバーサイドで決定された言語を使用
+        const serverLang = data?.currentLang || 'ja';
 
-        // SSR検出言語を使用してi18nストアを初期化
-        await i18nStore.initializeWithLanguage(detectedLanguage as LanguageCode);
+        // i18nを初期化（設定オブジェクトを渡す）
+        await init({ currentLanguage: serverLang as LanguageCode });
 
-        // console.log('✅ i18n initialized with SSR-detected language');
+        // console.log('✅ i18n initialized with server language:', serverLang);
       } catch (error) {
         console.error('❌ Failed to initialize i18n:', error);
       }
@@ -175,33 +163,39 @@
       <meta property="og:description" content={data.meta.ogDescription} />
       <meta property="og:url" content={data.meta.ogUrl} />
       <meta property="og:image" content={data.meta.ogImage} />
-      <meta property="og:type" content={data.meta.type} />
-      <meta property="og:site_name" content={data.meta.siteName} />
-      <meta property="og:locale" content={data.meta.locale} />
+      <meta property="og:type" content="website" />
+      <meta property="og:site_name" content="Fact Checklist" />
+      <meta
+        property="og:locale"
+        content={data?.currentLang === 'ja'
+          ? 'ja_JP'
+          : data?.currentLang === 'zh-TW'
+            ? 'zh_TW'
+            : data?.currentLang === 'ar'
+              ? 'ar_AR'
+              : `${data?.currentLang}_${data?.currentLang?.toUpperCase()}`}
+      />
 
       <!-- Twitter Card -->
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={data.meta.ogTitle} />
-      <meta name="twitter:description" content={data.meta.ogDescription} />
-      <meta name="twitter:image" content={data.meta.ogImage} />
+      <meta name="twitter:card" content={data.meta?.twitterCard} />
+      <meta name="twitter:title" content={data.meta?.twitterTitle} />
+      <meta name="twitter:description" content={data.meta?.twitterDescription} />
+      <meta name="twitter:image" content={data.meta?.twitterImage} />
 
-      <!-- Structured Data (JSON-LD) - Temporarily disabled for security -->
-      <!-- TODO: Re-enable structured data with proper XSS protection -->
+      <!-- Canonical URL -->
+      <link rel="canonical" href={data.meta?.canonicalUrl} />
+
+      <!-- Structured Data (JSON-LD) は別途処理 -->
 
       <!-- Alternate Language URLs (hreflang) -->
-      <link rel="alternate" hreflang="ja" href="https://fact-checklist.vercel.app/" />
-      <link rel="alternate" hreflang="en" href="https://fact-checklist.vercel.app/" />
-      <link rel="alternate" hreflang="fr" href="https://fact-checklist.vercel.app/" />
-      <link rel="alternate" hreflang="zh-TW" href="https://fact-checklist.vercel.app/" />
-      <link rel="alternate" hreflang="es" href="https://fact-checklist.vercel.app/" />
-      <link rel="alternate" hreflang="pt" href="https://fact-checklist.vercel.app/" />
-      <link rel="alternate" hreflang="hi" href="https://fact-checklist.vercel.app/" />
-      <link rel="alternate" hreflang="de" href="https://fact-checklist.vercel.app/" />
-      <link rel="alternate" hreflang="it" href="https://fact-checklist.vercel.app/" />
-      <link rel="alternate" hreflang="ar" href="https://fact-checklist.vercel.app/" />
-      <link rel="alternate" hreflang="id" href="https://fact-checklist.vercel.app/" />
-      <link rel="alternate" hreflang="ko" href="https://fact-checklist.vercel.app/" />
-      <link rel="alternate" hreflang="x-default" href="https://fact-checklist.vercel.app/" />
+      {#each data.meta?.alternateLinks || [] as alt}
+        <link rel="alternate" hreflang={alt.lang} href={alt.url} />
+      {/each}
+      <link
+        rel="alternate"
+        hreflang="x-default"
+        href="https://shuji-bonji.github.io/fact-checklist/"
+      />
     {:else}
       <!-- Fallback meta tags for prerendering (non-intro pages only) -->
       <title>Fact Checklist - 実用的事実確認チェックシート</title>
