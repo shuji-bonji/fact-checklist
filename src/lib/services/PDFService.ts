@@ -455,7 +455,7 @@ export class PDFService {
    * @returns 推奨方式
    */
   getRecommendedMode(
-    checklist: ChecklistResult,
+    _checklist: ChecklistResult,
     userPreferences?: Partial<PDFServiceOptions>
   ): PDFGenerationMode {
     // ユーザーの明示的な設定がある場合

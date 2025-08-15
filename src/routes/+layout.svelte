@@ -91,8 +91,8 @@
       // PWA Service Worker登録（Safari対応強化版）
       if (!dev && browser) {
         try {
-          const _pwaInfo = await registerPWA();
-          // console.log('PWA registration:', _pwaInfo);
+          await registerPWA();
+          // PWA registration completed
 
           // PWAインストール促進設定
           setupPWAInstallPrompt();

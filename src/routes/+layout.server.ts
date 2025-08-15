@@ -415,11 +415,11 @@ export const load: LayoutServerLoad<LayoutServerData> = async ({ url, cookies, l
   const browserLang = locals.language; // hooks.serverから
 
   const currentLang: Language =
-    pathLang && availableLanguages.includes(pathLang)
+    pathLang !== undefined && availableLanguages.includes(pathLang)
       ? pathLang
-      : cookieLang && availableLanguages.includes(cookieLang)
+      : cookieLang !== undefined && availableLanguages.includes(cookieLang)
         ? cookieLang
-        : browserLang && availableLanguages.includes(browserLang)
+        : browserLang !== undefined && availableLanguages.includes(browserLang)
           ? browserLang
           : 'ja';
 

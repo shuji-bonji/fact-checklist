@@ -238,17 +238,17 @@ export class ExportManager {
     t: TranslationFunction
   ): Promise<void> {
     try {
-      ExportProgressHelper.updateStandardProgress(this.progressManager, 'GENERATING', t);
+      await ExportProgressHelper.updateStandardProgress(this.progressManager, 'GENERATING', t);
 
       const csvContent = ExportContentGenerator.generateCSVData(checklist, options, t);
 
-      ExportProgressHelper.updateStandardProgress(this.progressManager, 'SAVING', t);
+      await ExportProgressHelper.updateStandardProgress(this.progressManager, 'SAVING', t);
 
       const filename = await ExportFilenameGenerator.generateCSVFilename(checklistStoreTitle, t);
       const { downloadText } = await import('$lib/utils/download.js');
       downloadText(csvContent, filename, 'text/csv');
 
-      ExportProgressHelper.completeExport(this.progressManager, 'CSV', t);
+      await ExportProgressHelper.completeExport(this.progressManager, 'CSV', t);
     } catch (error) {
       ExportErrorHandler.handleExportError(error, 'CSV', this.progressManager);
     }
@@ -268,7 +268,7 @@ export class ExportManager {
     t: TranslationFunction
   ): Promise<void> {
     try {
-      ExportProgressHelper.updateStandardProgress(this.progressManager, 'GENERATING', t);
+      await ExportProgressHelper.updateStandardProgress(this.progressManager, 'GENERATING', t);
 
       const xmlContent = ExportContentGenerator.generateXMLData(
         checklist,
@@ -276,13 +276,13 @@ export class ExportManager {
         checklistStoreTitle
       );
 
-      ExportProgressHelper.updateStandardProgress(this.progressManager, 'SAVING', t);
+      await ExportProgressHelper.updateStandardProgress(this.progressManager, 'SAVING', t);
 
       const filename = await ExportFilenameGenerator.generateXMLFilename(checklistStoreTitle, t);
       const { downloadText } = await import('$lib/utils/download.js');
       downloadText(xmlContent, filename, 'application/xml');
 
-      ExportProgressHelper.completeExport(this.progressManager, 'XML', t);
+      await ExportProgressHelper.completeExport(this.progressManager, 'XML', t);
     } catch (error) {
       ExportErrorHandler.handleExportError(error, 'XML', this.progressManager);
     }

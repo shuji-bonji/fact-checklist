@@ -48,14 +48,6 @@ export class ScoringService {
     low: 40
   };
 
-  // カテゴリの最大アイテム数設定
-  private static readonly CATEGORY_MAX_ITEMS = {
-    critical: 5,
-    detailed: 5,
-    verification: 5,
-    context: 5
-  };
-
   /**
    * 基本スコア計算
    * @param items チェックアイテム配列

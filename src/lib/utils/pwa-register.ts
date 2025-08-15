@@ -93,7 +93,7 @@ export function registerPWA(): Promise<PWAUpdateInfo> {
 
         // Safari対応：定期的な更新チェック
         setInterval(() => {
-          reg.update();
+          void reg.update();
         }, 60000); // 1分ごと
 
         resolve({
@@ -145,7 +145,7 @@ export function setupPWAInstallPrompt() {
       // 元のイベントベースのインストール
       if (deferredPrompt) {
         try {
-          deferredPrompt.prompt();
+          void deferredPrompt.prompt();
           const { outcome } = await deferredPrompt.userChoice;
           deferredPrompt = null;
           return outcome === 'accepted';

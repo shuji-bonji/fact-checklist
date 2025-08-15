@@ -8,7 +8,7 @@ import type jsPDF from 'jspdf';
 import type { ChecklistResult } from '$lib/types/checklist.js';
 import type { TranslationFunction } from '$lib/types/i18n.js';
 import { TextBasedPDFGenerator, type TextPDFOptions } from './textBasedPDFGenerator.js';
-import { PlatformAwarePDFGenerator, type EnhancedPDFOptions } from './platformAwarePDFGenerator.js';
+import type { EnhancedPDFOptions } from './platformAwarePDFGenerator.js';
 import { platformStore } from '$lib/stores/platformStore.svelte.js';
 
 export interface PDFExportOptions extends TextPDFOptions {
@@ -22,21 +22,17 @@ export interface PDFExportOptions extends TextPDFOptions {
 
 export class PWAAwarePDFExporter {
   private textGenerator: TextBasedPDFGenerator;
-  private platformGenerator: PlatformAwarePDFGenerator;
   private isNativeApp: boolean;
   private hasFileSystemAccess: boolean;
-  private hasWebShare: boolean;
   private hasWebShareFiles: boolean;
 
   constructor() {
     this.textGenerator = new TextBasedPDFGenerator();
-    this.platformGenerator = new PlatformAwarePDFGenerator();
 
     // プラットフォーム機能の検出
     const capabilities = platformStore.capabilities;
     this.isNativeApp = capabilities.isNativeApp;
     this.hasFileSystemAccess = capabilities.hasFileSystemAccess;
-    this.hasWebShare = capabilities.hasWebShare;
     this.hasWebShareFiles = capabilities.hasWebShareFiles;
 
     // console.log('🚀 PWAAwarePDFExporter initialized with capabilities:', {

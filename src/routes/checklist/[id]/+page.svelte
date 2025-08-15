@@ -32,7 +32,7 @@
   const effectiveTitle = $derived(refactoredChecklistStore.effectiveTitle);
 
   // URL parameters
-  const checklistId = $derived($page.params.id);
+  const checklistId = $derived($page.params['id']);
   const completedParam = $derived($page.url.searchParams.get('completed'));
 
   // PWAプロンプト表示条件

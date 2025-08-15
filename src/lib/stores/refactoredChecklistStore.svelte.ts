@@ -51,7 +51,7 @@ class RefactoredChecklistStore {
     this.sessionStorageService = SessionStorageService.getInstance();
 
     if (this.isBrowser) {
-      this.initializeAsync();
+      void this.initializeAsync();
       this.setupLanguageChangeListener();
     }
   }
@@ -318,7 +318,7 @@ class RefactoredChecklistStore {
       this._currentChecklist = updatedChecklist;
 
       // 非同期でストレージに保存（UIブロックを避ける）
-      this.saveCurrentChecklistAsync();
+      void this.saveCurrentChecklistAsync();
     } catch (error) {
       this._error = `Failed to update check item: ${error}`;
       console.error('RefactoredChecklistStore:', this._error);
@@ -339,7 +339,7 @@ class RefactoredChecklistStore {
       const updatedChecklist = ChecklistService.updateChecklist(this._currentChecklist, { title });
 
       this._currentChecklist = updatedChecklist;
-      this.saveCurrentChecklistAsync();
+      void this.saveCurrentChecklistAsync();
     } catch (error) {
       this._error = `Failed to update title: ${error}`;
       console.error('RefactoredChecklistStore:', this._error);
@@ -362,7 +362,7 @@ class RefactoredChecklistStore {
       });
 
       this._currentChecklist = updatedChecklist;
-      this.saveCurrentChecklistAsync();
+      void this.saveCurrentChecklistAsync();
     } catch (error) {
       this._error = `Failed to update description: ${error}`;
       console.error('RefactoredChecklistStore:', this._error);
@@ -383,7 +383,7 @@ class RefactoredChecklistStore {
       const updatedChecklist = ChecklistService.updateChecklist(this._currentChecklist, { notes });
 
       this._currentChecklist = updatedChecklist;
-      this.saveCurrentChecklistAsync();
+      void this.saveCurrentChecklistAsync();
     } catch (error) {
       this._error = `Failed to update notes: ${error}`;
       console.error('RefactoredChecklistStore:', this._error);
@@ -406,7 +406,7 @@ class RefactoredChecklistStore {
       });
 
       this._currentChecklist = updatedChecklist;
-      this.saveCurrentChecklistAsync();
+      void this.saveCurrentChecklistAsync();
     } catch (error) {
       this._error = `Failed to set judgment: ${error}`;
       console.error('RefactoredChecklistStore:', this._error);
@@ -613,7 +613,7 @@ class RefactoredChecklistStore {
       this._currentChecklist = refreshedChecklist;
 
       // 非同期でストレージに保存
-      this.saveCurrentChecklistAsync();
+      void this.saveCurrentChecklistAsync();
 
       // console.log('RefactoredChecklistStore: Checklist items refreshed for current language');
     } catch (error) {

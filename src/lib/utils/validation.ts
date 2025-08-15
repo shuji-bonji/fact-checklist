@@ -202,7 +202,7 @@ export function validateExportOptions(options: Record<string, unknown>): {
   const errors: string[] = [];
 
   const validFormats = ['pdf', 'html', 'json', 'markdown'];
-  if (!validFormats.includes(options.format as string)) {
+  if (!validFormats.includes(options['format'] as string)) {
     errors.push('Invalid export format');
   }
 

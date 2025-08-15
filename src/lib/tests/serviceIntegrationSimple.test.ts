@@ -147,7 +147,7 @@ describe('Simple Service Integration Tests', () => {
       // Create multiple checklists
       const checklist1 = ChecklistService.createChecklist({ title: 'Checklist One' });
       const checklist2 = ChecklistService.createChecklist({ title: 'Checklist Two' });
-      const _checklist3 = ChecklistService.createChecklist({ title: 'Another Test' });
+      ChecklistService.createChecklist({ title: 'Another Test' }); // Create third checklist for testing
 
       // Update first checklist with 5 items
       let updated1 = checklist1;

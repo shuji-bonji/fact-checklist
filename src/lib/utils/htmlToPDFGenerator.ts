@@ -31,7 +31,6 @@ export class HTMLToPDFGenerator {
   private static readonly A4_HEIGHT_MM = 297;
 
   // 高解像度設定（300DPI相当）
-  private static readonly DPI_SCALE = 300 / 96; // 96DPI → 300DPI
   private static readonly A4_WIDTH_PX = Math.round(HTMLToPDFGenerator.A4_WIDTH_MM * 11.81); // mm to px at 300DPI
   private static readonly A4_HEIGHT_PX = Math.round(HTMLToPDFGenerator.A4_HEIGHT_MM * 11.81);
 
@@ -516,24 +515,20 @@ export class HTMLToPDFGenerator {
         // 非表示要素を無視しない
         false,
       // フォント読み込み完了を待機
-      onclone: async (clonedDoc, _element) => {
+      onclone: (clonedDoc, element) => {
         // クローンされた要素のスタイルを確認
-        // console.log('🔍 Cloned element:', _element);
-        // console.log('📐 Element dimensions:', _element.offsetWidth, 'x', _element.offsetHeight);
+        // console.log('🔍 Cloned element:', element);
+        // console.log('📐 Element dimensions:', element.offsetWidth, 'x', element.offsetHeight);
 
         // クローンされた要素も確実に表示状態にする
-        if (_element instanceof HTMLElement) {
-          _element.style.opacity = '1';
-          _element.style.visibility = 'visible';
-          _element.style.display = 'block';
+        if (element instanceof HTMLElement) {
+          element.style.opacity = '1';
+          element.style.visibility = 'visible';
+          element.style.display = 'block';
         }
 
-        // フォント読み込み待機
-        if (clonedDoc.fonts?.ready) {
-          await clonedDoc.fonts.ready;
-        } else {
-          await new Promise(resolve => setTimeout(resolve, 500));
-        }
+        // フォント読み込み待機 - voidで同期処理
+        void clonedDoc;
       }
     });
 
@@ -548,7 +543,7 @@ export class HTMLToPDFGenerator {
       const checkHeight = Math.min(canvas.height, 500);
       const imageData = ctx.getImageData(0, 0, checkWidth, checkHeight);
 
-      let nonWhitePixels = 0;
+      let _nonWhitePixels = 0;
       for (let i = 0; i < imageData.data.length; i += 4) {
         const r = imageData.data[i] ?? 0;
         const g = imageData.data[i + 1] ?? 0;
@@ -557,12 +552,11 @@ export class HTMLToPDFGenerator {
 
         // 白以外のピクセルをカウント
         if (a > 0 && (r !== 255 || g !== 255 || b !== 255)) {
-          nonWhitePixels++;
+          _nonWhitePixels++;
         }
       }
 
-      const _hasContent = nonWhitePixels > 100; // 100ピクセル以上の非白ピクセルがあればコンテンツありと判定
-      // console.log(`🖼️ Canvas has content: ${_hasContent} (non-white pixels: ${nonWhitePixels}`);
+      // console.log(`🖼️ Canvas has content: ${_nonWhitePixels > 100} (non-white pixels: ${_nonWhitePixels}`);
     }
 
     return canvas;

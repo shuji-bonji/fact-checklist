@@ -252,42 +252,6 @@ export class ExportService {
   }
 
   /**
-   * Blobをダウンロード
-   * @param blob ダウンロードするBlob
-   * @param filename ファイル名
-   */
-  private downloadBlob(blob: Blob, filename: string): void {
-    if (typeof window === 'undefined') return;
-
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  }
-
-  /**
-   * MIMEタイプを取得
-   * @param format エクスポート形式
-   * @returns MIMEタイプ
-   */
-  private getMimeType(format: string): string {
-    const mimeTypes: Record<string, string> = {
-      json: 'application/json',
-      csv: 'text/csv',
-      html: 'text/html',
-      markdown: 'text/markdown',
-      xml: 'application/xml',
-      pdf: 'application/pdf'
-    };
-
-    return mimeTypes[format] ?? 'text/plain';
-  }
-
-  /**
    * 統計を更新
    * @param result エクスポート結果
    */

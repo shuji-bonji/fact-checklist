@@ -17,12 +17,8 @@
   const { data: _data } = $props<{ data: PageData }>();
 
   // リアクティブな状態
-  let _isLoading = $state(true);
   let isI18nReady = $state(false);
   let i18nError = $state<string | null>(null);
-
-  // i18n初期化状態を監視
-  const _i18nInitialized = $derived(i18nStore.initialized && !!i18nStore.translations);
 
   import CheckSection from '$lib/components/CheckSection.svelte';
   import ScoreDisplay from '$lib/components/ScoreDisplay.svelte';
@@ -116,7 +112,7 @@
     });
 
     // 最終的にローディング完了
-    _isLoading = false;
+    // ローディング状態は既にisI18nReadyで管理
   });
 
   async function startOrRestoreSession() {
@@ -227,11 +223,7 @@
       saveToSession();
 
       // デバウンスタイマー（頻繁な保存を避ける）
-      let saveTimer: number = 0;
-      const _debouncedSave = () => {
-        clearTimeout(saveTimer);
-        saveTimer = window.setTimeout(saveToSession, 1000);
-      };
+      const saveTimer: number = 0;
 
       // 変更を監視
       return () => {

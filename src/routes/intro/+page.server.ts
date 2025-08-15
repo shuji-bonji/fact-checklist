@@ -302,7 +302,7 @@ async function generateIntroMeta(language: LanguageCode, _url: URL) {
       }
     };
 
-    const fallback = fallbackMeta[language] ?? fallbackMeta.ja;
+    const fallback = fallbackMeta[language] ?? fallbackMeta['ja'];
 
     // fallbackMeta.ja は常に存在するため、fallback は never undefined
     if (!fallback) {

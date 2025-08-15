@@ -25,7 +25,13 @@
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
     "test:coverage": "vitest --coverage",
-    "test:watch": "vitest --watch"
+    "test:watch": "vitest --watch",
+    "quality:check": "npm run lint && npm run check && npm run test:run",
+    "type-check": "tsc --noEmit --pretty",
+    "clean": "rm -rf .svelte-kit build node_modules/.vite",
+    "clean:install": "npm run clean && npm install",
+    "analyze": "vite-bundle-visualizer",
+    "lighthouse:local": "lighthouse http://localhost:4173 --output html --view"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",

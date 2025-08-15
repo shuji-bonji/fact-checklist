@@ -76,7 +76,7 @@ class PlatformStore {
     // Only initialize in browser environment
     if (typeof window !== 'undefined' && typeof navigator !== 'undefined') {
       this.detectPlatform();
-      this.detectSystemFeatures();
+      void this.detectSystemFeatures();
     }
     this.isInitialized = true;
   }
@@ -323,7 +323,7 @@ class PlatformStore {
    */
   refresh(): void {
     this.detectPlatform();
-    this.detectSystemFeatures();
+    void this.detectSystemFeatures();
   }
 
   /**

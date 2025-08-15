@@ -35,7 +35,7 @@ export class PDFExportHandler {
     options: ExportOptions,
     progressManager: ExportProgressManager,
     generateHTMLContent: HTMLContentGenerator,
-    checklistStoreTitle: string,
+    _checklistStoreTitle: string,
     t: TranslationFunction
   ): Promise<void> {
     try {
@@ -110,8 +110,8 @@ export class PDFExportHandler {
  */
 export class HTMLExportHandler {
   async export(
-    checklist: ChecklistResult,
-    options: ExportOptions,
+    _checklist: ChecklistResult,
+    _options: ExportOptions,
     progressManager: ExportProgressManager,
     generateHTMLContent: SimpleHTMLContentGenerator,
     checklistStoreTitle: string,
@@ -197,8 +197,8 @@ export class JSONExportHandler {
  */
 export class MarkdownExportHandler {
   async export(
-    checklist: ChecklistResult,
-    options: ExportOptions,
+    _checklist: ChecklistResult,
+    _options: ExportOptions,
     progressManager: ExportProgressManager,
     generateMarkdownContent: MarkdownContentGenerator,
     checklistStoreTitle: string,

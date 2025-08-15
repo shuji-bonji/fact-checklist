@@ -46,7 +46,7 @@ export class ExportProgressHelper {
    */
   static async completeExport(
     progressManager: ExportProgressManager,
-    format: string,
+    _format: string,
     t: (key: string) => string
   ): Promise<void> {
     await this.updateStandardProgress(progressManager, 'COMPLETED', t);

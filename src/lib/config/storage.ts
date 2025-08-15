@@ -65,7 +65,7 @@ export async function createStorageWithFallback(): Promise<StorageInterface> {
       const value = localStorage.getItem(key);
       if (value === null) return null;
       try {
-        return JSON.parse(value);
+        return JSON.parse(value) as T;
       } catch {
         return value as T;
       }
