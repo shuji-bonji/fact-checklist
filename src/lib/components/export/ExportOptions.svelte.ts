@@ -46,7 +46,7 @@ export class ExportOptionsManager {
    * @param key オプションキー
    * @param value オプション値
    */
-  updateOption<K extends keyof ExportOptions>(key: K, value: ExportOptions[K]) {
+  updateOption<K extends keyof ExportOptions>(key: K, value: ExportOptions[K]): void {
     switch (key) {
       case 'format':
         this.format = value as 'pdf' | 'html' | 'json' | 'markdown' | 'csv' | 'xml';
@@ -97,7 +97,7 @@ export class ExportOptionsManager {
    * 全てのオプションを一度に設定する
    * @param options エクスポートオプション
    */
-  setOptions(options: ExportOptions) {
+  setOptions(options: ExportOptions): void {
     this.format = options.format;
     this.includeGuides = options.includeGuides;
     this.includeNotes = options.includeNotes;
@@ -112,7 +112,7 @@ export class ExportOptionsManager {
   /**
    * デフォルト設定にリセットする
    */
-  resetToDefaults() {
+  resetToDefaults(): void {
     this.format = 'pdf';
     this.includeGuides = true;
     this.includeNotes = true;

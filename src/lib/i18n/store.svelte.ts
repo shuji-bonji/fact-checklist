@@ -28,7 +28,7 @@ function getInitialLanguage(): LanguageCode {
 
   try {
     const saved = localStorage.getItem('fact-checklist-language');
-    if (saved && saved in SUPPORTED_LANGUAGES) {
+    if (saved !== null && saved !== '' && saved in SUPPORTED_LANGUAGES) {
       if (dev) console.warn(`🌍 Loaded saved language from localStorage: ${saved}`);
       return saved as LanguageCode;
     }
@@ -98,7 +98,7 @@ class I18nStore {
 
   // 現在の翻訳データ
   get translations(): TranslationKeys | null {
-    return this._translations[this._currentLanguage] || null;
+    return this._translations[this._currentLanguage] ?? null;
   }
 
   // 公開初期化メソッド（SSR検出言語を受け取る）
@@ -174,12 +174,12 @@ class I18nStore {
       this._error = null;
 
       // 言語が有効かチェック
-      if (!SUPPORTED_LANGUAGES[language]) {
+      if (SUPPORTED_LANGUAGES[language] === null || SUPPORTED_LANGUAGES[language] === undefined) {
         throw new Error(`Unsupported language: ${language}`);
       }
 
       // 翻訳データが未読み込みの場合は読み込み
-      if (!this._translations[language]) {
+      if (this._translations[language] === null || this._translations[language] === undefined) {
         // console.log(`📥 Loading translations for: ${language}`);
         await this.loadTranslations(language);
       }
@@ -209,7 +209,7 @@ class I18nStore {
       // 静的インポートから翻訳データを取得
       const baseTranslations = allTranslations[language];
 
-      if (!baseTranslations) {
+      if (baseTranslations === null || baseTranslations === undefined) {
         throw new Error(`No translations found for language: ${language}`);
       }
 
@@ -223,13 +223,15 @@ class I18nStore {
       // フォールバック: デフォルト言語の翻訳を使用
       if (
         language !== I18N_CONFIG.DEFAULT_LANGUAGE &&
-        this._translations[I18N_CONFIG.DEFAULT_LANGUAGE]
+        this._translations[I18N_CONFIG.DEFAULT_LANGUAGE] !== null &&
+        this._translations[I18N_CONFIG.DEFAULT_LANGUAGE] !== undefined
       ) {
         console.warn(`🔄 Using ${I18N_CONFIG.DEFAULT_LANGUAGE} fallback for: ${language}`);
         this._translations[language] = this._translations[I18N_CONFIG.DEFAULT_LANGUAGE];
       } else if (
         language !== I18N_CONFIG.DEFAULT_LANGUAGE &&
-        allTranslations[I18N_CONFIG.DEFAULT_LANGUAGE]
+        allTranslations[I18N_CONFIG.DEFAULT_LANGUAGE] !== null &&
+        allTranslations[I18N_CONFIG.DEFAULT_LANGUAGE] !== undefined
       ) {
         console.warn(
           `🔄 Using ${I18N_CONFIG.DEFAULT_LANGUAGE} fallback from static imports for: ${language}`
@@ -291,7 +293,12 @@ class I18nStore {
 
       // 言語コードの前半部分をチェック（例: "en-US" -> "en"）
       const langCode = browserLang.split('-')[0];
-      if (langCode && langCode in SUPPORTED_LANGUAGES) {
+      if (
+        langCode !== null &&
+        langCode !== undefined &&
+        langCode !== '' &&
+        langCode in SUPPORTED_LANGUAGES
+      ) {
         return langCode as LanguageCode;
       }
     }
@@ -305,7 +312,7 @@ class I18nStore {
 
     try {
       const saved = localStorage.getItem('fact-checklist-language');
-      if (saved && saved in SUPPORTED_LANGUAGES) {
+      if (saved !== null && saved !== '' && saved in SUPPORTED_LANGUAGES) {
         if (syncToCookie) {
           // LocalStorageに保存されている場合、Cookieにも同期
           // （PWAで LocalStorageに保存されたがCookieがない場合の対策）
@@ -377,7 +384,8 @@ export const i18nStore = new I18nStore();
 // 便利なエクスポート
 export const t = i18nStore.t;
 export const tArray = i18nStore.tArray;
-export const setLanguage = (language: LanguageCode) => i18nStore.setLanguage(language);
-export const getCurrentLanguage = () => i18nStore.currentLanguage;
-export const getDirection = () => i18nStore.direction;
-export const getIsRTL = () => i18nStore.isRTL;
+export const setLanguage = (language: LanguageCode): Promise<void> =>
+  i18nStore.setLanguage(language);
+export const getCurrentLanguage = (): LanguageCode => i18nStore.currentLanguage;
+export const getDirection = (): 'ltr' | 'rtl' => i18nStore.direction;
+export const getIsRTL = (): boolean => i18nStore.isRTL;

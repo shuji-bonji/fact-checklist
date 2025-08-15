@@ -189,7 +189,11 @@ export function hasPDFSupport(): boolean {
  * @returns Clipboard API対応の場合true
  */
 export function hasClipboardSupport(): boolean {
-  return !!navigator.clipboard?.writeText;
+  return !!(
+    navigator.clipboard !== null &&
+    navigator.clipboard !== undefined &&
+    navigator.clipboard.writeText !== undefined
+  );
 }
 
 /**
@@ -197,7 +201,12 @@ export function hasClipboardSupport(): boolean {
  * @returns File API対応の場合true
  */
 export function hasFileAPISupport(): boolean {
-  return !!(window.File && window.FileReader && window.FileList && window.Blob);
+  return !!(
+    window.File !== undefined &&
+    window.FileReader !== undefined &&
+    window.FileList !== undefined &&
+    window.Blob !== undefined
+  );
 }
 
 /**

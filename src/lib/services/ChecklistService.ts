@@ -150,8 +150,11 @@ export class ChecklistService {
       riskLevel: currentItem.riskLevel,
       category: currentItem.category,
       checked,
-      ...(currentItem.guideContent && { guideContent: currentItem.guideContent }),
-      ...(currentItem.translationKey && { translationKey: currentItem.translationKey })
+      ...(currentItem.guideContent !== null &&
+        currentItem.guideContent !== undefined && { guideContent: currentItem.guideContent }),
+      ...(currentItem.translationKey !== null &&
+        currentItem.translationKey !== undefined &&
+        currentItem.translationKey !== '' && { translationKey: currentItem.translationKey })
     };
     updatedChecklist.items = items;
 
@@ -203,7 +206,15 @@ export class ChecklistService {
    * @param items チェックアイテム配列
    * @returns 計算されたスコア
    */
-  static calculateScore(items: CheckItem[]) {
+  static calculateScore(items: CheckItem[]): {
+    critical: number;
+    detailed: number;
+    verification: number;
+    context: number;
+    total: number;
+    maxScore: number;
+    percentage: number;
+  } {
     const critical = items.filter(item => item.category.id === 'critical' && item.checked).length;
     const detailed = items.filter(item => item.category.id === 'detailed' && item.checked).length;
     const verification = items.filter(
@@ -344,15 +355,15 @@ export class ChecklistService {
       errors.push('Checklist title is required');
     }
 
-    if (!checklist.items || checklist.items.length === 0) {
+    if (checklist.items === null || checklist.items === undefined || checklist.items.length === 0) {
       errors.push('Checklist must contain at least one item');
     }
 
-    if (!checklist.createdAt) {
+    if (checklist.createdAt === null || checklist.createdAt === undefined) {
       errors.push('Created date is required');
     }
 
-    if (!checklist.updatedAt) {
+    if (checklist.updatedAt === null || checklist.updatedAt === undefined) {
       errors.push('Updated date is required');
     }
 
@@ -364,7 +375,7 @@ export class ChecklistService {
       if (!item.title) {
         errors.push(`Item ${index} is missing title`);
       }
-      if (!item.category) {
+      if (item.category === null || item.category === undefined) {
         errors.push(`Item ${index} is missing category`);
       }
     });
@@ -381,7 +392,7 @@ export class ChecklistService {
    * @returns デフォルトタイトルの場合true
    */
   static isDefaultTitle(title: string): boolean {
-    if (!title) return false;
+    if (title === null || title === '') return false;
 
     // パターン: "翻訳文_日付" または "Translation_Date"
     const patterns = [

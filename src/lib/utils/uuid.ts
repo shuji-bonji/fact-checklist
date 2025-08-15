@@ -11,7 +11,7 @@
  */
 export function generateUUID(): string {
   // ブラウザ環境またはNode.js 16.7+でcrypto.randomUUID()が利用可能
-  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID !== undefined) {
     return crypto.randomUUID();
   }
 
@@ -34,7 +34,10 @@ export function generateUUID(): string {
  * @returns {string} 短縮UUID文字列（例：550e8400）
  */
 export function generateShortUUID(): string {
-  return generateUUID().split('-')[0] || '';
+  const firstSegment = generateUUID().split('-')[0];
+  return firstSegment !== null && firstSegment !== undefined && firstSegment !== ''
+    ? firstSegment
+    : '';
 }
 
 /**

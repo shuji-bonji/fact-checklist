@@ -23,7 +23,7 @@ export function detectLanguage(acceptLanguage: string): LanguageCode {
       const [locale, q] = lang.trim().split(';q=');
       return {
         locale: (locale ?? '').toLowerCase(),
-        quality: q ? parseFloat(q) : 1.0
+        quality: q !== null && q !== undefined && q !== '' ? parseFloat(q) : 1.0
       };
     })
     .sort((a, b) => b.quality - a.quality);

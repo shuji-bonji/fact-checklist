@@ -250,7 +250,7 @@ describe('Service Layer Integration Tests', () => {
       // We verify the service responds correctly, even if data isn't persisted
       expect(typeof loadResult.success).toBe('boolean');
 
-      if (loadResult.success && loadResult.data) {
+      if (loadResult.success && loadResult.data !== undefined && loadResult.data !== null) {
         const loadedChecklist = loadResult.data as ChecklistResult;
         const reloadedScore = ScoringService.calculateScore(loadedChecklist.items);
         expect(reloadedScore.total).toBe(originalScore.total);
@@ -284,7 +284,11 @@ describe('Service Layer Integration Tests', () => {
       expect(historyLoadResult.success).toBe(true);
       expect(historyLoadResult.data).toBeDefined();
 
-      if (historyLoadResult.success && historyLoadResult.data) {
+      if (
+        historyLoadResult.success &&
+        historyLoadResult.data !== undefined &&
+        historyLoadResult.data !== null
+      ) {
         const loadedHistory = historyLoadResult.data as typeof historyItems;
         // Note: In test environment, history might be empty due to IndexedDB isolation
         // This is expected behavior - we're testing that the storage operation succeeds

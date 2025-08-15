@@ -24,7 +24,7 @@ export class IndexedDBStorage {
   async init(): Promise<void> {
     // console.log('IndexedDBStorage.init: start');
 
-    if (typeof window === 'undefined' || !window.indexedDB) {
+    if (typeof window === 'undefined' || typeof window.indexedDB === 'undefined') {
       const error = 'IndexedDB is not available';
       console.error('IndexedDBStorage.init:', error);
       throw new Error(error);
@@ -243,7 +243,11 @@ export class StorageMigration {
     storage: IndexedDBStorage,
     keyPatterns: string[]
   ): Promise<{ migrated: number; errors: string[] }> {
-    if (typeof window === 'undefined' || !window.localStorage) {
+    if (
+      typeof window === 'undefined' ||
+      window.localStorage === undefined ||
+      window.localStorage === null
+    ) {
       return { migrated: 0, errors: ['localStorage not available'] };
     }
 
@@ -256,7 +260,7 @@ export class StorageMigration {
         const matchingKeys = [];
         for (let i = 0; i < localStorage.length; i++) {
           const key = localStorage.key(i);
-          if (key && (key.startsWith(pattern) || key === pattern)) {
+          if (key !== null && (key.startsWith(pattern) || key === pattern)) {
             matchingKeys.push(key);
           }
         }
@@ -292,7 +296,11 @@ export class StorageMigration {
    * Clear migrated data from localStorage
    */
   static clearLocalStorageKeys(keyPatterns: string[]): { cleared: number; errors: string[] } {
-    if (typeof window === 'undefined' || !window.localStorage) {
+    if (
+      typeof window === 'undefined' ||
+      window.localStorage === undefined ||
+      window.localStorage === null
+    ) {
       return { cleared: 0, errors: ['localStorage not available'] };
     }
 
@@ -305,7 +313,7 @@ export class StorageMigration {
         const matchingKeys = [];
         for (let i = 0; i < localStorage.length; i++) {
           const key = localStorage.key(i);
-          if (key && (key.startsWith(pattern) || key === pattern)) {
+          if (key !== null && (key.startsWith(pattern) || key === pattern)) {
             matchingKeys.push(key);
           }
         }

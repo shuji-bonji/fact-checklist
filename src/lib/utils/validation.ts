@@ -97,7 +97,11 @@ export function validateChecklistResult(checklist: ChecklistResult): {
     errors.push('Title is required');
   }
 
-  if (!checklist.createdAt || !(checklist.createdAt instanceof Date)) {
+  if (
+    checklist.createdAt === null ||
+    checklist.createdAt === undefined ||
+    !(checklist.createdAt instanceof Date)
+  ) {
     errors.push('Valid creation date is required');
   }
 
@@ -149,7 +153,7 @@ export function validateCheckItem(item: CheckItem): {
     errors.push('Checked status must be boolean');
   }
 
-  if (!item.category || !isNotEmpty(item.category.id)) {
+  if (item.category === null || item.category === undefined || !isNotEmpty(item.category.id)) {
     errors.push('Valid category is required');
   }
 

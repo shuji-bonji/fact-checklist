@@ -38,9 +38,10 @@ export class ExportFilenameGenerator {
     t: (key: string) => string,
     options?: FilenameGenerationOptions
   ): Promise<string> {
-    const timestamp = options?.useCustomTimestamp
-      ? (options.customTimestamp ?? formatDateForFilename())
-      : formatDateForFilename();
+    const timestamp =
+      options?.useCustomTimestamp === true
+        ? (options.customTimestamp ?? formatDateForFilename())
+        : formatDateForFilename();
 
     const { sanitizeFilename } = await import('$lib/utils/download.js');
     const sanitizedTitle = sanitizeFilename(checklistTitle);

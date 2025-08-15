@@ -203,13 +203,13 @@ export class ExportI18nLoader {
     try {
       // 基本読み込みテスト
       const basicI18n = await this.loadBasicI18n(true);
-      if (!basicI18n?.t) {
+      if (basicI18n?.t === undefined || basicI18n?.t === null) {
         errors.push('Basic translation function not available');
       }
 
       // 完全読み込みテスト
       const fullI18n = await this.loadFullI18n(true);
-      if (!fullI18n.getCurrentLanguage) {
+      if (fullI18n.getCurrentLanguage === undefined || fullI18n.getCurrentLanguage === null) {
         errors.push('Language functions not available');
       }
 

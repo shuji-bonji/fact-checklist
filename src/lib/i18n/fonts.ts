@@ -197,7 +197,7 @@ export class InternationalFontManager {
     try {
       // Load and register the font
       const fontBase64 = await loadFontAsBase64(fontConfig.fontFile);
-      if (fontBase64) {
+      if (fontBase64 !== null && fontBase64 !== '') {
         const fontFileName = fontConfig.fontFile.split('/').pop() ?? `${fontConfig.fontName}.ttf`;
 
         this.pdf.addFileToVFS(fontFileName, fontBase64);
@@ -206,7 +206,7 @@ export class InternationalFontManager {
         // Also register bold variant if available
         const boldFontFile = fontConfig.fontFile.replace('Regular', 'Bold');
         const boldFontBase64 = await loadFontAsBase64(boldFontFile);
-        if (boldFontBase64) {
+        if (boldFontBase64 !== null && boldFontBase64 !== '') {
           const boldFontFileName =
             boldFontFile.split('/').pop() ?? `${fontConfig.fontName}-Bold.ttf`;
           this.pdf.addFileToVFS(boldFontFileName, boldFontBase64);

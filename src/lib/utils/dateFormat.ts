@@ -134,7 +134,12 @@ export function formatRelativeTime(
  * @param locale ロケール
  * @returns 日付フォーマッター関数
  */
-export function createDateFormatter(locale: string) {
+export function createDateFormatter(locale: string): {
+  formatDate: (date: Date | string, options?: Intl.DateTimeFormatOptions) => string;
+  formatDateOnly: (date: Date | string) => string;
+  formatTimeOnly: (date: Date | string) => string;
+  formatRelativeTime: (date: Date | string) => string;
+} {
   return {
     formatDate: (date: Date | string, options?: Intl.DateTimeFormatOptions) =>
       formatDate(date, locale, options),

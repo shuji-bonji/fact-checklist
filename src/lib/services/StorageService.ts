@@ -327,7 +327,11 @@ export class StorageService {
           let needsUpdate = false;
 
           checklist.items.forEach(item => {
-            if (!item.translationKey) {
+            if (
+              item.translationKey === null ||
+              item.translationKey === undefined ||
+              item.translationKey === ''
+            ) {
               item.translationKey = item.id;
               needsUpdate = true;
             }
@@ -387,7 +391,7 @@ export class StorageService {
 
         // 読み込みテスト
         const retrieved = await this.storage.getItem(testKey);
-        details.canRead = !!retrieved;
+        details.canRead = retrieved !== null && retrieved !== undefined;
 
         // テストデータを削除
         await this.storage.removeItem(testKey);

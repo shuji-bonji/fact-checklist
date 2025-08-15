@@ -84,7 +84,7 @@ export class SearchService {
     let filteredItems = [...history];
 
     // テキスト検索
-    if (criteria.query) {
+    if (criteria.query !== null && criteria.query !== undefined && criteria.query !== '') {
       const query = criteria.query.toLowerCase();
       filteredItems = filteredItems.filter(item => item.title.toLowerCase().includes(query));
     }
@@ -154,7 +154,7 @@ export class SearchService {
     let filteredItems = [...checklists];
 
     // テキスト検索（タイトル、説明、メモ）
-    if (criteria.query) {
+    if (criteria.query !== null && criteria.query !== undefined && criteria.query !== '') {
       const query = criteria.query.toLowerCase();
       filteredItems = filteredItems.filter(
         item =>
@@ -233,7 +233,7 @@ export class SearchService {
     let filteredItems = [...items];
 
     // テキスト検索（タイトル、説明）
-    if (criteria.query) {
+    if (criteria.query !== null && criteria.query !== undefined && criteria.query !== '') {
       const query = criteria.query.toLowerCase();
       filteredItems = filteredItems.filter(
         item =>

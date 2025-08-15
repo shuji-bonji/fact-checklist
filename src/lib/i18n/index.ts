@@ -119,14 +119,14 @@ export function getI18nState(): I18nState {
 /**
  * システム全体でサポートされている言語の取得
  */
-export function getSupportedLanguages() {
+export function getSupportedLanguages(): typeof SUPPORTED_LANGUAGES {
   return SUPPORTED_LANGUAGES;
 }
 
 /**
  * 翻訳統計の取得（開発・デバッグ用）
  */
-export function getTranslationStats() {
+export function getTranslationStats(): ReturnType<typeof i18nStore.getTranslationStats> {
   return i18nStore.getTranslationStats();
 }
 

@@ -202,7 +202,9 @@ export class ExportService {
       const result = await this.exportChecklist({
         checklist: request.checklist,
         options: request.options,
-        ...(request.filename && { filename: request.filename }),
+        ...(request.filename !== null &&
+          request.filename !== '' &&
+          request.filename !== undefined && { filename: request.filename }),
         ...(adjustedProgressHandler && { onProgress: adjustedProgressHandler }),
         ...(request.onError && { onError: request.onError })
       });
@@ -225,7 +227,7 @@ export class ExportService {
     const errors: string[] = [];
 
     // チェックリストの検証
-    if (!request.checklist) {
+    if (request.checklist === null || request.checklist === undefined) {
       errors.push('Checklist is required');
     } else {
       const checklistValidation = ExportValidationHelper.validateChecklistData(request.checklist);
@@ -235,7 +237,7 @@ export class ExportService {
     }
 
     // オプションの検証
-    if (!request.options) {
+    if (request.options === null || request.options === undefined) {
       errors.push('Export options are required');
     } else {
       // Basic validation placeholder
@@ -263,7 +265,7 @@ export class ExportService {
       (this.statistics.formatBreakdown[result.format] ?? 0) + 1;
 
     // 平均サイズの更新
-    if (result.size) {
+    if (result.size !== null && result.size !== undefined && result.size !== 0) {
       const totalSize = this.statistics.averageSize * (this.statistics.totalExports - 1);
       this.statistics.averageSize = (totalSize + result.size) / this.statistics.totalExports;
     }
@@ -450,7 +452,7 @@ export class ExportService {
     const errors: string[] = [];
 
     // ExportManagerの状態チェック
-    const exportManagerReady = !!this.exportManager;
+    const exportManagerReady = this.exportManager !== null && this.exportManager !== undefined;
     if (!exportManagerReady) {
       errors.push('Export manager is not initialized');
     }

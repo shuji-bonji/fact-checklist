@@ -31,7 +31,7 @@ export class ExportProgressManager {
    * @param stage ステージ名
    * @param message メッセージ
    */
-  updateProgress(current: number, total: number, stage: string, message: string) {
+  updateProgress(current: number, total: number, stage: string, message: string): void {
     this.progress.current = current;
     this.progress.total = total;
     this.progress.stage = stage;
@@ -44,7 +44,7 @@ export class ExportProgressManager {
    * @param stage 初期ステージ
    * @param message 初期メッセージ
    */
-  startExport(stage: string = 'Starting', message: string = 'Initializing export...') {
+  startExport(stage: string = 'Starting', message: string = 'Initializing export...'): void {
     this.isExporting = true;
     this.exportError = null;
     this.exportSuccess = false;
@@ -55,7 +55,7 @@ export class ExportProgressManager {
    * エクスポート完了
    * @param message 完了メッセージ
    */
-  completeExport(message: string = 'Export completed successfully') {
+  completeExport(message: string = 'Export completed successfully'): void {
     this.updateProgress(100, 100, 'Complete', message);
     this.exportSuccess = true;
     this.isExporting = false;
@@ -65,7 +65,7 @@ export class ExportProgressManager {
    * エクスポートエラー
    * @param error エラーメッセージ
    */
-  setError(error: string) {
+  setError(error: string): void {
     this.exportError = error;
     this.isExporting = false;
     this.exportSuccess = false;
@@ -74,7 +74,7 @@ export class ExportProgressManager {
   /**
    * プログレスをリセット
    */
-  reset() {
+  reset(): void {
     this.isExporting = false;
     this.exportError = null;
     this.exportSuccess = false;
@@ -87,7 +87,11 @@ export class ExportProgressManager {
    * @param currentStageIndex 現在のステージインデックス
    * @param stageProgress ステージ内の進捗（0-1）
    */
-  updateStageProgress(stages: string[], currentStageIndex: number, stageProgress: number = 0) {
+  updateStageProgress(
+    stages: string[],
+    currentStageIndex: number,
+    stageProgress: number = 0
+  ): void {
     const totalStages = stages.length;
     if (currentStageIndex >= totalStages) return;
 
@@ -115,7 +119,7 @@ export class ExportProgressManager {
     stage: string,
     message: string,
     delay: number = 100
-  ) {
+  ): Promise<void> {
     this.updateProgress(current, 100, stage, message);
     if (delay > 0) {
       await new Promise(resolve => setTimeout(resolve, delay));

@@ -5,7 +5,7 @@ import type { RequestHandler } from './$types';
  * Debug endpoint to verify meta tag generation logic
  */
 export const GET: RequestHandler = async ({ url, request }) => {
-  const pathname = url.searchParams.get('path') || '/';
+  const pathname = url.searchParams.get('path') ?? '/';
   const acceptLanguage = request.headers.get('accept-language') ?? '';
 
   // Simulate the logic from layout.server.ts

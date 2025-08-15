@@ -90,23 +90,27 @@ export class ReliablePDFGenerator {
     // PDF構築
     this.addHeader(checklist);
 
-    if (options.includeSummary) {
+    if (options.includeSummary === true) {
       this.addSummary(checklist);
     }
 
     this.addDetailedResults(checklist, options);
 
-    if (options.includeNotes && checklist.notes) {
+    if (
+      options.includeNotes === true &&
+      checklist.notes !== undefined &&
+      checklist.notes !== null
+    ) {
       this.addNotes(checklist.notes);
     }
 
     // Phase 3: 目次の追加（最初のページに挿入）
-    if (options.includeTableOfContents && this.tableOfContents.length > 0) {
+    if (options.includeTableOfContents === true && this.tableOfContents.length > 0) {
       this.insertTableOfContents();
     }
 
     // Phase 3: 透かしの追加
-    if (options.addWatermark) {
+    if (options.addWatermark === true) {
       this.addWatermarkToAllPages(options.watermarkText);
     }
 
@@ -154,7 +158,7 @@ export class ReliablePDFGenerator {
 
   // Phase 3: TOCエントリ追加用ヘルパー
   private addToTableOfContents(title: string, level: number = 1): void {
-    if (this.options.includeTableOfContents) {
+    if (this.options.includeTableOfContents === true) {
       this.tableOfContents.push({
         title,
         page: this.pdf.getNumberOfPages(),
@@ -179,7 +183,7 @@ export class ReliablePDFGenerator {
 
     // タイトルを文字化けしにくい形式で表示
     const mainTitle = this.useFallbackFont
-      ? `📋 ${this.t ? this.t('app.title') : 'Fact Checking Checklist'}`
+      ? `📋 ${this.t !== null && this.t !== undefined ? this.t('app.title') : 'Fact Checking Checklist'}`
       : `📋 ${this.t('app.title')}`;
 
     this.addText(mainTitle);
@@ -232,7 +236,7 @@ export class ReliablePDFGenerator {
       day: '2-digit'
     });
     const outputLabel = this.useFallbackFont
-      ? this.t
+      ? this.t !== null && this.t !== undefined
         ? this.t('export.generatedAt')
         : 'Generated'
       : this.t('export.generatedAt');
@@ -273,7 +277,7 @@ export class ReliablePDFGenerator {
     const sections = this.groupItemsByCategory(checklist.items);
 
     sections.forEach((section, index) => {
-      if (options.sectionBreaks && index > 0) {
+      if (options.sectionBreaks === true && index > 0) {
         this.pdf.addPage();
         this.currentY = this.margin;
       }
@@ -351,7 +355,11 @@ export class ReliablePDFGenerator {
     this.currentY += 2;
 
     // ガイド内容（オプション）
-    if (options.includeGuides && item.guideContent) {
+    if (
+      options.includeGuides === true &&
+      item.guideContent !== undefined &&
+      item.guideContent !== null
+    ) {
       this.addGuideContent(item.guideContent);
     }
 
@@ -493,7 +501,7 @@ export class ReliablePDFGenerator {
     }
 
     // Only advance Y position if we're using automatic positioning
-    if (!x && !y) {
+    if ((x === null || x === undefined || x === 0) && (y === null || y === undefined || y === 0)) {
       this.currentY = actualY + this.lineHeight + 0.5; // Ensure clear spacing
     }
   }

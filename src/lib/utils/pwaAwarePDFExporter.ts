@@ -152,10 +152,14 @@ export class PWAAwarePDFExporter {
     // console.log('💾 Attempting to save/share PDF:', filename);
 
     // 保存方法の優先順位
-    if (options.showSaveDialog && this.hasFileSystemAccess) {
+    if (options.showSaveDialog === true && this.hasFileSystemAccess === true) {
       // console.log('📁 Using File System Access API');
       await this.saveWithFileSystemAPI(pdf, filename);
-    } else if (options.enableSharing && this.hasWebShareFiles && this.isNativeApp) {
+    } else if (
+      options.enableSharing === true &&
+      this.hasWebShareFiles === true &&
+      this.isNativeApp === true
+    ) {
       // console.log('📤 Using Web Share API');
       await this.shareWithWebShareAPI(pdf, filename, title);
     } else {
@@ -200,7 +204,7 @@ export class PWAAwarePDFExporter {
       const pdfBlob = pdf.output('blob');
       const file = new File([pdfBlob], filename, { type: 'application/pdf' });
 
-      if (navigator.canShare?.({ files: [file] }) && navigator.share) {
+      if (navigator.canShare?.({ files: [file] }) === true && navigator.share !== undefined) {
         await navigator.share({
           title: '事実確認チェックシート',
           text: `${title}の評価結果`,

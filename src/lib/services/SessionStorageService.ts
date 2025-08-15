@@ -24,7 +24,7 @@ export class SessionStorageService {
   private constructor() {}
 
   static getInstance(): SessionStorageService {
-    if (!SessionStorageService.instance) {
+    if (SessionStorageService.instance === null || SessionStorageService.instance === undefined) {
       SessionStorageService.instance = new SessionStorageService();
     }
     return SessionStorageService.instance;
@@ -35,7 +35,11 @@ export class SessionStorageService {
    */
   isAvailable(): boolean {
     try {
-      if (typeof window === 'undefined' || !window.sessionStorage) {
+      if (
+        typeof window === 'undefined' ||
+        window.sessionStorage === null ||
+        window.sessionStorage === undefined
+      ) {
         return false;
       }
 
@@ -59,11 +63,17 @@ export class SessionStorageService {
 
     try {
       const sessionData: SessionData = {
-        title: checklist.title || '',
-        description: checklist.description || '',
-        notes: checklist.notes || '',
-        items: checklist.items || [],
-        judgment: checklist.judgment || null,
+        title: checklist.title !== null && checklist.title !== undefined ? checklist.title : '',
+        description:
+          checklist.description !== null && checklist.description !== undefined
+            ? checklist.description
+            : '',
+        notes: checklist.notes !== null && checklist.notes !== undefined ? checklist.notes : '',
+        items: checklist.items !== null && checklist.items !== undefined ? checklist.items : [],
+        judgment:
+          checklist.judgment !== null && checklist.judgment !== undefined
+            ? checklist.judgment
+            : null,
         lastUpdated: new Date().toISOString()
       };
 
@@ -85,7 +95,7 @@ export class SessionStorageService {
 
     try {
       const data = sessionStorage.getItem(SESSION_KEY);
-      if (!data) {
+      if (data === null || data === undefined || data === '') {
         return null;
       }
 

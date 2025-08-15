@@ -173,7 +173,7 @@ export class PDFService {
     t?: TranslationFunction
   ): Promise<PDFGenerationResult> {
     const generator = this.generators.get(mode);
-    if (!generator) {
+    if (generator === undefined) {
       throw new Error(`Unsupported PDF generation mode: ${mode}`);
     }
 
@@ -182,26 +182,30 @@ export class PDFService {
 
       switch (mode) {
         case PDFGenerationMode.PRINT_DIALOG: {
-          if (!htmlContent) throw new Error('HTML content required for print dialog mode');
+          if (htmlContent === null || htmlContent === undefined || htmlContent === '') {
+            throw new Error('HTML content required for print dialog mode');
+          }
           const printResult = await (generator as BasePDFGenerator).generateFromHTML?.(
             htmlContent,
             filename
           );
           const result = printResult as { success?: boolean; cancelled?: boolean } | undefined;
-          if (result?.cancelled) {
+          if (result !== null && result !== undefined && result.cancelled === true) {
             return {
               success: false,
               error: 'Print dialog was cancelled by user',
               usedMode: mode,
               duration: 0,
-              filename: filename || 'unknown.pdf'
+              filename:
+                typeof filename === 'string' && filename.trim() !== '' ? filename : 'unknown.pdf'
             };
           }
           return {
             success: result?.success ?? true,
             usedMode: mode,
             duration: 0,
-            filename: filename || 'unknown.pdf'
+            filename:
+              typeof filename === 'string' && filename.trim() !== '' ? filename : 'unknown.pdf'
           };
         }
 
@@ -212,7 +216,13 @@ export class PDFService {
             this.convertOptionsForReliable(options, t)
           )) as Blob | void;
           const blob = reliableBlob instanceof Blob ? reliableBlob : undefined;
-          if (filename && blob) {
+          if (
+            typeof filename === 'string' &&
+            filename !== null &&
+            filename.trim() !== '' &&
+            blob !== null &&
+            blob !== undefined
+          ) {
             const { downloadBlob } = await import('$lib/utils/download.js');
             downloadBlob(blob, filename);
           }
@@ -221,7 +231,8 @@ export class PDFService {
             blob,
             usedMode: mode,
             duration: 0,
-            filename: filename || 'unknown.pdf'
+            filename:
+              typeof filename === 'string' && filename.trim() !== '' ? filename : 'unknown.pdf'
           };
         }
 
@@ -232,7 +243,13 @@ export class PDFService {
             this.convertOptionsForText(options, t)
           )) as Blob | void;
           const blob = textBlob instanceof Blob ? textBlob : undefined;
-          if (filename && blob) {
+          if (
+            typeof filename === 'string' &&
+            filename !== null &&
+            filename.trim() !== '' &&
+            blob !== null &&
+            blob !== undefined
+          ) {
             const { downloadBlob } = await import('$lib/utils/download.js');
             downloadBlob(blob, filename);
           }
@@ -241,19 +258,29 @@ export class PDFService {
             blob,
             usedMode: mode,
             duration: 0,
-            filename: filename || 'unknown.pdf'
+            filename:
+              filename !== null && filename !== undefined && filename !== ''
+                ? filename
+                : 'unknown.pdf'
           };
         }
 
         case PDFGenerationMode.HTML_TO_CANVAS: {
-          if (!htmlContent) throw new Error('HTML content required for HTML to canvas mode');
+          if (htmlContent === null || htmlContent === undefined || htmlContent === '')
+            throw new Error('HTML content required for HTML to canvas mode');
           options.onProgress?.(50, 'Converting HTML to canvas...');
           const canvasBlob = (await (generator as BasePDFGenerator).generateFromHTML?.(
             htmlContent,
             this.convertOptionsForHTML(options)
           )) as Blob | { success?: boolean; cancelled?: boolean } | undefined;
           const blob = canvasBlob instanceof Blob ? canvasBlob : undefined;
-          if (filename && blob) {
+          if (
+            filename !== null &&
+            filename !== undefined &&
+            filename !== '' &&
+            blob !== null &&
+            blob !== undefined
+          ) {
             const { downloadBlob } = await import('$lib/utils/download.js');
             downloadBlob(blob, filename);
           }
@@ -262,7 +289,10 @@ export class PDFService {
             blob,
             usedMode: mode,
             duration: 0,
-            filename: filename || 'unknown.pdf'
+            filename:
+              filename !== null && filename !== undefined && filename !== ''
+                ? filename
+                : 'unknown.pdf'
           };
         }
 
@@ -276,7 +306,10 @@ export class PDFService {
             success: true,
             usedMode: mode,
             duration: 0,
-            filename: filename || 'unknown.pdf'
+            filename:
+              filename !== null && filename !== undefined && filename !== ''
+                ? filename
+                : 'unknown.pdf'
           };
         }
 
@@ -290,7 +323,10 @@ export class PDFService {
             success: true,
             usedMode: mode,
             duration: 0,
-            filename: filename || 'unknown.pdf'
+            filename:
+              filename !== null && filename !== undefined && filename !== ''
+                ? filename
+                : 'unknown.pdf'
           };
         }
 
@@ -304,7 +340,8 @@ export class PDFService {
         error: error instanceof Error ? error.message : String(error),
         usedMode: mode,
         duration: 0,
-        filename: filename || 'unknown.pdf'
+        filename:
+          filename !== null && filename !== undefined && filename !== '' ? filename : 'unknown.pdf'
       };
     }
   }
@@ -341,7 +378,10 @@ export class PDFService {
         // console.log(`✅ Fallback successful with mode: ${fallbackMode}`);
         return {
           ...result,
-          duration: startTime ? Date.now() - startTime : result.duration
+          duration:
+            startTime !== null && startTime !== undefined && startTime > 0
+              ? Date.now() - startTime
+              : result.duration
         };
       }
 
@@ -353,8 +393,10 @@ export class PDFService {
       success: false,
       error: `All PDF generation methods failed. Errors: ${errors.join('; ')}`,
       usedMode: options.mode,
-      duration: startTime ? Date.now() - startTime : 0,
-      filename: filename || 'unknown.pdf'
+      duration:
+        startTime !== null && startTime !== undefined && startTime > 0 ? Date.now() - startTime : 0,
+      filename:
+        filename !== null && filename !== undefined && filename !== '' ? filename : 'unknown.pdf'
     };
   }
 
@@ -366,7 +408,8 @@ export class PDFService {
     options: PDFServiceOptions,
     t?: TranslationFunction
   ): Promise<string> {
-    if (options.filename) return options.filename;
+    if (options.filename !== null && options.filename !== undefined && options.filename !== '')
+      return options.filename;
 
     const timestamp = formatDateForFilename();
     const { sanitizeFilename } = await import('$lib/utils/download.js');
@@ -379,7 +422,10 @@ export class PDFService {
   /**
    * ReliablePDFGenerator用のオプション変換
    */
-  private convertOptionsForReliable(options: PDFServiceOptions, t?: TranslationFunction) {
+  private convertOptionsForReliable(
+    options: PDFServiceOptions,
+    t?: TranslationFunction
+  ): Record<string, unknown> {
     return {
       includeGuides: options.includeGuides,
       includeNotes: options.includeNotes,
@@ -393,7 +439,10 @@ export class PDFService {
   /**
    * TextBasedPDFGenerator用のオプション変換
    */
-  private convertOptionsForText(options: PDFServiceOptions, t?: TranslationFunction) {
+  private convertOptionsForText(
+    options: PDFServiceOptions,
+    t?: TranslationFunction
+  ): Record<string, unknown> {
     return {
       includeGuides: options.includeGuides,
       includeNotes: options.includeNotes,
@@ -407,7 +456,7 @@ export class PDFService {
   /**
    * HTMLToPDFGenerator用のオプション変換
    */
-  private convertOptionsForHTML(options: PDFServiceOptions) {
+  private convertOptionsForHTML(options: PDFServiceOptions): Record<string, unknown> {
     return {
       includeGuides: options.includeGuides,
       includeNotes: options.includeNotes,
@@ -421,7 +470,7 @@ export class PDFService {
   /**
    * PlatformAwarePDFGenerator用のオプション変換
    */
-  private convertOptionsForPlatform(options: PDFServiceOptions) {
+  private convertOptionsForPlatform(options: PDFServiceOptions): Record<string, unknown> {
     return {
       includeGuides: options.includeGuides,
       includeNotes: options.includeNotes,
@@ -435,7 +484,10 @@ export class PDFService {
   /**
    * PWAAwarePDFExporter用のオプション変換
    */
-  private convertOptionsForPWA(options: PDFServiceOptions, t?: TranslationFunction) {
+  private convertOptionsForPWA(
+    options: PDFServiceOptions,
+    t?: TranslationFunction
+  ): Record<string, unknown> {
     return {
       includeGuides: options.includeGuides,
       includeNotes: options.includeNotes,
@@ -459,7 +511,7 @@ export class PDFService {
     userPreferences?: Partial<PDFServiceOptions>
   ): PDFGenerationMode {
     // ユーザーの明示的な設定がある場合
-    if (userPreferences?.mode) {
+    if (userPreferences?.mode !== null && userPreferences?.mode !== undefined) {
       return userPreferences.mode;
     }
 

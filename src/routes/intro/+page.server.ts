@@ -5,7 +5,24 @@ import { detectLanguage, getLocaleString } from '$lib/utils/language-detection';
 /**
  * intro ページ用の単一言語メタデータを生成（重複回避）
  */
-async function generateIntroMeta(language: LanguageCode, _url: URL) {
+async function generateIntroMeta(
+  language: LanguageCode,
+  _url: URL
+): Promise<{
+  title: string;
+  description: string;
+  keywords: string;
+  ogTitle: string;
+  ogDescription: string;
+  ogImage: string;
+  ogUrl: string;
+  url: string;
+  image: string;
+  type: string;
+  siteName: string;
+  locale: string;
+  language: string;
+}> {
   try {
     // 静的インポートマップを使用（SSR対応）
     const translationModules = {

@@ -75,7 +75,12 @@ export function detectPreferredLanguage(): LanguageCode {
 
     // 言語コードの前半部分をチェック
     const langCode = browserLang.split('-')[0];
-    if (langCode && isValidLanguageCode(langCode)) {
+    if (
+      langCode !== null &&
+      langCode !== undefined &&
+      langCode !== '' &&
+      isValidLanguageCode(langCode)
+    ) {
       return langCode;
     }
 

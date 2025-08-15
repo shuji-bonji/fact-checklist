@@ -48,7 +48,7 @@ export class SimplePDFGenerator {
             let cancelCheckInterval: number = 0;
 
             // ウィンドウのフォーカス変化を監視してキャンセル検出
-            const checkPrintStatus = () => {
+            const checkPrintStatus = (): void => {
               setTimeout(() => {
                 if (!dialogClosed) {
                   // ウィンドウが閉じられていない場合は成功とみなす
@@ -63,7 +63,7 @@ export class SimplePDFGenerator {
             };
 
             // ウィンドウがすぐに閉じられた場合はキャンセルとみなす
-            const checkCancel = () => {
+            const checkCancel = (): void => {
               if (printWindow.closed && !dialogClosed) {
                 dialogClosed = true;
                 clearTimeout(timeoutId);

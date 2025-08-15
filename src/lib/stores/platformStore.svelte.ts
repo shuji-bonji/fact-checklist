@@ -160,7 +160,7 @@ class PlatformStore {
     try {
       const canvas = document.createElement('canvas');
       return !!(
-        window.WebGLRenderingContext &&
+        'WebGLRenderingContext' in window &&
         (canvas.getContext('webgl') ?? canvas.getContext('experimental-webgl'))
       );
     } catch {
@@ -265,7 +265,7 @@ class PlatformStore {
    * 特定フォントの利用可能性をチェック
    */
   private async isFontAvailable(fontName: string): Promise<boolean> {
-    if (!document.fonts?.check) {
+    if (typeof document.fonts === 'undefined' || typeof document.fonts.check !== 'function') {
       return false;
     }
 

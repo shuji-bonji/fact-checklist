@@ -135,7 +135,7 @@ export async function addJapaneseFontToPDF(
 export async function loadLocalJapaneseFont(pdf: jsPDF): Promise<string> {
   try {
     // GitHub Pages対応の動的フォントパス取得
-    const getFontBasePath = () => {
+    const getFontBasePath = (): string => {
       if (typeof window === 'undefined') return '/fonts/'; // SSR
 
       const isGitHubPages =
@@ -219,7 +219,7 @@ export function getTextWidth(
 
   // 一時的にフォントサイズを設定
   pdf.setFontSize(fontSize);
-  if (fontName) {
+  if (fontName !== null && fontName !== undefined && fontName !== '') {
     pdf.setFont(fontName, 'normal');
   }
 
@@ -247,7 +247,7 @@ export function calculateTextLines(
   const wrappedLines: string[] = [];
 
   pdf.setFontSize(fontSize);
-  if (fontName) {
+  if (fontName !== null && fontName !== undefined && fontName !== '') {
     pdf.setFont(fontName, 'normal');
   }
 

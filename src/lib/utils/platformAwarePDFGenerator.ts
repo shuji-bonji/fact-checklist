@@ -136,13 +136,13 @@ export class PlatformAwarePDFGenerator {
     const pdf = await this.generateOptimizedPDF(checklist, options, optimalFont);
 
     // ネイティブファイルシステム連携
-    if (options.showSaveDialog && this.capabilities.hasFileSystemAccess) {
+    if (options.showSaveDialog === true && this.capabilities.hasFileSystemAccess === true) {
       await this.saveWithFileSystemAPI(pdf, checklist.title);
       return;
     }
 
     // Web Share API での共有
-    if (options.enableSharing && this.capabilities.hasWebShareFiles) {
+    if (options.enableSharing === true && this.capabilities.hasWebShareFiles === true) {
       await this.shareWithWebShareAPI(pdf, checklist.title);
       return;
     }
@@ -274,10 +274,10 @@ export class PlatformAwarePDFGenerator {
         weight: 'normal',
         style: 'normal',
         sizes: {
-          title: options.optimizeForMobile ? 16 : 18,
-          heading: options.optimizeForMobile ? 12 : 14,
-          body: options.optimizeForMobile ? 9 : 10,
-          small: options.optimizeForMobile ? 7 : 8
+          title: options.optimizeForMobile === true ? 16 : 18,
+          heading: options.optimizeForMobile === true ? 12 : 14,
+          body: options.optimizeForMobile === true ? 9 : 10,
+          small: options.optimizeForMobile === true ? 7 : 8
         }
       }
     };
@@ -344,7 +344,7 @@ export class PlatformAwarePDFGenerator {
         type: 'application/pdf'
       });
 
-      if (navigator.canShare?.({ files: [file] }) && navigator.share) {
+      if (navigator.canShare?.({ files: [file] }) === true && navigator.share !== undefined) {
         await navigator.share({
           title: '事実確認チェックシート',
           text: `${title}の評価結果`,

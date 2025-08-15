@@ -77,31 +77,36 @@ export class ExportValidationHelper {
       errors.push('Checklist ID is missing');
     }
 
-    if (!checklist.items || checklist.items.length === 0) {
+    if (checklist.items === undefined || checklist.items === null || checklist.items.length === 0) {
       errors.push('Checklist has no items');
     }
 
-    if (!checklist.score) {
+    if (checklist.score === undefined || checklist.score === null) {
       warnings.push('Score information is missing');
     }
 
     // アイテムの詳細チェック
-    if (checklist.items) {
+    if (checklist.items !== undefined && checklist.items !== null) {
       checklist.items.forEach((item, index) => {
         if (!item.id) {
           errors.push(`Item ${index + 1} is missing ID`);
         }
-        if (!item.title?.trim()) {
+        if (item.title === null || item.title === undefined || item.title.trim() === '') {
           errors.push(`Item ${index + 1} is missing title`);
         }
-        if (!item.category) {
+        if (item.category === undefined || item.category === null) {
           errors.push(`Item ${index + 1} is missing category`);
         }
       });
     }
 
     // データ整合性チェック
-    if (checklist.createdAt && checklist.updatedAt) {
+    if (
+      checklist.createdAt !== undefined &&
+      checklist.createdAt !== null &&
+      checklist.updatedAt !== undefined &&
+      checklist.updatedAt !== null
+    ) {
       if (new Date(checklist.createdAt) > new Date(checklist.updatedAt)) {
         warnings.push('Created date is later than updated date');
       }
@@ -141,7 +146,10 @@ export class ExportValidationHelper {
         }
 
         // HTML→PDF変換の場合はHTMLコンテンツが必要
-        if (!htmlContent && format === 'pdf-html') {
+        if (
+          (htmlContent === null || htmlContent === undefined || htmlContent === '') &&
+          format === 'pdf-html'
+        ) {
           errors.push('HTML content is required for HTML-to-PDF conversion');
         }
         break;

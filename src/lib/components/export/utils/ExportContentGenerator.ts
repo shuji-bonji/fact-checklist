@@ -115,22 +115,23 @@ export class ExportContentGenerator {
           category: item.category,
           translationKey: item.translationKey,
           guideContent:
-            options.includeGuides && item.guideContent
+            options.includeGuides && item.guideContent !== undefined
               ? {
                   title: item.guideContent.title,
                   content: item.guideContent.content,
-                  examples: item.guideContent.examples
-                    ? [
-                        ...item.guideContent.examples.good.map(content => ({
-                          type: 'good' as const,
-                          content
-                        })),
-                        ...item.guideContent.examples.bad.map(content => ({
-                          type: 'bad' as const,
-                          content
-                        }))
-                      ]
-                    : undefined
+                  examples:
+                    item.guideContent.examples !== null && item.guideContent.examples !== undefined
+                      ? [
+                          ...item.guideContent.examples.good.map(content => ({
+                            type: 'good' as const,
+                            content
+                          })),
+                          ...item.guideContent.examples.bad.map(content => ({
+                            type: 'bad' as const,
+                            content
+                          }))
+                        ]
+                      : undefined
                 }
               : undefined
         }))
@@ -235,8 +236,8 @@ export class ExportContentGenerator {
 
       if (options.includeGuides) {
         row.push(
-          `"${(t && item.guideContent?.title ? t(item.guideContent.title) : (item.guideContent?.title ?? '')).replace(/"/g, '""')}"`,
-          `"${(t && item.guideContent?.content ? t(item.guideContent.content) : (item.guideContent?.content ?? '')).replace(/"/g, '""')}"`
+          `"${(t !== undefined && item.guideContent?.title !== undefined && item.guideContent.title !== '' ? t(item.guideContent.title) : (item.guideContent?.title ?? '')).replace(/"/g, '""')}"`,
+          `"${(t !== undefined && item.guideContent?.content !== undefined && item.guideContent.content !== '' ? t(item.guideContent.content) : (item.guideContent?.content ?? '')).replace(/"/g, '""')}"`
         );
       }
 

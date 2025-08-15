@@ -128,7 +128,7 @@ class RefactoredChecklistStore {
   /**
    * 詳細スコア分析（derived state）
    */
-  get detailedAnalysis() {
+  get detailedAnalysis(): ReturnType<typeof ScoringService.analyzeScore> {
     if (!this._currentChecklist) {
       return ScoringService.analyzeScore([]);
     }
@@ -523,7 +523,10 @@ class RefactoredChecklistStore {
    * @param sort ソート条件
    * @returns 検索結果
    */
-  searchHistory(criteria?: SearchCriteria, sort?: SortCriteria) {
+  searchHistory(
+    criteria?: SearchCriteria,
+    sort?: SortCriteria
+  ): ReturnType<typeof SearchService.searchHistory> {
     return SearchService.searchHistory(this._history, criteria, sort);
   }
 
@@ -572,7 +575,7 @@ class RefactoredChecklistStore {
     // i18nストアの変更を定期的にチェック
     let lastLanguage = i18nStore.currentLanguage;
 
-    const checkLanguageChange = () => {
+    const checkLanguageChange = (): void => {
       const currentLanguage = i18nStore.currentLanguage;
       if (currentLanguage !== lastLanguage && this._initialized && this._currentChecklist) {
         // console.log(
@@ -678,7 +681,7 @@ class RefactoredChecklistStore {
   private async loadHistoryFromStorage(): Promise<void> {
     try {
       const result = await this.storageService.loadHistory();
-      if (result.success && result.data) {
+      if (result.success && result.data !== null && result.data !== undefined) {
         this._history = result.data as ChecklistHistoryItem[];
         // console.log('RefactoredChecklistStore: History loaded:', this._history.length, 'items');
 
@@ -742,12 +745,12 @@ class RefactoredChecklistStore {
 export const refactoredChecklistStore = new RefactoredChecklistStore();
 
 // Session storage helpers
-export const saveToSessionStorage = (checklist: ChecklistResult) => {
+export const saveToSessionStorage = (checklist: ChecklistResult): boolean => {
   const sessionService = SessionStorageService.getInstance();
   return sessionService.saveSession(checklist);
 };
 
-export const clearSessionStorage = () => {
+export const clearSessionStorage = (): void => {
   const sessionService = SessionStorageService.getInstance();
   sessionService.clearSession();
 };

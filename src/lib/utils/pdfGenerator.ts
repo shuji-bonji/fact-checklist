@@ -5,7 +5,7 @@
  */
 
 import type jsPDF from 'jspdf';
-import type { ChecklistResult, CheckItem } from '$lib/types/checklist.js';
+import type { ChecklistResult, CheckItem, CheckCategory } from '$lib/types/checklist.js';
 import { getCategories } from '$lib/data/checklist-items.js';
 import {
   addJapaneseFontToPDF,
@@ -423,7 +423,7 @@ async function addCheckItem(
     }
 
     // 良い例・悪い例
-    if (item.guideContent.examples) {
+    if (item.guideContent.examples !== undefined && item.guideContent.examples !== null) {
       if (item.guideContent.examples.good.length > 0) {
         y += 3;
         pdf.setTextColor(39, 174, 96); // Green
@@ -547,7 +547,13 @@ function addFooter(pdf: jsPDF, layout: PageLayout, fontConfig: FontConfig): void
 function groupItemsByCategory(
   checklist: ChecklistResult,
   translationFunction?: (key: string) => string
-) {
+): Array<{
+  category: CheckCategory;
+  items: CheckItem[];
+  checkedItems: CheckItem[];
+  uncheckedItems: CheckItem[];
+  completionRate: number;
+}> {
   return getCategories(translationFunction).map(category => {
     const items = checklist.items.filter(item => item.category.id === category.id);
     const checkedItems = items.filter(item => item.checked);
@@ -562,16 +568,22 @@ function groupItemsByCategory(
   });
 }
 
-type SectionData = ReturnType<typeof groupItemsByCategory>[0];
+type SectionData = {
+  category: CheckCategory;
+  items: CheckItem[];
+  checkedItems: CheckItem[];
+  uncheckedItems: CheckItem[];
+  completionRate: number;
+};
 
-function getSectionColor(categoryId: string) {
+function getSectionColor(categoryId: string): { r: number; g: number; b: number } {
   const colors = {
     critical: { r: 231, g: 76, b: 60 },
     detailed: { r: 243, g: 156, b: 18 },
     verification: { r: 52, g: 152, b: 219 },
     context: { r: 155, g: 89, b: 182 }
   };
-  return colors[categoryId as keyof typeof colors] || colors.verification;
+  return colors[categoryId as keyof typeof colors] ?? colors.verification;
 }
 
 function getJudgmentText(judgment: string | null): string {
@@ -650,7 +662,7 @@ function calculateGuideHeight(
   height += contentLines.length * fontConfig.sizes.small * layout.lineHeight;
 
   // 例
-  if (guideContent.examples) {
+  if (guideContent.examples !== undefined && guideContent.examples !== null) {
     if (guideContent.examples.good.length > 0) {
       height += fontConfig.sizes.small * layout.lineHeight; // ヘッダー
       height += guideContent.examples.good.length * fontConfig.sizes.small * layout.lineHeight;

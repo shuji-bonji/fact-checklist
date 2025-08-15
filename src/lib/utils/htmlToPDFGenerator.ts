@@ -444,7 +444,7 @@ export class HTMLToPDFGenerator {
 
     // body要素を取得
     const bodyElement = doc.body;
-    if (!bodyElement) {
+    if (bodyElement === null || bodyElement === undefined) {
       throw new Error('Body element not found in parsed HTML');
     }
 
@@ -502,7 +502,7 @@ export class HTMLToPDFGenerator {
 
     // 高解像度Canvas生成
     const canvas = await html2canvas(bodyElement, {
-      scale: this.options.highQuality ? 2 : 1, // 高品質の場合は2倍スケール
+      scale: this.options.highQuality === true ? 2 : 1, // 高品質の場合は2倍スケール
       useCORS: true,
       allowTaint: true,
       backgroundColor: '#ffffff',

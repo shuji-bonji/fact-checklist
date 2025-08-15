@@ -393,14 +393,14 @@ export class TextBasedPDFGenerator {
 
       // NotoSansJPフォントを読み込み
       const fontBase64 = await loadFontAsBase64(`${fontBasePath}NotoSansJP-Regular.ttf`);
-      if (fontBase64) {
+      if (fontBase64 !== null && fontBase64 !== '') {
         this.pdf.addFileToVFS('NotoSansJP-Regular.ttf', fontBase64);
         this.pdf.addFont('NotoSansJP-Regular.ttf', 'NotoSansJP', 'normal');
 
         // Boldフォントも試行
         try {
           const boldFontBase64 = await loadFontAsBase64(`${fontBasePath}NotoSansJP-Bold.ttf`);
-          if (boldFontBase64) {
+          if (boldFontBase64 !== null && boldFontBase64 !== '') {
             this.pdf.addFileToVFS('NotoSansJP-Bold.ttf', boldFontBase64);
             this.pdf.addFont('NotoSansJP-Bold.ttf', 'NotoSansJP', 'bold');
           }
