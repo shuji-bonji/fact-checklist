@@ -955,7 +955,9 @@ When working with tests in this project:
 以下の重要なESLintルールを適用：
 
 #### 1. **@typescript-eslint/no-floating-promises**
+
 非同期関数の適切な処理を強制：
+
 ```typescript
 // ❌ エラー
 asyncFunction();
@@ -967,7 +969,9 @@ void asyncFunction(); // 結果を無視する場合
 ```
 
 #### 2. **@typescript-eslint/explicit-function-return-type**
+
 すべての関数に明示的な戻り値の型を要求：
+
 ```typescript
 // ❌ 警告
 function getValue() {
@@ -981,29 +985,43 @@ function getValue(): string {
 ```
 
 #### 3. **@typescript-eslint/strict-boolean-expressions**
+
 条件式を明示的にすることを要求：
+
 ```typescript
 // ❌ 警告
-if (str) { }
-if (obj) { }
-if (nullable) { }
+if (str) {
+}
+if (obj) {
+}
+if (nullable) {
+}
 
 // ✅ 修正
-if (str !== '') { }
-if (str.length > 0) { }
-if (obj !== null) { }
-if (nullable !== null && nullable !== undefined) { }
+if (str !== '') {
+}
+if (str.length > 0) {
+}
+if (obj !== null) {
+}
+if (nullable !== null && nullable !== undefined) {
+}
 
 // nullable booleanの場合
-if (bool === true) { }
-if (bool !== null && bool) { }
+if (bool === true) {
+}
+if (bool !== null && bool) {
+}
 
 // nullable numberの場合
-if (num !== null && num !== 0) { }
+if (num !== null && num !== 0) {
+}
 ```
 
 #### 4. **@typescript-eslint/no-unsafe-return**
+
 any型の安全でない返却を防止：
+
 ```typescript
 // ❌ エラー
 function parse(value: string) {
@@ -1017,7 +1035,9 @@ function parse<T>(value: string): T {
 ```
 
 #### 5. **@typescript-eslint/no-unused-vars**
+
 未使用変数の検出（アンダースコアで回避可能）：
+
 ```typescript
 // ❌ エラー
 const unusedVar = 'test';
@@ -1030,19 +1050,23 @@ const _unusedVar = 'test';
 ### 型エラーの一般的な修正パターン
 
 #### translationKeyのundefinedチェック
+
 ```typescript
 // ❌ エラー：undefinedの可能性
-factChecklistI18n.getCheckItemTitle(item.translationKey)
+factChecklistI18n.getCheckItemTitle(item.translationKey);
 
 // ✅ 修正：明示的なチェック
-if (item.translationKey !== null && 
-    item.translationKey !== undefined && 
-    item.translationKey !== '') {
-  factChecklistI18n.getCheckItemTitle(item.translationKey)
+if (
+  item.translationKey !== null &&
+  item.translationKey !== undefined &&
+  item.translationKey !== ''
+) {
+  factChecklistI18n.getCheckItemTitle(item.translationKey);
 }
 ```
 
 #### 関数の戻り値の型不一致
+
 ```typescript
 // ❌ エラー：宣言と実装の不一致
 function getItems(): void {

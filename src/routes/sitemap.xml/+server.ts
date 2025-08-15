@@ -1,6 +1,9 @@
 import type { RequestHandler } from './$types';
 import { availableLanguages, type LanguageCode } from '$lib/i18n';
 
+// サイトのベースURL（環境に応じて変更）
+// Vercelでは自動的に正しいURLが設定される
+// GitHub Pagesの場合はこのURLを使用
 const SITE_URL = 'https://shuji-bonji.github.io/fact-checklist';
 
 const pages = [
@@ -8,10 +11,12 @@ const pages = [
   { path: '/about', priority: 0.8, changefreq: 'monthly' },
   { path: '/help', priority: 0.7, changefreq: 'monthly' },
   { path: '/privacy', priority: 0.5, changefreq: 'yearly' },
-  { path: '/terms', priority: 0.5, changefreq: 'yearly' }
+  { path: '/terms', priority: 0.5, changefreq: 'yearly' },
+  { path: '/intro', priority: 0.6, changefreq: 'monthly' }
 ];
 
 export const GET: RequestHandler = async () => {
+  // 実際の最終更新日を使用
   const lastmod = new Date().toISOString().split('T')[0];
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -22,14 +27,20 @@ ${pages
     availableLanguages.map((lang: LanguageCode) => {
       const url = lang === 'ja' ? `${SITE_URL}${page.path}` : `${SITE_URL}/${lang}${page.path}`;
 
+      // すべての言語バージョンへのリンクを生成（自分自身も含む）
       const alternates = availableLanguages
-        .filter((l: LanguageCode) => l !== lang)
         .map((altLang: LanguageCode) => {
           const altUrl =
             altLang === 'ja' ? `${SITE_URL}${page.path}` : `${SITE_URL}/${altLang}${page.path}`;
-          return `    <xhtml:link rel="alternate" hreflang="${altLang === 'zh-TW' ? 'zh-Hant' : altLang}" href="${altUrl}"/>`;
+          // zh-TWはzh-Hantとして、言語-地域コードを使用
+          const hreflang = altLang === 'zh-TW' ? 'zh-Hant-TW' : altLang;
+          return `    <xhtml:link rel="alternate" hreflang="${hreflang}" href="${altUrl}"/>`;
         })
         .join('\n');
+
+      // x-defaultリンクを追加（デフォルト言語として日本語を使用）
+      const xDefaultUrl = `${SITE_URL}${page.path}`;
+      const xDefaultLink = `    <xhtml:link rel="alternate" hreflang="x-default" href="${xDefaultUrl}"/>`;
 
       return `  <url>
     <loc>${url}</loc>
@@ -37,6 +48,7 @@ ${pages
     <changefreq>${page.changefreq}</changefreq>
     <priority>${page.priority}</priority>
 ${alternates}
+${xDefaultLink}
   </url>`;
     })
   )
