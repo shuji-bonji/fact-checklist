@@ -1,10 +1,14 @@
 import type { RequestHandler } from './$types';
 import { availableLanguages, type LanguageCode } from '$lib/i18n';
 
-// サイトのベースURL（環境に応じて変更）
-// Vercelでは自動的に正しいURLが設定される
-// GitHub Pagesの場合はこのURLを使用
-const SITE_URL = 'https://shuji-bonji.github.io/fact-checklist';
+// サイトのベースURLを決定
+// Vercelでは環境変数VERCEL_URLが自動的に設定される
+// デフォルトはVercelの本番URL
+function getSiteUrl(): string {
+  // SvelteKitでは環境変数はビルド時に静的に解決される
+  // Vercelデプロイメント用のURLを返す
+  return 'https://fact-checklist.vercel.app';
+}
 
 const pages = [
   { path: '/', priority: 1.0, changefreq: 'weekly' },
@@ -16,6 +20,9 @@ const pages = [
 ];
 
 export const GET: RequestHandler = async () => {
+  // サイトURLを決定
+  const SITE_URL = getSiteUrl();
+
   // 実際の最終更新日を使用
   const lastmod = new Date().toISOString().split('T')[0];
 
