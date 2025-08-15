@@ -63,12 +63,18 @@ export function renderCheckItem(
         <span class="check-icon">${item.checked ? '✅' : '❌'}</span>
         <div style="flex: 1;">
           <div class="check-item-title">${
-            factChecklistI18n && item.translationKey
+            factChecklistI18n !== undefined &&
+            item.translationKey !== null &&
+            item.translationKey !== undefined &&
+            item.translationKey !== ''
               ? (factChecklistI18n.getCheckItemTitle?.(item.translationKey) ?? item.title)
               : item.title
           }</div>
           <div class="check-item-description">${
-            factChecklistI18n && item.translationKey
+            factChecklistI18n !== undefined &&
+            item.translationKey !== null &&
+            item.translationKey !== undefined &&
+            item.translationKey !== ''
               ? (factChecklistI18n.getCheckItemDescription?.(item.translationKey) ??
                 item.description)
               : item.description
@@ -78,13 +84,19 @@ export function renderCheckItem(
               ? `
             <div class="check-item-guide">
               <div class="guide-title">${
-                factChecklistI18n && item.translationKey
+                factChecklistI18n !== undefined &&
+                item.translationKey !== null &&
+                item.translationKey !== undefined &&
+                item.translationKey !== ''
                   ? (factChecklistI18n.getCheckItemGuideTitle?.(item.translationKey) ??
                     item.guideContent.title)
                   : item.guideContent.title
               }</div>
               <div>${
-                factChecklistI18n && item.translationKey
+                factChecklistI18n !== undefined &&
+                item.translationKey !== null &&
+                item.translationKey !== undefined &&
+                item.translationKey !== ''
                   ? (
                       factChecklistI18n.getCheckItemGuideContent?.(item.translationKey) ??
                       item.guideContent.content
@@ -92,17 +104,23 @@ export function renderCheckItem(
                   : item.guideContent.content.replace(/\n/g, '<br>')
               }</div>
               ${
-                item.guideContent.examples &&
+                item.guideContent.examples !== undefined &&
                 (item.guideContent.examples.good.length > 0 ||
                   item.guideContent.examples.bad.length > 0)
                   ? `
                 <div class="guide-examples">
                   <div class="examples-title">${t ? t('export.examples') : 'Examples'}:</div>
                   ${
-                    factChecklistI18n && item.translationKey
+                    factChecklistI18n !== undefined &&
+                    item.translationKey !== null &&
+                    item.translationKey !== ''
                       ? (() => {
                           const goodExamples =
-                            factChecklistI18n.getCheckItemExamplesGood?.(item.translationKey) ?? [];
+                            item.translationKey !== undefined
+                              ? (factChecklistI18n.getCheckItemExamplesGood?.(
+                                  item.translationKey
+                                ) ?? [])
+                              : [];
                           return goodExamples.length > 0
                             ? `
                           <div class="good-examples">
@@ -116,7 +134,10 @@ export function renderCheckItem(
                         })() +
                         (() => {
                           const badExamples =
-                            factChecklistI18n.getCheckItemExamplesBad?.(item.translationKey) ?? [];
+                            item.translationKey !== undefined
+                              ? (factChecklistI18n.getCheckItemExamplesBad?.(item.translationKey) ??
+                                [])
+                              : [];
                           return badExamples.length > 0
                             ? `
                           <div class="bad-examples">
@@ -193,8 +214,14 @@ export async function generateSectionedHTMLContent(
   const appTitle = t('app.title');
   const checklistTitle = checklist.title;
   const title = checklistTitle ? `${appTitle} - ${checklistTitle}` : appTitle;
-  const description = checklist.description || t('app.description');
-  const createdAt = checklist.createdAt ? new Date(checklist.createdAt).toLocaleDateString() : '';
+  const description =
+    checklist.description !== null && checklist.description !== ''
+      ? checklist.description
+      : t('app.description');
+  const createdAt =
+    checklist.createdAt !== null && checklist.createdAt !== undefined
+      ? new Date(checklist.createdAt).toLocaleDateString()
+      : '';
   const score = checklist.score;
   const confidenceLevel = checklist.confidenceLevel;
   const judgment = checklist.judgment;
@@ -637,9 +664,16 @@ export async function generateMarkdownContent(
   t: (key: string) => string
 ): Promise<string> {
   const sections = groupItemsByCategory(checklist);
-  const title = checklist.title || t('app.title');
-  const description = checklist.description || t('app.description');
-  const createdAt = checklist.createdAt ? new Date(checklist.createdAt).toLocaleDateString() : '';
+  const title =
+    checklist.title !== null && checklist.title !== '' ? checklist.title : t('app.title');
+  const description =
+    checklist.description !== null && checklist.description !== ''
+      ? checklist.description
+      : t('app.description');
+  const createdAt =
+    checklist.createdAt !== null && checklist.createdAt !== undefined
+      ? new Date(checklist.createdAt).toLocaleDateString()
+      : '';
   const score = checklist.score;
   const confidenceLevel = checklist.confidenceLevel;
   const judgment = checklist.judgment;
@@ -660,34 +694,46 @@ export async function generateMarkdownContent(
 
     for (const item of section.items) {
       markdown += `### ${item.checked ? '✅' : '❌'} ${
-        factChecklistI18n && item.translationKey
+        factChecklistI18n !== undefined &&
+        item.translationKey !== null &&
+        item.translationKey !== undefined &&
+        item.translationKey !== ''
           ? (factChecklistI18n.getCheckItemTitle?.(item.translationKey) ?? item.title)
           : item.title
       }\n\n`;
 
       markdown += `${
-        factChecklistI18n && item.translationKey
+        factChecklistI18n !== undefined &&
+        item.translationKey !== null &&
+        item.translationKey !== undefined &&
+        item.translationKey !== ''
           ? (factChecklistI18n.getCheckItemDescription?.(item.translationKey) ?? item.description)
           : item.description
       }\n\n`;
 
       if (options.includeGuides && item.guideContent) {
         markdown += `#### ${
-          factChecklistI18n && item.translationKey
+          factChecklistI18n !== undefined &&
+          item.translationKey !== null &&
+          item.translationKey !== undefined &&
+          item.translationKey !== ''
             ? (factChecklistI18n.getCheckItemGuideTitle?.(item.translationKey) ??
               item.guideContent.title)
             : item.guideContent.title
         }\n\n`;
 
         markdown += `${
-          factChecklistI18n && item.translationKey
+          factChecklistI18n !== undefined &&
+          item.translationKey !== null &&
+          item.translationKey !== undefined &&
+          item.translationKey !== ''
             ? (factChecklistI18n.getCheckItemGuideContent?.(item.translationKey) ??
               item.guideContent.content)
             : item.guideContent.content
         }\n\n`;
 
         if (
-          item.guideContent.examples &&
+          item.guideContent.examples !== undefined &&
           (item.guideContent.examples.good.length > 0 || item.guideContent.examples.bad.length > 0)
         ) {
           markdown += '**Examples:**\n\n';

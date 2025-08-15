@@ -12,6 +12,18 @@ export interface PWAUpdateInfo {
   updateSW?: () => Promise<void>;
 }
 
+export interface PWAInstallPrompt {
+  canInstall: () => boolean;
+  install: () => Promise<boolean>;
+  getDebugInfo: () => {
+    hasDeferredPrompt: boolean;
+    canInstallFallback: boolean;
+    isStandalone: boolean;
+    hasServiceWorker: boolean;
+    userAgent: string;
+  };
+}
+
 export function registerPWA(): Promise<PWAUpdateInfo> {
   return new Promise(resolve => {
     if (!('serviceWorker' in navigator)) {
@@ -24,7 +36,7 @@ export function registerPWA(): Promise<PWAUpdateInfo> {
     let registration: ServiceWorkerRegistration | null = null;
 
     // Safari対応：強制更新メカニズム
-    const forceUpdate = async () => {
+    const forceUpdate = async (): Promise<void> => {
       if (registration) {
         await registration.unregister();
       }
@@ -33,7 +45,11 @@ export function registerPWA(): Promise<PWAUpdateInfo> {
 
     // Service Worker更新検知
     navigator.serviceWorker.addEventListener('message', event => {
-      if (event.data && (event.data as { type: string }).type === 'SW_UPDATED') {
+      if (
+        event.data !== null &&
+        event.data !== undefined &&
+        (event.data as { type: string }).type === 'SW_UPDATED'
+      ) {
         // console.log('🔄 Service Worker updated');
         updateAvailable = true;
 
@@ -47,7 +63,11 @@ export function registerPWA(): Promise<PWAUpdateInfo> {
         }
       }
 
-      if (event.data && (event.data as { type: string }).type === 'SW_CONTROLLING') {
+      if (
+        event.data !== null &&
+        event.data !== undefined &&
+        (event.data as { type: string }).type === 'SW_CONTROLLING'
+      ) {
         // console.log('✅ New Service Worker is controlling');
         if (refreshing) return;
         refreshing = true;
@@ -110,7 +130,7 @@ export function registerPWA(): Promise<PWAUpdateInfo> {
 }
 
 // PWAインストール促進
-export function setupPWAInstallPrompt() {
+export function setupPWAInstallPrompt(): PWAInstallPrompt {
   let deferredPrompt: BeforeInstallPromptEvent | null = null;
 
   window.addEventListener('beforeinstallprompt', e => {
@@ -120,7 +140,7 @@ export function setupPWAInstallPrompt() {
   });
 
   // フォールバック：beforeinstallpromptイベントが発火しない場合の代替判定
-  const canInstallFallback = () => {
+  const canInstallFallback = (): boolean => {
     // Service Workerがサポートされている
     const hasServiceWorker = 'serviceWorker' in navigator;
 

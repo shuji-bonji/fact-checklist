@@ -19,7 +19,8 @@ import {
 import {
   generateSectionedHTMLContent,
   generateMarkdownContent,
-  groupItemsByCategory
+  groupItemsByCategory,
+  type SectionInfo
 } from './ExportUtils.js';
 
 // 共通ユーティリティのインポート
@@ -205,7 +206,7 @@ export class ExportManager {
    * セクション情報を取得する
    * @param checklist チェックリスト結果
    */
-  getSections(checklist: ChecklistResult | null) {
+  getSections(checklist: ChecklistResult | null): SectionInfo[] {
     return groupItemsByCategory(checklist);
   }
 
@@ -304,7 +305,7 @@ export class ExportManager {
         'Preparing content...'
       );
 
-      if (navigator.clipboard?.writeText) {
+      if (navigator.clipboard?.writeText !== undefined) {
         await navigator.clipboard.writeText(content);
       } else {
         // フォールバック: テキストエリアを使用

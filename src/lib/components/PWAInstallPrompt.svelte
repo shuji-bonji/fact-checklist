@@ -3,7 +3,7 @@
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
   // import { t } from '$lib/i18n'; // TODO: 多言語対応予定
-  import { setupPWAInstallPrompt } from '$lib/utils/pwa-register.js';
+  import { setupPWAInstallPrompt, type PWAInstallPrompt } from '$lib/utils/pwa-register.js';
 
   interface Props {
     variant: 'success' | 'subtle' | 'feature' | 'persistent';
@@ -24,7 +24,7 @@
   }: Props = $props();
 
   // PWA状態管理
-  let pwaInstall: ReturnType<typeof setupPWAInstallPrompt> | null = null;
+  let pwaInstall: PWAInstallPrompt | null = null;
   let canInstall = $state(false);
   let isInstalling = $state(false);
   let installResult = $state<'success' | 'dismissed' | null>(null);

@@ -53,16 +53,20 @@ export const translationMetadata = {
 
 // Helper function to get translation by language code
 export function getTranslation(languageCode: LanguageCode): TranslationKeys {
-  return translations[languageCode] || translations.ja; // fallback to Japanese
+  return translations[languageCode] ?? translations.ja; // fallback to Japanese
 }
 
 // Helper function to get translation metadata
-export function getTranslationMetadata(languageCode: LanguageCode) {
-  return translationMetadata[languageCode] || translationMetadata.ja;
+export function getTranslationMetadata(
+  languageCode: LanguageCode
+): (typeof translationMetadata)[keyof typeof translationMetadata] {
+  return translationMetadata[languageCode] ?? translationMetadata.ja;
 }
 
 // Get available languages with completion status
-export function getAvailableLanguages() {
+export function getAvailableLanguages(): Array<
+  { code: LanguageCode } & (typeof translationMetadata)[keyof typeof translationMetadata]
+> {
   return Object.entries(translationMetadata).map(([code, meta]) => ({
     code: code as LanguageCode,
     ...meta
@@ -70,7 +74,7 @@ export function getAvailableLanguages() {
 }
 
 // Get completed translations only (above certain threshold)
-export function getCompletedTranslations(threshold = 80) {
+export function getCompletedTranslations(threshold = 80): ReturnType<typeof getAvailableLanguages> {
   return getAvailableLanguages().filter(lang => lang.completeness >= threshold);
 }
 
