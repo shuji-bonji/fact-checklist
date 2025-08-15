@@ -931,3 +931,157 @@ When working with tests in this project:
 - RTL言語（アラビア語）の適切な処理
 
 詳細なタスクリストと実装方法は `improvement-plan.md` を参照してください。
+
+## 🔧 コード品質基準とESLint/TypeScriptルール（2025年1月更新）
+
+### TypeScript型チェック厳格設定
+
+プロジェクトは完全なTypeScript厳格モードで動作し、以下の設定を維持：
+
+```json
+{
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true
+  }
+}
+```
+
+### ESLint厳格ルール
+
+以下の重要なESLintルールを適用：
+
+#### 1. **@typescript-eslint/no-floating-promises**
+非同期関数の適切な処理を強制：
+```typescript
+// ❌ エラー
+asyncFunction();
+
+// ✅ 修正方法
+await asyncFunction();
+// または
+void asyncFunction(); // 結果を無視する場合
+```
+
+#### 2. **@typescript-eslint/explicit-function-return-type**
+すべての関数に明示的な戻り値の型を要求：
+```typescript
+// ❌ 警告
+function getValue() {
+  return 'test';
+}
+
+// ✅ 修正
+function getValue(): string {
+  return 'test';
+}
+```
+
+#### 3. **@typescript-eslint/strict-boolean-expressions**
+条件式を明示的にすることを要求：
+```typescript
+// ❌ 警告
+if (str) { }
+if (obj) { }
+if (nullable) { }
+
+// ✅ 修正
+if (str !== '') { }
+if (str.length > 0) { }
+if (obj !== null) { }
+if (nullable !== null && nullable !== undefined) { }
+
+// nullable booleanの場合
+if (bool === true) { }
+if (bool !== null && bool) { }
+
+// nullable numberの場合
+if (num !== null && num !== 0) { }
+```
+
+#### 4. **@typescript-eslint/no-unsafe-return**
+any型の安全でない返却を防止：
+```typescript
+// ❌ エラー
+function parse(value: string) {
+  return JSON.parse(value); // any型
+}
+
+// ✅ 修正
+function parse<T>(value: string): T {
+  return JSON.parse(value) as T;
+}
+```
+
+#### 5. **@typescript-eslint/no-unused-vars**
+未使用変数の検出（アンダースコアで回避可能）：
+```typescript
+// ❌ エラー
+const unusedVar = 'test';
+
+// ✅ 修正（本当に未使用の場合）
+const _unusedVar = 'test';
+// または削除
+```
+
+### 型エラーの一般的な修正パターン
+
+#### translationKeyのundefinedチェック
+```typescript
+// ❌ エラー：undefinedの可能性
+factChecklistI18n.getCheckItemTitle(item.translationKey)
+
+// ✅ 修正：明示的なチェック
+if (item.translationKey !== null && 
+    item.translationKey !== undefined && 
+    item.translationKey !== '') {
+  factChecklistI18n.getCheckItemTitle(item.translationKey)
+}
+```
+
+#### 関数の戻り値の型不一致
+```typescript
+// ❌ エラー：宣言と実装の不一致
+function getItems(): void {
+  return items; // 実際は配列を返している
+}
+
+// ✅ 修正：正しい型を宣言
+function getItems(): Item[] {
+  return items;
+}
+```
+
+### コマンド
+
+```bash
+# TypeScript型チェック
+npm run check          # svelte-checkを含む完全チェック
+
+# ESLintチェック
+npm run lint           # ESLintチェック
+npm run lint:fix       # 自動修正可能な問題を修正
+
+# 品質チェック（両方を実行）
+npm run check && npm run lint
+```
+
+### 品質目標
+
+- **TypeScript**: `npm run check` で0エラー、0警告
+- **ESLint**: `npm run lint` で0エラー、警告は最小限
+- **すべての関数**に明示的な戻り値の型
+- **すべての条件式**が明示的
+- **no-any**: any型の使用を避ける
+
+### デバッグのヒント
+
+1. **型エラーの調査**：VSCodeのTypeScript拡張機能でホバーして型を確認
+2. **ESLint自動修正**：`npm run lint:fix`で多くの問題が自動修正可能
+3. **段階的な修正**：優先度の高いサービス層から修正を開始
+4. **型定義の確認**：`src/lib/types/`内の型定義を参照
+
+これらのルールに従うことで、バグの早期発見と保守性の高いコードベースを維持できます。
