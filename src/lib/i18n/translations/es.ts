@@ -164,6 +164,15 @@ export const translations: TranslationKeys = {
       low: 'Precaución requerida. Se necesita verificación adicional.',
       poor: 'Rechazo recomendado. Busque fuentes de información fiables.'
     },
+    confidenceVeryHigh: 'Confianza Muy Alta',
+    confidenceHigh: 'Confianza Alta',
+    confidenceMedium: 'Confianza Media',
+    confidenceLow: 'Confianza Baja',
+    confidenceVeryLow: 'Confianza Muy Baja',
+    judgmentAdviceAccept: 'Adopción recomendada. Se ha realizado verificación suficiente.',
+    judgmentAdviceCaution:
+      'Verificación adicional recomendada. Sea cauteloso con decisiones importantes.',
+    judgmentAdviceReject: 'Rechazo recomendado. Busque fuentes más confiables.',
     evaluationCompleted: '✓ ¡Evaluación Completada!',
     evaluationCompletedDescription:
       'Puede revisar los resultados de la evaluación de la lista de verificación.',
@@ -182,7 +191,30 @@ export const translations: TranslationKeys = {
     completionRate: 'Tasa de Finalización',
     actions: 'Acciones',
     exportShare: 'Exportar y Compartir',
-    reEdit: 'Re-editar'
+    reEdit: 'Re-editar',
+
+    // PWA installation prompt
+    pwaInstallTitle: '🎉 ¡Evaluación completada! ¿Instalar la aplicación?',
+    pwaInstallMessage:
+      'Instale esta aplicación para evaluar información rápida y fácilmente en cualquier momento.',
+    pwaBenefits: {
+      fastLaunch: '🚀 Inicio rápido',
+      homeScreen: '📱 Acceso directo desde la pantalla de inicio',
+      offlineAvailable: '🌐 Disponible sin conexión',
+      notifications: '🔔 Notificaciones (Próximamente)'
+    },
+    pwaInstallButton: '📲 Instalar',
+    pwaInstalling: 'Instalando...',
+    pwaInstallSuccess: '🎉 ¡Instalación completa!',
+    pwaInstallSuccessMessage: 'La aplicación se ha añadido a tu pantalla de inicio.',
+    pwaLater: 'Más tarde',
+    pwaClose: 'Cerrar',
+    pwaHint: '💡 Consejo',
+    pwaFeature: '📱 Soporte de aplicación PWA',
+    pwaPersistent: '📲 Instalar aplicación',
+    pwaHintMessage: 'Instala la aplicación para una mejor experiencia',
+    pwaFeatureMessage: 'Este sitio está disponible como aplicación web progresiva',
+    pwaPersistentMessage: 'Instala la aplicación para una experiencia más cómoda'
   },
 
   // Categorías de elementos de verificación
@@ -925,7 +957,8 @@ export const translations: TranslationKeys = {
     quickStartGuide: '💡 ¡Use esta guía para comenzar rápidamente!',
     guideModeDetailed: '🔍 Modo de Guía Detallada',
     guideModeNormal: '📝 Modo Normal',
-    completeEvaluation: 'Completar Evaluación'
+    completeEvaluation: 'Completar Evaluación',
+    close: 'Cerrar'
   },
 
   // Elementos de la lista de verificación
@@ -1320,7 +1353,23 @@ export const translations: TranslationKeys = {
       subtitle: 'Entrena tu juicio para evitar ahogarte en el mar de información'
     },
     share: {
-      title: 'Compartir Esta Herramienta'
+      title: 'Compartir Esta Herramienta',
+      button: 'Compartir',
+      sharing: 'Compartiendo...',
+      selectPlatform: 'Seleccionar Plataforma',
+      copyLink: 'Copiar Enlace',
+      qrCode: 'Código QR',
+      copied: '¡Copiado!',
+      scanToOpen: 'Escanear para abrir',
+      score: 'Puntuación: {score}%',
+      description: 'Resultado de evaluación de fiabilidad de información',
+      invalidUrl: 'URL de compartir inválida',
+      sharedChecklist: 'Lista de Verificación Compartida',
+      loadError: 'Error al cargar datos compartidos',
+      saveError: 'Error al guardar lista de verificación',
+      sharedResultTitle: 'Resultado de Evaluación Compartido',
+      sharedResultDescription: 'Este resultado se cargó desde un enlace compartido (solo lectura)',
+      saveToDevice: 'Guardar en Dispositivo'
     }
   }
 };

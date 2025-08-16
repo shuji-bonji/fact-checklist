@@ -158,6 +158,14 @@ export const translations: TranslationKeys = {
       low: '要注意です。さらなる検証が必要です。',
       poor: '不採用を推奨します。信頼できる情報源を探しましょう。'
     },
+    confidenceVeryHigh: '非常に高い信頼性',
+    confidenceHigh: '高い信頼性',
+    confidenceMedium: '中程度の信頼性',
+    confidenceLow: '低い信頼性',
+    confidenceVeryLow: '非常に低い信頼性',
+    judgmentAdviceAccept: '採用を推奨します。十分な検証が行われています。',
+    judgmentAdviceCaution: '追加確認を推奨します。重要な決定には慎重に。',
+    judgmentAdviceReject: '不採用を推奨します。信頼できる情報源を探しましょう。',
     // 詳細ページ用の新しいキー
     evaluationCompleted: '評価が完了しました！',
     evaluationResults: '評価結果',
@@ -177,7 +185,29 @@ export const translations: TranslationKeys = {
     actions: 'アクション',
     exportShare: 'エクスポート・共有',
     reEdit: '再編集',
-    completed: '完了'
+    completed: '完了',
+    // PWA installation prompt
+    pwaInstallTitle: '🎉 評価完了！アプリをインストールしませんか？',
+    pwaInstallMessage:
+      'このアプリをインストールして、いつでも素早く情報評価ができるようにしませんか？',
+    pwaBenefits: {
+      fastLaunch: '🚀 高速な起動',
+      homeScreen: '📱 ホーム画面から直接アクセス',
+      offlineAvailable: '🌐 オフラインでも利用可能',
+      notifications: '🔔 通知機能（今後実装予定）'
+    },
+    pwaInstallButton: '📲 インストール',
+    pwaInstalling: 'インストール中...',
+    pwaInstallSuccess: '🎉 インストール完了！',
+    pwaInstallSuccessMessage: 'アプリがホーム画面に追加されました。',
+    pwaLater: '後で',
+    pwaClose: '閉じる',
+    pwaHint: '💡 ヒント',
+    pwaFeature: '📱 PWAアプリ対応',
+    pwaPersistent: '📲 アプリをインストール',
+    pwaHintMessage: 'アプリをインストールすると、より快適にご利用いただけます',
+    pwaFeatureMessage: 'このサイトはPWA（Progressive Web App）として利用できます',
+    pwaPersistentMessage: 'より快適な体験のために、アプリをインストールしてください'
   },
 
   // チェック項目カテゴリ
@@ -934,7 +964,8 @@ export const translations: TranslationKeys = {
       'まず「クリティカル評価」から始めて、基本的な信頼性を確認しましょう。各項目をチェックすると、右側のスコアがリアルタイムで更新されます。',
     guideModeDetailed: '📖 詳細ガイドモード',
     guideModeNormal: '📝 通常モード',
-    completeEvaluation: '✅ 評価を完了'
+    completeEvaluation: '✅ 評価を完了',
+    close: '閉じる'
   },
 
   // チェックリスト項目
@@ -1204,7 +1235,23 @@ export const translations: TranslationKeys = {
       subtitle: '情報の海で溺れないために、あなた自身の判断力を鍛えましょう'
     },
     share: {
-      title: 'このツールをシェアする'
+      title: 'このツールをシェアする',
+      button: '共有する',
+      sharing: '共有中...',
+      selectPlatform: 'プラットフォームを選択',
+      copyLink: 'リンクをコピー',
+      qrCode: 'QRコード',
+      copied: 'コピーしました！',
+      scanToOpen: 'スキャンして開く',
+      score: 'スコア: {score}%',
+      description: '情報の信頼性評価結果',
+      invalidUrl: '無効な共有URLです',
+      sharedChecklist: '共有されたチェックリスト',
+      loadError: '共有データの読み込みに失敗しました',
+      saveError: 'チェックリストの保存に失敗しました',
+      sharedResultTitle: '共有された評価結果',
+      sharedResultDescription: 'この結果は共有リンクから読み込まれました（読み取り専用）',
+      saveToDevice: 'デバイスに保存'
     }
   }
 };

@@ -193,6 +193,14 @@ export interface TranslationKeys {
       low: string;
       poor: string;
     };
+    confidenceVeryHigh: string;
+    confidenceHigh: string;
+    confidenceMedium: string;
+    confidenceLow: string;
+    confidenceVeryLow: string;
+    judgmentAdviceAccept: string;
+    judgmentAdviceCaution: string;
+    judgmentAdviceReject: string;
     advice: {
       high: string;
       medium: string;
@@ -219,6 +227,27 @@ export interface TranslationKeys {
     exportShare: string;
     reEdit: string;
     completed: string;
+    // PWA installation prompt
+    pwaInstallTitle: string;
+    pwaInstallMessage: string;
+    pwaBenefits: {
+      fastLaunch: string;
+      homeScreen: string;
+      offlineAvailable: string;
+      notifications: string;
+    };
+    pwaInstallButton: string;
+    pwaInstalling: string;
+    pwaInstallSuccess: string;
+    pwaInstallSuccessMessage: string;
+    pwaLater: string;
+    pwaClose: string;
+    pwaHint: string;
+    pwaFeature: string;
+    pwaPersistent: string;
+    pwaHintMessage: string;
+    pwaFeatureMessage: string;
+    pwaPersistentMessage: string;
   };
 
   // チェック項目カテゴリ
@@ -856,6 +885,7 @@ export interface TranslationKeys {
     guideModeDetailed: string;
     guideModeNormal: string;
     completeEvaluation: string;
+    close: string;
   };
 
   // チェックリスト項目
@@ -940,6 +970,22 @@ export interface TranslationKeys {
     };
     share: {
       title: string;
+      button: string;
+      sharing: string;
+      selectPlatform: string;
+      copyLink: string;
+      qrCode: string;
+      copied: string;
+      scanToOpen: string;
+      score: string;
+      description: string;
+      invalidUrl: string;
+      sharedChecklist: string;
+      loadError: string;
+      saveError: string;
+      sharedResultTitle: string;
+      sharedResultDescription: string;
+      saveToDevice: string;
     };
   };
 }

@@ -1,8 +1,6 @@
 <!-- src/lib/components/ExportModal.svelte -->
 <script lang="ts">
   import type { ChecklistResult } from '$lib/types/checklist.js';
-  import { getCategories } from '$lib/data/checklist-items.js';
-  import { refactoredChecklistStore } from '$lib/stores/refactoredChecklistStore.svelte.js';
   import { ExportService } from '$lib/services/ExportService.js';
   import {
     ExportOptionsManager,
@@ -41,26 +39,6 @@
       onClose();
     }
   }
-
-  // セクション別にアイテムを分類（リアクティブ、動的翻訳対応）
-  const sections = $derived(
-    checklist
-      ? getCategories(t as (key: string) => string).map(category => {
-          const items = checklist.items.filter(item => item.category.id === category.id);
-          const checkedItems = items.filter(item => item.checked);
-          const uncheckedItems = items.filter(item => !item.checked);
-
-          return {
-            category,
-            items,
-            checkedItems,
-            uncheckedItems,
-            completionRate:
-              items.length > 0 ? Math.round((checkedItems.length / items.length) * 100) : 0
-          };
-        })
-      : []
-  );
 
   // 進捗更新ユーティリティ
   function updateProgress(current: number, total: number, stage: string, message: string) {
@@ -142,46 +120,6 @@
       );
     } finally {
       isExporting = false;
-    }
-  }
-
-  function getJudgmentText(judgment: string | null): string {
-    switch (judgment) {
-      case 'accept':
-        return `📗 ${t('export.judgment.accept')}`;
-      case 'caution':
-        return `📙 ${t('export.judgment.caution')}`;
-      case 'reject':
-        return `📕 ${t('export.judgment.reject')}`;
-      default:
-        return `❓ ${t('export.judgment.notEvaluated')}`;
-    }
-  }
-
-  async function copyToClipboard() {
-    if (!checklist) return;
-
-    const text = `
-📋 ${t('export.clipboardTitle')}
-
-${t('export.metadata.title')}: ${refactoredChecklistStore.effectiveTitle}
-${t('export.metadata.created')}: ${checklist.createdAt.toLocaleDateString()}
-${t('export.metadata.score')}: ${checklist.score.total}/${checklist.score.maxScore} (${checklist.confidenceLevel}%)
-${t('export.metadata.confidence')}: ${checklist.confidenceText}
-${t('export.metadata.judgment')}: ${getJudgmentText(checklist.judgment)}
-
-📊 ${t('export.sectionCompletion')}:
-${sections.map(s => `${s.category.emoji} ${s.category.name}: ${s.completionRate}% (${s.checkedItems.length}/${s.items.length} ${t('export.items')})`).join('\n')}
-
-${checklist.notes ? `📝 ${t('export.notes')}:\n${checklist.notes}` : ''}
-		`.trim();
-
-    try {
-      await navigator.clipboard.writeText(text);
-      alert(`📋 ${t('success.copied')}`);
-    } catch (error) {
-      console.error('コピーに失敗:', error);
-      alert(`❌ ${t('errors.general')}`);
     }
   }
 </script>
@@ -432,15 +370,6 @@ ${checklist.notes ? `📝 ${t('export.notes')}:\n${checklist.notes}` : ''}
       {/if}
 
       <div class="action-buttons">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          onclick={copyToClipboard}
-          disabled={!checklist || isExporting}
-        >
-          📋 {t('common.copy')}
-        </button>
-
         <button
           type="button"
           class="btn btn-primary"

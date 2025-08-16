@@ -155,6 +155,14 @@ export const translations: TranslationKeys = {
       low: '需要謹慎。需要進一步驗證。',
       poor: '建議拒絕。尋找可靠的資訊來源。'
     },
+    confidenceVeryHigh: '信心極高',
+    confidenceHigh: '信心很高',
+    confidenceMedium: '信心中等',
+    confidenceLow: '信心較低',
+    confidenceVeryLow: '信心極低',
+    judgmentAdviceAccept: '建議採用。已進行充分驗證。',
+    judgmentAdviceCaution: '建議額外驗證。重要決定請謹慎。',
+    judgmentAdviceReject: '建議拒絕。尋找更可靠的來源。',
     evaluationCompleted: '✓ 評估完成！',
     evaluationCompletedDescription: '您可以查看檢查列表評估的結果。',
     evaluationResults: '評估結果',
@@ -172,7 +180,29 @@ export const translations: TranslationKeys = {
     completionRate: '完成率',
     actions: '行動',
     exportShare: '匯出與分享',
-    reEdit: '重新編輯'
+    reEdit: '重新編輯',
+
+    // PWA installation prompt
+    pwaInstallTitle: '🎉 評估完成！安裝應用程式？',
+    pwaInstallMessage: '安裝此應用程式，隨時快速評估資訊。',
+    pwaBenefits: {
+      fastLaunch: '🚀 快速啟動',
+      homeScreen: '📱 從主畫面直接存取',
+      offlineAvailable: '🌐 離線可用',
+      notifications: '🔔 通知功能（即將推出）'
+    },
+    pwaInstallButton: '📲 安裝',
+    pwaInstalling: '安裝中...',
+    pwaInstallSuccess: '🎉 安裝完成！',
+    pwaInstallSuccessMessage: '應用程式已新增至您的主畫面。',
+    pwaLater: '稍後',
+    pwaClose: '關閉',
+    pwaHint: '💡 提示',
+    pwaFeature: '📱 PWA應用程式支援',
+    pwaPersistent: '📲 安裝應用程式',
+    pwaHintMessage: '安裝應用程式以獲得更好的體驗',
+    pwaFeatureMessage: '此網站可作為漸進式網頁應用程式使用',
+    pwaPersistentMessage: '安裝應用程式以獲得更舒適的體驗'
   },
 
   // 檢查項目類別
@@ -872,7 +902,8 @@ export const translations: TranslationKeys = {
     quickStartGuide: '💡 使用此指南快速開始！',
     guideModeDetailed: '🔍 詳細指南模式',
     guideModeNormal: '📝 一般模式',
-    completeEvaluation: '完成評估'
+    completeEvaluation: '完成評估',
+    close: '關閉'
   },
 
   // 檢查清單項目 - 繁體中文翻譯
@@ -1127,7 +1158,23 @@ export const translations: TranslationKeys = {
       subtitle: '訓練你的判斷力，免於在資訊海洋中溺沒'
     },
     share: {
-      title: '分享這個工具'
+      title: '分享這個工具',
+      button: '分享',
+      sharing: '分享中...',
+      selectPlatform: '選擇平台',
+      copyLink: '複製連結',
+      qrCode: 'QR Code',
+      copied: '已複製！',
+      scanToOpen: '掃描開啟',
+      score: '分數：{score}%',
+      description: '資訊可靠性評估結果',
+      invalidUrl: '無效的分享網址',
+      sharedChecklist: '分享的檢查表',
+      loadError: '載入分享資料失敗',
+      saveError: '儲存檢查表失敗',
+      sharedResultTitle: '分享的評估結果',
+      sharedResultDescription: '此結果從分享連結載入（唯讀）',
+      saveToDevice: '儲存到裝置'
     }
   }
 };
