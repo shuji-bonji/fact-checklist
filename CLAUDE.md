@@ -914,6 +914,14 @@ When working with tests in this project:
 
 ### Svelte5対応
 
+Svelte5では以下の新機能を使用してください。
+
+$state() - リアクティブな状態管理
+$derived() - 派生値の計算
+$effect() - 副作用の処理
+$props() - 型安全なプロパティ .svelte.ts -
+Runesを使用したストア
+
 - 必ずruntime runesを使用（`$state()`, `$derived()`, `$effect()`）
 - `$props()`と`$bindable()`でコンポーネントプロパティを定義
 - レガシーな`export let`は使用しない

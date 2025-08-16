@@ -64,7 +64,7 @@ ${xDefaultLink}
 
   return new Response(xml, {
     headers: {
-      'Content-Type': 'application/xml',
+      'Content-Type': 'text/xml; charset=UTF-8',
       'Cache-Control': 'max-age=3600'
     }
   });
