@@ -2,7 +2,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
-  // import { t } from '$lib/i18n'; // TODO: 多言語対応予定
+  import { t } from '$lib/i18n';
   import { setupPWAInstallPrompt, type PWAInstallPrompt } from '$lib/utils/pwa-register.js';
 
   interface Props {
@@ -163,17 +163,17 @@
 
   // デフォルトテキスト
   const defaultTitles = {
-    success: '🎉 評価完了！',
-    subtle: '💡 ヒント',
-    feature: '📱 PWAアプリ対応',
-    persistent: '📲 アプリをインストール'
+    success: t('checklist.pwaInstallTitle'),
+    subtle: t('checklist.pwaHint'),
+    feature: t('checklist.pwaFeature'),
+    persistent: t('checklist.pwaPersistent')
   };
 
   const defaultMessages = {
-    success: 'このアプリをインストールして、いつでも素早く評価できるようにしませんか？',
-    subtle: 'アプリをインストールすると、より快適にご利用いただけます',
-    feature: 'このサイトはPWA（Progressive Web App）として利用できます',
-    persistent: 'より快適な体験のために、アプリをインストールしてください'
+    success: t('checklist.pwaInstallMessage'),
+    subtle: t('checklist.pwaHintMessage'),
+    feature: t('checklist.pwaFeatureMessage'),
+    persistent: t('checklist.pwaPersistentMessage')
   };
 
   const displayTitle = title || defaultTitles[variant];
@@ -188,15 +188,20 @@
   >
     {#if installResult === 'success'}
       <div class="pwa-install-success">
-        <h3>🎉 インストール完了！</h3>
-        <p>アプリがホーム画面に追加されました。</p>
+        <h3>{t('checklist.pwaInstallSuccess')}</h3>
+        <p>{t('checklist.pwaInstallSuccessMessage')}</p>
       </div>
     {:else}
       <div class="pwa-content">
         <div class="pwa-header">
           <h3 id="pwa-title">{displayTitle}</h3>
           {#if variant !== 'persistent'}
-            <button type="button" class="pwa-dismiss" onclick={handleDismiss} aria-label="閉じる">
+            <button
+              type="button"
+              class="pwa-dismiss"
+              onclick={handleDismiss}
+              aria-label={t('checklist.pwaClose')}
+            >
               ✕
             </button>
           {/if}
@@ -207,10 +212,10 @@
 
           {#if showBenefits}
             <ul class="pwa-benefits">
-              <li>🚀 高速な起動</li>
-              <li>📱 ホーム画面から直接アクセス</li>
-              <li>🌐 オフラインでも利用可能</li>
-              <li>🔔 通知機能（今後実装予定）</li>
+              <li>{t('checklist.pwaBenefits.fastLaunch')}</li>
+              <li>{t('checklist.pwaBenefits.homeScreen')}</li>
+              <li>{t('checklist.pwaBenefits.offlineAvailable')}</li>
+              <li>{t('checklist.pwaBenefits.notifications')}</li>
             </ul>
           {/if}
         </div>
@@ -225,15 +230,15 @@
           >
             {#if isInstalling}
               <span class="pwa-spinner"></span>
-              インストール中...
+              {t('checklist.pwaInstalling')}
             {:else}
-              📲 インストール
+              {t('checklist.pwaInstallButton')}
             {/if}
           </button>
 
           {#if variant === 'feature'}
             <button type="button" onclick={handleDismiss} class="pwa-secondary-button">
-              後で
+              {t('checklist.pwaLater')}
             </button>
           {/if}
         </div>

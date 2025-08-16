@@ -158,6 +158,15 @@ export const translations: TranslationKeys = {
       low: 'Cautela necessaria. È richiesta ulteriore verifica.',
       poor: 'Rifiuto raccomandato. Cerca fonti di informazione affidabili.'
     },
+    confidenceVeryHigh: 'Fiducia Molto Alta',
+    confidenceHigh: 'Fiducia Alta',
+    confidenceMedium: 'Fiducia Media',
+    confidenceLow: 'Fiducia Bassa',
+    confidenceVeryLow: 'Fiducia Molto Bassa',
+    judgmentAdviceAccept: 'Adozione raccomandata. È stata condotta una verifica sufficiente.',
+    judgmentAdviceCaution:
+      'Verifica aggiuntiva raccomandata. Siate cauti con decisioni importanti.',
+    judgmentAdviceReject: 'Rifiuto raccomandato. Cercate fonti più affidabili.',
     evaluationCompleted: '✓ Valutazione Completata!',
     evaluationCompletedDescription: 'Puoi rivedere i risultati della valutazione della checklist.',
     evaluationResults: 'Risultati Valutazione',
@@ -175,7 +184,30 @@ export const translations: TranslationKeys = {
     completionRate: 'Tasso di Completamento',
     actions: 'Azioni',
     exportShare: 'Esporta e Condividi',
-    reEdit: 'Ri-modifica'
+    reEdit: 'Ri-modifica',
+
+    // PWA installation prompt
+    pwaInstallTitle: "🎉 Valutazione completata! Installare l'app?",
+    pwaInstallMessage:
+      'Installa questa app per valutare rapidamente le informazioni in qualsiasi momento.',
+    pwaBenefits: {
+      fastLaunch: '🚀 Avvio rapido',
+      homeScreen: '📱 Accesso diretto dalla schermata home',
+      offlineAvailable: '🌐 Disponibile offline',
+      notifications: '🔔 Notifiche (Prossimamente)'
+    },
+    pwaInstallButton: '📲 Installa',
+    pwaInstalling: 'Installazione...',
+    pwaInstallSuccess: '🎉 Installazione completata!',
+    pwaInstallSuccessMessage: "L'app è stata aggiunta alla schermata home.",
+    pwaLater: 'Più tardi',
+    pwaClose: 'Chiudi',
+    pwaHint: '💡 Suggerimento',
+    pwaFeature: '📱 Supporto app PWA',
+    pwaPersistent: '📲 Installa app',
+    pwaHintMessage: "Installa l'app per un'esperienza migliore",
+    pwaFeatureMessage: 'Questo sito è disponibile come Progressive Web App',
+    pwaPersistentMessage: "Installa l'app per un'esperienza più confortevole"
   },
   categories: {
     critical: {
@@ -898,7 +930,8 @@ export const translations: TranslationKeys = {
     quickStartGuide: '💡 Usa questa guida per iniziare rapidamente!',
     guideModeDetailed: '🔍 Modalità Guida Dettagliata',
     guideModeNormal: '📝 Modalità Normale',
-    completeEvaluation: 'Completa Valutazione'
+    completeEvaluation: 'Completa Valutazione',
+    close: 'Chiudi'
   },
 
   // Checklist items
@@ -1371,7 +1404,24 @@ export const translations: TranslationKeys = {
       subtitle: 'Allena il tuo giudizio per evitare di annegare nel mare di informazioni'
     },
     share: {
-      title: 'Condividi Questo Strumento'
+      title: 'Condividi Questo Strumento',
+      button: 'Condividi',
+      sharing: 'Condivisione...',
+      selectPlatform: 'Seleziona Piattaforma',
+      copyLink: 'Copia Link',
+      qrCode: 'Codice QR',
+      copied: 'Copiato!',
+      scanToOpen: 'Scansiona per aprire',
+      score: 'Punteggio: {score}%',
+      description: "Risultato della valutazione dell'affidabilità delle informazioni",
+      invalidUrl: 'URL di condivisione non valido',
+      sharedChecklist: 'Checklist Condivisa',
+      loadError: 'Caricamento dati condivisi fallito',
+      saveError: 'Salvataggio checklist fallito',
+      sharedResultTitle: 'Risultato di Valutazione Condiviso',
+      sharedResultDescription:
+        'Questo risultato è stato caricato da un link condiviso (solo lettura)',
+      saveToDevice: 'Salva su Dispositivo'
     }
   }
 };

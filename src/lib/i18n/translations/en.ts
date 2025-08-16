@@ -161,6 +161,15 @@ export const translations: TranslationKeys = {
       low: 'Caution required. Further verification is needed.',
       poor: 'Rejection recommended. Look for reliable information sources.'
     },
+    confidenceVeryHigh: 'Very High Confidence',
+    confidenceHigh: 'High Confidence',
+    confidenceMedium: 'Medium Confidence',
+    confidenceLow: 'Low Confidence',
+    confidenceVeryLow: 'Very Low Confidence',
+    judgmentAdviceAccept: 'Adoption recommended. Sufficient verification has been performed.',
+    judgmentAdviceCaution:
+      'Additional verification recommended. Be careful with important decisions.',
+    judgmentAdviceReject: 'Rejection recommended. Look for more reliable information sources.',
     // New keys for detail page
     evaluationCompleted: 'Evaluation Completed!',
     evaluationCompletedDescription: 'You can review the checklist evaluation results.',
@@ -180,7 +189,28 @@ export const translations: TranslationKeys = {
     actions: 'Actions',
     exportShare: 'Export & Share',
     reEdit: 'Re-edit',
-    completed: 'Completed'
+    completed: 'Completed',
+    // PWA installation prompt
+    pwaInstallTitle: '🎉 Evaluation Complete! Install the App?',
+    pwaInstallMessage: 'Install this app for quick and easy information evaluation anytime.',
+    pwaBenefits: {
+      fastLaunch: '🚀 Fast Launch',
+      homeScreen: '📱 Direct Access from Home Screen',
+      offlineAvailable: '🌐 Available Offline',
+      notifications: '🔔 Notifications (Coming Soon)'
+    },
+    pwaInstallButton: '📲 Install',
+    pwaInstalling: 'Installing...',
+    pwaInstallSuccess: '🎉 Installation Complete!',
+    pwaInstallSuccessMessage: 'The app has been added to your home screen.',
+    pwaLater: 'Later',
+    pwaClose: 'Close',
+    pwaHint: '💡 Tip',
+    pwaFeature: '📱 PWA App Support',
+    pwaPersistent: '📲 Install App',
+    pwaHintMessage: 'Install the app for a better experience',
+    pwaFeatureMessage: 'This site is available as a Progressive Web App',
+    pwaPersistentMessage: 'Install the app for a more comfortable experience'
   },
 
   // Check item categories
@@ -937,7 +967,8 @@ export const translations: TranslationKeys = {
       'Start with "Critical Evaluation" first to verify basic reliability. As you check each item, the score on the right will update in real-time.',
     guideModeDetailed: '📖 Detailed Guide Mode',
     guideModeNormal: '📝 Normal Mode',
-    completeEvaluation: '✅ Complete Evaluation'
+    completeEvaluation: '✅ Complete Evaluation',
+    close: 'Close'
   },
 
   // Checklist items
@@ -1312,7 +1343,23 @@ export const translations: TranslationKeys = {
       subtitle: 'Train your judgment to avoid drowning in the sea of information'
     },
     share: {
-      title: 'Share This Tool'
+      title: 'Share This Tool',
+      button: 'Share',
+      sharing: 'Sharing...',
+      selectPlatform: 'Select Platform',
+      copyLink: 'Copy Link',
+      qrCode: 'QR Code',
+      copied: 'Copied!',
+      scanToOpen: 'Scan to open',
+      score: 'Score: {score}%',
+      description: 'Information reliability evaluation result',
+      invalidUrl: 'Invalid share URL',
+      sharedChecklist: 'Shared Checklist',
+      loadError: 'Failed to load shared data',
+      saveError: 'Failed to save checklist',
+      sharedResultTitle: 'Shared Evaluation Result',
+      sharedResultDescription: 'This result was loaded from a shared link (read-only)',
+      saveToDevice: 'Save to Device'
     }
   }
 };

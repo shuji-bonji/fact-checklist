@@ -147,11 +147,19 @@ export const translations: TranslationKeys = {
       poor: 'Reliability Issues'
     },
     advice: {
-      high: 'Adoption recommended. Sufficient verification has been conducted.',
-      medium: 'Additional confirmation recommended. Be cautious with important decisions.',
-      low: 'Caution required. Further verification is needed.',
-      poor: 'Rejection recommended. Look for reliable information sources.'
+      high: '채택을 권장합니다. 충분한 검증이 이루어졌습니다.',
+      medium: '추가 확인을 권장합니다. 중요한 결정에서는 신중하세요.',
+      low: '주의가 필요합니다. 추가 검증이 필요합니다.',
+      poor: '거부를 권장합니다. 신뢰할 수 있는 정보 소스를 찾으세요.'
     },
+    confidenceVeryHigh: '매우 높은 신뢰도',
+    confidenceHigh: '높은 신뢰도',
+    confidenceMedium: '보통 신뢰도',
+    confidenceLow: '낮은 신뢰도',
+    confidenceVeryLow: '매우 낮은 신뢰도',
+    judgmentAdviceAccept: '채택을 권장합니다. 충분한 검증이 이루어졌습니다.',
+    judgmentAdviceCaution: '추가 검증을 권장합니다. 중요한 결정에서는 신중하세요.',
+    judgmentAdviceReject: '거부를 권장합니다. 더 신뢰할 수 있는 소스를 찾으세요.',
     evaluationCompleted: '✓ 평가 완료!',
     evaluationCompletedDescription: '체크리스트 평가 결과를 확인할 수 있습니다.',
     evaluationResults: '평가 결과',
@@ -169,7 +177,29 @@ export const translations: TranslationKeys = {
     completionRate: '완료율',
     actions: '조치',
     exportShare: '내보내기 및 공유',
-    reEdit: '재편집'
+    reEdit: '재편집',
+
+    // PWA installation prompt
+    pwaInstallTitle: '🎉 평가 완료! 앱을 설치하시겠습니까?',
+    pwaInstallMessage: '이 앱을 설치하여 언제든지 빠르고 쉽게 정보를 평가하세요.',
+    pwaBenefits: {
+      fastLaunch: '🚀 빠른 실행',
+      homeScreen: '📱 홈 화면에서 바로 접근',
+      offlineAvailable: '🌐 오프라인에서도 사용 가능',
+      notifications: '🔔 알림 기능 (곧 출시)'
+    },
+    pwaInstallButton: '📲 설치',
+    pwaInstalling: '설치 중...',
+    pwaInstallSuccess: '🎉 설치 완료!',
+    pwaInstallSuccessMessage: '앱이 홈 화면에 추가되었습니다.',
+    pwaLater: '나중에',
+    pwaClose: '닫기',
+    pwaHint: '💡 팁',
+    pwaFeature: '📱 PWA 앱 지원',
+    pwaPersistent: '📲 앱 설치',
+    pwaHintMessage: '더 나은 경험을 위해 앱을 설치하세요',
+    pwaFeatureMessage: '이 사이트는 Progressive Web App으로 사용할 수 있습니다',
+    pwaPersistentMessage: '더 편안한 경험을 위해 앱을 설치하세요'
   },
   categories: {
     critical: {
@@ -682,7 +712,23 @@ export const translations: TranslationKeys = {
       subtitle: '정보의 바다에서 빠지지 않도록 자신의 판단력을 효련하세요'
     },
     share: {
-      title: '이 도구 공유하기'
+      title: '이 도구 공유하기',
+      button: '공유',
+      sharing: '공유 중...',
+      selectPlatform: '플랫폼 선택',
+      copyLink: '링크 복사',
+      qrCode: 'QR 코드',
+      copied: '복사됨!',
+      scanToOpen: '스캔하여 열기',
+      score: '점수: {score}%',
+      description: '정보 신뢰성 평가 결과',
+      invalidUrl: '유효하지 않은 공유 URL',
+      sharedChecklist: '공유된 체크리스트',
+      loadError: '공유 데이터 로드 실패',
+      saveError: '체크리스트 저장 실패',
+      sharedResultTitle: '공유된 평가 결과',
+      sharedResultDescription: '이 결과는 공유 링크에서 로드되었습니다 (읽기 전용)',
+      saveToDevice: '기기에 저장'
     }
   },
 
@@ -947,7 +993,8 @@ export const translations: TranslationKeys = {
     quickStartGuide: '💡 이 가이드를 사용하여 빠르게 시작하세요!',
     guideModeDetailed: '🔍 상세 가이드 모드',
     guideModeNormal: '📝 일반 모드',
-    completeEvaluation: '평가 완료'
+    completeEvaluation: '평가 완료',
+    close: '닫기'
   },
 
   // 체크리스트 항목

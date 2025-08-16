@@ -10,6 +10,7 @@
 
   import ExportModal from '$lib/components/ExportModal.svelte';
   import PWAInstallPrompt from '$lib/components/PWAInstallPrompt.svelte';
+  import ShareButton from '$lib/components/ShareButton.svelte';
 
   // i18n初期化状態を監視
   const isI18nReady = $derived(i18nStore.initialized && !!i18nStore.translations);
@@ -158,8 +159,8 @@
           variant="success"
           page="checklist-result"
           showBenefits={true}
-          title="🎉 評価完了！アプリをインストールしませんか？"
-          message="このアプリをインストールして、いつでも素早く情報評価ができるようにしませんか？"
+          title={t('checklist.pwaInstallTitle')}
+          message={t('checklist.pwaInstallMessage')}
         />
       {/if}
     {/if}
@@ -191,6 +192,9 @@
         <button type="button" class="btn btn-secondary" onclick={editChecklist}>
           ✏️ {t('common.edit')}
         </button>
+        {#if checklist}
+          <ShareButton {checklist} variant="icon" />
+        {/if}
         <button type="button" class="btn btn-primary" onclick={() => (showExportModal = true)}>
           📄 {t('common.export')}
         </button>
@@ -381,6 +385,9 @@
         <div class="action-panel card">
           <h3>🔧 {t('checklist.actions')}</h3>
           <div class="action-buttons">
+            {#if checklist}
+              <ShareButton {checklist} variant="button" class="w-full" />
+            {/if}
             <button
               type="button"
               class="btn btn-primary w-full"
@@ -521,8 +528,12 @@
 
   .header-actions {
     display: flex;
+    justify-content: flex-end;
     gap: var(--spacing-sm);
     flex-shrink: 0;
+    flex-wrap: wrap;
+    /* position: relative; */
+    z-index: 10;
   }
 
   /* メインコンテンツ */

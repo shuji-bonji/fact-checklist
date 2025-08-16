@@ -150,11 +150,20 @@ export const translations: TranslationKeys = {
       poor: 'Reliability Issues'
     },
     advice: {
-      high: 'Adoption recommended. Sufficient verification has been conducted.',
-      medium: 'Additional confirmation recommended. Be cautious with important decisions.',
-      low: 'Caution required. Further verification is needed.',
-      poor: 'Rejection recommended. Look for reliable information sources.'
+      high: 'Adopsi direkomendasikan. Verifikasi yang memadai telah dilakukan.',
+      medium: 'Konfirmasi tambahan direkomendasikan. Berhati-hatilah dengan keputusan penting.',
+      low: 'Kehati-hatian diperlukan. Verifikasi lebih lanjut diperlukan.',
+      poor: 'Penolakan direkomendasikan. Cari sumber informasi yang dapat diandalkan.'
     },
+    confidenceVeryHigh: 'Kepercayaan Sangat Tinggi',
+    confidenceHigh: 'Kepercayaan Tinggi',
+    confidenceMedium: 'Kepercayaan Sedang',
+    confidenceLow: 'Kepercayaan Rendah',
+    confidenceVeryLow: 'Kepercayaan Sangat Rendah',
+    judgmentAdviceAccept: 'Adopsi direkomendasikan. Verifikasi yang memadai telah dilakukan.',
+    judgmentAdviceCaution:
+      'Verifikasi tambahan direkomendasikan. Berhati-hatilah dengan keputusan penting.',
+    judgmentAdviceReject: 'Penolakan direkomendasikan. Cari sumber yang lebih dapat diandalkan.',
     evaluationCompleted: '✓ Evaluasi Selesai!',
     evaluationCompletedDescription: 'Anda dapat meninjau hasil evaluasi daftar periksa.',
     evaluationResults: 'Hasil Evaluasi',
@@ -172,7 +181,30 @@ export const translations: TranslationKeys = {
     completionRate: 'Tingkat Penyelesaian',
     actions: 'Tindakan',
     exportShare: 'Ekspor & Bagikan',
-    reEdit: 'Edit Ulang'
+    reEdit: 'Edit Ulang',
+
+    // PWA installation prompt
+    pwaInstallTitle: '🎉 Evaluasi Selesai! Pasang Aplikasi?',
+    pwaInstallMessage:
+      'Pasang aplikasi ini untuk evaluasi informasi yang cepat dan mudah kapan saja.',
+    pwaBenefits: {
+      fastLaunch: '🚀 Peluncuran Cepat',
+      homeScreen: '📱 Akses Langsung dari Layar Beranda',
+      offlineAvailable: '🌐 Tersedia Offline',
+      notifications: '🔔 Notifikasi (Segera Hadir)'
+    },
+    pwaInstallButton: '📲 Pasang',
+    pwaInstalling: 'Memasang...',
+    pwaInstallSuccess: '🎉 Pemasangan Selesai!',
+    pwaInstallSuccessMessage: 'Aplikasi telah ditambahkan ke layar beranda Anda.',
+    pwaLater: 'Nanti',
+    pwaClose: 'Tutup',
+    pwaHint: '💡 Tip',
+    pwaFeature: '📱 Dukungan Aplikasi PWA',
+    pwaPersistent: '📲 Pasang Aplikasi',
+    pwaHintMessage: 'Pasang aplikasi untuk pengalaman yang lebih baik',
+    pwaFeatureMessage: 'Situs ini tersedia sebagai Progressive Web App',
+    pwaPersistentMessage: 'Pasang aplikasi untuk pengalaman yang lebih nyaman'
   },
   categories: {
     critical: {
@@ -883,7 +915,8 @@ export const translations: TranslationKeys = {
     quickStartGuide: '💡 Gunakan panduan ini untuk memulai dengan cepat!',
     guideModeDetailed: '🔍 Mode Panduan Detail',
     guideModeNormal: '📝 Mode Normal',
-    completeEvaluation: 'Selesaikan Evaluasi'
+    completeEvaluation: 'Selesaikan Evaluasi',
+    close: 'Tutup'
   },
 
   // Item daftar periksa
@@ -1265,7 +1298,23 @@ export const translations: TranslationKeys = {
       subtitle: 'Latih penilaian Anda untuk menghindari tenggelam di lautan informasi'
     },
     share: {
-      title: 'Bagikan Alat Ini'
+      title: 'Bagikan Alat Ini',
+      button: 'Bagikan',
+      sharing: 'Sedang berbagi...',
+      selectPlatform: 'Pilih Platform',
+      copyLink: 'Salin Tautan',
+      qrCode: 'Kode QR',
+      copied: 'Tersalin!',
+      scanToOpen: 'Pindai untuk membuka',
+      score: 'Skor: {score}%',
+      description: 'Hasil evaluasi keandalan informasi',
+      invalidUrl: 'URL berbagi tidak valid',
+      sharedChecklist: 'Daftar Periksa Bersama',
+      loadError: 'Gagal memuat data bersama',
+      saveError: 'Gagal menyimpan daftar periksa',
+      sharedResultTitle: 'Hasil Evaluasi Bersama',
+      sharedResultDescription: 'Hasil ini dimuat dari tautan bersama (hanya baca)',
+      saveToDevice: 'Simpan ke Perangkat'
     }
   }
 };
