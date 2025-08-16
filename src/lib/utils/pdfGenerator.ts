@@ -527,7 +527,7 @@ function addFooter(pdf: jsPDF, layout: PageLayout, fontConfig: FontConfig): void
     setFontSize(pdf, 'small', fontConfig);
     pdf.setTextColor(102, 102, 102);
 
-    const footerText = '実用的事実確認チェックシートによる評価結果';
+    const footerText = 'ファクトチェックシートによる評価結果';
     const pageText = `${i} / ${pageCount}`;
     const dateText = `生成日時: ${new Date().toLocaleString('ja-JP')}`;
 

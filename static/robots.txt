@@ -1,4 +1,4 @@
-# robots.txt for Fact Checklist (実用的事実確認チェックシート)
+# robots.txt for Fact Checklist (ファクトチェックシート)
 # https://fact-checklist.vercel.app/
 
 # Allow all web crawlers

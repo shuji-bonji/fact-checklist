@@ -85,14 +85,14 @@ async function generateIntroMeta(
     > = {
       ja: {
         title:
-          '偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート - Fact Checklist',
+          '偽情報・誤情報だらけの世界を生き抜く、ファクトチェックシート - Fact Checklist',
         description:
           '政府のSNS規制が進む中、情報の信頼性を自分の目と頭で見極めるためのシンプルなチェックリスト。AIやメディアを鵜呑みにせず、科学的・体系的に情報を評価するPWAアプリ。',
         keywords:
           '事実確認,ファクトチェック,情報検証,信頼性評価,PWA,情報リテラシー,偽情報対策,SNS規制,言論統制,情報の質,AIファクトチェック',
-        siteName: '実用的事実確認チェックシート',
+        siteName: 'ファクトチェックシート',
         ogTitle:
-          '偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート - Fact Checklist',
+          '偽情報・誤情報だらけの世界を生き抜く、ファクトチェックシート - Fact Checklist',
         ogDescription:
           '政府のSNS規制が進む中、情報の信頼性を自分の目と頭で見極めるためのシンプルなチェックリスト。AIやメディアを鵜呑みにせず、科学的・体系的に情報を評価するPWAアプリ。',
         ogImage: 'https://fact-checklist.vercel.app/og-image-intro.png',

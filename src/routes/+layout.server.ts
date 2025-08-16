@@ -6,12 +6,12 @@ import type { MetaData, LayoutServerData } from '$lib/types/layout';
 // SEO最適化されたメタデータ（12言語対応）
 const metaDataByLanguage: Record<Language, MetaData> = {
   ja: {
-    title: 'Fact Checklist - 実用的事実確認チェックシート | 信頼性評価ツール',
+    title: 'Fact Checklist - ファクトチェックシート | 信頼性評価ツール',
     description:
       '20項目の科学的チェックリストで情報の信頼性を体系的に評価。AIや政府に頼らず、自分の目と頭で情報を見極める無料PWAアプリ。偽情報対策・情報リテラシー向上に。',
     keywords:
       '事実確認,ファクトチェック,情報検証,信頼性評価,PWA,情報リテラシー,偽情報対策,フェイクニュース対策,メディアリテラシー,批判的思考',
-    ogTitle: 'Fact Checklist - 実用的事実確認チェックシート',
+    ogTitle: 'Fact Checklist - ファクトチェックシート',
     ogDescription:
       '20項目のチェックリストで情報の信頼性を科学的に評価。偽情報から身を守るための無料ツール。',
     ogImage: 'https://shuji-bonji.github.io/fact-checklist/og-image.png',

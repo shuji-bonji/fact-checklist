@@ -5,7 +5,7 @@ code in this repository.
 
 ## Project Overview
 
-This is **Fact Checklist** (実用的事実確認チェックシート), an internationalized
+This is **Fact Checklist** (ファクトチェックシート), an internationalized
 PWA for systematically evaluating information reliability with full support for
 12 languages. Built with Svelte 5, TypeScript, and deployed to GitHub Pages, the
 application helps users assess the credibility of information through a

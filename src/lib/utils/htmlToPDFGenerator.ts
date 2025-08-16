@@ -611,7 +611,7 @@ export class HTMLToPDFGenerator {
     pdf.setProperties({
       title: `事実確認チェックシート - ${this.checklist.title}`,
       author: 'Fact Checklist Generator',
-      subject: '情報の信頼性を科学的・体系的に評価するための実用的事実確認チェックシート',
+      subject: '情報の信頼性を科学的・体系的に評価するためのファクトチェックシート',
       keywords: 'fact-check, evaluation, reliability, information, 事実確認, 情報検証',
       creator: 'Fact Checklist PWA'
     });

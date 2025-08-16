@@ -58,7 +58,7 @@ export const translations: TranslationKeys = {
 
   // アプリケーション固有
   app: {
-    title: '実用的事実確認チェックシート',
+    title: 'ファクトチェックシート',
     subtitle: '情報の信頼性を科学的・体系的に評価するための統合システム',
     brandTitle: 'ファクトチェックリスト',
     brandSubtitle: '情報の信頼性を体系的に評価',
@@ -72,7 +72,7 @@ export const translations: TranslationKeys = {
   // ページ固有メタデータ
   pages: {
     home: {
-      title: 'Fact Checklist - 実用的事実確認チェックシート',
+      title: 'Fact Checklist - ファクトチェックシート',
       description:
         '20項目のチェックリストで情報の信頼性を体系的に評価。AIや政府に頼らず、自分の目と頭で情報を見極めるPWAアプリ。',
       keywords: '事実確認,ファクトチェック,情報検証,信頼性評価,PWA,情報リテラシー,偽情報対策'
@@ -96,7 +96,7 @@ export const translations: TranslationKeys = {
       keywords: 'プライバシー,個人情報,データ保護,ローカルストレージ,セキュリティ'
     },
     intro: {
-      title: '偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート - Fact Checklist',
+      title: '偽情報・誤情報だらけの世界を生き抜く、ファクトチェックシート - Fact Checklist',
       description:
         '政府のSNS規制が進む中、情報の信頼性を自分の目と頭で見極めるためのシンプルなチェックリスト。AIやメディアを鵜呑みにせず、科学的・体系的に情報を評価するPWAアプリ。',
       keywords:
@@ -664,12 +664,12 @@ export const translations: TranslationKeys = {
   privacy: {
     title: 'プライバシーポリシー',
     subtitle:
-      '実用的事実確認チェックシートのプライバシーポリシー。データの取り扱いと保護について説明します。',
+      'ファクトチェックシートのプライバシーポリシー。データの取り扱いと保護について説明します。',
     lastUpdated: '最終更新: 2025年6月28日',
     introduction: {
       title: '🛡️ プライバシー保護への取り組み',
       content:
-        '「実用的事実確認チェックシート」は、ユーザーのプライバシー保護を最重要課題として位置づけています。このアプリケーションは完全にローカル環境で動作し、サーバーへのデータ送信は一切行いません。'
+        '「ファクトチェックシート」は、ユーザーのプライバシー保護を最重要課題として位置づけています。このアプリケーションは完全にローカル環境で動作し、サーバーへのデータ送信は一切行いません。'
     },
     dataCollection: {
       title: '📊 データ収集について',
@@ -746,9 +746,9 @@ export const translations: TranslationKeys = {
   // アプリについて
   about: {
     title: 'アプリについて',
-    subtitle: '実用的事実確認チェックシートの詳細情報とアプリの特徴について',
+    subtitle: 'ファクトチェックシートの詳細情報とアプリの特徴について',
     hero: {
-      title: '実用的事実確認チェックシート',
+      title: 'ファクトチェックシート',
       subtitle: '情報の信頼性を科学的・体系的に評価するためのPWA（Progressive Web App）',
       description: [
         '偽情報やミスリーディングな情報が氾濫する現代において、情報リテラシーの向上を支援する実用的なツールです。',
@@ -1170,11 +1170,11 @@ export const translations: TranslationKeys = {
   // イントロページ
   intro: {
     meta: {
-      title: '偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート',
+      title: '偽情報・誤情報だらけの世界を生き抜く、ファクトチェックシート',
       keywords: '事実確認,ファクトチェック,情報検証,信頼性評価,PWA,情報リテラシー,偽情報対策'
     },
     hero: {
-      title: '偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート',
+      title: '偽情報・誤情報だらけの世界を生き抜く、ファクトチェックシート',
       subtitle:
         '政府のSNS規制が進む中、情報の信頼性を自分の目と頭で見極めるためのシンプルなチェックリスト'
     },

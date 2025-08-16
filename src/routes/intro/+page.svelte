@@ -81,7 +81,7 @@
   {:else}
     <!-- Fallback intro meta tags -->
     <title
-      >偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート - Fact Checklist</title
+      >偽情報・誤情報だらけの世界を生き抜く、ファクトチェックシート - Fact Checklist</title
     >
     <meta
       name="description"
@@ -95,7 +95,7 @@
     <!-- OGP fallback -->
     <meta
       property="og:title"
-      content="偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート - Fact Checklist"
+      content="偽情報・誤情報だらけの世界を生き抜く、ファクトチェックシート - Fact Checklist"
     />
     <meta
       property="og:description"
@@ -104,14 +104,14 @@
     <meta property="og:url" content="https://fact-checklist.vercel.app/intro" />
     <meta property="og:image" content="https://fact-checklist.vercel.app/og-image-intro.png" />
     <meta property="og:type" content="article" />
-    <meta property="og:site_name" content="実用的事実確認チェックシート" />
+    <meta property="og:site_name" content="ファクトチェックシート" />
     <meta property="og:locale" content="ja_JP" />
 
     <!-- Twitter Card fallback -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta
       name="twitter:title"
-      content="偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート - Fact Checklist"
+      content="偽情報・誤情報だらけの世界を生き抜く、ファクトチェックシート - Fact Checklist"
     />
     <meta
       name="twitter:description"
@@ -136,7 +136,7 @@
         {#if isI18nReady}
           {t('intro.hero.title')}
         {:else}
-          偽情報・誤情報だらけの世界を生き抜く、実用的ファクトチェックシート
+          偽情報・誤情報だらけの世界を生き抜く、ファクトチェックシート
         {/if}
       </h1>
       <p class="hero-subtitle">

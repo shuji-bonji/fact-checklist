@@ -198,7 +198,7 @@
       />
     {:else}
       <!-- Fallback meta tags for prerendering (non-intro pages only) -->
-      <title>Fact Checklist - 実用的事実確認チェックシート</title>
+      <title>Fact Checklist - ファクトチェックシート</title>
       <meta
         name="description"
         content="20項目のチェックリストで情報の信頼性を体系的に評価。AIや政府に頼らず、自分の目と頭で情報を見極めるPWAアプリ。"
@@ -209,7 +209,7 @@
       />
 
       <!-- OGP fallback -->
-      <meta property="og:title" content="Fact Checklist - 実用的事実確認チェックシート" />
+      <meta property="og:title" content="Fact Checklist - ファクトチェックシート" />
       <meta
         property="og:description"
         content="20項目のチェックリストで情報の信頼性を体系的に評価。AIや政府に頼らず、自分の目と頭で情報を見極めるPWAアプリ。"
@@ -217,12 +217,12 @@
       <meta property="og:url" content="https://fact-checklist.vercel.app" />
       <meta property="og:image" content="https://fact-checklist.vercel.app/og-image.png" />
       <meta property="og:type" content="website" />
-      <meta property="og:site_name" content="実用的事実確認チェックシート" />
+      <meta property="og:site_name" content="ファクトチェックシート" />
       <meta property="og:locale" content="ja_JP" />
 
       <!-- Twitter Card fallback -->
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content="Fact Checklist - 実用的事実確認チェックシート" />
+      <meta name="twitter:title" content="Fact Checklist - ファクトチェックシート" />
       <meta
         name="twitter:description"
         content="20項目のチェックリストで情報の信頼性を体系的に評価。AIや政府に頼らず、自分の目と頭で情報を見極めるPWAアプリ。"
@@ -234,7 +234,7 @@
         {
           "@context": "https://schema.org",
           "@type": "WebApplication",
-          "name": "Fact Checklist - 実用的事実確認チェックシート",
+          "name": "Fact Checklist - ファクトチェックシート",
           "description": "20項目のチェックリストで情報の信頼性を体系的に評価。AIや政府に頼らず、自分の目と頭で情報を見極めるPWAアプリ。",
           "url": "https://fact-checklist.vercel.app",
           "applicationCategory": "UtilityApplication",
@@ -256,7 +256,7 @@
             "target": "https://fact-checklist.vercel.app",
             "object": {
               "@type": "WebApplication",
-              "name": "Fact Checklist - 実用的事実確認チェックシート"
+              "name": "Fact Checklist - ファクトチェックシート"
             }
           }
         }

@@ -56,7 +56,7 @@ export default defineConfig(({ mode }) => {
           'icon-512x512.png'
         ],
         manifest: {
-          name: '実用的事実確認チェックシート',
+          name: 'ファクトチェックシート',
           short_name: 'FactCheckList',
           description:
             'ファクトチェックリスト - 情報の信頼性を科学的・体系的に評価するファクトチェック支援PWA',
