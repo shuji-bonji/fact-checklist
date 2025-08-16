@@ -58,7 +58,7 @@ export const translations: TranslationKeys = {
 
   // Application specific
   app: {
-    title: 'Practical Fact-Check Checklist',
+    title: 'Fact Checklist',
     subtitle: 'A comprehensive system for scientifically evaluating information reliability',
     brandTitle: 'Fact Checklist',
     brandSubtitle: 'Systematic evaluation of information reliability',
@@ -99,7 +99,7 @@ export const translations: TranslationKeys = {
       keywords: 'privacy,personal information,data protection,local storage,security'
     },
     intro: {
-      title: 'Practical Fact-Check Checklist for Surviving in a World Full of Misinformation',
+      title: 'Fact Checklist for Surviving in a World Full of Misinformation',
       description:
         'A simple checklist to evaluate information reliability with your own eyes and mind as government SNS regulations advance. Scientifically and systematically evaluate information without blindly trusting AI or media.',
       keywords:
@@ -713,7 +713,7 @@ export const translations: TranslationKeys = {
     title: 'About',
     subtitle: 'Learn about our comprehensive fact-checking system',
     hero: {
-      title: 'Practical Fact-Check Checklist',
+      title: 'Fact Checklist',
       subtitle:
         'A Progressive Web App (PWA) for scientifically and systematically evaluating information reliability',
       description: [
@@ -1271,7 +1271,7 @@ export const translations: TranslationKeys = {
   // Intro page
   intro: {
     meta: {
-      title: 'Practical Fact-Check Checklist for Surviving in a World Full of Misinformation',
+      title: 'Fact Checklist for Surviving in a World Full of Misinformation',
       keywords:
         'fact-checking,fact verification,information verification,reliability assessment,PWA,information literacy,misinformation countermeasures'
     },

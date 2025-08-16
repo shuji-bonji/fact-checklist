@@ -55,7 +55,7 @@ export const translations: TranslationKeys = {
     }
   },
   app: {
-    title: 'Lista di Controllo Pratica per Fact-Check',
+    title: 'Lista di Controllo per Fact-Check',
     subtitle: "Un sistema completo per valutare scientificamente l'affidabilità delle informazioni",
     brandTitle: 'Lista di Controllo Fact-Check',
     brandSubtitle: "Valutazione sistematica dell'affidabilità delle informazioni",
@@ -70,7 +70,7 @@ export const translations: TranslationKeys = {
   // Metadati specifici delle pagine
   pages: {
     home: {
-      title: "Fact Checklist - Valutazione Pratica dell'Affidabilità delle Informazioni",
+      title: "Fact Checklist - Valutazione dell'Affidabilità delle Informazioni",
       description:
         "Valuta sistematicamente l'affidabilità delle informazioni con 20 elementi di controllo. Giudica le informazioni con i tuoi occhi e la tua mente senza dipendere da IA o governo.",
       keywords:
@@ -98,7 +98,7 @@ export const translations: TranslationKeys = {
     },
     intro: {
       title:
-        'Lista di Controllo Pratica per Fact-Check per Sopravvivere in un Mondo Pieno di Disinformazione',
+        'Lista di Controllo per Fact-Check per Sopravvivere in un Mondo Pieno di Disinformazione',
       description:
         "Una lista di controllo semplice per valutare l'affidabilità delle informazioni con i tuoi occhi e la tua mente mentre avanza la regolamentazione governativa dei social media. Valuta le informazioni scientificamente e sistematicamente senza fidarti ciecamente di IA o media.",
       keywords:
@@ -752,7 +752,7 @@ export const translations: TranslationKeys = {
     title: "Info sull'App",
     subtitle: 'Scopri il nostro sistema completo di verifica dei fatti',
     hero: {
-      title: 'Lista di Controllo Pratica per la Verifica dei Fatti',
+      title: 'Lista di Controllo per la Verifica dei Fatti',
       subtitle:
         "Un'Applicazione Web Progressiva (PWA) per valutare scientificamente e sistematicamente l'affidabilità delle informazioni",
       description: [
@@ -1327,13 +1327,13 @@ export const translations: TranslationKeys = {
   intro: {
     meta: {
       title:
-        'Checklist Pratica di Verifica dei Fatti per Sopravvivere in un Mondo Pieno di Disinformazione',
+        'Checklist di Verifica dei Fatti per Sopravvivere in un Mondo Pieno di Disinformazione',
       keywords:
         "verifica dei fatti,verifica delle informazioni,valutazione dell'affidabilità,PWA,alfabetizzazione informativa,contromisure alla disinformazione"
     },
     hero: {
       title:
-        'Checklist Pratica di Verifica dei Fatti per Sopravvivere in un Mondo Pieno di Disinformazione',
+        'Checklist di Verifica dei Fatti per Sopravvivere in un Mondo Pieno di Disinformazione',
       subtitle:
         "Una semplice checklist per valutare l'affidabilità delle informazioni con i tuoi occhi e la tua mente mentre avanzano le regolamentazioni governative dei social media"
     },

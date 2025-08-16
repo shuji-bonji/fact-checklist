@@ -1,4 +1,4 @@
-# 🔍 Practical Fact-Check Checklist / ファクトチェックシート
+# 🔍 Fact Checklist / ファクトチェックシート
 
 > 🌍 **International 12-Language Support** | A sophisticated PWA (Progressive
 > Web App) for scientific and systematic evaluation of information reliability
@@ -13,16 +13,16 @@
 
 ## 🌟 Overview / 概要
 
-The Practical Fact-Check Checklist is an **enterprise-grade progressive web
-application** for scientifically and systematically evaluating the reliability
-of online information. In an era where misinformation and misleading content
-proliferate, this application supports the improvement of information literacy
-across **12 languages** with full internationalization support.
+The Fact Checklist is an **enterprise-grade progressive web application** for
+scientifically and systematically evaluating the reliability of online
+information. In an era where misinformation and misleading content proliferate,
+this application supports the improvement of information literacy across **12
+languages** with full internationalization support.
 
 ファクトチェックシートは、インターネット上の情報の信頼性を科学的・体系的に評価するための**企業レベル高度PWA**です。偽情報やミスリーディングな情報が氾濫する現代において、**12言語完全対応**の国際化機能で情報リテラシーの向上を支援します。
 
-> [!IMPORTANT] This "Practical Fact-Check Checklist" project is created through
-> collaboration between a human engineer (@shuji-bonji) and AI
+> [!IMPORTANT] This "Fact Checklist" project is created through collaboration
+> between a human engineer (@shuji-bonji) and AI
 > (Claude). この「ファクトチェックシート」プロジェクト(Github)は、人間のエンジニア（@shuji-bonji）と生成AI（Claude）との協働によって作成されています。
 
 ### 🎯 Key Features / 主な特徴

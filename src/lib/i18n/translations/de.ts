@@ -55,7 +55,7 @@ export const translations: TranslationKeys = {
     }
   },
   app: {
-    title: 'Praktische Faktencheck-Checkliste',
+    title: 'Faktencheck-Checkliste',
     subtitle:
       'Ein umfassendes System zur wissenschaftlichen Bewertung der Informationszuverlässigkeit',
     brandTitle: 'Faktencheck-Checkliste',
@@ -71,7 +71,7 @@ export const translations: TranslationKeys = {
   // Seitenspezifische Metadaten
   pages: {
     home: {
-      title: 'Fact Checklist - Praktische Bewertung der Informationszuverlässigkeit',
+      title: 'Fact Checklist - Bewertung der Informationszuverlässigkeit',
       description:
         'Bewerten Sie systematisch die Informationszuverlässigkeit mit 20 Checklisten-Elementen. Beurteilen Sie Informationen mit Ihren eigenen Augen und Ihrem Verstand, ohne auf KI oder Regierung angewiesen zu sein.',
       keywords:
@@ -98,7 +98,7 @@ export const translations: TranslationKeys = {
         'Datenschutz,persönliche Informationen,Datensicherheit,lokale Speicherung,Sicherheit'
     },
     intro: {
-      title: 'Praktische Faktencheck-Checkliste zum Überleben in einer Welt voller Desinformation',
+      title: 'Faktencheck-Checkliste zum Überleben in einer Welt voller Desinformation',
       description:
         'Eine einfache Checkliste zur Bewertung der Informationszuverlässigkeit mit Ihren eigenen Augen und Ihrem Verstand, während die staatliche Regulierung sozialer Netzwerke voranschreitet. Bewerten Sie Informationen wissenschaftlich und systematisch, ohne blind KI oder Medien zu vertrauen.',
       keywords:
@@ -754,7 +754,7 @@ export const translations: TranslationKeys = {
     title: 'Über die App',
     subtitle: 'Erfahren Sie mehr über unser umfassendes Faktencheck-System',
     hero: {
-      title: 'Praktische Faktencheck-Checkliste',
+      title: 'Faktencheck-Checkliste',
       subtitle:
         'Eine Progressive Web App (PWA) zur wissenschaftlichen und systematischen Bewertung der Informationszuverlässigkeit',
       description: [
@@ -1283,14 +1283,12 @@ export const translations: TranslationKeys = {
   },
   intro: {
     meta: {
-      title:
-        'Praktische Faktencheck-Checkliste zum Überleben in einer Welt voller Fehlinformationen',
+      title: 'Faktencheck-Checkliste zum Überleben in einer Welt voller Fehlinformationen',
       keywords:
         'Faktencheck,Faktenuberprufung,Informationsverifikation,Zuverlassigkeitsbewertung,PWA,Informationskompetenz,Fehlinformationsbekampfung'
     },
     hero: {
-      title:
-        'Praktische Faktencheck-Checkliste zum Überleben in einer Welt voller Fehlinformationen',
+      title: 'Faktencheck-Checkliste zum Überleben in einer Welt voller Fehlinformationen',
       subtitle:
         'Eine einfache Checkliste zur Bewertung der Informationszuverlässigkeit mit eigenen Augen und Verstand, während staatliche SNS-Regulierungen voranschreiten'
     },

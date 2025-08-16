@@ -58,7 +58,7 @@ export const translations: TranslationKeys = {
 
   // Application spécifique
   app: {
-    title: 'Liste de Vérification Factuelle Pratique',
+    title: 'Liste de Vérification Factuelle',
     subtitle: 'Un système complet pour évaluer scientifiquement la fiabilité des informations',
     brandTitle: 'Liste de Vérification Factuelle',
     brandSubtitle: 'Évaluation systématique de la fiabilité des informations',
@@ -101,8 +101,7 @@ export const translations: TranslationKeys = {
         'confidentialité,informations personnelles,protection des données,stockage local,sécurité'
     },
     intro: {
-      title:
-        'Liste de Vérification Factuelle Pratique pour Survivre dans un Monde Plein de Désinformation',
+      title: 'Liste de Vérification Factuelle pour Survivre dans un Monde Plein de Désinformation',
       description:
         "Une liste de vérification simple pour évaluer la fiabilité des informations avec vos propres yeux et votre esprit alors que la réglementation gouvernementale des réseaux sociaux progresse. Évaluez scientifiquement et systématiquement les informations sans faire aveuglément confiance à l'IA ou aux médias.",
       keywords:
@@ -806,7 +805,7 @@ export const translations: TranslationKeys = {
     title: "À Propos de l'App",
     subtitle: 'Découvrez notre système complet de vérification des faits',
     hero: {
-      title: 'Liste de Vérification Pratique des Faits',
+      title: 'Liste de Vérification des Faits',
       subtitle:
         "Une Application Web Progressive (PWA) pour évaluer scientifiquement et systématiquement la fiabilité de l'information",
       description: [
@@ -1310,12 +1309,12 @@ export const translations: TranslationKeys = {
   },
   intro: {
     meta: {
-      title: 'Liste de contrôle pratique pour survivre dans un monde plein de désinformation',
+      title: 'Liste de Vérification des Faits pour survivre dans un monde plein de désinformation',
       keywords:
         "vérification des faits,vérification de l'information,évaluation de la fiabilité,PWA,littératie informationnelle,contre-mesures désinformation"
     },
     hero: {
-      title: 'Liste de contrôle pratique pour survivre dans un monde plein de désinformation',
+      title: 'Liste de Vérification des Faits pour survivre dans un monde plein de désinformation',
       subtitle:
         "Une liste simple pour évaluer la fiabilité de l'information avec vos propres yeux et votre esprit alors que les réglementations gouvernementales sur les réseaux sociaux progressent"
     },

@@ -58,7 +58,7 @@ export const translations: TranslationKeys = {
 
   // Específico de la aplicación
   app: {
-    title: 'Lista de Verificación de Hechos Práctica',
+    title: 'Lista de Verificación de Hechos',
     subtitle: 'Un sistema integral para evaluar científicamente la confiabilidad de la información',
     brandTitle: 'Lista de Verificación de Hechos',
     brandSubtitle: 'Evaluación sistemática de la confiabilidad de la información',
@@ -100,8 +100,7 @@ export const translations: TranslationKeys = {
       keywords: 'privacidad,información personal,protección de datos,almacenamiento local,seguridad'
     },
     intro: {
-      title:
-        'Lista de Verificación de Hechos Práctica para Sobrevivir en un Mundo Lleno de Desinformación',
+      title: 'Lista de Verificación de Hechos para Sobrevivir en un Mundo Lleno de Desinformación',
       description:
         'Una lista de verificación simple para evaluar la confiabilidad de la información con sus propios ojos y mente mientras avanza la regulación gubernamental de redes sociales. Evalúe información científica y sistemáticamente sin confiar ciegamente en IA o medios.',
       keywords:
@@ -778,7 +777,7 @@ export const translations: TranslationKeys = {
     title: 'Acerca de la App',
     subtitle: 'Conozca nuestro sistema integral de verificación de hechos',
     hero: {
-      title: 'Lista de Verificación Práctica de Hechos',
+      title: 'Lista de Verificación de Hechos',
       subtitle:
         'Una Aplicación Web Progresiva (PWA) para evaluar científica y sistemáticamente la confiabilidad de la información',
       description: [
@@ -1275,14 +1274,12 @@ export const translations: TranslationKeys = {
   },
   intro: {
     meta: {
-      title:
-        'Lista de Verificación Práctica de Hechos para Sobrevivir en un Mundo Lleno de Desinformación',
+      title: 'Lista de Verificación de Hechos para Sobrevivir en un Mundo Lleno de Desinformación',
       keywords:
         'verificación de hechos,verificación de información,evaluación de confiabilidad,PWA,alfabetización informacional,contramedidas de desinformación'
     },
     hero: {
-      title:
-        'Lista de Verificación Práctica de Hechos para Sobrevivir en un Mundo Lleno de Desinformación',
+      title: 'Lista de Verificación de Hechos para Sobrevivir en un Mundo Lleno de Desinformación',
       subtitle:
         'Una lista de verificación simple para evaluar la confiabilidad de la información con tus propios ojos y mente mientras avanzan las regulaciones gubernamentales de redes sociales'
     },

@@ -55,7 +55,7 @@ export const translations: TranslationKeys = {
     }
   },
   app: {
-    title: 'Daftar Periksa Fakta Praktis',
+    title: 'Daftar Periksa Fakta',
     subtitle: 'Sistem komprehensif untuk mengevaluasi keandalan informasi secara ilmiah',
     brandTitle: 'Daftar Periksa Fakta',
     brandSubtitle: 'Evaluasi sistematis keandalan informasi',
@@ -70,7 +70,7 @@ export const translations: TranslationKeys = {
   // Metadata khusus halaman
   pages: {
     home: {
-      title: 'Fact Checklist - Evaluasi Praktis Keandalan Informasi',
+      title: 'Fact Checklist - Evaluasi Keandalan Informasi',
       description:
         'Evaluasi keandalan informasi secara sistematis dengan 20 item pemeriksaan. Nilai informasi dengan mata dan pikiran Anda sendiri tanpa bergantung pada AI atau pemerintah.',
       keywords:
@@ -96,7 +96,7 @@ export const translations: TranslationKeys = {
       keywords: 'privasi,informasi pribadi,perlindungan data,penyimpanan lokal,keamanan'
     },
     intro: {
-      title: 'Daftar Periksa Fakta Praktis untuk Bertahan di Dunia Penuh Misinformasi',
+      title: 'Daftar Periksa Fakta untuk Bertahan di Dunia Penuh Misinformasi',
       description:
         'Daftar periksa sederhana untuk mengevaluasi keandalan informasi dengan mata dan pikiran Anda sendiri saat regulasi media sosial pemerintah berkembang. Evaluasi informasi secara ilmiah dan sistematis tanpa mempercayai AI atau media secara membabi buta.',
       keywords:
@@ -740,7 +740,7 @@ export const translations: TranslationKeys = {
     title: 'Tentang Aplikasi',
     subtitle: 'Pelajari sistem pengecekan fakta komprehensif kami',
     hero: {
-      title: 'Daftar Periksa Fakta Praktis',
+      title: 'Daftar Periksa Fakta',
       subtitle:
         'Aplikasi Web Progresif (PWA) untuk mengevaluasi keandalan informasi secara ilmiah dan sistematis',
       description: [
@@ -1223,14 +1223,12 @@ export const translations: TranslationKeys = {
   // Intro page
   intro: {
     meta: {
-      title:
-        'Daftar Periksa Praktis Pemeriksaan Fakta untuk Bertahan di Dunia yang Penuh Disinformasi',
+      title: 'Daftar Periksa Pemeriksaan Fakta untuk Bertahan di Dunia yang Penuh Disinformasi',
       keywords:
         'pemeriksaan fakta,verifikasi informasi,penilaian keandalan,PWA,literasi informasi,penanggulangan disinformasi'
     },
     hero: {
-      title:
-        'Daftar Periksa Praktis Pemeriksaan Fakta untuk Bertahan di Dunia yang Penuh Disinformasi',
+      title: 'Daftar Periksa Pemeriksaan Fakta untuk Bertahan di Dunia yang Penuh Disinformasi',
       subtitle:
         'Daftar periksa sederhana untuk mengevaluasi keandalan informasi dengan mata dan pikiran Anda sendiri saat regulasi media sosial pemerintah berkembang'
     },

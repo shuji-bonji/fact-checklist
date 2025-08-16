@@ -80,9 +80,7 @@
     <meta name="twitter:image" content={_data.meta.ogImage} />
   {:else}
     <!-- Fallback intro meta tags -->
-    <title
-      >偽情報・誤情報だらけの世界を生き抜く、ファクトチェックシート - Fact Checklist</title
-    >
+    <title>偽情報・誤情報だらけの世界を生き抜く、ファクトチェックシート - Fact Checklist</title>
     <meta
       name="description"
       content="政府のSNS規制が進む中、情報の信頼性を自分の目と頭で見極めるためのシンプルなチェックリスト。AIやメディアを鵜呑みにせず、科学的・体系的に情報を評価するPWAアプリ。"

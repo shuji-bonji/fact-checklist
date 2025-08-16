@@ -58,7 +58,7 @@ export const translations: TranslationKeys = {
 
   // 應用程式特定
   app: {
-    title: '實用事實查核檢查表',
+    title: '事實查核檢查表',
     subtitle: '科學評估資訊可靠性的綜合系統',
     brandTitle: '事實查核檢查表',
     brandSubtitle: '系統性評估資訊可靠性',
@@ -93,7 +93,7 @@ export const translations: TranslationKeys = {
       keywords: '隱私,個人資訊,資料保護,本機儲存,安全性'
     },
     intro: {
-      title: '在充滿假訊息的世界中生存的實用事實查核檢查表',
+      title: '在充滿假訊息的世界中生存的事實查核檢查表',
       description:
         '在政府社群媒體管制進展中，用自己的眼睛和頭腦評估資訊可靠性的簡單檢查表。科學系統性地評估資訊，不盲目信任AI或媒體。',
       keywords:
@@ -734,7 +734,7 @@ export const translations: TranslationKeys = {
     title: '關於應用程式',
     subtitle: '了解我們的綜合事實查核系統',
     hero: {
-      title: '實用事實查核檢核表',
+      title: '事實查核檢核表',
       subtitle: '一個用於科學和系統性評估資訊可信度的漸進式網頁應用程式（PWA）',
       description: [
         '在充斥著錯誤資訊和誤導性內容的時代，這個實用工具支援提升資訊素養。',
@@ -1096,11 +1096,11 @@ export const translations: TranslationKeys = {
   },
   intro: {
     meta: {
-      title: '在充滿虛假資訊的世界中生存的實用事實查核清單',
+      title: '在充滿虛假資訊的世界中生存的事實查核清單',
       keywords: '事實查核,資訊驗證,可信度評估,PWA,資訊素養,虛假資訊對策'
     },
     hero: {
-      title: '在充滿虛假資訊的世界中生存的實用事實查核清單',
+      title: '在充滿虛假資訊的世界中生存的事實查核清單',
       subtitle: '隨著政府社交網路規範的進展，用自己的眼睛和心智評估資訊可信度的簡單清單'
     },
     cta: {

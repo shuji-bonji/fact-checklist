@@ -57,7 +57,7 @@ export const translations: TranslationKeys = {
     }
   },
   app: {
-    title: 'Lista de Verificação Prática de Fatos',
+    title: 'Lista de Verificação de Fatos',
     subtitle: 'Um sistema abrangente para avaliar cientificamente a confiabilidade das informações',
     brandTitle: 'Lista de Verificação de Fatos',
     brandSubtitle: 'Avaliação sistemática da confiabilidade das informações',
@@ -72,7 +72,7 @@ export const translations: TranslationKeys = {
   // Metadados específicos de páginas
   pages: {
     home: {
-      title: 'Fact Checklist - Avaliação Prática de Confiabilidade de Informações',
+      title: 'Fact Checklist - Avaliação de Confiabilidade de Informações',
       description:
         'Avalie sistematicamente a confiabilidade das informações com 20 itens de verificação. Julgue informações com seus próprios olhos e mente sem depender de IA ou governo.',
       keywords:
@@ -98,8 +98,7 @@ export const translations: TranslationKeys = {
       keywords: 'privacidade,informações pessoais,proteção de dados,armazenamento local,segurança'
     },
     intro: {
-      title:
-        'Lista de Verificação Prática de Fatos para Sobreviver em um Mundo Cheio de Desinformação',
+      title: 'Lista de Verificação de Fatos para Sobreviver em um Mundo Cheio de Desinformação',
       description:
         'Uma lista de verificação simples para avaliar a confiabilidade das informações com seus próprios olhos e mente enquanto a regulamentação governamental das redes sociais avança. Avalie informações científica e sistematicamente sem confiar cegamente em IA ou mídia.',
       keywords:
@@ -751,7 +750,7 @@ export const translations: TranslationKeys = {
     title: 'Sobre o App',
     subtitle: 'Conheça nosso sistema abrangente de verificação de fatos',
     hero: {
-      title: 'Lista de Verificação Prática de Fatos',
+      title: 'Lista de Verificação de Fatos',
       subtitle:
         'Um Aplicativo Web Progressivo (PWA) para avaliar cientificamente e sistematicamente a confiabilidade da informação',
       description: [
@@ -1279,14 +1278,12 @@ export const translations: TranslationKeys = {
   },
   intro: {
     meta: {
-      title:
-        'Lista de Verificação Prática de Fatos para Sobreviver em um Mundo Cheio de Desinformação',
+      title: 'Lista de Verificação de Fatos para Sobreviver em um Mundo Cheio de Desinformação',
       keywords:
         'verificação de fatos,verificação de informações,avaliação de confiabilidade,PWA,alfabetização informacional,contramedidas de desinformação'
     },
     hero: {
-      title:
-        'Lista de Verificação Prática de Fatos para Sobreviver em um Mundo Cheio de Desinformação',
+      title: 'Lista de Verificação de Fatos para Sobreviver em um Mundo Cheio de Desinformação',
       subtitle:
         'Uma lista de verificação simples para avaliar a confiabilidade da informação com seus próprios olhos e mente enquanto as regulamentações governamentais de redes sociais avançam'
     },
