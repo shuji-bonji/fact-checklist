@@ -12,7 +12,7 @@ export const APP_INFO = {
   AUTHOR: 'Fact Checklist Team',
   DESCRIPTION: 'Information reliability evaluation checklist',
   REPOSITORY: 'https://github.com/shuji-bonji/fact-checklist',
-  HOMEPAGE: 'https://shuji-bonji.github.io/fact-checklist/'
+  HOMEPAGE: 'https://fact-checklist.vercel.app/'
 } as const;
 
 /**

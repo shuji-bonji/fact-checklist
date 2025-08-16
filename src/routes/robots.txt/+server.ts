@@ -1,10 +1,10 @@
 import type { RequestHandler } from './$types';
 
-const SITE_URL = 'https://shuji-bonji.github.io/fact-checklist';
+const SITE_URL = 'https://fact-checklist.vercel.app';
 
 export const GET: RequestHandler = async () => {
   const robotsTxt = `# Fact Checklist - Robots.txt
-# https://shuji-bonji.github.io/fact-checklist
+# https://fact-checklist.vercel.app
 
 User-agent: *
 Allow: /
