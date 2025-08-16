@@ -19,6 +19,7 @@ export default defineConfig(({ mode }) => {
         workbox: {
           // version: '1.0.0'
           globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2}'],
+          maximumFileSizeToCacheInBytes: 3 * 1024 * 1024, // 3MBまでキャッシュ可能にする
           navigateFallback: null,
           cleanupOutdatedCaches: true,
           clientsClaim: true,
