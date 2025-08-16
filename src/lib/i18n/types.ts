@@ -609,6 +609,10 @@ export interface TranslationKeys {
             title: string;
             content: string;
           };
+          sharing: {
+            title: string;
+            content: string;
+          };
           pwaSupport: {
             title: string;
             content: string;

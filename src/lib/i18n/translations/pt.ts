@@ -570,6 +570,11 @@ export const translations: TranslationKeys = {
             content:
               'A aplicação guarda automaticamente as últimas 5 avaliações e permite-lhe aceder e gerir'
           },
+          sharing: {
+            title: 'Função de Partilha',
+            content:
+              'Partilhe facilmente os resultados da avaliação.\n• Partilha nativa do SO (smartphones)\n• Partilha em redes sociais (X, Facebook, WhatsApp)\n• Geração de código QR\n• Cópia de URL\n• Envio por e-mail\n\n📌 Como partilhar:\n1. Após completar a avaliação, clique no botão "Partilhar"\n2. Selecione o método de partilha (partilha do SO prioritária)\n3. O URL contém dados de avaliação comprimidos e codificados\n4. Não é necessário servidor (solução apenas com URL)'
+          },
           pwaSupport: {
             title: 'Suporte PWA',
             content:

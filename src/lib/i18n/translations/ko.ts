@@ -551,6 +551,11 @@ export const translations: TranslationKeys = {
             title: '기록 관리',
             content: '앱은 자동으로 최근 5개의 평가를 저장하고 액세스 및 관리할 수 있게 해줍니다'
           },
+          sharing: {
+            title: '공유 기능',
+            content:
+              '평가 결과를 쉽게 공유하세요.\n• OS 네이티브 공유 (스마트폰)\n• 소셜 미디어 공유 (X, Facebook, WhatsApp)\n• QR 코드 생성\n• URL 복사\n• 이메일 전송\n\n📌 공유 방법:\n1. 평가 완료 후 "공유" 버튼 클릭\n2. 공유 방법 선택 (OS 공유 우선)\n3. URL에는 압축되고 인코딩된 평가 데이터가 포함됨\n4. 서버 불필요 (URL 전용 솔루션)'
+          },
           pwaSupport: {
             title: 'PWA 지원',
             content: '앱은 기기에 설치할 수 있으며 완전히 오프라인으로 작동할 수 있습니다'

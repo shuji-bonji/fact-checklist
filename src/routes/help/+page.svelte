@@ -277,6 +277,11 @@
       .replace(/'/g, '&#x27;')
       .replace(/\n/g, '<br>');
   }
+
+  function processHtmlContent(content: string): string {
+    // HTMLコンテンツはそのまま返す（改行のみ処理）
+    return content.replace(/\n/g, '');
+  }
 </script>
 
 <!-- Meta tags are now handled by server-side layout only to prevent duplicates -->
@@ -339,7 +344,7 @@
                         <div class="sub-section-content">
                           {#if subSection.htmlContent}
                             <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-                            {@html sanitizeHtml(subSection.htmlContent)}
+                            {@html processHtmlContent(subSection.htmlContent)}
                           {:else}
                             <!-- eslint-disable-next-line svelte/no-at-html-tags -->
                             {@html sanitizeHtml(subSection.content)}

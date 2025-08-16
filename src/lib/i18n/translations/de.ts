@@ -574,6 +574,11 @@ export const translations: TranslationKeys = {
             content:
               'Die App speichert automatisch die letzten 5 Bewertungen und ermöglicht Ihnen den Zugriff und die Verwaltung'
           },
+          sharing: {
+            title: 'Teilungsfunktion',
+            content:
+              'Bewertungsergebnisse einfach teilen.\n• Native OS-Freigabe (Smartphones)\n• Social Media-Freigabe (X, Facebook, WhatsApp)\n• QR-Code-Generierung\n• URL kopieren\n• E-Mail-Versand\n\n📌 So teilen Sie:\n1. Nach Abschluss der Bewertung klicken Sie auf die Schaltfläche "Teilen"\n2. Wählen Sie die Freigabemethode (OS-Freigabe bevorzugt)\n3. Die URL enthält komprimierte und kodierte Bewertungsdaten\n4. Kein Server erforderlich (reine URL-Lösung)'
+          },
           pwaSupport: {
             title: 'PWA-Unterstützung',
             content:

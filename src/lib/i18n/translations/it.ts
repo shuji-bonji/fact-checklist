@@ -571,6 +571,11 @@ export const translations: TranslationKeys = {
             content:
               "L'applicazione salva automaticamente le ultime 5 valutazioni e ti permette di accedere e gestire"
           },
+          sharing: {
+            title: 'Funzione di Condivisione',
+            content:
+              'Condividi facilmente i risultati della valutazione.\n• Condivisione nativa del SO (smartphone)\n• Condivisione sui social media (X, Facebook, WhatsApp)\n• Generazione codice QR\n• Copia URL\n• Invio email\n\n📌 Come condividere:\n1. Dopo aver completato la valutazione, fare clic sul pulsante "Condividi"\n2. Selezionare il metodo di condivisione (condivisione SO prioritaria)\n3. L\'URL contiene dati di valutazione compressi e codificati\n4. Nessun server richiesto (soluzione solo URL)'
+          },
           pwaSupport: {
             title: 'Supporto PWA',
             content:

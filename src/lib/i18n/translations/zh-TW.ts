@@ -565,6 +565,11 @@ export const translations: TranslationKeys = {
             title: '歷史記錄管理',
             content: '應用程式自動儲存最近5次評估，並允許您存取和管理'
           },
+          sharing: {
+            title: '分享功能',
+            content:
+              '輕鬆分享評估結果。\n• OS原生分享（智慧型手機）\n• 社群媒體分享（X、Facebook、WhatsApp）\n• QR碼生成\n• URL複製\n• 電子郵件發送\n\n📌 如何分享：\n1. 完成評估後，點擊「分享」按鈕\n2. 選擇分享方式（優先使用OS分享）\n3. URL包含壓縮和編碼的評估資料\n4. 無需伺服器（僅URL解決方案）'
+          },
           pwaSupport: {
             title: 'PWA支援',
             content: '應用程式可以安裝在裝置上並完全離線運作'

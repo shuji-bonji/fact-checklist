@@ -594,6 +594,11 @@ export const translations: TranslationKeys = {
             content:
               '過去の評価結果を自動保存します。\n• 最新5件をサイドバーに表示\n• 全履歴の一覧表示\n• 個別削除機能\n• 再編集機能（完了前のみ）'
           },
+          sharing: {
+            title: '共有機能',
+            content:
+              '評価結果を簡単に共有できます。\n• OSネイティブ共有（スマートフォン）\n• SNS共有（X、Facebook、WhatsApp）\n• QRコード生成\n• URLコピー\n• メール送信\n\n📌 共有方法:\n1. 評価完了後、「共有」ボタンをクリック\n2. 共有方法を選択（OS共有優先）\n3. URLには評価データが圧縮・エンコードされて含まれます\n4. サーバーは不要（URLのみで完結）'
+          },
           pwaSupport: {
             title: 'PWA対応・高度機能',
             content:

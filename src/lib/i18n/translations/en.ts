@@ -604,6 +604,11 @@ export const translations: TranslationKeys = {
             content:
               'Automatically saves past evaluation results.\n• Display latest 5 items in sidebar\n• List view of all history\n• Individual deletion function\n• Re-edit function (before completion only)'
           },
+          sharing: {
+            title: 'Sharing Feature',
+            content:
+              'Easily share evaluation results.\n• Native OS sharing (smartphones)\n• Social media sharing (X, Facebook, WhatsApp)\n• QR code generation\n• URL copy\n• Email sending\n\n📌 How to share:\n1. After completing evaluation, click "Share" button\n2. Select sharing method (OS sharing prioritized)\n3. URL contains compressed and encoded evaluation data\n4. No server required (URL-only solution)'
+          },
           pwaSupport: {
             title: 'PWA Support & Advanced Features',
             content:

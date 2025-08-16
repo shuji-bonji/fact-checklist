@@ -201,6 +201,82 @@ src/lib/components/
 - **No Analytics**: No tracking or data collection implemented
 - **Content Security Policy**: Configured for XSS protection
 
+## 📤 Sharing Functionality
+
+### Overview
+
+The application includes a sophisticated sharing system that allows users to
+share their evaluation results without any server infrastructure:
+
+- **Serverless Architecture**: Uses URL-encoded data sharing (Base64
+  compression)
+- **Privacy-First**: No data is stored on servers; all sharing is done via
+  encoded URLs
+- **Multi-Platform Support**: Native OS sharing, social media, and QR codes
+
+### Technical Implementation
+
+#### Core Components
+
+- `/src/lib/components/ShareButton.svelte` - Main sharing UI component
+- `/src/lib/utils/shareUrl.ts` - URL encoding/decoding utilities
+- `/src/routes/checklist/shared/+page.svelte` - Shared result viewing page
+
+#### Data Encoding Strategy
+
+```typescript
+// Minimal data structure for URL sharing
+interface MinimalShareData {
+  v: 1; // Version number
+  t: string; // Title
+  n?: string; // Notes (optional)
+  j?: string | null; // Judgment
+  d: number; // Date timestamp
+  c: string[]; // Checked item IDs
+  s: number; // Score percentage
+}
+```
+
+#### URL Encoding Process
+
+1. **Data Minimization**: Only essential data is included
+2. **JSON Serialization**: Convert to compact JSON
+3. **Base64 Encoding**: URL-safe Base64 encoding
+4. **URL Generation**: Append to `/checklist/shared?d=` path
+
+#### Sharing Capabilities
+
+```typescript
+interface SharingCapabilities {
+  canShareText: boolean; // Web Share API support
+  canShareFiles: boolean; // File sharing support
+  canShareUrl: boolean; // URL sharing support
+  canShareTitle: boolean; // Title sharing support
+  canCopyToClipboard: boolean; // Clipboard API support
+}
+```
+
+### Browser Compatibility
+
+- **Web Share API**: Modern browsers (Chrome 89+, Safari 12.1+, Edge 93+)
+- **Fallback**: Social media buttons and clipboard copy for older browsers
+- **Safari SSL Fix**: Explicit HTTPS protocol for GitHub Pages URLs
+
+### Social Media Integration
+
+Supported platforms with pre-formatted messages:
+
+- X (Twitter) - With hashtags
+- Facebook - Share dialog
+- WhatsApp - Direct message
+- Email - mailto: link with subject/body
+
+### QR Code Generation
+
+- Dynamic QR code generation using qrcode library
+- Automatic sizing for mobile scanning
+- Embedded sharing URL
+
 ## Svelte 5 Specification Requirements
 
 ### **CRITICAL: Always Use Latest Svelte 5 Specification**

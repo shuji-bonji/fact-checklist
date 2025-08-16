@@ -564,6 +564,11 @@ export const translations: TranslationKeys = {
             content:
               'Aplikasi menyimpan 5 evaluasi terakhir secara otomatis dan memungkinkan Anda mengakses dan mengelolanya'
           },
+          sharing: {
+            title: 'Fitur Berbagi',
+            content:
+              'Bagikan hasil evaluasi dengan mudah.\n• Berbagi native OS (smartphone)\n• Berbagi media sosial (X, Facebook, WhatsApp)\n• Generasi kode QR\n• Salin URL\n• Kirim email\n\n📌 Cara berbagi:\n1. Setelah menyelesaikan evaluasi, klik tombol "Bagikan"\n2. Pilih metode berbagi (berbagi OS diprioritaskan)\n3. URL berisi data evaluasi yang dikompresi dan dikodekan\n4. Tidak perlu server (solusi khusus URL)'
+          },
           pwaSupport: {
             title: 'Dukungan PWA',
             content: 'Aplikasi dapat diinstal di perangkat dan bekerja sepenuhnya offline'

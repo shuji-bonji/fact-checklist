@@ -41,6 +41,11 @@ across **12 languages** with full internationalization support.
   - RTL text rendering for Arabic
   - Two primary PDF modes (Pixel-perfect/Text-based)
 - **🔄 History Management**: Save and reference past evaluation results
+- **📤 Sharing Functionality**: Share evaluation results via URL or social media
+  - Native OS sharing support (Web Share API)
+  - URL-encoded serverless data sharing
+  - Social media integration (X/Twitter, Facebook, WhatsApp, Email)
+  - QR code generation for easy mobile sharing
 - **♿ Accessibility**: WCAG-compliant universal design
 - **⚡ Performance Optimization**: Font caching, progress indicators, error
   handling

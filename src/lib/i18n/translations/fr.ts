@@ -614,6 +614,11 @@ export const translations: TranslationKeys = {
             content:
               "Sauvegarde automatiquement les résultats d'évaluation passés.\n• Afficher les 5 derniers éléments dans la barre latérale\n• Vue liste de tout l'historique\n• Fonction de suppression individuelle\n• Fonction de ré-édition (avant completion seulement)"
           },
+          sharing: {
+            title: 'Fonction de Partage',
+            content:
+              "Partagez facilement les résultats d'évaluation.\n• Partage natif OS (smartphones)\n• Partage sur réseaux sociaux (X, Facebook, WhatsApp)\n• Génération de code QR\n• Copie d'URL\n• Envoi par e-mail\n\n📌 Comment partager :\n1. Après avoir terminé l'évaluation, cliquez sur le bouton « Partager »\n2. Sélectionnez la méthode de partage (partage OS prioritaire)\n3. L'URL contient les données d'évaluation compressées et encodées\n4. Aucun serveur requis (solution basée uniquement sur l'URL)"
+          },
           pwaSupport: {
             title: 'Support PWA et Fonctionnalités Avancées',
             content:

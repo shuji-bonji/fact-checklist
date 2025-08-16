@@ -592,6 +592,11 @@ export const translations: TranslationKeys = {
             content:
               'La aplicación guarda automáticamente las últimas 5 evaluaciones y te permite acceder y gestionar'
           },
+          sharing: {
+            title: 'Función de Compartir',
+            content:
+              'Comparte fácilmente los resultados de evaluación.\n• Compartir nativo del OS (teléfonos inteligentes)\n• Compartir en redes sociales (X, Facebook, WhatsApp)\n• Generación de código QR\n• Copia de URL\n• Envío por correo electrónico\n\n📌 Cómo compartir:\n1. Después de completar la evaluación, haz clic en el botón "Compartir"\n2. Selecciona el método de compartir (compartir del OS prioritario)\n3. La URL contiene datos de evaluación comprimidos y codificados\n4. No se requiere servidor (solución solo con URL)'
+          },
           pwaSupport: {
             title: 'Soporte PWA',
             content:
