@@ -18,12 +18,27 @@ const pages = [
   { path: '/intro', priority: 0.6, changefreq: 'monthly' }
 ];
 
+export const prerender = true;
+
 export const GET: RequestHandler = async () => {
   // サイトURLを決定
   const SITE_URL = getSiteUrl();
 
-  // 実際の最終更新日を使用
-  const lastmod = new Date().toISOString().split('T')[0];
+  // Git履歴から各ページの最終更新日を取得（ビルド時に生成されたJSONから）
+  let lastModMap = new Map<string, string>();
+  const defaultLastmod = new Date().toISOString().split('T')[0];
+
+  try {
+    // Dynamic import to avoid Node.js dependencies in runtime
+    const gitLastmodData = await import('$lib/data/git-lastmod.json');
+    const data = gitLastmodData.default !== undefined ? gitLastmodData.default : gitLastmodData;
+    if (data !== null && data !== undefined && typeof data === 'object') {
+      lastModMap = new Map<string, string>(Object.entries(data as Record<string, string>));
+    }
+  } catch (error) {
+    // ファイルが存在しない場合はデフォルトの日付を使用
+    console.warn('Could not load git-lastmod.json, using default dates:', error);
+  }
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -44,9 +59,12 @@ ${pages
     // x-defaultリンクを追加（デフォルト言語として日本語を使用）
     const xDefaultLink = `    <xhtml:link rel="alternate" hreflang="x-default" href="${url}"/>`;
 
+    // このページ固有の最終更新日を取得（なければデフォルトを使用）
+    const pageLastmod = lastModMap.get(page.path) ?? defaultLastmod;
+
     return `  <url>
     <loc>${url}</loc>
-    <lastmod>${lastmod}</lastmod>
+    <lastmod>${pageLastmod}</lastmod>
     <changefreq>${page.changefreq}</changefreq>
     <priority>${page.priority}</priority>
 ${alternates}
@@ -58,8 +76,9 @@ ${xDefaultLink}
 
   return new Response(xml, {
     headers: {
-      'Content-Type': 'text/xml; charset=UTF-8',
-      'Cache-Control': 'max-age=3600'
+      'Content-Type': 'application/xml; charset=UTF-8',
+      'Cache-Control': 'max-age=3600',
+      'X-Content-Type-Options': 'nosniff'
     }
   });
 };
