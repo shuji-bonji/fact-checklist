@@ -1313,6 +1313,36 @@
     color: var(--gh-fg-muted) !important;
   }
 
+  /* Risk indicators */
+  .risk-indicator,
+  .risk-indicator-compact {
+    border-color: var(--gh-border-default) !important;
+  }
+
+  .risk-indicator.risk-high,
+  .risk-indicator-compact.risk-high,
+  .risk-high {
+    background: rgba(248, 81, 73, 0.2) !important;
+    color: var(--gh-danger-fg) !important;
+    border-color: var(--gh-danger-emphasis) !important;
+  }
+
+  .risk-indicator.risk-medium,
+  .risk-indicator-compact.risk-medium,
+  .risk-medium {
+    background: rgba(187, 128, 9, 0.2) !important;
+    color: var(--gh-attention-fg) !important;
+    border-color: var(--gh-attention-emphasis) !important;
+  }
+
+  .risk-indicator.risk-low,
+  .risk-indicator-compact.risk-low,
+  .risk-low {
+    background: rgba(46, 160, 67, 0.2) !important;
+    color: var(--gh-success-fg) !important;
+    border-color: var(--gh-success-emphasis) !important;
+  }
+
   /* Ensure proper text contrast in all content areas */
   .container p,
   .container li,
