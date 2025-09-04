@@ -104,12 +104,11 @@
       startOrRestoreSession();
     }
 
-    // デフォルトで「クリティカル評価」以外を折りたたみ
-    categories.forEach((category, index) => {
-      if (index > 0) {
-        collapsedSections[category.id] = true;
-      }
-    });
+    // デフォルトで全てのセクションを開いた状態にする
+    // （必要に応じて、特定のセクションだけを折りたたむ場合は以下のようにできます）
+    // categories.forEach((category, index) => {
+    //   collapsedSections[category.id] = false; // 全て開く
+    // });
 
     // 最終的にローディング完了
     // ローディング状態は既にisI18nReadyで管理

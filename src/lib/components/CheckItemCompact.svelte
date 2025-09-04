@@ -1,16 +1,13 @@
 <script lang="ts">
   import type { CheckItem } from '$lib/types/checklist.js';
-  import { t, factChecklistI18n } from '$lib/i18n/index.js';
+  import { factChecklistI18n } from '$lib/i18n/index.js';
 
   interface Props {
     item: CheckItem;
-    showGuideMode?: boolean;
     onCheckChange: (checked: boolean) => void;
   }
 
-  const { item, showGuideMode = false, onCheckChange }: Props = $props();
-
-  let showGuide = $state(false);
+  const { item, onCheckChange }: Props = $props();
 
   // 動的翻訳：translationKeyがあれば使用、なければ既存のtitle/descriptionを使用
   const displayTitle = $derived(() => {
@@ -49,7 +46,7 @@
     onchange={handleCheckChange}
     aria-describedby="desc-{item.id}"
   />
-  
+
   <div class="item-content-compact">
     <label for="check-{item.id}" class="item-header-compact">
       <span class="item-title-compact">
@@ -59,7 +56,7 @@
         {item.riskLevel === 'high' ? '高' : item.riskLevel === 'medium' ? '中' : '低'}
       </span>
     </label>
-    
+
     <div id="desc-{item.id}" class="item-description-compact">
       {displayDescription()}
     </div>

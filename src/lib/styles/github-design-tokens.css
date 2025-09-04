@@ -2,63 +2,66 @@
 
 :root {
   /* ========== GitHub Color System ========== */
-  
+
   /* Core Colors */
   --gh-white: #ffffff;
   --gh-black: #1b1f24;
-  
+
   /* Canvas (Background) Colors */
   --gh-canvas-default: #ffffff;
   --gh-canvas-subtle: #f6f8fa;
   --gh-canvas-inset: #f6f8fa;
   --gh-canvas-overlay: #ffffff;
-  
+
   /* Foreground Colors */
   --gh-fg-default: #1f2328;
   --gh-fg-muted: #656d76;
   --gh-fg-subtle: #6e7781;
   --gh-fg-on-emphasis: #ffffff;
-  
+
   /* Border Colors */
   --gh-border-default: #d0d7de;
   --gh-border-muted: #d8dee4;
   --gh-border-subtle: rgba(27, 31, 36, 0.15);
   --gh-border-emphasis: #586069;
-  
+
   /* Accent Colors - Blue (Primary) */
   --gh-accent-fg: #0969da;
   --gh-accent-emphasis: #0969da;
   --gh-accent-muted: rgba(84, 174, 255, 0.4);
   --gh-accent-subtle: #ddf4ff;
-  
+
   /* Success - Green */
   --gh-success-fg: #1a7f37;
   --gh-success-emphasis: #2ea043;
   --gh-success-muted: rgba(46, 160, 67, 0.4);
   --gh-success-subtle: #dafbe1;
-  
+
   /* Attention - Yellow */
   --gh-attention-fg: #9a6700;
   --gh-attention-emphasis: #bf8700;
   --gh-attention-muted: rgba(212, 167, 44, 0.4);
   --gh-attention-subtle: #fff8c5;
-  
+
   /* Danger - Red */
   --gh-danger-fg: #cf222e;
   --gh-danger-emphasis: #da3633;
   --gh-danger-muted: rgba(248, 81, 73, 0.4);
   --gh-danger-subtle: #ffebe9;
-  
+
   /* Done - Purple */
   --gh-done-fg: #8250df;
   --gh-done-emphasis: #8250df;
   --gh-done-muted: rgba(130, 80, 223, 0.4);
   --gh-done-subtle: #fbefff;
-  
+
   /* ========== Typography ========== */
-  --gh-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-  --gh-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
-  
+  --gh-font-sans:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji';
+  --gh-font-mono:
+    ui-monospace, SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+
   /* Font Sizes */
   --gh-text-xs: 12px;
   --gh-text-sm: 14px;
@@ -66,18 +69,18 @@
   --gh-text-lg: 20px;
   --gh-text-xl: 24px;
   --gh-text-2xl: 32px;
-  
+
   /* Font Weights */
   --gh-font-normal: 400;
   --gh-font-medium: 500;
   --gh-font-semibold: 600;
   --gh-font-bold: 700;
-  
+
   /* Line Heights */
   --gh-line-condensed: 1.25;
   --gh-line-default: 1.5;
   --gh-line-relaxed: 1.75;
-  
+
   /* ========== Spacing (Compact) ========== */
   --gh-space-0: 0;
   --gh-space-1: 4px;
@@ -88,23 +91,23 @@
   --gh-space-6: 24px;
   --gh-space-7: 28px;
   --gh-space-8: 32px;
-  
+
   /* ========== Border Radius ========== */
   --gh-radius-small: 3px;
   --gh-radius-medium: 6px;
   --gh-radius-large: 12px;
   --gh-radius-full: 9999px;
-  
+
   /* ========== Borders ========== */
   --gh-border-width: 1px;
   --gh-border-width-thick: 2px;
-  
+
   /* ========== Shadows (Minimal) ========== */
   --gh-shadow-small: 0 1px 0 rgba(27, 31, 36, 0.04);
   --gh-shadow-medium: 0 3px 6px rgba(140, 149, 159, 0.15);
   --gh-shadow-large: 0 8px 24px rgba(140, 149, 159, 0.2);
   --gh-shadow-floating: 0 1px 3px rgba(27, 31, 36, 0.12), 0 8px 24px rgba(66, 74, 83, 0.12);
-  
+
   /* ========== Button Styles ========== */
   --gh-btn-text: #24292f;
   --gh-btn-bg: #f6f8fa;
@@ -112,17 +115,17 @@
   --gh-btn-shadow: 0 1px 0 rgba(27, 31, 36, 0.04);
   --gh-btn-hover-bg: #f3f4f6;
   --gh-btn-hover-border: rgba(27, 31, 36, 0.15);
-  
+
   --gh-btn-primary-text: #ffffff;
   --gh-btn-primary-bg: #2ea043;
   --gh-btn-primary-border: rgba(27, 31, 36, 0.15);
   --gh-btn-primary-hover-bg: #2c974b;
   --gh-btn-primary-hover-border: rgba(27, 31, 36, 0.15);
-  
+
   --gh-btn-danger-text: #cf222e;
   --gh-btn-danger-hover-text: #ffffff;
   --gh-btn-danger-hover-bg: #cf222e;
-  
+
   /* ========== State Colors ========== */
   --gh-state-open-fg: #1a7f37;
   --gh-state-open-bg: #2ea043;
@@ -132,62 +135,62 @@
   --gh-state-merged-bg: #8250df;
   --gh-state-draft-fg: #656d76;
   --gh-state-draft-bg: #6e7781;
-  
+
   /* ========== Focus ========== */
   --gh-focus-border: #0969da;
   --gh-focus-shadow: 0 0 0 3px rgba(9, 105, 218, 0.3);
 }
 
 /* ========== Dark Theme ========== */
-[data-theme="dark"] {
+[data-theme='dark'] {
   /* Canvas (Background) Colors */
   --gh-canvas-default: #0d1117;
   --gh-canvas-subtle: #161b22;
   --gh-canvas-inset: #010409;
   --gh-canvas-overlay: #161b22;
-  
+
   /* Foreground Colors */
   --gh-fg-default: #e6edf3;
   --gh-fg-muted: #7d8590;
   --gh-fg-subtle: #6e7681;
   --gh-fg-on-emphasis: #ffffff;
-  
+
   /* Border Colors */
   --gh-border-default: #30363d;
   --gh-border-muted: #21262d;
   --gh-border-subtle: rgba(240, 246, 252, 0.1);
   --gh-border-emphasis: #6e7681;
-  
+
   /* Accent Colors - Blue (Primary) */
   --gh-accent-fg: #2f81f7;
   --gh-accent-emphasis: #1f6feb;
   --gh-accent-muted: rgba(56, 139, 253, 0.4);
   --gh-accent-subtle: rgba(56, 139, 253, 0.15);
-  
+
   /* Success - Green */
   --gh-success-fg: #3fb950;
   --gh-success-emphasis: #238636;
   --gh-success-muted: rgba(46, 160, 67, 0.4);
   --gh-success-subtle: rgba(46, 160, 67, 0.15);
-  
+
   /* Attention - Yellow */
   --gh-attention-fg: #d29922;
   --gh-attention-emphasis: #bb8009;
   --gh-attention-muted: rgba(187, 128, 9, 0.4);
   --gh-attention-subtle: rgba(187, 128, 9, 0.15);
-  
+
   /* Danger - Red */
   --gh-danger-fg: #f85149;
   --gh-danger-emphasis: #da3633;
   --gh-danger-muted: rgba(248, 81, 73, 0.4);
   --gh-danger-subtle: rgba(248, 81, 73, 0.15);
-  
+
   /* Done - Purple */
   --gh-done-fg: #a371f7;
   --gh-done-emphasis: #8957e5;
   --gh-done-muted: rgba(163, 113, 247, 0.4);
   --gh-done-subtle: rgba(163, 113, 247, 0.15);
-  
+
   /* Button Styles - Dark */
   --gh-btn-text: #c9d1d9;
   --gh-btn-bg: #21262d;
@@ -195,17 +198,17 @@
   --gh-btn-shadow: 0 0 transparent;
   --gh-btn-hover-bg: #30363d;
   --gh-btn-hover-border: #6e7681;
-  
+
   --gh-btn-primary-text: #ffffff;
   --gh-btn-primary-bg: #238636;
   --gh-btn-primary-border: rgba(240, 246, 252, 0.1);
   --gh-btn-primary-hover-bg: #2ea043;
   --gh-btn-primary-hover-border: rgba(240, 246, 252, 0.1);
-  
+
   --gh-btn-danger-text: #f85149;
   --gh-btn-danger-hover-text: #ffffff;
   --gh-btn-danger-hover-bg: #da3633;
-  
+
   /* Shadows - Dark */
   --gh-shadow-small: 0 0 transparent;
   --gh-shadow-medium: 0 3px 6px #010409;
