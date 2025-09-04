@@ -72,9 +72,6 @@
         >
         <span class="score-value">{score.context}/4</span>
       </div>
-    </div>
-
-    <div class="total-score">
       <div class="score-item total">
         <strong class="score-label">{t('units.total')} {t('units.score')}</strong>
         <strong class="score-value">{score.total}/{score.maxScore}</strong>
