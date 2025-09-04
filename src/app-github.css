@@ -1,0 +1,517 @@
+/* GitHub Style Global CSS */
+@import './lib/styles/github-design-tokens.css';
+
+/* ========== Reset ========== */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ========== Base ========== */
+html {
+  font-family: var(--gh-font-sans);
+  font-size: 14px;
+  line-height: var(--gh-line-default);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-color: var(--gh-canvas-default);
+  color: var(--gh-fg-default);
+  min-height: 100vh;
+}
+
+/* ========== Typography ========== */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: var(--gh-font-semibold);
+  line-height: var(--gh-line-condensed);
+  margin: 0;
+  color: var(--gh-fg-default);
+}
+
+h1 { font-size: var(--gh-text-2xl); }
+h2 { font-size: var(--gh-text-xl); }
+h3 { font-size: var(--gh-text-lg); }
+h4 { font-size: var(--gh-text-base); }
+h5 { font-size: var(--gh-text-sm); }
+h6 { font-size: var(--gh-text-xs); }
+
+p {
+  margin: 0 0 var(--gh-space-3);
+  line-height: var(--gh-line-default);
+}
+
+/* ========== Links ========== */
+a {
+  color: var(--gh-accent-fg);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ========== Buttons - GitHub Style ========== */
+.gh-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 5px 16px;
+  font-size: var(--gh-text-sm);
+  font-weight: var(--gh-font-medium);
+  line-height: 20px;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  border: var(--gh-border-width) solid var(--gh-btn-border);
+  border-radius: var(--gh-radius-medium);
+  background-color: var(--gh-btn-bg);
+  color: var(--gh-btn-text);
+  box-shadow: var(--gh-btn-shadow);
+  transition: 0.2s cubic-bezier(0.3, 0, 0.5, 1);
+  transition-property: color, background-color, border-color;
+}
+
+.gh-btn:hover {
+  background-color: var(--gh-btn-hover-bg);
+  border-color: var(--gh-btn-hover-border);
+  transition-duration: 0.1s;
+}
+
+.gh-btn:active {
+  background-color: var(--gh-canvas-subtle);
+  transition: none;
+}
+
+.gh-btn:focus {
+  outline: 2px solid var(--gh-focus-border);
+  outline-offset: -2px;
+}
+
+.gh-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Button Variants */
+.gh-btn-primary {
+  background-color: var(--gh-btn-primary-bg);
+  border-color: var(--gh-btn-primary-border);
+  color: var(--gh-btn-primary-text);
+}
+
+.gh-btn-primary:hover {
+  background-color: var(--gh-btn-primary-hover-bg);
+  border-color: var(--gh-btn-primary-hover-border);
+}
+
+.gh-btn-danger {
+  color: var(--gh-btn-danger-text);
+}
+
+.gh-btn-danger:hover {
+  background-color: var(--gh-btn-danger-hover-bg);
+  border-color: var(--gh-btn-danger-hover-bg);
+  color: var(--gh-btn-danger-hover-text);
+}
+
+.gh-btn-sm {
+  padding: 3px 12px;
+  font-size: var(--gh-text-xs);
+  line-height: 18px;
+}
+
+.gh-btn-icon {
+  padding: 5px;
+  display: inline-flex;
+}
+
+/* ========== Forms - GitHub Style ========== */
+.gh-input,
+.gh-textarea,
+.gh-select {
+  padding: 5px 12px;
+  font-size: var(--gh-text-sm);
+  line-height: 20px;
+  color: var(--gh-fg-default);
+  vertical-align: middle;
+  background-color: var(--gh-canvas-default);
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  border: var(--gh-border-width) solid var(--gh-border-default);
+  border-radius: var(--gh-radius-medium);
+  outline: none;
+  box-shadow: var(--gh-shadow-small);
+  transition: 0.2s cubic-bezier(0.3, 0, 0.5, 1);
+  transition-property: border-color, box-shadow;
+  width: 100%;
+}
+
+.gh-input:focus,
+.gh-textarea:focus,
+.gh-select:focus {
+  border-color: var(--gh-focus-border);
+  outline: none;
+  box-shadow: var(--gh-focus-shadow);
+}
+
+.gh-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.gh-label {
+  display: block;
+  margin-bottom: var(--gh-space-1);
+  font-size: var(--gh-text-sm);
+  font-weight: var(--gh-font-semibold);
+  color: var(--gh-fg-default);
+}
+
+.gh-form-group {
+  margin-bottom: var(--gh-space-4);
+}
+
+/* Checkbox - GitHub Style */
+.gh-checkbox-wrapper {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: var(--gh-space-2);
+}
+
+.gh-checkbox {
+  margin-top: 2px;
+  margin-right: var(--gh-space-2);
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.gh-checkbox-label {
+  cursor: pointer;
+  font-size: var(--gh-text-sm);
+  line-height: var(--gh-line-default);
+}
+
+/* ========== Navigation - GitHub Style ========== */
+.gh-header {
+  background-color: var(--gh-canvas-subtle);
+  border-bottom: var(--gh-border-width) solid var(--gh-border-default);
+  padding: var(--gh-space-4);
+  position: sticky;
+  top: 0;
+  z-index: 32;
+}
+
+.gh-header-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gh-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--gh-space-4);
+}
+
+.gh-nav-item {
+  padding: var(--gh-space-2) var(--gh-space-3);
+  border-radius: var(--gh-radius-medium);
+  color: var(--gh-fg-default);
+  font-size: var(--gh-text-sm);
+  font-weight: var(--gh-font-medium);
+  transition: background-color 0.2s;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+}
+
+.gh-nav-item:hover {
+  background-color: var(--gh-canvas-inset);
+  text-decoration: none;
+}
+
+.gh-nav-item.active {
+  background-color: var(--gh-canvas-inset);
+  font-weight: var(--gh-font-semibold);
+}
+
+/* ========== Cards - GitHub Style ========== */
+.gh-box {
+  background-color: var(--gh-canvas-default);
+  border: var(--gh-border-width) solid var(--gh-border-default);
+  border-radius: var(--gh-radius-medium);
+  padding: var(--gh-space-4);
+}
+
+.gh-box-header {
+  padding: var(--gh-space-3) var(--gh-space-4);
+  margin: calc(var(--gh-space-4) * -1) calc(var(--gh-space-4) * -1) var(--gh-space-4);
+  background-color: var(--gh-canvas-subtle);
+  border-bottom: var(--gh-border-width) solid var(--gh-border-default);
+  border-radius: var(--gh-radius-medium) var(--gh-radius-medium) 0 0;
+  font-weight: var(--gh-font-semibold);
+}
+
+.gh-box-row {
+  padding: var(--gh-space-3) 0;
+  border-bottom: var(--gh-border-width) solid var(--gh-border-muted);
+}
+
+.gh-box-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+/* ========== Checklist Item - Compact GitHub Style ========== */
+.gh-checklist-item {
+  display: flex;
+  align-items: flex-start;
+  padding: var(--gh-space-2) var(--gh-space-3);
+  margin-left: calc(var(--gh-space-3) * -1);
+  margin-right: calc(var(--gh-space-3) * -1);
+  border-radius: var(--gh-radius-medium);
+  transition: background-color 0.1s;
+}
+
+.gh-checklist-item:hover {
+  background-color: var(--gh-canvas-subtle);
+}
+
+.gh-checklist-checkbox {
+  margin-top: 3px;
+  margin-right: var(--gh-space-2);
+  flex-shrink: 0;
+}
+
+.gh-checklist-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.gh-checklist-title {
+  font-size: var(--gh-text-sm);
+  line-height: var(--gh-line-condensed);
+  color: var(--gh-fg-default);
+  font-weight: var(--gh-font-medium);
+  display: flex;
+  align-items: center;
+  gap: var(--gh-space-2);
+  cursor: pointer;
+}
+
+.gh-checklist-description {
+  font-size: var(--gh-text-xs);
+  color: var(--gh-fg-muted);
+  margin-top: 2px;
+  line-height: var(--gh-line-default);
+}
+
+/* ========== Labels/Badges - GitHub Style ========== */
+.gh-label {
+  display: inline-flex;
+  padding: 0 7px;
+  font-size: var(--gh-text-xs);
+  font-weight: var(--gh-font-medium);
+  line-height: 18px;
+  border-radius: 2em;
+  white-space: nowrap;
+}
+
+.gh-label-success {
+  background-color: var(--gh-success-subtle);
+  color: var(--gh-success-fg);
+}
+
+.gh-label-attention {
+  background-color: var(--gh-attention-subtle);
+  color: var(--gh-attention-fg);
+}
+
+.gh-label-danger {
+  background-color: var(--gh-danger-subtle);
+  color: var(--gh-danger-fg);
+}
+
+.gh-label-done {
+  background-color: var(--gh-done-subtle);
+  color: var(--gh-done-fg);
+}
+
+.gh-label-default {
+  background-color: var(--gh-canvas-subtle);
+  color: var(--gh-fg-muted);
+  border: var(--gh-border-width) solid var(--gh-border-default);
+}
+
+/* ========== State Indicators ========== */
+.gh-state {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  font-size: var(--gh-text-sm);
+  font-weight: var(--gh-font-medium);
+  line-height: 16px;
+  border-radius: 2em;
+  white-space: nowrap;
+  color: var(--gh-fg-on-emphasis);
+}
+
+.gh-state-open {
+  background-color: var(--gh-state-open-bg);
+}
+
+.gh-state-closed {
+  background-color: var(--gh-state-closed-bg);
+}
+
+.gh-state-merged {
+  background-color: var(--gh-state-merged-bg);
+}
+
+/* ========== Progress Bar ========== */
+.gh-progress {
+  display: flex;
+  height: 8px;
+  overflow: hidden;
+  background-color: var(--gh-canvas-inset);
+  border-radius: var(--gh-radius-medium);
+}
+
+.gh-progress-bar {
+  background-color: var(--gh-success-emphasis);
+}
+
+/* ========== Container ========== */
+.gh-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--gh-space-4);
+}
+
+.gh-container-md {
+  max-width: 768px;
+}
+
+.gh-container-sm {
+  max-width: 544px;
+}
+
+/* ========== Utility Classes ========== */
+.gh-text-small { font-size: var(--gh-text-xs); }
+.gh-text-normal { font-size: var(--gh-text-sm); }
+.gh-text-medium { font-size: var(--gh-text-base); }
+.gh-text-large { font-size: var(--gh-text-lg); }
+
+.gh-text-muted { color: var(--gh-fg-muted); }
+.gh-text-subtle { color: var(--gh-fg-subtle); }
+.gh-text-emphasis { font-weight: var(--gh-font-semibold); }
+
+.gh-mt-0 { margin-top: 0 !important; }
+.gh-mt-1 { margin-top: var(--gh-space-1) !important; }
+.gh-mt-2 { margin-top: var(--gh-space-2) !important; }
+.gh-mt-3 { margin-top: var(--gh-space-3) !important; }
+.gh-mt-4 { margin-top: var(--gh-space-4) !important; }
+
+.gh-mb-0 { margin-bottom: 0 !important; }
+.gh-mb-1 { margin-bottom: var(--gh-space-1) !important; }
+.gh-mb-2 { margin-bottom: var(--gh-space-2) !important; }
+.gh-mb-3 { margin-bottom: var(--gh-space-3) !important; }
+.gh-mb-4 { margin-bottom: var(--gh-space-4) !important; }
+
+.gh-p-0 { padding: 0 !important; }
+.gh-p-1 { padding: var(--gh-space-1) !important; }
+.gh-p-2 { padding: var(--gh-space-2) !important; }
+.gh-p-3 { padding: var(--gh-space-3) !important; }
+.gh-p-4 { padding: var(--gh-space-4) !important; }
+
+.gh-border { border: var(--gh-border-width) solid var(--gh-border-default) !important; }
+.gh-border-0 { border: 0 !important; }
+.gh-border-top { border-top: var(--gh-border-width) solid var(--gh-border-default) !important; }
+.gh-border-bottom { border-bottom: var(--gh-border-width) solid var(--gh-border-default) !important; }
+
+.gh-rounded-0 { border-radius: 0 !important; }
+.gh-rounded-1 { border-radius: var(--gh-radius-small) !important; }
+.gh-rounded-2 { border-radius: var(--gh-radius-medium) !important; }
+.gh-rounded-3 { border-radius: var(--gh-radius-large) !important; }
+
+.gh-d-none { display: none !important; }
+.gh-d-block { display: block !important; }
+.gh-d-flex { display: flex !important; }
+.gh-d-inline-flex { display: inline-flex !important; }
+
+.gh-flex-auto { flex: 1 1 auto !important; }
+.gh-flex-shrink-0 { flex-shrink: 0 !important; }
+.gh-flex-column { flex-direction: column !important; }
+.gh-flex-justify-between { justify-content: space-between !important; }
+.gh-flex-items-center { align-items: center !important; }
+
+/* ========== Scrollbar - GitHub Style ========== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--gh-border-default);
+  border-radius: var(--gh-radius-medium);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--gh-border-emphasis);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--gh-border-default) transparent;
+}
+
+/* ========== Focus Styles ========== */
+*:focus-visible {
+  outline: 2px solid var(--gh-focus-border);
+  outline-offset: -2px;
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 768px) {
+  .gh-header {
+    padding: var(--gh-space-3);
+  }
+  
+  .gh-container {
+    padding: 0 var(--gh-space-3);
+  }
+  
+  .gh-hide-sm {
+    display: none !important;
+  }
+}
+
+/* ========== Print ========== */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+  
+  .gh-header,
+  .no-print {
+    display: none !important;
+  }
+}

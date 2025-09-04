@@ -75,15 +75,13 @@
 
 <div class="history-sidebar">
   <!-- 新規作成ボタン -->
-  <div class="new-checklist card">
-    <button
-      type="button"
-      class="btn btn-ghost w-full new-checklist-btn"
-      onclick={createNewChecklist}
-    >
-      ➕ {t('checklist.newChecklist')}
-    </button>
-  </div>
+  <button
+    type="button"
+    class="btn btn-ghost w-full new-checklist-btn card"
+    onclick={createNewChecklist}
+  >
+    ➕ {t('checklist.newChecklist')}
+  </button>
 
   <!-- 履歴表示 -->
   <div class="history-section card">
@@ -171,10 +169,6 @@
   }
 
   /* 新規作成ボタン */
-  .new-checklist {
-    text-align: center;
-  }
-
   .btn {
     display: inline-flex;
     align-items: center;

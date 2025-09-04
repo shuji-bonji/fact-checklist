@@ -149,14 +149,14 @@
 
 <style>
   .check-item {
-    margin-bottom: var(--spacing-4);
-    padding: var(--spacing-6);
+    margin-bottom: var(--spacing-3);
+    padding: var(--spacing-4);
     background: var(--surface-elevated);
-    border-radius: var(--radius-xl);
-    border: 2px solid var(--border-color);
-    border-left: 6px solid var(--secondary-color);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--secondary-color);
     transition: all var(--transition-base) var(--ease-out);
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     position: relative;
     overflow: hidden;
   }
@@ -199,8 +199,8 @@
   }
 
   .checkbox-wrapper input[type='checkbox'] {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     cursor: pointer;
     accent-color: var(--primary-color);
     transform: scale(1);
@@ -223,16 +223,16 @@
 
   .item-title {
     font-family: var(--font-family-heading);
-    font-weight: var(--font-weight-semibold);
-    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-base);
     color: var(--text-color);
-    margin-bottom: var(--spacing-2);
+    margin-bottom: var(--spacing-1);
     display: flex;
     align-items: center;
-    gap: var(--spacing-3);
+    gap: var(--spacing-2);
     flex-wrap: wrap;
     cursor: pointer;
-    line-height: var(--line-height-snug);
+    line-height: var(--line-height-tight);
     transition: color var(--transition-fast) var(--ease-in-out);
   }
 
@@ -242,9 +242,9 @@
 
   .item-description {
     color: var(--text-color-secondary);
-    font-size: var(--font-size-base);
-    line-height: var(--line-height-relaxed);
-    margin-bottom: var(--spacing-2);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-snug);
+    margin-bottom: var(--spacing-1);
   }
 
   .risk-indicator {
@@ -320,10 +320,10 @@
 
   .detailed-guide {
     background: var(--surface-color);
-    border: 2px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-6);
-    margin-top: var(--spacing-4);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-4);
+    margin-top: var(--spacing-3);
     opacity: 0;
     transform: translateY(-10px);
     transition: all var(--transition-slow) var(--ease-out);
