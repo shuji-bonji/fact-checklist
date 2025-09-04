@@ -80,29 +80,32 @@
     </div>
 
     <div class="item-content">
-      <label for="check-{item.id}" class="item-title">
-        {displayTitle()}
-        <span class="risk-indicator {riskClasses[item.riskLevel]}">
-          {item.riskLevel === 'high'
-            ? t('common.rip.high')
-            : item.riskLevel === 'medium'
-              ? t('common.rip.medium')
-              : t('common.rip.low')}
-        </span>
-
-        {#if displayGuideContent() && !showGuideMode}
-          <button
-            type="button"
-            class="guide-toggle"
-            onclick={toggleGuide}
-            aria-expanded={showGuide}
-            aria-controls="guide-{item.id}"
-            title={t('common.showGuide')}
-          >
-            {t('common.guide')}
-          </button>
-        {/if}
-      </label>
+      <div class="item-header">
+        <label for="check-{item.id}" class="item-title">
+          {displayTitle()}
+        </label>
+        <div class="item-controls">
+          <span class="risk-indicator {riskClasses[item.riskLevel]}">
+            {item.riskLevel === 'high'
+              ? t('common.rip.high')
+              : item.riskLevel === 'medium'
+                ? t('common.rip.medium')
+                : t('common.rip.low')}
+          </span>
+          {#if displayGuideContent() && !showGuideMode}
+            <button
+              type="button"
+              class="guide-toggle"
+              onclick={toggleGuide}
+              aria-expanded={showGuide}
+              aria-controls="guide-{item.id}"
+              title={t('common.showGuide')}
+            >
+              {t('common.guide')}
+            </button>
+          {/if}
+        </div>
+      </div>
 
       <div id="desc-{item.id}" class="item-description">
         {displayDescription()}

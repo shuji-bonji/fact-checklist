@@ -24,14 +24,6 @@
     onJudgmentChange(judgment);
   }
 
-  // 信頼度バーの色を動的に決定
-  const confidenceBarColor = $derived(() => {
-    if (confidenceLevel >= 80) return 'var(--gradient-success)';
-    if (confidenceLevel >= 60) return 'var(--gradient-accent)';
-    if (confidenceLevel >= 40) return 'var(--gradient-warning)';
-    return 'var(--gradient-error)';
-  });
-
   // 判定ボタンのスタイル決定
   function getJudgmentButtonClass(judgment: JudgmentType) {
     const baseClass = 'judgment-btn';
@@ -39,6 +31,22 @@
       judgment === 'accept' ? 'accept' : judgment === 'caution' ? 'caution' : 'reject';
     const activeClass = currentJudgment === judgment ? 'active' : '';
     return `${baseClass} ${typeClass} ${activeClass}`.trim();
+  }
+
+  // 信頼度テキストのクラス決定
+  function getConfidenceClass() {
+    if (confidenceLevel >= 80) return 'confidence-high';
+    if (confidenceLevel >= 60) return 'confidence-medium';
+    if (confidenceLevel >= 40) return 'confidence-low';
+    return 'confidence-very-low';
+  }
+
+  // 信頼度バーのクラス決定（/checklist/[id]と同じスタイル）
+  function getConfidenceBarClass() {
+    if (confidenceLevel >= 80) return 'high';
+    if (confidenceLevel >= 60) return 'medium';
+    if (confidenceLevel >= 40) return 'low';
+    return 'very-low';
   }
 </script>
 
@@ -83,16 +91,12 @@
   <div class="confidence-meter card">
     <h3>🎯 {t('checklist.confidenceLevel')}</h3>
     <div class="confidence-bar-container">
-      <div class="confidence-bar">
-        <div
-          class="confidence-fill"
-          style:width="{confidenceLevel}%"
-          style:background={confidenceBarColor.toString()}
-        ></div>
+      <div class="confidence-bar {getConfidenceBarClass()}">
+        <div class="confidence-fill" style:width="{confidenceLevel}%"></div>
       </div>
       <div class="confidence-percentage">{confidenceLevel}%</div>
     </div>
-    <div class="confidence-text">{confidenceText}</div>
+    <div class="confidence-text {getConfidenceClass()}">{confidenceText}</div>
   </div>
 
   <!-- 最終判定 -->

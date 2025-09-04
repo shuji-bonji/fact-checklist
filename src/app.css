@@ -4,6 +4,9 @@
 /* GitHub Style Override - 既存のデザインをGitHub風に上書き */
 @import './lib/styles/github-override.css';
 
+/* GitHub Dark Mode Support */
+@import './lib/styles/github-dark-tokens.css';
+
 /* Reset and base styles */
 * {
   margin: 0;

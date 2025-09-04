@@ -29,7 +29,12 @@ body {
 }
 
 /* ========== Typography ========== */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: var(--v-font-semibold);
   line-height: var(--v-leading-tight);
   letter-spacing: var(--v-tracking-tight);
@@ -109,7 +114,9 @@ a:hover {
 }
 
 .v-btn:focus-visible {
-  box-shadow: 0 0 0 2px var(--v-focus-ring-offset), 0 0 0 4px var(--v-focus-ring);
+  box-shadow:
+    0 0 0 2px var(--v-focus-ring-offset),
+    0 0 0 4px var(--v-focus-ring);
 }
 
 .v-btn:disabled {
@@ -273,7 +280,7 @@ a:hover {
 }
 
 .v-label-required::after {
-  content: "*";
+  content: '*';
   color: var(--v-accent-danger);
   margin-left: var(--v-space-1);
 }
@@ -300,8 +307,8 @@ a:hover {
   cursor: pointer;
 }
 
-.v-checkbox input[type="checkbox"],
-.v-radio input[type="radio"] {
+.v-checkbox input[type='checkbox'],
+.v-radio input[type='radio'] {
   width: 16px;
   height: 16px;
   cursor: pointer;
@@ -323,7 +330,7 @@ a:hover {
   background-color: rgba(255, 255, 255, 0.8);
 }
 
-[data-theme="dark"] .v-nav {
+[data-theme='dark'] .v-nav {
   background-color: rgba(0, 0, 0, 0.8);
 }
 
@@ -547,12 +554,12 @@ a:hover {
   .v-nav {
     padding: 0 var(--v-space-4);
   }
-  
+
   .v-container {
     padding-left: var(--v-space-4);
     padding-right: var(--v-space-4);
   }
-  
+
   .v-modal-overlay {
     padding: var(--v-space-4);
   }
@@ -564,7 +571,7 @@ a:hover {
     background: white;
     color: black;
   }
-  
+
   .v-nav,
   .no-print {
     display: none !important;
@@ -626,9 +633,21 @@ a:hover {
   justify-content: space-between;
 }
 
-.v-gap-1 { gap: var(--v-space-1); }
-.v-gap-2 { gap: var(--v-space-2); }
-.v-gap-3 { gap: var(--v-space-3); }
-.v-gap-4 { gap: var(--v-space-4); }
-.v-gap-5 { gap: var(--v-space-5); }
-.v-gap-6 { gap: var(--v-space-6); }
+.v-gap-1 {
+  gap: var(--v-space-1);
+}
+.v-gap-2 {
+  gap: var(--v-space-2);
+}
+.v-gap-3 {
+  gap: var(--v-space-3);
+}
+.v-gap-4 {
+  gap: var(--v-space-4);
+}
+.v-gap-5 {
+  gap: var(--v-space-5);
+}
+.v-gap-6 {
+  gap: var(--v-space-6);
+}

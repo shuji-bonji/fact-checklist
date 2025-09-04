@@ -16,19 +16,23 @@
   --gh-gray-700: #444d56;
   --gh-gray-800: #2f363d;
   --gh-gray-900: #24292e;
-  
+
   --gh-blue: #0366d6;
   --gh-green: #28a745;
   --gh-yellow: #ffd33d;
   --gh-orange: #f66a0a;
   --gh-red: #d73a49;
   --gh-purple: #6f42c1;
-  
+
   /* 既存の変数を上書き */
-  --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-  --font-family-heading: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-  --font-family-mono: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
-  
+  --font-family-base:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji';
+  --font-family-heading:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-family-mono:
+    ui-monospace, SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+
   /* フォントサイズ - GitHub基準 */
   --font-size-xs: 12px;
   --font-size-sm: 12px;
@@ -39,21 +43,21 @@
   --font-size-3xl: 32px;
   --font-size-4xl: 40px;
   --font-size-5xl: 48px;
-  
+
   /* フォントウェイト */
   --font-weight-light: 300;
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 600;
-  
+
   /* 行の高さ */
   --line-height-tight: 1.25;
   --line-height-snug: 1.375;
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.625;
   --line-height-loose: 1.75;
-  
+
   /* スペーシング - GitHub基準（コンパクト） */
   --spacing-0: 0;
   --spacing-1: 4px;
@@ -65,7 +69,7 @@
   --spacing-8: 32px;
   --spacing-10: 40px;
   --spacing-12: 48px;
-  
+
   /* 色の上書き */
   --text-color: var(--gh-gray-900);
   --text-color-secondary: var(--gh-gray-600);
@@ -75,7 +79,7 @@
   --bg-color: var(--gh-gray-50);
   --border-color: var(--gh-gray-200);
   --border-color-strong: var(--gh-gray-300);
-  
+
   /* プライマリカラー */
   --primary-color: var(--gh-blue);
   --primary-hover: #0056b3;
@@ -84,13 +88,13 @@
   --success-color: var(--gh-green);
   --warning-color: var(--gh-orange);
   --error-color: var(--gh-red);
-  
+
   /* カテゴリカラー */
   --critical-color: var(--gh-red);
   --detailed-color: var(--gh-orange);
   --verification-color: var(--gh-blue);
   --context-color: var(--gh-purple);
-  
+
   /* ボーダー半径 */
   --radius-sm: 3px;
   --radius-md: 6px;
@@ -101,7 +105,7 @@
   --border-radius-sm: 3px;
   --border-radius: 6px;
   --border-radius-lg: 6px;
-  
+
   /* シャドウ - 最小限 */
   --shadow-xs: 0 1px 0 rgba(27, 31, 36, 0.04);
   --shadow-sm: 0 1px 0 rgba(27, 31, 36, 0.04);
@@ -110,7 +114,7 @@
   --shadow-xl: 0 12px 28px rgba(0, 0, 0, 0.12);
   --shadow: 0 1px 0 rgba(27, 31, 36, 0.04);
   --shadow-hover: 0 3px 6px rgba(149, 157, 165, 0.15);
-  
+
   /* グラデーションを単色に */
   --gradient-primary: var(--gh-blue);
   --gradient-secondary: var(--gh-gray-500);
@@ -118,7 +122,7 @@
   --gradient-success: var(--gh-green);
   --gradient-warning: var(--gh-orange);
   --gradient-error: var(--gh-red);
-  
+
   /* トランジション */
   --transition-fast: 0.1s;
   --transition-base: 0.2s;
@@ -137,25 +141,43 @@ html {
 
 body {
   background: var(--gh-gray-50) !important;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif !important;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif !important;
   font-size: 14px !important;
   line-height: 1.5 !important;
   color: var(--gh-gray-900) !important;
 }
 
 /* ========== タイポグラフィ ========== */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 600 !important;
   line-height: 1.25 !important;
   margin-bottom: 16px !important;
 }
 
-h1 { font-size: 32px !important; }
-h2 { font-size: 24px !important; }
-h3 { font-size: 20px !important; }
-h4 { font-size: 16px !important; }
-h5 { font-size: 14px !important; }
-h6 { font-size: 12px !important; }
+h1 {
+  font-size: 32px !important;
+}
+h2 {
+  font-size: 24px !important;
+}
+h3 {
+  font-size: 20px !important;
+}
+h4 {
+  font-size: 16px !important;
+}
+h5 {
+  font-size: 14px !important;
+}
+h6 {
+  font-size: 12px !important;
+}
 
 p {
   margin-bottom: 16px !important;
@@ -271,7 +293,7 @@ a:hover {
 /* ========== チェックリストアイテム ========== */
 .check-item {
   margin-bottom: 0 !important;
-  padding: 6px 0 !important;  /* 8px → 6pxに削減 */
+  padding: 6px 0 !important; /* 8px → 6pxに削減 */
   background: transparent !important;
   border: none !important;
   border-bottom: 1px solid var(--gh-gray-200) !important;
@@ -314,17 +336,34 @@ a:hover {
   transform: none !important;
 }
 
+/* アイテムヘッダー - タイトルとコントロールを横並び */
+.item-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  margin-bottom: 4px !important;
+}
+
 .item-title {
   font-size: 14px !important;
   font-weight: 600 !important;
   color: var(--gh-gray-900) !important;
-  margin-bottom: 4px !important;
-  gap: 8px !important;
   line-height: 1.25 !important;
+  flex: 1 !important;
 }
 
 .item-title:hover {
   color: var(--gh-gray-900) !important;
+}
+
+/* アイテムコントロール - risk-indicatorとguide-toggleを右寄せ */
+.item-controls {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-shrink: 0 !important;
 }
 
 .item-description {
@@ -367,7 +406,7 @@ a:hover {
   background: var(--gh-gray-50) !important;
   color: var(--gh-gray-900) !important;
   border: 1px solid var(--gh-gray-300) !important;
-  padding: 3px 8px !important;  /* 12px → 8px */
+  padding: 3px 8px !important; /* 12px → 8px */
   border-radius: 6px !important;
   font-size: 12px !important;
   font-weight: 500 !important;
@@ -425,7 +464,7 @@ a:hover {
 
 /* ========== ボタン ========== */
 .btn {
-  padding: 5px 8px !important;  /* 16px → 8px */
+  padding: 5px 8px !important; /* 16px → 8px */
   font-size: 14px !important;
   font-weight: 500 !important;
   line-height: 20px !important;
@@ -493,11 +532,14 @@ main {
 /* ========== セクション関連 ========== */
 .section,
 div.section {
-  margin-bottom: 8px !important;  /* 24px → 8pxに削減 */
+  margin-bottom: 8px !important; /* 24px → 8pxに削減 */
 }
 
 .evaluation-area {
-  gap: 8px !important;  /* セクション間の隙間を統一 */
+  gap: 8px !important; /* セクション間の隙間を統一 */
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
 }
 
 /* ========== Quick Start エリア ========== */
@@ -527,7 +569,7 @@ div.section {
 
 /* ========== チェックセクション ========== */
 .check-section {
-  margin-bottom: 0 !important;  /* evaluation-areaのgapを使用 */
+  margin-bottom: 0 !important; /* evaluation-areaのgapを使用 */
   background: white !important;
   border: 1px solid var(--gh-gray-200) !important;
   border-radius: 6px !important;
@@ -667,6 +709,26 @@ div.section {
   margin-bottom: 0 !important;
 }
 
+/* Fix score-item background */
+.score-item {
+  background: transparent !important;
+}
+
+.score-item:hover {
+  background: var(--gh-gray-50) !important;
+}
+
+/* Dark mode score-item background */
+@media (prefers-color-scheme: dark) {
+  .score-item:hover {
+    background: var(--gh-gray-800, #21262d) !important;
+  }
+}
+
+[data-theme='dark'] .score-item:hover {
+  background: var(--gh-gray-800, #21262d) !important;
+}
+
 .score-label,
 .total-score-label,
 .score-title {
@@ -713,9 +775,36 @@ div.section {
   color: var(--gh-gray-900) !important;
 }
 
-/* フォントカラーのフォールバック */
-.score-container * {
+/* フォントカラーのフォールバック - ダークモード対応 */
+@media (prefers-color-scheme: light) {
+  .score-container * {
+    color: var(--gh-gray-900) !important;
+  }
+}
+
+[data-theme='light'] .score-container * {
   color: var(--gh-gray-900) !important;
+}
+
+/* 信頼度テキストの段階的な色分け */
+.confidence-text.confidence-high {
+  color: var(--gh-green) !important;
+  font-weight: 600 !important;
+}
+
+.confidence-text.confidence-medium {
+  color: var(--gh-blue) !important;
+  font-weight: 500 !important;
+}
+
+.confidence-text.confidence-low {
+  color: var(--gh-yellow-dark) !important;
+  font-weight: 500 !important;
+}
+
+.confidence-text.confidence-very-low {
+  color: var(--gh-red) !important;
+  font-weight: 600 !important;
 }
 
 /* ========== サイドバー ========== */
@@ -776,7 +865,7 @@ div.section {
 }
 
 .history-item {
-  padding: 4px 6px !important;  /* さらに削減 6px 8px → 4px 6px */
+  padding: 4px 6px !important; /* さらに削減 6px 8px → 4px 6px */
   margin-bottom: 4px !important;
   border: 1px solid var(--gh-gray-200) !important;
   border-radius: 6px !important;
@@ -794,7 +883,7 @@ div.section {
 /* ========== タイトル入力とメモ ========== */
 .title-input,
 .notes-textarea,
-input[type="text"],
+input[type='text'],
 textarea {
   width: 100% !important;
   padding: 5px 12px !important;
@@ -809,7 +898,7 @@ textarea {
 
 .title-input:focus,
 .notes-textarea:focus,
-input[type="text"]:focus,
+input[type='text']:focus,
 textarea:focus {
   border-color: var(--gh-blue) !important;
   outline: none !important;
@@ -827,6 +916,88 @@ label {
   font-size: 14px !important;
   font-weight: 600 !important;
   color: var(--gh-gray-900) !important;
+}
+
+/* ========== チェックボックス ========== */
+input[type='checkbox'] {
+  appearance: none !important;
+  width: 16px !important;
+  height: 16px !important;
+  border: 1px solid var(--gh-gray-400) !important;
+  border-radius: 4px !important;
+  background: white !important;
+  cursor: pointer !important;
+  position: relative !important;
+  transition: all 0.2s ease !important;
+  margin: 0 8px !important;
+  flex-shrink: 0 !important;
+}
+
+/* Unchecked state - always gray regardless of mode */
+input[type='checkbox']:not(:checked) {
+  background: var(--gh-gray-100) !important;
+  border-color: var(--gh-gray-400) !important;
+}
+
+/* Checked state */
+input[type='checkbox']:checked {
+  background: var(--gh-blue) !important;
+  border-color: var(--gh-blue) !important;
+}
+
+/* Checkmark */
+input[type='checkbox']:checked::after {
+  content: '✓' !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  color: white !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+}
+
+/* Hover state */
+input[type='checkbox']:hover:not(:disabled) {
+  border-color: var(--gh-gray-600) !important;
+}
+
+input[type='checkbox']:checked:hover:not(:disabled) {
+  background: #0860ca !important;
+  border-color: #0860ca !important;
+}
+
+/* Focus state */
+input[type='checkbox']:focus {
+  outline: 2px solid var(--gh-blue) !important;
+  outline-offset: 2px !important;
+}
+
+/* Disabled state */
+input[type='checkbox']:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+}
+
+/* Dark mode specific checkbox overrides */
+@media (prefers-color-scheme: dark) {
+  input[type='checkbox']:not(:checked) {
+    background: var(--gh-gray-200, #30363d) !important;
+    border-color: var(--gh-gray-400, #6e7681) !important;
+  }
+
+  input[type='checkbox'] {
+    background: var(--gh-canvas-subtle, #161b22) !important;
+  }
+}
+
+[data-theme='dark'] input[type='checkbox']:not(:checked) {
+  background: var(--gh-gray-200, #30363d) !important;
+  border-color: var(--gh-gray-400, #6e7681) !important;
+}
+
+[data-theme='dark'] input[type='checkbox'] {
+  background: var(--gh-canvas-subtle, #161b22) !important;
 }
 
 /* ========== アクションボタン・履歴セクション ========== */
@@ -875,40 +1046,77 @@ label {
 .judgment-option,
 .judgment-btn {
   flex: 1 !important;
-  padding: 0.5rem !important;  /* 全て0.5rem(8px)に統一 */
+  padding: 0.5rem !important; /* 全て0.5rem(8px)に統一 */
   font-size: 13px !important;
   border: 1px solid var(--gh-gray-300) !important;
   border-radius: 6px !important;
-  background: var(--gh-gray-50) !important;
+  background: white !important;
   color: var(--gh-gray-900) !important;
   cursor: pointer !important;
   transition: all 0.2s !important;
   text-align: center !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
+  white-space: normal !important; /* nowrap → normal でドイツ語の長い単語も折り返し可能に */
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
   min-width: 0 !important;
 }
 
-.judgment-button:hover,
-.judgment-option:hover,
-.judgment-btn:hover {
+.judgment-button:hover:not(.active),
+.judgment-option:hover:not(.active),
+.judgment-btn:hover:not(.active) {
   background: var(--gh-gray-100) !important;
   border-color: var(--gh-gray-400) !important;
 }
 
-/* 選択された判定ボタン */
-.judgment-button.selected,
+/* 判定ボタンの選択時スタイル - 詳細度を上げて確実に適用 */
+.final-judgment .judgment-btn.accept.active,
+.judgment-buttons .judgment-btn.accept.active {
+  background: #d1f8d9 !important;
+  border-color: #2ea043 !important;
+  color: #1a7f37 !important;
+  font-weight: 600 !important;
+}
+
+.final-judgment .judgment-btn.caution.active,
+.judgment-buttons .judgment-btn.caution.active {
+  background: #fff8c5 !important;
+  border-color: #bf8700 !important;
+  color: #9a6700 !important;
+  font-weight: 600 !important;
+}
+
+.final-judgment .judgment-btn.reject.active,
+.judgment-buttons .judgment-btn.reject.active {
+  background: #ffebe9 !important;
+  border-color: #da3633 !important;
+  color: #cf222e !important;
+  font-weight: 600 !important;
+}
+
+/* スコア表示 - ScoreDisplay内のcard要素とscore-itemの修正 */
+.score-display.card,
+.confidence-meter.card,
+.final-judgment.card {
+  background: var(--gh-canvas-subtle) !important;
+}
+
+.score-display .score-item {
+  background: transparent !important;
+  border: 1px solid var(--gh-gray-300) !important;
+}
+
+/* 選択された判定ボタン (削除 - 個別の色設定と競合するため) */
+/* .judgment-button.selected,
 .judgment-option.selected,
 .judgment-button.active,
 .judgment-option.active {
   background: var(--gh-blue) !important;
   color: white !important;
   border-color: var(--gh-blue) !important;
-}
+} */
 
-/* 信頼できる */
-.judgment-button.reliable,
+/* 古い判定ボタンのスタイル (コメントアウト - 新しいactiveスタイルと競合) */
+/* .judgment-button.reliable,
 .judgment-option[data-value="reliable"] {
   border-color: var(--gh-green) !important;
 }
@@ -919,7 +1127,6 @@ label {
   border-color: var(--gh-green) !important;
 }
 
-/* 注意が必要 */
 .judgment-button.caution,
 .judgment-option[data-value="caution"] {
   border-color: var(--gh-orange) !important;
@@ -931,7 +1138,6 @@ label {
   border-color: var(--gh-orange) !important;
 }
 
-/* 信頼できない */
 .judgment-button.unreliable,
 .judgment-option[data-value="unreliable"] {
   border-color: var(--gh-red) !important;
@@ -941,4 +1147,75 @@ label {
 .judgment-option[data-value="unreliable"].selected {
   background: var(--gh-red) !important;
   border-color: var(--gh-red) !important;
+} */
+
+/* ========== モバイル対応（ドイツ語などの長い単語対策） ========== */
+@media (max-width: 768px) {
+  /* evaluation-area のオーバーフロー防止 */
+  .evaluation-area {
+    width: 100% !important;
+    max-width: 100vw !important;
+    padding: 0 8px !important;
+    box-sizing: border-box !important;
+  }
+
+  .evaluation-area > * {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    word-break: break-word !important;
+  }
+
+  /* カード要素の幅調整 */
+  .card {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 12px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* 判定ボタンの縦配置とテキスト折り返し */
+  .judgment-buttons {
+    flex-direction: column !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .judgment-button,
+  .judgment-option,
+  .judgment-btn {
+    width: 100% !important;
+    padding: 10px 8px !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    hyphens: auto !important;
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+    min-height: 44px !important; /* タッチターゲットのアクセシビリティ */
+  }
+
+  /* チェック項目のテキスト折り返し */
+  .check-item,
+  .item-title,
+  .item-description {
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    hyphens: auto !important;
+  }
+
+  /* セクションヘッダーの調整 */
+  .section-header,
+  .section-title,
+  .section-description {
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    hyphens: auto !important;
+  }
+
+  /* アクションボタンの調整 */
+  .action-buttons button {
+    word-break: break-word !important;
+    white-space: normal !important;
+    min-height: 44px !important;
+  }
 }
