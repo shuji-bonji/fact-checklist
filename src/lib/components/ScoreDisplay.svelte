@@ -20,7 +20,6 @@
     onJudgmentChange
   }: Props = $props();
 
-
   function setJudgment(judgment: JudgmentType) {
     onJudgmentChange(judgment);
   }

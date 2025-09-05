@@ -11,7 +11,6 @@
 
   let showGuide = $state(false);
 
-
   // 動的翻訳：translationKeyがあれば使用、なければ既存のtitle/descriptionを使用
   const displayTitle = $derived(() => {
     if (item.translationKey) {
@@ -487,7 +486,6 @@
     color: #fca5a5 !important;
   }
 
-
   /* ダークモード用 example-item */
   :global(.dark) .example-item {
     background: rgba(255, 255, 255, 0.03) !important;
@@ -512,7 +510,6 @@
   :global(.dark) .example-item.bad:hover {
     background: rgba(239, 68, 68, 0.15) !important;
   }
-
 
   /* アクセシビリティ向上 */
   @media (prefers-reduced-motion: reduce) {
