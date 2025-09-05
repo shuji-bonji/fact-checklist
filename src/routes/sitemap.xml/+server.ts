@@ -3,12 +3,9 @@ import { availableLanguages } from '$lib/i18n/simple-store.svelte.js';
 import type { LanguageCode } from '$lib/i18n/types.js';
 
 // サイトのベースURLを決定
-// Vercelでは環境変数VERCEL_URLが自動的に設定される
-// デフォルトはVercelの本番URL
 function getSiteUrl(): string {
-  // SvelteKitでは環境変数はビルド時に静的に解決される
-  // Vercelデプロイメント用のURLを返す
-  return 'https://fact-checklist.vercel.app';
+  // GitHub Pages用のURLを返す
+  return 'https://shuji-bonji.github.io/fact-checklist';
 }
 
 const pages = [
