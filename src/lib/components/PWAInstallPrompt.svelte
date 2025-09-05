@@ -2,7 +2,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
-  import { t } from '$lib/i18n';
+  import { t } from '$lib/i18n/simple-store.svelte.js';
   import { setupPWAInstallPrompt, type PWAInstallPrompt } from '$lib/utils/pwa-register.js';
 
   interface Props {

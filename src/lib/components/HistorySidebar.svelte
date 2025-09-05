@@ -3,7 +3,7 @@
   import { base } from '$app/paths';
   import { refactoredChecklistStore } from '$lib/stores/refactoredChecklistStore.svelte.js';
   import type { ChecklistHistoryItem, JudgmentType } from '$lib/types/checklist.js';
-  import { t } from '$lib/i18n/index.js';
+  import { t } from '$lib/i18n/simple-store.svelte.js';
 
   // ストアから履歴を取得
   const history = $derived(refactoredChecklistStore.history);
