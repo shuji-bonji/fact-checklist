@@ -1,93 +1,93 @@
 /* GitHub Dark Theme Design Tokens */
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* ========== Dark Mode Colors ========== */
-    /* Background Colors */
-    --gh-canvas-default: #0d1117;
-    --gh-canvas-overlay: #161b22;
-    --gh-canvas-inset: #010409;
-    --gh-canvas-subtle: #161b22;
+/* Class-based dark mode - responds to manual toggle */
+:root.dark,
+html.dark {
+  /* ========== Dark Mode Colors ========== */
+  /* Background Colors */
+  --gh-canvas-default: #0d1117;
+  --gh-canvas-overlay: #161b22;
+  --gh-canvas-inset: #010409;
+  --gh-canvas-subtle: #161b22;
 
-    /* Foreground Colors */
-    --gh-fg-default: #c9d1d9;
-    --gh-fg-muted: #8b949e;
-    --gh-fg-subtle: #6e7681;
-    --gh-fg-on-emphasis: #ffffff;
+  /* Foreground Colors */
+  --gh-fg-default: #c9d1d9;
+  --gh-fg-muted: #8b949e;
+  --gh-fg-subtle: #6e7681;
+  --gh-fg-on-emphasis: #ffffff;
 
-    /* Border Colors */
-    --gh-border-default: #30363d;
-    --gh-border-muted: #21262d;
-    --gh-border-subtle: rgba(240, 246, 252, 0.1);
-    --gh-border-emphasis: #6e7681;
+  /* Border Colors */
+  --gh-border-default: #30363d;
+  --gh-border-muted: #21262d;
+  --gh-border-subtle: rgba(240, 246, 252, 0.1);
+  --gh-border-emphasis: #6e7681;
 
-    /* Accent Colors - Blue (Primary) */
-    --gh-accent-fg: #58a6ff;
-    --gh-accent-emphasis: #1f6feb;
-    --gh-accent-muted: rgba(56, 139, 253, 0.4);
-    --gh-accent-subtle: rgba(56, 139, 253, 0.15);
+  /* Accent Colors - Blue (Primary) */
+  --gh-accent-fg: #58a6ff;
+  --gh-accent-emphasis: #1f6feb;
+  --gh-accent-muted: rgba(56, 139, 253, 0.4);
+  --gh-accent-subtle: rgba(56, 139, 253, 0.15);
 
-    /* Success - Green */
-    --gh-success-fg: #3fb950;
-    --gh-success-emphasis: #238636;
-    --gh-success-muted: rgba(46, 160, 67, 0.4);
-    --gh-success-subtle: rgba(46, 160, 67, 0.15);
+  /* Success - Green */
+  --gh-success-fg: #3fb950;
+  --gh-success-emphasis: #238636;
+  --gh-success-muted: rgba(46, 160, 67, 0.4);
+  --gh-success-subtle: rgba(46, 160, 67, 0.15);
 
-    /* Attention - Yellow */
-    --gh-attention-fg: #d29922;
-    --gh-attention-emphasis: #9e6a03;
-    --gh-attention-muted: rgba(187, 128, 9, 0.4);
-    --gh-attention-subtle: rgba(187, 128, 9, 0.15);
+  /* Attention - Yellow */
+  --gh-attention-fg: #d29922;
+  --gh-attention-emphasis: #9e6a03;
+  --gh-attention-muted: rgba(187, 128, 9, 0.4);
+  --gh-attention-subtle: rgba(187, 128, 9, 0.15);
 
-    /* Danger - Red */
-    --gh-danger-fg: #f85149;
-    --gh-danger-emphasis: #da3633;
-    --gh-danger-muted: rgba(248, 81, 73, 0.4);
-    --gh-danger-subtle: rgba(248, 81, 73, 0.15);
+  /* Danger - Red */
+  --gh-danger-fg: #f85149;
+  --gh-danger-emphasis: #da3633;
+  --gh-danger-muted: rgba(248, 81, 73, 0.4);
+  --gh-danger-subtle: rgba(248, 81, 73, 0.15);
 
-    /* Grays for dark mode */
-    --gh-gray-000: #0d1117;
-    --gh-gray-50: #161b22;
-    --gh-gray-100: #21262d;
-    --gh-gray-200: #30363d;
-    --gh-gray-300: #484f58;
-    --gh-gray-400: #6e7681;
-    --gh-gray-500: #8b949e;
-    --gh-gray-600: #c9d1d9;
-    --gh-gray-700: #e6edf3;
-    --gh-gray-800: #f0f6fc;
-    --gh-gray-900: #ffffff;
+  /* Grays for dark mode */
+  --gh-gray-000: #0d1117;
+  --gh-gray-50: #161b22;
+  --gh-gray-100: #21262d;
+  --gh-gray-200: #30363d;
+  --gh-gray-300: #484f58;
+  --gh-gray-400: #6e7681;
+  --gh-gray-500: #8b949e;
+  --gh-gray-600: #c9d1d9;
+  --gh-gray-700: #e6edf3;
+  --gh-gray-800: #f0f6fc;
+  --gh-gray-900: #ffffff;
 
-    /* Semantic colors */
-    --gh-blue: #58a6ff;
-    --gh-green: #3fb950;
-    --gh-yellow: #d29922;
-    --gh-yellow-dark: #9e6a03;
-    --gh-red: #f85149;
-    --gh-red-dark: #da3633;
-    --gh-purple: #a371f7;
-    --gh-orange: #db6d28;
+  /* Semantic colors */
+  --gh-blue: #58a6ff;
+  --gh-green: #3fb950;
+  --gh-yellow: #d29922;
+  --gh-yellow-dark: #9e6a03;
+  --gh-red: #f85149;
+  --gh-red-dark: #da3633;
+  --gh-purple: #a371f7;
+  --gh-orange: #db6d28;
 
-    /* Shadow for dark mode */
-    --gh-shadow-sm: 0 1px 0 rgba(27, 31, 35, 0.04);
-    --gh-shadow-md: 0 3px 6px rgba(0, 0, 0, 0.15);
-    --gh-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
-    --gh-shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.3);
+  /* Shadow for dark mode */
+  --gh-shadow-sm: 0 1px 0 rgba(27, 31, 35, 0.04);
+  --gh-shadow-md: 0 3px 6px rgba(0, 0, 0, 0.15);
+  --gh-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
+  --gh-shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.3);
 
-    /* Focus styles */
-    --gh-focus-ring: 0 0 0 3px rgba(88, 166, 255, 0.3);
-  }
-
-  /* Override specific white backgrounds to dark */
-  body {
-    background-color: var(--gh-canvas-default) !important;
-    color: var(--gh-fg-default) !important;
-  }
+  /* Focus styles */
+  --gh-focus-ring: 0 0 0 3px rgba(88, 166, 255, 0.3);
 }
 
-/* CSS variables are defined in the @media (prefers-color-scheme: dark) section above */
+/* Override specific white backgrounds to dark */
+:root.dark body,
+html.dark body {
+  background-color: var(--gh-canvas-default) !important;
+  color: var(--gh-fg-default) !important;
+}
 
-/* Dark mode specific overrides - Apply for both media query and manual toggle */
-@media (prefers-color-scheme: dark) {
+/* Dark mode specific overrides - Apply for class-based dark mode */
+:root.dark,
+html.dark {
   /* Backgrounds */
   .page-wrapper,
   .main-container {

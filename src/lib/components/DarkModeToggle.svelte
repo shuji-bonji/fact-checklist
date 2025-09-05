@@ -19,7 +19,7 @@
     const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     const currentDark = document.documentElement.classList.contains('dark');
-    
+
     // 既にdarkクラスがある場合はそれを優先、なければ保存値かシステム設定
     isDarkMode = currentDark || (savedTheme ? savedTheme === 'dark' : prefersDark);
 
