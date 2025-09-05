@@ -70,10 +70,8 @@ class I18nStore {
   private _initialized = $state<boolean>(false);
 
   constructor() {
-    // ブラウザ環境では即座にデフォルト翻訳を読み込む
-    if (isBrowser) {
-      this.initializeImmediately();
-    }
+    // 即座にデフォルト翻訳を読み込む（SSRとブラウザ両方で）
+    this.initializeImmediately();
   }
 
   // 現在の言語（読み取り専用）
@@ -140,8 +138,10 @@ class I18nStore {
         this._translations[defaultLang] = allTranslations[defaultLang];
       }
 
-      // HTML属性を即座に更新
-      this.updateDocumentAttributes();
+      // HTML属性を即座に更新（ブラウザ環境のみ）
+      if (isBrowser) {
+        this.updateDocumentAttributes();
+      }
 
       // 初期化フラグを立てる
       this._initialized = true;
