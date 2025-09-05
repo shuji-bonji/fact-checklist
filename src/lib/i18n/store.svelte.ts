@@ -385,23 +385,23 @@ class I18nStore {
     try {
       // 1. 現在の言語で探す
       let value = this.getTranslationArray(this._currentLanguage, key);
-      
+
       // 2. デフォルト言語で探す
       if (value === null && this._currentLanguage !== I18N_CONFIG.DEFAULT_LANGUAGE) {
         value = this.getTranslationArray(I18N_CONFIG.DEFAULT_LANGUAGE, key);
       }
-      
+
       // 3. 英語で探す
       if (value === null && this._currentLanguage !== 'en') {
         value = this.getTranslationArray('en', key);
       }
-      
+
       // 4. 最後の手段: 空の配列を返す
       if (value === null) {
         console.warn(`[i18n] Missing translation array for "${key}"`);
         return [];
       }
-      
+
       return value;
     } catch (error) {
       console.error(`[i18n] Error getting array for "${key}":`, error);
@@ -431,7 +431,7 @@ class I18nStore {
     if (Array.isArray(value)) {
       return value.filter((v): v is string => typeof v === 'string');
     }
-    
+
     // 文字列の場合は単一要素の配列として返す
     if (typeof value === 'string') {
       return [value];

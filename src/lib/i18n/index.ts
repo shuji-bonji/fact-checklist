@@ -124,13 +124,6 @@ export function getSupportedLanguages(): typeof SUPPORTED_LANGUAGES {
 }
 
 /**
- * 翻訳統計の取得（開発・デバッグ用）
- */
-export function getTranslationStats(): ReturnType<typeof i18nStore.getTranslationStats> {
-  return i18nStore.getTranslationStats();
-}
-
-/**
  * 言語切り替え時のコールバック
  * コンポーネントで使用可能
  */
