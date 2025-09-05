@@ -34,7 +34,6 @@
   // ナビゲーションメニューの状態
   let isMenuOpen = $state(false);
 
-
   // 現在のページを判定
   const currentPath = $derived($page.url.pathname);
   const isHomePage = $derived(currentPath === '/' || currentPath === base);
@@ -83,7 +82,6 @@
     if (urlLang && urlLang in SUPPORTED_LANGUAGES) {
       setLanguage(urlLang as LanguageCode);
     }
-
 
     // ローディング画面を確実に非表示にする（ブラウザ環境でのみ）
     if (browser) {

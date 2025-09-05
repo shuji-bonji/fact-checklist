@@ -1,8 +1,3 @@
-/* Tailwind CSS directives */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 /* Import Design Tokens */
 @import './lib/styles/design-tokens.css';
 
@@ -11,6 +6,11 @@
 
 /* GitHub Dark Mode Support */
 @import './lib/styles/github-dark-tokens.css';
+
+/* Tailwind CSS directives - baseを除外して既存のスタイルを保持 */
+/* @tailwind base; */
+@tailwind components;
+@tailwind utilities;
 
 /* Reset and base styles */
 * {
