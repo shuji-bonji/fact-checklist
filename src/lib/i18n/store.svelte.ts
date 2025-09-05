@@ -17,6 +17,7 @@ import { I18N_CONFIG } from '../config/i18n.js';
 import { translations } from './translations/index.js';
 
 import { countTranslations, createSafeTranslator, createFlexibleTranslator } from './helpers.js';
+import { dev } from '$app/environment';
 
 // ブラウザ環境チェック
 const isBrowser = typeof window !== 'undefined';
