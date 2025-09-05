@@ -10,7 +10,7 @@
   } from '$lib/stores/refactoredChecklistStore.svelte.js';
   import { getCategories } from '$lib/data/checklist-items.js';
   import type { JudgmentType } from '$lib/types/checklist.js';
-  import { t, simpleI18nStore } from '$lib/i18n/simple-store.svelte.js';
+  import { t } from '$lib/i18n/simple-store.svelte.js';
   import type { PageData } from './$types';
 
   // Svelte5の新しいprops構文
