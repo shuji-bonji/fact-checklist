@@ -41,7 +41,7 @@ export const translations: TranslationKeys = {
     about: '關於',
     privacy: '隱私',
     terms: '條款',
-    home: '首頁',
+    home: '檢查清單',
     menu: '選單',
     languages: '語言',
     darkMode: '深色模式',
@@ -103,7 +103,7 @@ export const translations: TranslationKeys = {
 
   // 導航
   navigation: {
-    home: '首頁',
+    home: '檢查清單',
     about: '關於',
     help: '說明與使用',
     privacy: '隱私',
@@ -179,7 +179,7 @@ export const translations: TranslationKeys = {
     uncheckedItems: '未檢查',
     completionRate: '完成率',
     actions: '行動',
-    exportShare: '匯出與分享',
+    exportShare: '匯出',
     reEdit: '重新編輯',
 
     // PWA installation prompt

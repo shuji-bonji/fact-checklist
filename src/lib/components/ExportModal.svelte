@@ -399,25 +399,26 @@
   }
 
   .modal-content {
-    background: white;
-    border-radius: 16px;
+    background: var(--surface-elevated);
+    border-radius: var(--radius-xl);
     padding: 0;
     width: 90%;
     max-width: 600px;
     max-height: 90vh;
     overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-2xl);
+    border: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
   }
 
   .modal-header {
-    padding: 25px 30px;
-    border-bottom: 1px solid #e9ecef;
+    padding: var(--spacing-6) var(--spacing-8);
+    border-bottom: 1px solid var(--border-color);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--gradient-primary);
     color: white;
   }
 
@@ -443,9 +444,11 @@
   }
 
   .modal-body {
-    padding: 30px;
+    padding: var(--spacing-6);
     overflow-y: auto;
     flex: 1;
+    background: var(--surface-base);
+    color: var(--text-primary);
   }
 
   .option-group {
@@ -456,7 +459,7 @@
     margin: 0 0 15px 0;
     font-size: 16px;
     font-weight: 600;
-    color: #2c3e50;
+    color: var(--text-secondary);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -475,22 +478,24 @@
     align-items: flex-start;
     gap: 12px;
     padding: 15px;
-    border: 2px solid #e9ecef;
-    border-radius: 10px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-lg);
     cursor: pointer;
-    transition: all 0.2s;
-    background: #fafafa;
+    transition: all var(--transition-base);
+    background: var(--surface-base);
   }
 
   .radio-option:hover,
   .checkbox-option:hover {
-    border-color: #3498db;
-    background: #f8f9fa;
+    border-color: var(--primary-color);
+    background: var(--surface-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
   }
 
   .radio-option input[type='radio']:checked + span,
   .checkbox-option input[type='checkbox']:checked + span {
-    color: #3498db;
+    color: var(--primary-color);
     font-weight: 600;
   }
 
@@ -516,28 +521,31 @@
   }
 
   .modal-footer {
-    padding: 20px 30px;
-    border-top: 1px solid #e9ecef;
-    background: #f8f9fa;
+    padding: var(--spacing-4) var(--spacing-6);
+    border-top: 1px solid var(--border-color);
+    background: var(--surface-elevated);
   }
 
   .action-buttons {
     display: flex;
     gap: 12px;
     justify-content: flex-end;
+    padding: var(--spacing-4) 0 0;
+    margin-top: var(--spacing-4);
+    border-top: 1px solid var(--border-color);
   }
 
   .btn {
-    padding: 12px 24px;
+    padding: var(--spacing-3) var(--spacing-6);
     border: none;
-    border-radius: 8px;
-    font-weight: 600;
+    border-radius: var(--radius-lg);
+    font-weight: var(--font-weight-semibold);
     cursor: pointer;
-    transition: all 0.2s;
-    font-size: 14px;
+    transition: all var(--transition-base);
+    font-size: var(--font-size-sm);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--spacing-2);
   }
 
   .btn:disabled {
@@ -556,13 +564,13 @@
   }
 
   .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--gradient-primary);
     color: white;
   }
 
   .btn-primary:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-accent);
   }
 
   /* レスポンシブ対応 */
@@ -624,7 +632,7 @@
   .section-label {
     font-size: 12px;
     font-weight: 600;
-    color: #2c3e50;
+    color: var(--text-secondary);
     margin-bottom: 10px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -632,7 +640,7 @@
 
   .pdf-mode-section .radio-option {
     margin-bottom: 8px;
-    background: #f8f9fa;
+    background: var(--surface-base);
   }
 
   .pdf-mode-section .radio-option:last-child {
@@ -662,13 +670,13 @@
 
   .progress-stage {
     font-weight: 600;
-    color: #2c3e50;
+    color: var(--text-secondary);
     font-size: 14px;
   }
 
   .progress-percentage {
     font-weight: 700;
-    color: #3498db;
+    color: var(--primary-color);
     font-size: 14px;
   }
 
@@ -710,7 +718,7 @@
 
   .progress-message {
     font-size: 13px;
-    color: #5a6c7d;
+    color: var(--text-tertiary);
     font-style: italic;
   }
 
@@ -736,12 +744,12 @@
 
   .error-title {
     font-weight: 600;
-    color: #c0392b;
+    color: #e74c3c;
     font-size: 14px;
   }
 
   .error-message {
-    color: #721c24;
+    color: var(--text-secondary);
     font-size: 13px;
     line-height: 1.4;
     margin-bottom: 12px;
@@ -779,14 +787,134 @@
 
   .success-title {
     font-weight: 600;
-    color: #1e8449;
+    color: #27ae60;
     font-size: 14px;
   }
 
   .success-message {
-    color: #145a32;
+    color: var(--text-secondary);
     font-size: 13px;
     line-height: 1.4;
+  }
+
+  /* ダークモード対応 */
+  :global(.dark) .modal-content {
+    background: var(--surface-elevated);
+    color: var(--text-color);
+  }
+
+  :global(.dark) .modal-header {
+    background: var(--gradient-primary);
+    border-bottom-color: var(--border-color);
+  }
+
+  :global(.dark) .modal-body {
+    background: #1a1a1a;
+    color: var(--text-color);
+  }
+
+  :global(.dark) .action-buttons {
+    border-top-color: #3a3a3a;
+  }
+
+  :global(.dark) .modal-footer {
+    background: #1a1a1a;
+    border-top-color: #3a3a3a;
+  }
+
+  :global(.dark) .option-group h3 {
+    color: var(--text-color);
+  }
+
+  :global(.dark) .radio-option,
+  :global(.dark) .checkbox-option {
+    background: #2a2a2a;
+    border-color: #3a3a3a;
+    color: var(--text-color);
+  }
+
+  :global(.dark) .radio-option:hover,
+  :global(.dark) .checkbox-option:hover {
+    background: #333;
+    border-color: var(--primary-color);
+  }
+
+  :global(.dark) .radio-option span,
+  :global(.dark) .checkbox-option span {
+    color: var(--text-color);
+  }
+
+  :global(.dark) .radio-option input[type='radio']:checked + span,
+  :global(.dark) .checkbox-option input[type='checkbox']:checked + span {
+    color: #3498db;
+  }
+
+  :global(.dark) .radio-option small,
+  :global(.dark) .checkbox-option small {
+    color: var(--text-color-secondary);
+  }
+
+  :global(.dark) .pdf-mode-section {
+    background: rgba(102, 126, 234, 0.1);
+    border-color: rgba(102, 126, 234, 0.3);
+  }
+
+  :global(.dark) .pdf-mode-section .radio-option {
+    background: #2a2a2a;
+  }
+
+  :global(.dark) .section-label {
+    color: var(--text-color-secondary);
+  }
+
+  :global(.dark) .progress-container {
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(52, 152, 219, 0.05));
+    border-left-color: var(--primary-color);
+  }
+
+  :global(.dark) .progress-stage {
+    color: var(--text-color);
+  }
+
+  :global(.dark) .progress-percentage {
+    color: var(--primary-color);
+  }
+
+  :global(.dark) .progress-message {
+    color: var(--text-color-secondary);
+  }
+
+  :global(.dark) .error-container {
+    background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(231, 76, 60, 0.05));
+  }
+
+  :global(.dark) .error-title {
+    color: #ff6b6b;
+  }
+
+  :global(.dark) .error-message {
+    color: var(--text-color-secondary);
+  }
+
+  :global(.dark) .success-container {
+    background: linear-gradient(135deg, rgba(39, 174, 96, 0.1), rgba(39, 174, 96, 0.05));
+  }
+
+  :global(.dark) .success-title {
+    color: #51cf66;
+  }
+
+  :global(.dark) .success-message {
+    color: var(--text-color-secondary);
+  }
+
+  :global(.dark) .btn-secondary {
+    background: var(--surface-hover);
+    color: var(--text-color);
+  }
+
+  :global(.dark) .btn-secondary:hover:not(:disabled) {
+    background: var(--surface-active);
   }
 
   /* レスポンシブ対応 */

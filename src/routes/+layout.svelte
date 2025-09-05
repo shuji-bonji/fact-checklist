@@ -33,6 +33,9 @@
   // ナビゲーションメニューの状態
   let isMenuOpen = $state(false);
 
+  // ダークモードの状態
+  let isDarkMode = $state(false);
+
   // 現在のページを判定
   const currentPath = $derived($page.url.pathname);
   const isHomePage = $derived(currentPath === '/' || currentPath === base);
@@ -80,6 +83,16 @@
     const urlLang = $page.url.searchParams.get('lang');
     if (urlLang && urlLang in SUPPORTED_LANGUAGES) {
       setLanguage(urlLang as LanguageCode);
+    }
+
+    // ダークモードの初期化（システム設定またはローカルストレージから）
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    isDarkMode = savedTheme ? savedTheme === 'dark' : prefersDark;
+
+    // ダークモードクラスの適用
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
     }
 
     // ローディング画面を確実に非表示にする（ブラウザ環境でのみ）
@@ -139,6 +152,18 @@
 
   function toggleMenu() {
     isMenuOpen = !isMenuOpen;
+  }
+
+  // ダークモードの切り替え
+  function toggleDarkMode() {
+    isDarkMode = !isDarkMode;
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
   }
 
   // メニュー外クリックで閉じる
@@ -341,6 +366,15 @@
               >
                 🔐 {t('navigation.privacy')}
               </button>
+              <!-- ダークモードトグル -->
+              <button
+                type="button"
+                class="nav-link dark-mode-toggle"
+                onclick={toggleDarkMode}
+                aria-label="Toggle dark mode"
+              >
+                {isDarkMode ? '☀️' : '🌙'}
+              </button>
               <!-- タブレット用言語切り替え -->
               <div class="tablet-language-switcher">
                 <LanguageSwitcher />
@@ -381,6 +415,15 @@
               onclick={goToPrivacy}
             >
               🔐 {t('navigation.privacy')}
+            </button>
+            <!-- ダークモードトグル -->
+            <button
+              type="button"
+              class="nav-link dark-mode-toggle"
+              onclick={toggleDarkMode}
+              aria-label="Toggle dark mode"
+            >
+              {isDarkMode ? '☀️' : '🌙'}
             </button>
           </div>
 

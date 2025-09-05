@@ -1,7 +1,7 @@
 import type { LayoutServerLoad } from './$types';
-import { availableLanguages } from '$lib/i18n';
-import type { LanguageCode as Language } from '$lib/i18n';
-import type { MetaData, LayoutServerData } from '$lib/types/layout';
+import { availableLanguages } from '$lib/i18n/simple-store.svelte.js';
+import type { LanguageCode as Language } from '$lib/i18n/types.js';
+import type { MetaData, LayoutServerData } from '$lib/types/layout.js';
 
 // SEO最適化されたメタデータ（12言語対応）
 const metaDataByLanguage: Record<Language, MetaData> = {
@@ -410,8 +410,10 @@ export const load: LayoutServerLoad<LayoutServerData> = async ({ url, cookies, l
   // 2. Cookie（ユーザーが選択した言語）
   // 3. ブラウザ言語設定（Accept-Language）
   // 4. デフォルト（ja）
-  const pathLang = url.pathname.split('/')[1] as Language;
-  const cookieLang = cookies.get('language') as Language;
+  const pathSegment = url.pathname.split('/')[1];
+  const pathLang = pathSegment as Language | undefined;
+  const cookieLangValue = cookies.get('language');
+  const cookieLang = cookieLangValue as Language | undefined;
   const browserLang = locals.language; // hooks.serverから
 
   const currentLang: Language =
@@ -424,7 +426,7 @@ export const load: LayoutServerLoad<LayoutServerData> = async ({ url, cookies, l
           : 'ja';
 
   // メタデータを取得
-  const meta = metaDataByLanguage[currentLang];
+  const meta = metaDataByLanguage[currentLang] ?? metaDataByLanguage.ja;
 
   // alternate linksを生成 - 現在言語別URLパスがないためコメントアウト
   // 将来的に /en/, /fr/ などの言語別パスを実装したら有効化
