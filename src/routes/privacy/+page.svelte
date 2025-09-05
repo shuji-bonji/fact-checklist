@@ -1,10 +1,11 @@
 <script lang="ts">
   import { page as _page } from '$app/stores';
   import { base as _base } from '$app/paths';
-  import { t, tArray, i18nStore } from '$lib/i18n/index.js';
+  import { t } from '$lib/i18n/simple-store.svelte.js';
+  import { tArray } from '$lib/i18n/index.js';
 
-  // Svelte 5 runesでi18n初期化状態を監視
-  const isInitialized = $derived(i18nStore.initialized && !!i18nStore.translations);
+  // シンプルストアは常に初期化済み
+  const isInitialized = true;
 
   // 配列翻訳用のヘルパー関数
   function getTranslationArray(key: string): string[] {

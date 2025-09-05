@@ -5,7 +5,8 @@
   import { base } from '$app/paths';
   import { parseShareableUrl } from '$lib/utils/shareUrl';
   import { getChecklistItems, getCategories } from '$lib/data/checklist-items';
-  import { factChecklistI18n, i18nStore, t } from '$lib/i18n';
+  import { t } from '$lib/i18n/simple-store.svelte.js';
+  import { factChecklistI18n } from '$lib/i18n';
   import type { ChecklistResult } from '$lib/types/checklist';
 
   // State
@@ -15,9 +16,9 @@
   let error = $state<string | null>(null);
   let copiedToClipboard = $state(false);
 
-  // i18n初期化状態を監視
-  const isI18nReady = $derived(i18nStore.initialized && !!i18nStore.translations);
-  const categories = $derived(isI18nReady ? getCategories() : []);
+  // シンプルストアは常に初期化済み
+  const isI18nReady = true;
+  const categories = $derived(getCategories());
 
   onMount(() => {
     loadSharedData();

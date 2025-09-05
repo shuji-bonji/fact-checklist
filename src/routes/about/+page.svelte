@@ -2,10 +2,11 @@
   import { base } from '$app/paths';
   import { goto } from '$app/navigation';
   import { page as _page } from '$app/stores';
-  import { t, tArray, i18nStore } from '$lib/i18n/index.js';
+  import { t } from '$lib/i18n/simple-store.svelte.js';
+  import { tArray } from '$lib/i18n/index.js';
 
-  // i18n初期化状態を監視
-  const isInitialized = $derived(i18nStore.initialized && !!i18nStore.translations);
+  // シンプルストアは常に初期化済み
+  const isInitialized = true;
 
   // アプリの特徴
   interface Feature {
