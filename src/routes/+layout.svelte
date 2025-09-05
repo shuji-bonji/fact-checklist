@@ -11,7 +11,7 @@
     data: LayoutServerData;
   }
 
-  let { data }: Props = $props();
+  const { data }: Props = $props();
 
   // 🔴 削除: クライアント準備フラグを使わない
   // let isClientReady = $state(false);

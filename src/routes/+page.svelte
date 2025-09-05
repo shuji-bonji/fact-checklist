@@ -52,7 +52,8 @@
         'forms.descriptionLabel': '概要・要約',
         'forms.descriptionPlaceholder': '評価対象となる情報の詳細を記入してください...',
         'forms.notesLabel': '評価メモ・追加確認事項',
-        'forms.notesPlaceholder': '疑問点、追加で確認したい事項、総合的な印象など、自由に記録してください...',
+        'forms.notesPlaceholder':
+          '疑問点、追加で確認したい事項、総合的な印象など、自由に記録してください...',
         'ui.completeEvaluation': '評価を完了',
         'ui.createChecklist': 'チェックリストを作成',
         'ui.export': 'エクスポート',
