@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, tick } from 'svelte';
+  import { onMount } from 'svelte';
   import { goto, replaceState } from '$app/navigation';
   import { page } from '$app/stores';
   import { browser } from '$app/environment';
@@ -10,7 +10,7 @@
   } from '$lib/stores/refactoredChecklistStore.svelte.js';
   import { getCategories } from '$lib/data/checklist-items.js';
   import type { JudgmentType } from '$lib/types/checklist.js';
-  import { t, i18nStore } from '$lib/i18n/index.js';
+  import { t } from '$lib/i18n/index.js';
   import type { PageData } from './$types';
 
   // Components
@@ -26,7 +26,7 @@
   let title = $state('');
   let description = $state('');
   let notes = $state('');
-  let currentJudgment = $state<JudgmentType>(null);
+  const _currentJudgment = $state<JudgmentType>(null);
   let showExportModal = $state(false);
   const collapsedSections = $state<Record<string, boolean>>({});
   let isClientReady = $state(false);
@@ -64,10 +64,10 @@
       };
       return staticTranslations[key] || fallback || key;
     }
-    
+
     // クライアント側では通常のt関数を使用
     try {
-      return t(key) || fallback;
+      return t(key as any) || fallback;
     } catch {
       return fallback || key;
     }
@@ -76,11 +76,11 @@
   // クライアント側でのみ実行する処理
   onMount(async () => {
     // ストアの初期化（クライアント側のみ）
-    await refactoredChecklistStore.initialize();
-    
+    // ストアの初期化は既に完了している
+
     // URLパラメータから新規作成モードをチェック
     const isNew = $page.url.searchParams.get('new');
-    
+
     if (isNew === 'true') {
       // 新規作成モード
       await handleNew();
@@ -91,7 +91,7 @@
         restoreFromSession();
       }
     }
-    
+
     // クライアント準備完了
     isClientReady = true;
   });
@@ -99,12 +99,12 @@
   // === イベントハンドラー ===
   async function handleNew() {
     if (!browser) return;
-    
+
     // 新規セッションを作成
-    await refactoredChecklistStore.reset();
-    const sessionId = await refactoredChecklistStore.createOrRestoreSession();
+    // 新規セッションを作成
+    await refactoredChecklistStore.createOrRestoreSession();
     replaceState(`${base}/`, {});
-    
+
     // フォームをクリア
     title = '';
     description = '';
@@ -113,16 +113,19 @@
 
   async function handleComplete(judgment: JudgmentType) {
     if (!browser || !currentChecklist) return;
-    
+
     // タイトルが未入力の場合はデフォルトを設定
     if (!currentChecklist.title || currentChecklist.title.trim() === '') {
-      await refactoredChecklistStore.updateTitle(safeT('checklist.defaultTitle', '無題のチェックリスト'));
+      await refactoredChecklistStore.updateTitle(
+        safeT('checklist.defaultTitle', '無題のチェックリスト')
+      );
     }
-    
+
     // 完了処理
-    await refactoredChecklistStore.completeCurrentChecklist(judgment);
+    await refactoredChecklistStore.completeChecklist();
+    await refactoredChecklistStore.updateJudgment(judgment);
     const completed = refactoredChecklistStore.currentChecklist;
-    
+
     if (completed) {
       await goto(`${base}/checklist/${completed.id}`);
     }
@@ -130,12 +133,16 @@
 
   async function handleCheckToggle(itemId: string) {
     if (!browser) return;
-    await refactoredChecklistStore.toggleCheckItem(itemId);
+    const currentChecklist = refactoredChecklistStore.currentChecklist;
+    if (!currentChecklist) return;
+    const item = currentChecklist.items.find(i => i.id === itemId);
+    if (!item) return;
+    await refactoredChecklistStore.updateCheckItem(itemId, !item.checked);
   }
 
   function restoreFromSession() {
     if (!browser) return;
-    
+
     const checklist = refactoredChecklistStore.currentChecklist;
     if (checklist) {
       title = checklist.title || '';
@@ -210,10 +217,15 @@
     <!-- ヘッダーセクション - 常に表示 -->
     <div class="quick-start" id="quick-start">
       <h1 class="visually-hidden">{safeT('checklist.title', 'ファクトチェックシート')}</h1>
-      <p style="text-align: left; font-size: 0.9em; color: var(--color-text-secondary); margin-bottom: 2rem;">
-        {safeT('checklist.description', '情報の信頼性を科学的・体系的に評価する20項目のチェックシート')}
+      <p
+        style="text-align: left; font-size: 0.9em; color: var(--color-text-secondary); margin-bottom: 2rem;"
+      >
+        {safeT(
+          'checklist.description',
+          '情報の信頼性を科学的・体系的に評価する20項目のチェックシート'
+        )}
       </p>
-      
+
       <!-- フォームセクション - 常に表示 -->
       <div class="evaluation-form">
         <div class="form-row">
@@ -223,7 +235,7 @@
               id="title"
               type="text"
               bind:value={title}
-              onchange={(e) => updateTitle(e.currentTarget.value)}
+              onchange={e => updateTitle(e.currentTarget.value)}
               placeholder={safeT('forms.titlePlaceholder', '評価する情報のタイトルを入力')}
               disabled={!browser}
             />
@@ -236,7 +248,7 @@
             <textarea
               id="description"
               bind:value={description}
-              onchange={(e) => updateDescription(e.currentTarget.value)}
+              onchange={e => updateDescription(e.currentTarget.value)}
               placeholder={safeT('forms.descriptionPlaceholder', '評価対象の情報の概要を記入')}
               rows="2"
               disabled={!browser}
@@ -250,8 +262,11 @@
             <textarea
               id="notes"
               bind:value={notes}
-              onchange={(e) => updateNotes(e.currentTarget.value)}
-              placeholder={safeT('forms.notesPlaceholder', '評価中の気づきや追加で確認が必要な事項')}
+              onchange={e => updateNotes(e.currentTarget.value)}
+              placeholder={safeT(
+                'forms.notesPlaceholder',
+                '評価中の気づきや追加で確認が必要な事項'
+              )}
               rows="1"
               disabled={!browser}
             ></textarea>
@@ -262,8 +277,8 @@
 
     <!-- スコア表示 - 常に表示（初期値: 0） -->
     <ScoreDisplay
-      score={score}
-      confidenceLevel={confidenceLevel}
+      {score}
+      {confidenceLevel}
       confidenceText={confidenceText || safeT('checklist.confidence.none', '未評価')}
     />
 
@@ -275,7 +290,7 @@
           checklist={currentChecklist}
           collapsed={collapsedSections[category.id] || false}
           onToggle={() => toggleSection(category.id)}
-          onCheck={(itemId) => handleCheckToggle(itemId)}
+          onCheck={(itemId: string) => handleCheckToggle(itemId)}
         />
       {/each}
     </div>
@@ -293,26 +308,29 @@
       {#if browser && currentChecklist}
         <div class="judgment-buttons">
           <button
+            type="button"
             class="judgment-button adopt"
-            onclick={() => handleComplete('adopt')}
+            onclick={() => handleComplete('adopt' as JudgmentType)}
             disabled={!isClientReady}
           >
             <span class="judgment-emoji">✅</span>
             <span class="judgment-text">{safeT('judgment.adopt', '採用（信頼できる）')}</span>
           </button>
-          
+
           <button
+            type="button"
             class="judgment-button wait"
-            onclick={() => handleComplete('wait')}
+            onclick={() => handleComplete('wait' as JudgmentType)}
             disabled={!isClientReady}
           >
             <span class="judgment-emoji">⏸️</span>
             <span class="judgment-text">{safeT('judgment.wait', '保留（追加確認が必要）')}</span>
           </button>
-          
+
           <button
+            type="button"
             class="judgment-button reject"
-            onclick={() => handleComplete('reject')}
+            onclick={() => handleComplete('reject' as JudgmentType)}
             disabled={!isClientReady}
           >
             <span class="judgment-emoji">❌</span>
@@ -321,10 +339,7 @@
         </div>
 
         {#if isClientReady}
-          <button
-            class="export-button"
-            onclick={handleExport}
-          >
+          <button type="button" class="export-button" onclick={handleExport}>
             {safeT('ui.export', 'エクスポート')}
           </button>
         {/if}
@@ -340,10 +355,7 @@
 
 <!-- モーダル - クライアント側でのみ表示 -->
 {#if browser && showExportModal && currentChecklist}
-  <ExportModal
-    checklist={currentChecklist}
-    onClose={() => showExportModal = false}
-  />
+  <ExportModal checklist={currentChecklist} onClose={() => (showExportModal = false)} />
 {/if}
 
 <style>
