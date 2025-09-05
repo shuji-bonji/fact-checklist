@@ -149,7 +149,7 @@ class I18nStore {
         this._initialized = true;
 
         if (dev) {
-          console.log(`✅ [SSR-Safe] Default translations (${defaultLang}) loaded`);
+          console.warn(`✅ [SSR-Safe] Default translations (${defaultLang}) loaded`);
         }
       } else {
         console.warn(`⚠️ [SSR-Safe] No translations found for ${defaultLang}`);
@@ -182,7 +182,7 @@ class I18nStore {
         this.updateDocumentAttributes();
 
         if (dev) {
-          console.log(`✅ [Browser] Language updated to: ${browserLang}`);
+          console.warn(`✅ [Browser] Language updated to: ${browserLang}`);
         }
       }
 
