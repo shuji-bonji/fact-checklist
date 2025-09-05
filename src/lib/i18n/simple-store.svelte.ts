@@ -144,6 +144,39 @@ export const setLanguage = (language: LanguageCode): void => simpleI18nStore.set
 
 export const getCurrentLanguage = (): LanguageCode => simpleI18nStore.currentLanguage;
 
+// 配列翻訳用のヘルパー関数（factChecklistI18nより前に定義）
+export function tArray(key: string): string[] {
+  const parts = key.split('.');
+  let current: unknown = simpleI18nStore.translations;
+
+  for (const part of parts) {
+    if (
+      current !== null &&
+      current !== undefined &&
+      typeof current === 'object' &&
+      part in current
+    ) {
+      current = (current as Record<string, unknown>)[part];
+    } else {
+      // キーが見つからない場合は空配列を返す
+      return [];
+    }
+  }
+
+  // 配列の場合はそのまま返す
+  if (Array.isArray(current)) {
+    return current.filter((item): item is string => typeof item === 'string');
+  }
+
+  // 文字列の場合は配列として返す
+  if (typeof current === 'string') {
+    return [current];
+  }
+
+  // それ以外は空配列を返す
+  return [];
+}
+
 // チェックリスト専用のヘルパー関数
 export const factChecklistI18n = {
   getCheckItemTitle: (itemId: string): string => {
@@ -166,5 +199,11 @@ export const factChecklistI18n = {
   },
   getCategoryEmoji: (categoryId: string): string => {
     return t(`categories.${categoryId}.emoji`);
+  },
+  getCheckItemExamplesGood: (itemId: string): string[] => {
+    return tArray(`checklistItems.${itemId}.examples.good`);
+  },
+  getCheckItemExamplesBad: (itemId: string): string[] => {
+    return tArray(`checklistItems.${itemId}.examples.bad`);
   }
 };

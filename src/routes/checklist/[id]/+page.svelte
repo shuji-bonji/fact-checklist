@@ -3,8 +3,7 @@
   import { base } from '$app/paths';
   import { page } from '$app/stores';
   import { getCategories } from '$lib/data/checklist-items.js';
-  import { t } from '$lib/i18n/simple-store.svelte.js';
-  import { factChecklistI18n } from '$lib/i18n/index.js';
+  import { t, factChecklistI18n } from '$lib/i18n/simple-store.svelte.js';
   import { refactoredChecklistStore } from '$lib/stores/refactoredChecklistStore.svelte.js';
   import type { JudgmentType } from '$lib/types/checklist.js';
   import { onMount } from 'svelte';
