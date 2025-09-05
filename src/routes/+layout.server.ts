@@ -426,11 +426,13 @@ export const load: LayoutServerLoad<LayoutServerData> = async ({ url, cookies, l
   // メタデータを取得
   const meta = metaDataByLanguage[currentLang];
 
-  // alternate linksを生成
-  meta.alternateLinks = availableLanguages.map((lang: Language) => ({
-    lang: lang === 'zh-TW' ? 'zh-Hant' : lang,
-    url: `https://fact-checklist.vercel.app${lang === 'ja' ? '' : `/${lang}`}`
-  }));
+  // alternate linksを生成 - 現在言語別URLパスがないためコメントアウト
+  // 将来的に /en/, /fr/ などの言語別パスを実装したら有効化
+  // meta.alternateLinks = availableLanguages.map((lang: Language) => ({
+  //   lang: lang === 'zh-TW' ? 'zh-Hant' : lang,
+  //   url: `https://fact-checklist.vercel.app${lang === 'ja' ? '' : `/${lang}`}`
+  // }));
+  meta.alternateLinks = []; // 空配列にしておく
 
   // URLを更新
   const currentPath = url.pathname === '/' ? '' : url.pathname;

@@ -187,7 +187,9 @@
 
       <!-- Structured Data (JSON-LD) は別途処理 -->
 
-      <!-- Alternate Language URLs (hreflang) -->
+      <!-- Alternate Language URLs (hreflang) - 現在言語別URLパスがないためコメントアウト -->
+      <!-- 将来的に /en/, /fr/ などの言語別パスを実装したら有効化 -->
+      <!--
       {#each data.meta?.alternateLinks || [] as alt}
         <link rel="alternate" hreflang={alt.lang} href={alt.url} />
       {/each}
@@ -196,6 +198,7 @@
         hreflang="x-default"
         href="https://shuji-bonji.github.io/fact-checklist/"
       />
+      -->
     {:else}
       <!-- Fallback meta tags for prerendering (non-intro pages only) -->
       <title>Fact Checklist - ファクトチェックシート</title>
@@ -262,7 +265,8 @@
         }
       </script>
 
-      <!-- Alternate Language URLs (hreflang) fallback -->
+      <!-- Alternate Language URLs (hreflang) fallback - 現在言語別URLパスがないためコメントアウト -->
+      <!--
       <link rel="alternate" hreflang="ja" href="https://fact-checklist.vercel.app/" />
       <link rel="alternate" hreflang="en" href="https://fact-checklist.vercel.app/" />
       <link rel="alternate" hreflang="fr" href="https://fact-checklist.vercel.app/" />
@@ -276,6 +280,7 @@
       <link rel="alternate" hreflang="id" href="https://fact-checklist.vercel.app/" />
       <link rel="alternate" hreflang="ko" href="https://fact-checklist.vercel.app/" />
       <link rel="alternate" hreflang="x-default" href="https://fact-checklist.vercel.app/" />
+      -->
     {/if}
   {/if}
   <!-- Note: Intro page meta tags are handled by intro/+page.svelte -->
