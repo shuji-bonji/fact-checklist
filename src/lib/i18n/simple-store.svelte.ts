@@ -179,31 +179,15 @@ export function tArray(key: string): string[] {
 
 // チェックリスト専用のヘルパー関数
 export const factChecklistI18n = {
-  getCheckItemTitle: (itemId: string): string => {
-    return t(`checklistItems.${itemId}.title`);
-  },
-  getCheckItemDescription: (itemId: string): string => {
-    return t(`checklistItems.${itemId}.description`);
-  },
-  getCheckItemGuideTitle: (itemId: string): string => {
-    return t(`checklistItems.${itemId}.guideTitle`);
-  },
-  getCheckItemGuideContent: (itemId: string): string => {
-    return t(`checklistItems.${itemId}.guideContent`);
-  },
-  getCategoryName: (categoryId: string): string => {
-    return t(`categories.${categoryId}.name`);
-  },
-  getCategoryDescription: (categoryId: string): string => {
-    return t(`categories.${categoryId}.description`);
-  },
-  getCategoryEmoji: (categoryId: string): string => {
-    return t(`categories.${categoryId}.emoji`);
-  },
-  getCheckItemExamplesGood: (itemId: string): string[] => {
-    return tArray(`checklistItems.${itemId}.examples.good`);
-  },
-  getCheckItemExamplesBad: (itemId: string): string[] => {
-    return tArray(`checklistItems.${itemId}.examples.bad`);
-  }
+  getCheckItemTitle: (itemId: string): string => t(`checklistItems.${itemId}.title`),
+  getCheckItemDescription: (itemId: string): string => t(`checklistItems.${itemId}.description`),
+  getCheckItemGuideTitle: (itemId: string): string => t(`checklistItems.${itemId}.guideTitle`),
+  getCheckItemGuideContent: (itemId: string): string => t(`checklistItems.${itemId}.guideContent`),
+  getCategoryName: (categoryId: string): string => t(`categories.${categoryId}.name`),
+  getCategoryDescription: (categoryId: string): string => t(`categories.${categoryId}.description`),
+  getCategoryEmoji: (categoryId: string): string => t(`categories.${categoryId}.emoji`),
+  getCheckItemExamplesGood: (itemId: string): string[] =>
+    tArray(`checklistItems.${itemId}.examples.good`),
+  getCheckItemExamplesBad: (itemId: string): string[] =>
+    tArray(`checklistItems.${itemId}.examples.bad`)
 };
