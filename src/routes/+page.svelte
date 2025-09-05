@@ -30,7 +30,6 @@
   let description = $state('');
   let notes = $state('');
   let currentJudgment = $state<JudgmentType>(null);
-  let showGuideMode = $state(false);
   let showExportModal = $state(false);
   const collapsedSections = $state<Record<string, boolean>>({});
 
@@ -166,10 +165,6 @@
     collapsedSections[categoryId] = !collapsedSections[categoryId];
   }
 
-  function toggleGuideMode() {
-    showGuideMode = !showGuideMode;
-  }
-
   async function completeChecklist() {
     // console.log('completeChecklist called');
     // console.log('[snapshot] currentChecklist:', $state.snapshot(currentChecklist));
@@ -250,12 +245,6 @@
   </div>
 {:else}
   <div class="container">
-    <!-- ページヘッダー -->
-    <header class="page-header">
-      <h1>🔍 {t('app.title')}</h1>
-      <p class="page-subtitle">{t('app.subtitle')}</p>
-    </header>
-
     <!-- メインコンテンツ -->
     <div class="main-content">
       <!-- 評価エリア -->
@@ -298,7 +287,6 @@
             {category}
             items={currentChecklist?.items.filter(item => item.category.id === category.id) || []}
             collapsed={collapsedSections[category.id] || false}
-            {showGuideMode}
             onToggle={() => toggleSection(category.id)}
             onCheckItem={handleCheckItem}
           />
@@ -318,13 +306,6 @@
 
       <!-- サイドバー -->
       <div class="sidebar">
-        <!-- ガイドモード切り替えボタン -->
-        <div class="guide-toggle-section card">
-          <button type="button" class="btn btn-secondary w-full" onclick={() => toggleGuideMode()}>
-            {showGuideMode ? t('ui.guideModeNormal') : t('ui.guideModeDetailed')}
-          </button>
-        </div>
-
         <!-- スコア表示 -->
         <ScoreDisplay
           {score}
@@ -417,53 +398,6 @@
     padding: var(--spacing-6);
   }
 
-  /* ページヘッダー - モダンデザイン */
-  .page-header {
-    text-align: center;
-    margin-bottom: var(--spacing-8);
-    padding: var(--spacing-8);
-    background: rgba(255, 255, 255, 0.75);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: var(--radius-2xl);
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .page-header::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: var(--gradient-primary);
-    opacity: 0.03;
-    pointer-events: none;
-  }
-
-  .page-header h1 {
-    color: var(--text-color);
-    margin: 0 0 var(--spacing-4) 0;
-    font-family: var(--font-family-heading);
-    font-size: var(--font-size-5xl);
-    font-weight: var(--font-weight-light);
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    position: relative;
-    z-index: 1;
-  }
-
-  .page-subtitle {
-    color: var(--text-color-secondary);
-    margin: 0;
-    font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-medium);
-    position: relative;
-    z-index: 1;
-  }
-
   /* 2カラムレイアウト - CSS Grid */
   .main-content {
     display: grid;
@@ -497,16 +431,6 @@
     display: none; /* WebKit browsers (Chrome, Safari, etc.) */
   }
 
-  /* ガイドボタンセクション */
-  .guide-toggle-section {
-    text-align: center;
-    padding: var(--spacing-4);
-    background: var(--surface-elevated);
-    border-radius: var(--radius-xl);
-    border: 2px solid var(--border-color);
-    box-shadow: var(--shadow-sm);
-  }
-
   /* クイックスタートガイド */
   .quick-start {
     background: var(--gradient-accent);
@@ -536,6 +460,7 @@
     z-index: 1;
     font-weight: var(--font-weight-medium);
     line-height: var(--line-height-relaxed);
+    text-align: left;
   }
 
   /* 評価メモエリア */
@@ -628,20 +553,7 @@
 
   @media (max-width: 768px) {
     .container {
-      padding: var(--spacing-4);
-    }
-
-    .page-header {
-      padding: var(--spacing-6);
-      margin-bottom: var(--spacing-6);
-    }
-
-    .page-header h1 {
-      font-size: var(--font-size-4xl);
-    }
-
-    .page-subtitle {
-      font-size: var(--font-size-base);
+      padding: 0;
     }
 
     .main-content {
@@ -656,7 +568,6 @@
       gap: var(--spacing-3);
     }
 
-    .guide-toggle-section,
     .action-buttons {
       padding: var(--spacing-4);
     }
@@ -664,7 +575,6 @@
 
   /* アクセシビリティ向上 */
   @media (prefers-reduced-motion: reduce) {
-    .page-header::before,
     .quick-start::before,
     .action-buttons::before {
       transition: none !important;

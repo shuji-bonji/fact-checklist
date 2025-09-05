@@ -6,19 +6,11 @@
     category: CheckCategory;
     items: CheckItem[];
     collapsed?: boolean;
-    showGuideMode?: boolean;
     onToggle: () => void;
     onCheckItem: (itemId: string, checked: boolean) => void;
   }
 
-  const {
-    category,
-    items,
-    collapsed = false,
-    showGuideMode = false,
-    onToggle,
-    onCheckItem
-  }: Props = $props();
+  const { category, items, collapsed = false, onToggle, onCheckItem }: Props = $props();
 
   // カテゴリ別のスタイルクラス
   const categoryClasses = {
@@ -52,11 +44,7 @@
   <div id="section-{category.id}" class="collapsible-content" class:collapsed>
     <div class="section-content">
       {#each items as item (item.id)}
-        <CheckItemComponent
-          {item}
-          {showGuideMode}
-          onCheckChange={checked => onCheckItem(item.id, checked)}
-        />
+        <CheckItemComponent {item} onCheckChange={checked => onCheckItem(item.id, checked)} />
       {/each}
     </div>
   </div>

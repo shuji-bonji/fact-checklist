@@ -4,11 +4,10 @@
 
   interface Props {
     item: CheckItem;
-    showGuideMode?: boolean;
     onCheckChange: (checked: boolean) => void;
   }
 
-  const { item, showGuideMode = false, onCheckChange }: Props = $props();
+  const { item, onCheckChange }: Props = $props();
 
   let showGuide = $state(false);
 
@@ -50,15 +49,6 @@
     onCheckChange(target.checked);
   }
 
-  // ガイドモードが有効な場合は自動でガイドを表示
-  $effect(() => {
-    if (showGuideMode) {
-      showGuide = true;
-    } else {
-      showGuide = false;
-    }
-  });
-
   // リスクレベルに応じたスタイルクラス
   const riskClasses = {
     high: 'risk-high',
@@ -92,7 +82,7 @@
                 ? t('common.rip.medium')
                 : t('common.rip.low')}
           </span>
-          {#if displayGuideContent() && !showGuideMode}
+          {#if displayGuideContent()}
             <button
               type="button"
               class="guide-toggle"
@@ -284,6 +274,7 @@
     color: white;
     border: none;
     padding: var(--spacing-2) var(--spacing-4);
+    margin-right: 8px;
     border-radius: var(--radius-full);
     cursor: pointer;
     font-size: var(--font-size-xs);
