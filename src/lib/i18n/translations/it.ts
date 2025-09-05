@@ -55,15 +55,15 @@ export const translations: TranslationKeys = {
     }
   },
   app: {
-    title: 'Lista di Controllo per Fact-Check',
+    title: 'Fact Checklist',
     subtitle: "Un sistema completo per valutare scientificamente l'affidabilità delle informazioni",
-    brandTitle: 'Lista di Controllo Fact-Check',
+    brandTitle: 'Fact Checklist',
     brandSubtitle: "Valutazione sistematica dell'affidabilità delle informazioni",
     description:
       "Una lista di controllo per valutare scientificamente e sistematicamente l'affidabilità delle informazioni",
     version: '1.0.0',
-    author: 'Team Lista di Controllo Fact-Check',
-    copyright: '© 2025 Team Lista di Controllo Fact-Check',
+    author: 'Team Fact Checklist',
+    copyright: '© 2025 Team Fact Checklist',
     poweredBy: 'Sviluppato da'
   },
 
@@ -97,8 +97,7 @@ export const translations: TranslationKeys = {
       keywords: 'privacy,informazioni personali,protezione dei dati,memorizzazione locale,sicurezza'
     },
     intro: {
-      title:
-        'Lista di Controllo per Fact-Check per Sopravvivere in un Mondo Pieno di Disinformazione',
+      title: 'Fact Checklist per Sopravvivere in un Mondo Pieno di Disinformazione',
       description:
         "Una lista di controllo semplice per valutare l'affidabilità delle informazioni con i tuoi occhi e la tua mente mentre avanza la regolamentazione governativa dei social media. Valuta le informazioni scientificamente e sistematicamente senza fidarti ciecamente di IA o media.",
       keywords:
