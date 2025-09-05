@@ -391,6 +391,26 @@
     color: var(--text-muted);
   }
 
+  /* Dark mode styles for indicators */
+  :global(.dark) .confidence-indicator.high,
+  :global(.dark) .judgment-indicator.accept {
+    background: #1b3d1b;
+    color: #66bb6a;
+  }
+
+  :global(.dark) .confidence-indicator.medium,
+  :global(.dark) .judgment-indicator.caution {
+    background: #3d2f1b;
+    color: #ffa726;
+  }
+
+  :global(.dark) .confidence-indicator.low,
+  :global(.dark) .confidence-indicator.very-low,
+  :global(.dark) .judgment-indicator.reject {
+    background: #3d1b1b;
+    color: #ef5350;
+  }
+
   /* レスポンシブ対応 */
   @media (max-width: 768px) {
     .card {
