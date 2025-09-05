@@ -30,7 +30,9 @@ body {
   background: var(--bg-color);
   min-height: 100vh;
   color: var(--text-color);
-  transition: background var(--transition-slow) var(--ease-in-out), color var(--transition-slow) var(--ease-in-out);
+  transition:
+    background var(--transition-slow) var(--ease-in-out),
+    color var(--transition-slow) var(--ease-in-out);
 }
 
 /* Typography Scale */
@@ -400,14 +402,17 @@ label {
 }
 
 /* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-  }
+:root.dark {
+  color-scheme: dark;
+}
 
-  body {
-    background: linear-gradient(135deg, var(--color-primary-900) 0%, var(--color-primary-800) 100%);
-  }
+html.dark {
+  color-scheme: dark;
+}
+
+:root.dark body,
+html.dark body {
+  background: linear-gradient(135deg, var(--color-primary-900) 0%, var(--color-primary-800) 100%);
 }
 
 /* High contrast mode support */

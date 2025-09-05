@@ -719,13 +719,8 @@ div.section {
 }
 
 /* Dark mode score-item background */
-@media (prefers-color-scheme: dark) {
-  .score-item:hover {
-    background: var(--gh-gray-800, #21262d) !important;
-  }
-}
-
-[data-theme='dark'] .score-item:hover {
+:root.dark .score-item:hover,
+html.dark .score-item:hover {
   background: var(--gh-gray-800, #21262d) !important;
 }
 
@@ -775,14 +770,9 @@ div.section {
   color: var(--gh-gray-900) !important;
 }
 
-/* フォントカラーのフォールバック - ダークモード対応 */
-@media (prefers-color-scheme: light) {
-  .score-container * {
-    color: var(--gh-gray-900) !important;
-  }
-}
-
-[data-theme='light'] .score-container * {
+/* フォントカラーのフォールバック - ライトモード対応 */
+:root:not(.dark) .score-container *,
+html:not(.dark) .score-container * {
   color: var(--gh-gray-900) !important;
 }
 
@@ -980,23 +970,14 @@ input[type='checkbox']:disabled {
 }
 
 /* Dark mode specific checkbox overrides */
-@media (prefers-color-scheme: dark) {
-  input[type='checkbox']:not(:checked) {
-    background: var(--gh-gray-200, #30363d) !important;
-    border-color: var(--gh-gray-400, #6e7681) !important;
-  }
-
-  input[type='checkbox'] {
-    background: var(--gh-canvas-subtle, #161b22) !important;
-  }
-}
-
-[data-theme='dark'] input[type='checkbox']:not(:checked) {
+:root.dark input[type='checkbox']:not(:checked),
+html.dark input[type='checkbox']:not(:checked) {
   background: var(--gh-gray-200, #30363d) !important;
   border-color: var(--gh-gray-400, #6e7681) !important;
 }
 
-[data-theme='dark'] input[type='checkbox'] {
+:root.dark input[type='checkbox'],
+html.dark input[type='checkbox'] {
   background: var(--gh-canvas-subtle, #161b22) !important;
 }
 
