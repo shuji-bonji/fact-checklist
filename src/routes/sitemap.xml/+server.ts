@@ -19,6 +19,9 @@ const pages = [
 ];
 
 export const prerender = true;
+export const config = {
+  isr: false
+};
 
 export const GET: RequestHandler = async () => {
   // サイトURLを決定
