@@ -7,11 +7,6 @@
 /* GitHub Dark Mode Support */
 @import './lib/styles/github-dark-tokens.css';
 
-/* Tailwind CSS directives - baseを除外して既存のスタイルを保持 */
-/* @tailwind base; */
-@tailwind components;
-@tailwind utilities;
-
 /* Reset and base styles */
 * {
   margin: 0;
