@@ -93,6 +93,7 @@
     // ダークモードクラスの適用
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
+      document.body.classList.add('dark');
     }
 
     // ローディング画面を確実に非表示にする（ブラウザ環境でのみ）
@@ -154,18 +155,6 @@
     isMenuOpen = !isMenuOpen;
   }
 
-  // ダークモードの切り替え
-  function toggleDarkMode() {
-    isDarkMode = !isDarkMode;
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  }
-
   // メニュー外クリックで閉じる
   function handleClickOutside(event: MouseEvent) {
     const target = event.target as HTMLElement;
@@ -211,19 +200,6 @@
       <link rel="canonical" href={data.meta?.canonicalUrl} />
 
       <!-- Structured Data (JSON-LD) は別途処理 -->
-
-      <!-- Alternate Language URLs (hreflang) - 現在言語別URLパスがないためコメントアウト -->
-      <!-- 将来的に /en/, /fr/ などの言語別パスを実装したら有効化 -->
-      <!--
-      {#each data.meta?.alternateLinks || [] as alt}
-        <link rel="alternate" hreflang={alt.lang} href={alt.url} />
-      {/each}
-      <link
-        rel="alternate"
-        hreflang="x-default"
-        href="https://shuji-bonji.github.io/fact-checklist/"
-      />
-      -->
     {:else}
       <!-- Fallback meta tags for prerendering (non-intro pages only) -->
       <title>Fact Checklist - ファクトチェックシート</title>
@@ -289,23 +265,6 @@
           }
         }
       </script>
-
-      <!-- Alternate Language URLs (hreflang) fallback - 現在言語別URLパスがないためコメントアウト -->
-      <!--
-      <link rel="alternate" hreflang="ja" href="https://fact-checklist.vercel.app/" />
-      <link rel="alternate" hreflang="en" href="https://fact-checklist.vercel.app/" />
-      <link rel="alternate" hreflang="fr" href="https://fact-checklist.vercel.app/" />
-      <link rel="alternate" hreflang="zh-TW" href="https://fact-checklist.vercel.app/" />
-      <link rel="alternate" hreflang="es" href="https://fact-checklist.vercel.app/" />
-      <link rel="alternate" hreflang="pt" href="https://fact-checklist.vercel.app/" />
-      <link rel="alternate" hreflang="hi" href="https://fact-checklist.vercel.app/" />
-      <link rel="alternate" hreflang="de" href="https://fact-checklist.vercel.app/" />
-      <link rel="alternate" hreflang="it" href="https://fact-checklist.vercel.app/" />
-      <link rel="alternate" hreflang="ar" href="https://fact-checklist.vercel.app/" />
-      <link rel="alternate" hreflang="id" href="https://fact-checklist.vercel.app/" />
-      <link rel="alternate" hreflang="ko" href="https://fact-checklist.vercel.app/" />
-      <link rel="alternate" hreflang="x-default" href="https://fact-checklist.vercel.app/" />
-      -->
     {/if}
   {/if}
   <!-- Note: Intro page meta tags are handled by intro/+page.svelte -->
@@ -366,15 +325,6 @@
               >
                 🔐 {t('navigation.privacy')}
               </button>
-              <!-- ダークモードトグル -->
-              <button
-                type="button"
-                class="nav-link dark-mode-toggle"
-                onclick={toggleDarkMode}
-                aria-label="Toggle dark mode"
-              >
-                {isDarkMode ? '☀️' : '🌙'}
-              </button>
               <!-- タブレット用言語切り替え -->
               <div class="tablet-language-switcher">
                 <LanguageSwitcher />
@@ -415,15 +365,6 @@
               onclick={goToPrivacy}
             >
               🔐 {t('navigation.privacy')}
-            </button>
-            <!-- ダークモードトグル -->
-            <button
-              type="button"
-              class="nav-link dark-mode-toggle"
-              onclick={toggleDarkMode}
-              aria-label="Toggle dark mode"
-            >
-              {isDarkMode ? '☀️' : '🌙'}
             </button>
           </div>
 
