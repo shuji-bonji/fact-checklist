@@ -13,6 +13,7 @@
   import type { LanguageCode } from '$lib/i18n/types.js';
   import { SUPPORTED_LANGUAGES } from '$lib/i18n/types.js';
   import LanguageSwitcher from '$lib/components/LanguageSwitcher.svelte';
+  import DarkModeToggle from '$lib/components/DarkModeToggle.svelte';
   import type { LayoutData } from './$types';
   import type { LayoutServerData } from '$lib/types/layout.js';
 
@@ -33,8 +34,6 @@
   // ナビゲーションメニューの状態
   let isMenuOpen = $state(false);
 
-  // ダークモードの状態
-  let isDarkMode = $state(false);
 
   // 現在のページを判定
   const currentPath = $derived($page.url.pathname);
@@ -85,16 +84,6 @@
       setLanguage(urlLang as LanguageCode);
     }
 
-    // ダークモードの初期化（システム設定またはローカルストレージから）
-    const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    isDarkMode = savedTheme ? savedTheme === 'dark' : prefersDark;
-
-    // ダークモードクラスの適用
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-      document.body.classList.add('dark');
-    }
 
     // ローディング画面を確実に非表示にする（ブラウザ環境でのみ）
     if (browser) {
@@ -325,8 +314,9 @@
               >
                 🔐 {t('navigation.privacy')}
               </button>
-              <!-- タブレット用言語切り替え -->
-              <div class="tablet-language-switcher">
+              <!-- タブレット用言語切り替えとダークモード -->
+              <div class="tablet-controls">
+                <DarkModeToggle />
                 <LanguageSwitcher />
               </div>
             </div>
@@ -379,8 +369,9 @@
             <span class="hamburger-line"></span>
             <span class="hamburger-line"></span>
           </button>
-          <!-- デスクトップ用言語切り替え -->
-          <div class="desktop-language-switcher">
+          <!-- デスクトップ用言語切り替えとダークモード -->
+          <div class="desktop-controls">
+            <DarkModeToggle />
             <LanguageSwitcher />
           </div>
         </div>
@@ -420,8 +411,9 @@
             >
               🔐 {t('navigation.privacy')}
             </button>
-            <!-- モバイル用言語切り替え -->
-            <div class="mobile-language-switcher">
+            <!-- モバイル用言語切り替えとダークモード -->
+            <div class="mobile-controls">
+              <DarkModeToggle />
               <LanguageSwitcher mobileMode={true} />
             </div>
           </div>
@@ -713,12 +705,19 @@
     opacity: 0;
   }
 
-  /* 言語切り替えスタイル */
-  .mobile-language-switcher {
+  /* コントロールスタイル */
+  .mobile-controls,
+  .tablet-controls,
+  .desktop-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+  }
+
+  .mobile-controls {
     padding: var(--spacing-4) 0;
     border-top: 1px solid var(--border-color);
     margin-top: var(--spacing-4);
-    display: flex;
     justify-content: center;
   }
 
@@ -776,13 +775,13 @@
     font-size: 1.5em;
   }
 
-  /* デスクトップ用言語切り替えの表示制御 */
-  .desktop-language-switcher {
-    display: block;
+  /* デスクトップ用コントロールの表示制御 */
+  .desktop-controls {
+    display: flex;
   }
 
-  /* タブレット用言語切り替えの表示制御 */
-  .tablet-language-switcher {
+  /* タブレット用コントロールの表示制御 */
+  .tablet-controls {
     display: none;
   }
 
@@ -796,13 +795,13 @@
       display: none;
     }
 
-    /* タブレット範囲では言語切り替えをタブレット用に切り替え */
-    .desktop-language-switcher {
+    /* タブレット範囲ではコントロールをタブレット用に切り替え */
+    .desktop-controls {
       display: none;
     }
 
-    .tablet-language-switcher {
-      display: block;
+    .tablet-controls {
+      display: flex;
       margin-left: var(--spacing-4);
     }
   }
@@ -817,8 +816,8 @@
       display: flex;
     }
 
-    /* モバイルでは言語切り替えを非表示 */
-    .desktop-language-switcher {
+    /* モバイルではコントロールを非表示 */
+    .desktop-controls {
       display: none;
     }
 

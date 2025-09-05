@@ -11,29 +11,6 @@
 
   let showGuide = $state(false);
 
-  // ダークモードの状態を監視
-  let isDark = $state(false);
-
-  $effect(() => {
-    // DOM が利用可能な場合のみ実行
-    if (typeof document !== 'undefined') {
-      const checkDarkMode = () => {
-        isDark = document.documentElement.classList.contains('dark');
-      };
-
-      checkDarkMode();
-
-      // MutationObserverでクラスの変更を監視
-      const observer = new MutationObserver(checkDarkMode);
-      observer.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ['class']
-      });
-
-      return () => observer.disconnect();
-    }
-    return undefined;
-  });
 
   // 動的翻訳：translationKeyがあれば使用、なければ既存のtitle/descriptionを使用
   const displayTitle = $derived(() => {
@@ -137,21 +114,21 @@
 
             {#if displayGuideContent()?.examples}
               {@const examples = displayGuideContent()?.examples}
-              <div class="guide-examples" class:dark-mode={isDark}>
+              <div class="guide-examples">
                 {#if examples?.good && examples.good.length > 0}
-                  <div class="examples-section examples-good" class:dark-mode={isDark}>
+                  <div class="examples-section examples-good">
                     <h5>✅ {t('export.goodExamples')}:</h5>
                     {#each examples.good as example}
-                      <div class="example-item good" class:dark-mode={isDark}>{example}</div>
+                      <div class="example-item good">{example}</div>
                     {/each}
                   </div>
                 {/if}
 
                 {#if examples?.bad && examples.bad.length > 0}
-                  <div class="examples-section examples-bad" class:dark-mode={isDark}>
+                  <div class="examples-section examples-bad">
                     <h5>❌ {t('export.badExamples')}:</h5>
                     {#each examples.bad as example}
-                      <div class="example-item bad" class:dark-mode={isDark}>{example}</div>
+                      <div class="example-item bad">{example}</div>
                     {/each}
                   </div>
                 {/if}
@@ -481,58 +458,58 @@
   }
 
   /* ダークモード対応 */
-  .guide-examples.dark-mode {
+  :global(.dark) .guide-examples {
     background: transparent !important;
     border: none !important;
   }
 
-  .examples-section.dark-mode {
+  :global(.dark) .examples-section {
     background: transparent !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
   }
 
   /* ダークモード専用クラス - より高い優先度 */
-  .examples-section.examples-good.dark-mode {
+  :global(.dark) .examples-section.examples-good {
     background: transparent !important;
     border: 2px solid #10b981 !important;
   }
 
-  .examples-section.examples-good.dark-mode h5 {
+  :global(.dark) .examples-section.examples-good h5 {
     color: #86efac !important;
   }
 
-  .examples-section.examples-bad.dark-mode {
+  :global(.dark) .examples-section.examples-bad {
     background: transparent !important;
     border: 2px solid #ef4444 !important;
   }
 
-  .examples-section.examples-bad.dark-mode h5 {
+  :global(.dark) .examples-section.examples-bad h5 {
     color: #fca5a5 !important;
   }
 
 
-  /* ダークモード用 example-item - 専用クラス */
-  .example-item.dark-mode {
+  /* ダークモード用 example-item */
+  :global(.dark) .example-item {
     background: rgba(255, 255, 255, 0.03) !important;
   }
 
-  .example-item.good.dark-mode {
+  :global(.dark) .example-item.good {
     color: #bbf7d0 !important;
     background: rgba(16, 185, 129, 0.05) !important;
     border-left: 4px solid #10b981 !important;
   }
 
-  .example-item.good.dark-mode:hover {
+  :global(.dark) .example-item.good:hover {
     background: rgba(16, 185, 129, 0.15) !important;
   }
 
-  .example-item.bad.dark-mode {
+  :global(.dark) .example-item.bad {
     color: #fecaca !important;
     background: rgba(239, 68, 68, 0.05) !important;
     border-left: 4px solid #ef4444 !important;
   }
 
-  .example-item.bad.dark-mode:hover {
+  :global(.dark) .example-item.bad:hover {
     background: rgba(239, 68, 68, 0.15) !important;
   }
 
