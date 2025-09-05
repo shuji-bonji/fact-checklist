@@ -14,10 +14,16 @@ import {
 import { I18N_CONFIG } from '../config/i18n.js';
 
 // 静的な翻訳インポート
-import { translations as allTranslations } from './translations/index.js';
+import { translations } from './translations/index.js';
 
 import { countTranslations, createSafeTranslator, createFlexibleTranslator } from './helpers.js';
 import { dev } from '$app/environment';
+
+// デバッグ: 翻訳データの確認
+if (dev) {
+  console.warn('🔍 [DEBUG] translations loaded:', !!translations);
+  console.warn('🔍 [DEBUG] translations keys:', translations ? Object.keys(translations) : 'undefined');
+}
 
 // ブラウザ環境チェック
 const isBrowser = typeof window !== 'undefined';
@@ -70,6 +76,16 @@ class I18nStore {
   private _initialized = $state<boolean>(false);
 
   constructor() {
+    // デバッグログ
+    if (dev) {
+      console.warn('🚨 [DEBUG] I18nStore constructor called');
+      console.warn('🚨 [DEBUG] translations exists:', !!translations);
+      console.warn('🚨 [DEBUG] isBrowser:', isBrowser);
+      if (translations) {
+        console.warn('🚨 [DEBUG] Available languages:', Object.keys(translations));
+      }
+    }
+
     // SSRでも安全に実行できるデフォルト初期化
     this.initializeDefault();
 
@@ -133,16 +149,21 @@ class I18nStore {
       // デフォルト言語を取得
       const defaultLang = I18N_CONFIG.DEFAULT_LANGUAGE;
 
+      if (dev) {
+        console.warn(`🔍 [initializeDefault] Starting with defaultLang: ${defaultLang}`);
+        console.warn(`🔍 [initializeDefault] translations status:`, !!translations);
+      }
+
       // 静的インポートされた翻訳データを直接設定
       // これはSSRでも安全（静的インポートのため）
-      if (allTranslations && allTranslations[defaultLang]) {
-        this._translations[defaultLang] = allTranslations[defaultLang];
+      if (translations && translations[defaultLang]) {
+        this._translations[defaultLang] = translations[defaultLang];
         this._currentLanguage = defaultLang;
 
         // 英語のフォールバックも読み込む
         const enLang = 'en' as LanguageCode;
-        if (defaultLang !== enLang && allTranslations[enLang]) {
-          this._translations[enLang] = allTranslations[enLang];
+        if (defaultLang !== enLang && translations[enLang]) {
+          this._translations[enLang] = translations[enLang];
         }
 
         // 初期化フラグを設定
@@ -152,10 +173,49 @@ class I18nStore {
           console.warn(`✅ [SSR-Safe] Default translations (${defaultLang}) loaded`);
         }
       } else {
-        console.warn(`⚠️ [SSR-Safe] No translations found for ${defaultLang}`);
-        // フォールバック: 空のオブジェクトを設定
-        this._translations[defaultLang] = {} as TranslationKeys;
+        console.warn(`⚠️ [SSR-Safe] No translations found for ${defaultLang}, using emergency fallback`);
+        
+        // 緊急フォールバック：最小限の翻訳を提供
+        this._translations[defaultLang] = {
+          app: {
+            title: 'ファクトチェックシート',
+            brandTitle: 'Fact Checklist',
+            brandSubtitle: 'ファクトチェックシート'
+          },
+          checklist: {
+            title: 'ファクトチェックシート'
+          },
+          categories: {
+            critical: {
+              name: '重要評価項目',
+              emoji: '⚠️',
+              description: '重要な評価項目'
+            },
+            detailed: {
+              name: '詳細評価項目',
+              emoji: '🔍',
+              description: '詳細な評価項目'
+            },
+            verification: {
+              name: '検証項目',
+              emoji: '✅',
+              description: '検証項目'
+            },
+            context: {
+              name: '文脈評価',
+              emoji: '📝',
+              description: '文脈の評価'
+            }
+          },
+          forms: {
+            notesLabel: '評価メモ・追加確認事項'
+          }
+        } as any;
+        
+        this._currentLanguage = defaultLang;
         this._initialized = true;
+        
+        console.warn('🟡 [Emergency] Using hardcoded fallback translations');
       }
     } catch (error) {
       console.error('❌ [SSR-Safe] Default initialization failed:', error);
@@ -174,9 +234,9 @@ class I18nStore {
 
       // ブラウザで検出した言語がデフォルトと異なる場合のみ更新
       const browserLang = getInitialLanguage();
-      if (browserLang !== currentLang && allTranslations[browserLang]) {
+      if (browserLang !== currentLang && translations[browserLang]) {
         this._currentLanguage = browserLang;
-        this._translations[browserLang] = allTranslations[browserLang];
+        this._translations[browserLang] = translations[browserLang];
 
         // HTML属性を更新
         this.updateDocumentAttributes();
@@ -303,7 +363,7 @@ class I18nStore {
   private async loadTranslations(language: LanguageCode): Promise<void> {
     try {
       // 静的インポートから翻訳データを取得
-      const baseTranslations = allTranslations[language];
+      const baseTranslations = translations[language];
 
       if (baseTranslations === null || baseTranslations === undefined) {
         throw new Error(`No translations found for language: ${language}`);
@@ -326,13 +386,13 @@ class I18nStore {
         this._translations[language] = this._translations[I18N_CONFIG.DEFAULT_LANGUAGE];
       } else if (
         language !== I18N_CONFIG.DEFAULT_LANGUAGE &&
-        allTranslations[I18N_CONFIG.DEFAULT_LANGUAGE] !== null &&
-        allTranslations[I18N_CONFIG.DEFAULT_LANGUAGE] !== undefined
+        translations[I18N_CONFIG.DEFAULT_LANGUAGE] !== null &&
+        translations[I18N_CONFIG.DEFAULT_LANGUAGE] !== undefined
       ) {
         console.warn(
           `🔄 Using ${I18N_CONFIG.DEFAULT_LANGUAGE} fallback from static imports for: ${language}`
         );
-        this._translations[language] = allTranslations[I18N_CONFIG.DEFAULT_LANGUAGE];
+        this._translations[language] = translations[I18N_CONFIG.DEFAULT_LANGUAGE];
       } else {
         throw error;
       }
