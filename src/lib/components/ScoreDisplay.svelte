@@ -20,29 +20,6 @@
     onJudgmentChange
   }: Props = $props();
 
-  // ダークモード状態を追跡
-  let isDark = $state(false);
-
-  $effect(() => {
-    // DOM が利用可能な場合のみ実行
-    if (typeof document !== 'undefined') {
-      const checkDarkMode = () => {
-        isDark = document.documentElement.classList.contains('dark');
-      };
-
-      checkDarkMode();
-
-      // MutationObserverでクラスの変更を監視
-      const observer = new MutationObserver(checkDarkMode);
-      observer.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ['class']
-      });
-
-      return () => observer.disconnect();
-    }
-    return undefined;
-  });
 
   function setJudgment(judgment: JudgmentType) {
     onJudgmentChange(judgment);
@@ -120,7 +97,7 @@
       </div>
       <div class="confidence-percentage">{confidenceLevel}%</div>
     </div>
-    <div class="confidence-text {getConfidenceClass()}" class:dark-mode={isDark}>{confidenceText}</div>
+    <div class="confidence-text {getConfidenceClass()}">{confidenceText}</div>
   </div>
 
   <!-- 最終判定 -->
@@ -153,7 +130,7 @@
       </button>
     </div>
 
-    <div class="judgment-advice" class:dark-mode={isDark}>
+    <div class="judgment-advice">
       {judgmentAdvice}
     </div>
   </div>
@@ -438,7 +415,7 @@
     z-index: 1;
   }
 
-  .judgment-advice.dark-mode {
+  :global(.dark) .judgment-advice {
     background: rgba(30, 30, 30, 0.6) !important;
     color: var(--text-color) !important;
     border-color: rgba(255, 255, 255, 0.1) !important;
