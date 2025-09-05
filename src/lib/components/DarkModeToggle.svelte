@@ -3,11 +3,25 @@
 
   let isDarkMode = $state(false);
 
+  // 初期状態のチェック（ブラウザ環境のみ）
+  $effect(() => {
+    if (typeof document !== 'undefined') {
+      // 現在のダークモード状態を検知
+      const hasDarkClass = document.documentElement.classList.contains('dark');
+      if (hasDarkClass !== isDarkMode) {
+        isDarkMode = hasDarkClass;
+      }
+    }
+  });
+
   onMount(() => {
     // 初期状態の取得
     const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    isDarkMode = savedTheme ? savedTheme === 'dark' : prefersDark;
+    const currentDark = document.documentElement.classList.contains('dark');
+    
+    // 既にdarkクラスがある場合はそれを優先、なければ保存値かシステム設定
+    isDarkMode = currentDark || (savedTheme ? savedTheme === 'dark' : prefersDark);
 
     // 初期状態を適用
     updateTheme(isDarkMode);
@@ -59,7 +73,7 @@
       viewBox="0 0 24 24"
       stroke-width="1.5"
       stroke="currentColor"
-      class="w-6 h-6"
+      class="icon"
     >
       <path
         stroke-linecap="round"
@@ -75,7 +89,7 @@
       viewBox="0 0 24 24"
       stroke-width="1.5"
       stroke="currentColor"
-      class="w-6 h-6"
+      class="icon"
     >
       <path
         stroke-linecap="round"
@@ -111,19 +125,19 @@
     transform: scale(0.95);
   }
 
-  svg {
+  .icon {
     width: 20px;
     height: 20px;
   }
 
-  /* Tailwind utility classes for responsiveness */
+  /* Responsive design */
   @media (max-width: 768px) {
     .dark-mode-toggle {
       width: 36px;
       height: 36px;
     }
 
-    svg {
+    .icon {
       width: 18px;
       height: 18px;
     }
