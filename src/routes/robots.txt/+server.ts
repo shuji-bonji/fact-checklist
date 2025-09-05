@@ -2,6 +2,11 @@ import type { RequestHandler } from './$types';
 
 const SITE_URL = 'https://fact-checklist.vercel.app';
 
+export const prerender = true;
+export const config = {
+  isr: false
+};
+
 export const GET: RequestHandler = async () => {
   const robotsTxt = `# Fact Checklist - Robots.txt
 # https://fact-checklist.vercel.app
