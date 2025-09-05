@@ -2,8 +2,7 @@
   import { base } from '$app/paths';
   import { goto } from '$app/navigation';
   import { page as _page } from '$app/stores';
-  import { t } from '$lib/i18n/simple-store.svelte.js';
-  import { tArray } from '$lib/i18n/index.js';
+  import { t, tArray } from '$lib/i18n/simple-store.svelte.js';
 
   // シンプルストアは常に初期化済み
   const isInitialized = true;

@@ -9,7 +9,7 @@ import type {
 } from '../types/checklist.js';
 import { getChecklistItems } from '../data/checklist-items.js';
 import { v4 as uuidv4 } from 'uuid';
-import { t } from '../i18n/index.js';
+import { t } from '../i18n/simple-store.svelte.js';
 
 /**
  * チェックリスト作成オプション

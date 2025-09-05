@@ -2,7 +2,7 @@
 // スコア計算と信頼度評価を管理するサービス
 
 import type { CheckItem, ChecklistScore, JudgmentType } from '../types/checklist.js';
-import { t } from '../i18n/index.js';
+import { t } from '../i18n/simple-store.svelte.js';
 
 /**
  * カテゴリ別スコア詳細

@@ -1,5 +1,5 @@
 import type { CheckItem, CheckCategory } from '../types/checklist.js';
-import { factChecklistI18n, t } from '../i18n/index.js';
+import { factChecklistI18n, t } from '../i18n/simple-store.svelte.js';
 
 // カテゴリ情報の取得関数（動的翻訳対応）
 export function getCategories(translationFunction?: (key: string) => string): CheckCategory[] {
