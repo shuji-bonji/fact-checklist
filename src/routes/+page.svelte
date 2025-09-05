@@ -14,9 +14,13 @@
   import type { PageData } from './$types';
 
   // Svelte5の新しいprops構文
+  // dataは現在使用していないが、PageDataの型情報を保持
   const { data: _data } = $props<{ data: PageData }>();
 
-  // i18n初期化状態を監視（aboutページと同じパターン）
+  // SSRから渡された言語はi18nStoreが既に適切に処理するため、
+  // ここでの追加の処理は不要（ユーザーの選択を上書きしない）
+
+  // i18n初期化状態を監視（常にtrueになるよう最適化）
   const isInitialized = $derived(i18nStore.initialized && !!i18nStore.translations);
 
   import CheckSection from '$lib/components/CheckSection.svelte';
@@ -202,8 +206,8 @@
 
 <!-- Meta tags are now handled by server-side layout only to prevent duplicates -->
 
-{#if isInitialized}
-  <div class="container">
+<div class="container">
+  {#if isInitialized}
     <!-- メインコンテンツ -->
     <div class="main-content">
       <!-- 評価エリア -->
@@ -305,25 +309,10 @@
     {#if showExportModal}
       <ExportModal checklist={currentChecklist} onClose={() => (showExportModal = false)} />
     {/if}
-  </div>
-{:else}
-  <div class="container">
-    <div class="loading">
-      <h1>Loading...</h1>
-    </div>
-  </div>
-{/if}
+  {/if}
+</div>
 
 <style>
-  /* ローディング状態 */
-  .loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 60vh;
-    color: var(--text-color-secondary);
-  }
-
   .container {
     max-width: 1400px;
     margin: 0 auto;
