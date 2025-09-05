@@ -26,7 +26,7 @@
   let title = $state('');
   let description = $state('');
   let notes = $state('');
-  const _currentJudgment = $state<JudgmentType>(null);
+  // const _currentJudgment = $state<JudgmentType>(null); // 未使用
   let showExportModal = $state(false);
   const collapsedSections = $state<Record<string, boolean>>({});
   let isClientReady = $state(false);
@@ -67,7 +67,8 @@
 
     // クライアント側では通常のt関数を使用
     try {
-      return t(key as any) || fallback;
+      const result = t(key as Parameters<typeof t>[0]);
+      return result || fallback;
     } catch {
       return fallback || key;
     }
@@ -121,9 +122,9 @@
       );
     }
 
-    // 完了処理
+    // 判定を設定してから完了処理
+    await refactoredChecklistStore.setJudgment(judgment);
     await refactoredChecklistStore.completeChecklist();
-    await refactoredChecklistStore.updateJudgment(judgment);
     const completed = refactoredChecklistStore.currentChecklist;
 
     if (completed) {
@@ -131,14 +132,7 @@
     }
   }
 
-  async function handleCheckToggle(itemId: string) {
-    if (!browser) return;
-    const currentChecklist = refactoredChecklistStore.currentChecklist;
-    if (!currentChecklist) return;
-    const item = currentChecklist.items.find(i => i.id === itemId);
-    if (!item) return;
-    await refactoredChecklistStore.updateCheckItem(itemId, !item.checked);
-  }
+  // Removed unused function - using inline handler in CheckSection component instead
 
   function restoreFromSession() {
     if (!browser) return;
@@ -280,6 +274,9 @@
       {score}
       {confidenceLevel}
       confidenceText={confidenceText || safeT('checklist.confidence.none', '未評価')}
+      judgmentAdvice={judgmentAdvice || ''}
+      currentJudgment={null}
+      onJudgmentChange={() => {}}
     />
 
     <!-- チェックリストセクション - 常に表示 -->
@@ -287,10 +284,14 @@
       {#each categories as category (category.id)}
         <CheckSection
           {category}
-          checklist={currentChecklist}
+          items={currentChecklist?.items.filter(item => item.category.id === category.id) || []}
           collapsed={collapsedSections[category.id] || false}
           onToggle={() => toggleSection(category.id)}
-          onCheck={(itemId: string) => handleCheckToggle(itemId)}
+          onCheckItem={async (itemId: string, checked: boolean) => {
+            if (browser) {
+              await refactoredChecklistStore.updateCheckItem(itemId, checked);
+            }
+          }}
         />
       {/each}
     </div>
