@@ -592,14 +592,28 @@
 
   /* ダークモード対応 */
   @media (prefers-color-scheme: dark) {
+    .quick-start {
+      background: var(--surface-color);
+      padding: 1.5rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+    }
+
     .form-group input,
     .form-group textarea {
-      background: var(--color-surface-dark);
-      border-color: var(--color-border-dark);
+      background: var(--surface-elevated);
+      border-color: var(--border-color);
+      color: var(--text-color);
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: var(--text-color-secondary);
     }
 
     .judgment-button {
-      background: var(--color-surface-dark);
+      background: var(--surface-elevated);
+      color: var(--text-color);
     }
   }
 </style>
