@@ -122,13 +122,17 @@ export class ExportContentGenerator {
                   content: item.guideContent.content,
                   examples: (() => {
                     // translationKeyがある場合は直接取得
-                    if (factChecklistI18n !== undefined && 
-                        item.translationKey !== null && 
-                        item.translationKey !== undefined &&
-                        item.translationKey !== '') {
-                      const goodExamples = factChecklistI18n.getCheckItemExamplesGood?.(item.translationKey) ?? [];
-                      const badExamples = factChecklistI18n.getCheckItemExamplesBad?.(item.translationKey) ?? [];
-                      
+                    if (
+                      factChecklistI18n !== undefined &&
+                      item.translationKey !== null &&
+                      item.translationKey !== undefined &&
+                      item.translationKey !== ''
+                    ) {
+                      const goodExamples =
+                        factChecklistI18n.getCheckItemExamplesGood?.(item.translationKey) ?? [];
+                      const badExamples =
+                        factChecklistI18n.getCheckItemExamplesBad?.(item.translationKey) ?? [];
+
                       if (goodExamples.length > 0 || badExamples.length > 0) {
                         return [
                           ...goodExamples.map(content => ({

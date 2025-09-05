@@ -10,28 +10,29 @@
   const { item, onCheckChange }: Props = $props();
 
   let showGuide = $state(false);
-  
+
   // ダークモードの状態を監視
   let isDark = $state(false);
-  
+
   $effect(() => {
     // DOM が利用可能な場合のみ実行
     if (typeof document !== 'undefined') {
       const checkDarkMode = () => {
         isDark = document.documentElement.classList.contains('dark');
       };
-      
+
       checkDarkMode();
-      
+
       // MutationObserverでクラスの変更を監視
       const observer = new MutationObserver(checkDarkMode);
       observer.observe(document.documentElement, {
         attributes: true,
         attributeFilter: ['class']
       });
-      
+
       return () => observer.disconnect();
     }
+    return undefined;
   });
 
   // 動的翻訳：translationKeyがあれば使用、なければ既存のtitle/descriptionを使用

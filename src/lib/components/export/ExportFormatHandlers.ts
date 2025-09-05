@@ -164,7 +164,7 @@ export class JSONExportHandler {
 
       // Import i18n functions
       const { factChecklistI18n } = await import('$lib/i18n/simple-store.svelte.js');
-      
+
       // JSONデータを準備
       const exportData = ExportContentGenerator.generateJSONExportData(
         checklist,
