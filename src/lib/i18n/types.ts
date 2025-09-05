@@ -619,6 +619,13 @@ export interface TranslationKeys {
           };
         };
       };
+      examples: {
+        title: string;
+        emoji: string;
+        description: string;
+        content: string;
+        subSections: Record<string, never>;
+      };
       privacy: {
         title: string;
         emoji: string;

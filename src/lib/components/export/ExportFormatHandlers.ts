@@ -162,11 +162,16 @@ export class JSONExportHandler {
 
       await ExportProgressHelper.updateStandardProgress(progressManager, 'GENERATING', t);
 
+      // Import i18n functions
+      const { factChecklistI18n } = await import('$lib/i18n/simple-store.svelte.js');
+      
       // JSONデータを準備
       const exportData = ExportContentGenerator.generateJSONExportData(
         checklist,
         options,
-        checklistStoreTitle
+        checklistStoreTitle,
+        undefined,
+        factChecklistI18n
       );
 
       await ExportProgressHelper.updateCustomProgress(

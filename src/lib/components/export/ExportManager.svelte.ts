@@ -369,7 +369,9 @@ export class ExportManager {
           const jsonData = ExportContentGenerator.generateJSONExportData(
             checklist,
             options,
-            checklist.title
+            checklist.title,
+            undefined,
+            i18nResult.factChecklistI18n
           );
           return JSON.stringify(jsonData, null, 2);
         }

@@ -104,81 +104,69 @@ export function renderCheckItem(
                   : item.guideContent.content.replace(/\n/g, '<br>')
               }</div>
               ${
-                item.guideContent.examples !== undefined &&
-                (item.guideContent.examples.good.length > 0 ||
-                  item.guideContent.examples.bad.length > 0)
-                  ? `
-                <div class="guide-examples">
-                  <div class="examples-title">${t ? t('export.examples') : 'Examples'}:</div>
-                  ${
-                    factChecklistI18n !== undefined &&
-                    item.translationKey !== null &&
-                    item.translationKey !== ''
-                      ? (() => {
-                          const goodExamples =
-                            item.translationKey !== undefined
-                              ? (factChecklistI18n.getCheckItemExamplesGood?.(
-                                  item.translationKey
-                                ) ?? [])
-                              : [];
-                          return goodExamples.length > 0
-                            ? `
-                          <div class="good-examples">
-                            <div class="example-type">${t ? t('export.goodExamples') : 'Good Examples'}:</div>
-                            <ul>
-                              ${goodExamples.map((example: string) => `<li>${example}</li>`).join('')}
-                            </ul>
-                          </div>
-                        `
-                            : '';
-                        })() +
-                        (() => {
-                          const badExamples =
-                            item.translationKey !== undefined
-                              ? (factChecklistI18n.getCheckItemExamplesBad?.(item.translationKey) ??
-                                [])
-                              : [];
-                          return badExamples.length > 0
-                            ? `
-                          <div class="bad-examples">
-                            <div class="example-type">${t ? t('export.badExamples') : 'Bad Examples'}:</div>
-                            <ul>
-                              ${badExamples.map((example: string) => `<li>${example}</li>`).join('')}
-                            </ul>
-                          </div>
-                        `
-                            : '';
-                        })()
-                      : `
-                        ${
-                          item.guideContent.examples.good.length > 0
-                            ? `
-                          <div class="good-examples">
-                            <div class="example-type">${t ? t('export.goodExamples') : 'Good Examples'}:</div>
-                            <ul>
-                              ${item.guideContent.examples.good.map(example => `<li>${example}</li>`).join('')}
-                            </ul>
-                          </div>
-                        `
-                            : ''
-                        }
-                        ${
-                          item.guideContent.examples.bad.length > 0
-                            ? `
-                          <div class="bad-examples">
-                            <div class="example-type">${t ? t('export.badExamples') : 'Bad Examples'}:</div>
-                            <ul>
-                              ${item.guideContent.examples.bad.map(example => `<li>${example}</li>`).join('')}
-                            </ul>
-                          </div>
-                        `
-                            : ''
-                        }
-                      `
+                (() => {
+                  // translationKeyがある場合は直接取得
+                  const hasTranslationKey = factChecklistI18n !== undefined && 
+                                           item.translationKey !== null && 
+                                           item.translationKey !== undefined &&
+                                           item.translationKey !== '';
+                  
+                  if (hasTranslationKey) {
+                    const goodExamples = factChecklistI18n.getCheckItemExamplesGood?.(item.translationKey) ?? [];
+                    const badExamples = factChecklistI18n.getCheckItemExamplesBad?.(item.translationKey) ?? [];
+                    
+                    if (goodExamples.length > 0 || badExamples.length > 0) {
+                      return `
+                        <div class="guide-examples">
+                          <div class="examples-title">${t ? t('export.examples') : 'Examples'}:</div>
+                          ${goodExamples.length > 0 ? `
+                            <div class="good-examples">
+                              <div class="example-type">${t ? t('export.goodExamples') : 'Good Examples'}:</div>
+                              <ul>
+                                ${goodExamples.map((example: string) => `<li>${example}</li>`).join('')}
+                              </ul>
+                            </div>
+                          ` : ''}
+                          ${badExamples.length > 0 ? `
+                            <div class="bad-examples">
+                              <div class="example-type">${t ? t('export.badExamples') : 'Bad Examples'}:</div>
+                              <ul>
+                                ${badExamples.map((example: string) => `<li>${example}</li>`).join('')}
+                              </ul>
+                            </div>
+                          ` : ''}
+                        </div>
+                      `;
+                    }
                   }
-                </div>
-              `
-                  : ''
+                  // フォールバック: guideContentのexamplesをチェック
+                  else if (item.guideContent?.examples && 
+                           (item.guideContent.examples.good?.length > 0 || 
+                            item.guideContent.examples.bad?.length > 0)) {
+                    return `
+                      <div class="guide-examples">
+                        <div class="examples-title">${t ? t('export.examples') : 'Examples'}:</div>
+                        ${item.guideContent.examples.good?.length > 0 ? `
+                          <div class="good-examples">
+                            <div class="example-type">${t ? t('export.goodExamples') : 'Good Examples'}:</div>
+                            <ul>
+                              ${item.guideContent.examples.good.map((example: string) => `<li>${example}</li>`).join('')}
+                            </ul>
+                          </div>
+                        ` : ''}
+                        ${item.guideContent.examples.bad?.length > 0 ? `
+                          <div class="bad-examples">
+                            <div class="example-type">${t ? t('export.badExamples') : 'Bad Examples'}:</div>
+                            <ul>
+                              ${item.guideContent.examples.bad.map((example: string) => `<li>${example}</li>`).join('')}
+                            </ul>
+                          </div>
+                        ` : ''}
+                      </div>
+                    `;
+                  }
+                  return '';
+                })()
               }
             </div>
           `
@@ -758,18 +746,41 @@ export async function generateMarkdownContent(
             : item.guideContent.content
         }\n\n`;
 
-        if (
-          item.guideContent.examples !== undefined &&
-          (item.guideContent.examples.good.length > 0 || item.guideContent.examples.bad.length > 0)
-        ) {
-          markdown += '**Examples:**\n\n';
-          for (const example of item.guideContent.examples.good) {
-            markdown += `- **Good Example**: ${example}\n`;
+        // 良い例・悪い例の取得
+        const hasTranslationKey = factChecklistI18n !== undefined && 
+                                 item.translationKey !== null && 
+                                 item.translationKey !== undefined &&
+                                 item.translationKey !== '';
+        
+        let goodExamples: string[] = [];
+        let badExamples: string[] = [];
+        
+        if (hasTranslationKey) {
+          goodExamples = factChecklistI18n.getCheckItemExamplesGood?.(item.translationKey) ?? [];
+          badExamples = factChecklistI18n.getCheckItemExamplesBad?.(item.translationKey) ?? [];
+        } else if (item.guideContent?.examples) {
+          goodExamples = item.guideContent.examples.good ?? [];
+          badExamples = item.guideContent.examples.bad ?? [];
+        }
+        
+        if (goodExamples.length > 0 || badExamples.length > 0) {
+          markdown += `**${t ? t('export.examples') : 'Examples'}:**\n\n`;
+          
+          if (goodExamples.length > 0) {
+            markdown += `**${t ? t('export.goodExamples') : 'Good Examples'}:**\n`;
+            for (const example of goodExamples) {
+              markdown += `- ✅ ${example}\n`;
+            }
+            markdown += '\n';
           }
-          for (const example of item.guideContent.examples.bad) {
-            markdown += `- **Bad Example**: ${example}\n`;
+          
+          if (badExamples.length > 0) {
+            markdown += `**${t ? t('export.badExamples') : 'Bad Examples'}:**\n`;
+            for (const example of badExamples) {
+              markdown += `- ❌ ${example}\n`;
+            }
+            markdown += '\n';
           }
-          markdown += '\n';
         }
       }
     }

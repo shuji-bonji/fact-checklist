@@ -403,15 +403,21 @@
   .judgment-advice {
     text-align: center;
     font-size: var(--font-size-base);
-    color: var(--text-color-secondary);
+    color: var(--text-color-secondary) !important;
     line-height: var(--line-height-relaxed);
     padding: var(--spacing-4);
-    background: var(--surface-color);
+    background: var(--surface-color) !important;
     border-radius: var(--radius-lg);
     border-left: 4px solid var(--secondary-color);
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--border-color) !important;
     position: relative;
     z-index: 1;
+  }
+
+  :global(.dark) .judgment-advice {
+    background: rgba(30, 30, 30, 0.6) !important;
+    color: var(--text-color) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
   }
 
   /* レスポンシブ対応 */

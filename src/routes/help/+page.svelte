@@ -855,6 +855,7 @@
         transition: none !important;
       }
     }
+
   </style>
 {:else}
   <div class="help-container">
