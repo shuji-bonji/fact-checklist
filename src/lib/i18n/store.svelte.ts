@@ -46,7 +46,7 @@ const allTranslations: Record<LanguageCode, TranslationKeys> = {
 };
 
 // デフォルトフォールバック辞書（最小限の翻訳）
-const FALLBACK_TRANSLATIONS: Partial<TranslationKeys> = {
+const FALLBACK_TRANSLATIONS: Record<string, unknown> = {
   app: {
     title: 'Fact Checklist',
     brandTitle: 'Fact Checklist',
@@ -97,7 +97,7 @@ const FALLBACK_TRANSLATIONS: Partial<TranslationKeys> = {
     total: 'Total',
     score: 'Score'
   }
-} as TranslationKeys;
+};
 
 // ブラウザ環境チェック
 const isBrowser = typeof window !== 'undefined';
