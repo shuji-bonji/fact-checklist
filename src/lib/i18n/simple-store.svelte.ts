@@ -190,7 +190,7 @@ export const factChecklistI18n = {
   getCategoryDescription: (categoryId: string): string => t(`categories.${categoryId}.description`),
   getCategoryEmoji: (categoryId: string): string => t(`categories.${categoryId}.emoji`),
   getCheckItemExamplesGood: (itemId: string): string[] =>
-    tArray(`checklistItems.${itemId}.examples.good`),
+    tArray(`checklistItems.${itemId}.examplesGood`),
   getCheckItemExamplesBad: (itemId: string): string[] =>
-    tArray(`checklistItems.${itemId}.examples.bad`)
+    tArray(`checklistItems.${itemId}.examplesBad`)
 };

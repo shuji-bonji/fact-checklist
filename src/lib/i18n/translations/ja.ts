@@ -496,6 +496,13 @@ export const translations: TranslationKeys = {
           }
         }
       },
+      examples: {
+        title: '良い例・悪い例',
+        emoji: '💡',
+        description: '具体的な評価例で理解を深める',
+        content: '',
+        subSections: {}
+      },
       features: {
         title: '機能詳細',
         emoji: '⚙️',

@@ -3,7 +3,7 @@
 
 import type { ChecklistResult } from '$lib/types/checklist.js';
 import type { ExportOptions } from '../ExportOptions.svelte.js';
-import type { TranslationFunction } from '$lib/types/i18n.js';
+import type { TranslationFunction, FactChecklistI18n } from '$lib/types/i18n.js';
 
 /**
  * エクスポートメタデータインターフェース
@@ -85,7 +85,8 @@ export class ExportContentGenerator {
     checklist: ChecklistResult,
     options: ExportOptions,
     checklistStoreTitle: string,
-    additionalMetadata?: Partial<ExportMetadata>
+    additionalMetadata?: Partial<ExportMetadata>,
+    factChecklistI18n?: FactChecklistI18n
   ): JSONExportData {
     const metadata: ExportMetadata = {
       exportDate: new Date().toISOString(),
@@ -119,19 +120,47 @@ export class ExportContentGenerator {
               ? {
                   title: item.guideContent.title,
                   content: item.guideContent.content,
-                  examples:
-                    item.guideContent.examples !== null && item.guideContent.examples !== undefined
-                      ? [
-                          ...item.guideContent.examples.good.map(content => ({
+                  examples: (() => {
+                    // translationKeyがある場合は直接取得
+                    if (factChecklistI18n !== undefined && 
+                        item.translationKey !== null && 
+                        item.translationKey !== undefined &&
+                        item.translationKey !== '') {
+                      const goodExamples = factChecklistI18n.getCheckItemExamplesGood?.(item.translationKey) ?? [];
+                      const badExamples = factChecklistI18n.getCheckItemExamplesBad?.(item.translationKey) ?? [];
+                      
+                      if (goodExamples.length > 0 || badExamples.length > 0) {
+                        return [
+                          ...goodExamples.map(content => ({
                             type: 'good' as const,
                             content
                           })),
-                          ...item.guideContent.examples.bad.map(content => ({
+                          ...badExamples.map(content => ({
                             type: 'bad' as const,
                             content
                           }))
-                        ]
-                      : undefined
+                        ];
+                      }
+                    }
+                    // フォールバック: guideContentのexamplesをチェック
+                    else if (item.guideContent?.examples) {
+                      const good = item.guideContent.examples.good ?? [];
+                      const bad = item.guideContent.examples.bad ?? [];
+                      if (good.length > 0 || bad.length > 0) {
+                        return [
+                          ...good.map(content => ({
+                            type: 'good' as const,
+                            content
+                          })),
+                          ...bad.map(content => ({
+                            type: 'bad' as const,
+                            content
+                          }))
+                        ];
+                      }
+                    }
+                    return undefined;
+                  })()
                 }
               : undefined
         }))
