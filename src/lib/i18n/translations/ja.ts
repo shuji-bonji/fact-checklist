@@ -41,7 +41,7 @@ export const translations: TranslationKeys = {
     about: 'アプリについて',
     privacy: 'プライバシー',
     terms: '利用規約',
-    home: 'ホーム',
+    home: 'チェックリスト',
     menu: 'メニュー',
     languages: '言語',
     darkMode: 'ダークモード',
@@ -106,7 +106,7 @@ export const translations: TranslationKeys = {
 
   // ナビゲーション
   navigation: {
-    home: 'ホーム',
+    home: 'チェックリスト',
     about: 'アプリについて',
     help: 'ヘルプ・使い方',
     privacy: 'プライバシー',

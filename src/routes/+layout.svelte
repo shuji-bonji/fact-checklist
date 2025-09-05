@@ -308,7 +308,11 @@
             <button type="button" class="nav-brand" onclick={goToHome}>
               <span class="nav-icon">🔍</span>
               <div class="brand-text">
-                <span class="brand-title">{t('app.brandTitle')}</span>
+                {#if isHomePage}
+                  <h1 class="brand-title">{t('app.brandTitle')}</h1>
+                {:else}
+                  <span class="brand-title">{t('app.brandTitle')}</span>
+                {/if}
                 <span class="brand-subtitle">{t('app.brandSubtitle')}</span>
               </div>
             </button>
@@ -345,7 +349,11 @@
           <button type="button" class="nav-brand" onclick={goToHome}>
             <span class="nav-icon">🔍</span>
             <div class="brand-text">
-              <span class="brand-title">{t('app.brandTitle')}</span>
+              {#if isHomePage}
+                <h1 class="brand-title">{t('app.brandTitle')}</h1>
+              {:else}
+                <span class="brand-title">{t('app.brandTitle')}</span>
+              {/if}
               <span class="brand-subtitle">{t('app.brandSubtitle')}</span>
             </div>
           </button>
@@ -538,6 +546,15 @@
   }
 
   .brand-title {
+    font-family: var(--font-family-heading);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-lg);
+    color: var(--text-color);
+    line-height: var(--line-height-tight);
+  }
+
+  h1.brand-title {
+    margin: 0;
     font-family: var(--font-family-heading);
     font-weight: var(--font-weight-semibold);
     font-size: var(--font-size-lg);
@@ -757,6 +774,11 @@
     font-size: var(--font-size-base);
   }
 
+  .tablet-layout h1.brand-title {
+    margin: 0;
+    font-size: var(--font-size-base);
+  }
+
   .tablet-layout .brand-subtitle {
     font-size: var(--font-size-xs);
   }
@@ -816,6 +838,11 @@
     }
 
     .brand-title {
+      font-size: var(--font-size-base);
+    }
+
+    h1.brand-title {
+      margin: 0;
       font-size: var(--font-size-base);
     }
 
