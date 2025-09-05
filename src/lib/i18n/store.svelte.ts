@@ -1,6 +1,8 @@
 /**
  * i18n言語ストア - Svelte 5 runesベース
  * 12言語対応の国際化システム
+ *
+ * 改善版: 同期的翻訳読み込みと多段階フォールバック
  */
 
 import {
@@ -8,469 +10,327 @@ import {
   type LanguageCode,
   type SupportedLanguage,
   type TranslationKeys,
-  type TranslationFunction,
-  type NestedRecord
+  type TranslationFunction
 } from './types.js';
 import { I18N_CONFIG } from '../config/i18n.js';
 
-// 静的な翻訳インポート
-import { translations } from './translations/index.js';
+// 🔴 重要: 翻訳データを同期的にインポート
+// 動的インポートではなく、静的インポートを使用
+import { translations as ja } from './translations/ja.js';
+import { translations as en } from './translations/en.js';
+import { translations as fr } from './translations/fr.js';
+import { translations as es } from './translations/es.js';
+import { translations as pt } from './translations/pt.js';
+import { translations as de } from './translations/de.js';
+import { translations as it } from './translations/it.js';
+import { translations as ar } from './translations/ar.js';
+import { translations as hi } from './translations/hi.js';
+import { translations as ko } from './translations/ko.js';
+import { translations as zhTW } from './translations/zh-TW.js';
+import { translations as id } from './translations/id.js';
 
-import { countTranslations, createSafeTranslator, createFlexibleTranslator } from './helpers.js';
-import { dev } from '$app/environment';
+// 🔴 翻訳データを事前に準備（同期的）
+const allTranslations: Record<LanguageCode, TranslationKeys> = {
+  ja,
+  en,
+  fr,
+  es,
+  pt,
+  de,
+  it,
+  ar,
+  hi,
+  ko,
+  'zh-TW': zhTW,
+  id
+};
+
+// デフォルトフォールバック辞書（最小限の翻訳）
+const FALLBACK_TRANSLATIONS: Partial<TranslationKeys> = {
+  app: {
+    title: 'Fact Checklist',
+    brandTitle: 'Fact Checklist',
+    brandSubtitle: 'Fact Checklist'
+  },
+  checklist: {
+    title: 'Checklist',
+    score: 'Score',
+    confidenceLevel: 'Confidence',
+    finalJudgment: 'Judgment'
+  },
+  categories: {
+    critical: {
+      name: 'Critical',
+      emoji: '⚠️',
+      description: 'Critical Items'
+    },
+    detailed: {
+      name: 'Detailed',
+      emoji: '🔍',
+      description: 'Detailed Items'
+    },
+    verification: {
+      name: 'Verification',
+      emoji: '✅',
+      description: 'Verification Items'
+    },
+    context: {
+      name: 'Context',
+      emoji: '📝',
+      description: 'Context Items'
+    }
+  },
+  forms: {
+    notesLabel: 'Notes',
+    notesTitlePlaceholder: 'Title',
+    notesPlaceholder: 'Add notes...'
+  },
+  history: {
+    title: 'History',
+    empty: 'No history',
+    createFirst: 'Create your first checklist'
+  },
+  ui: {
+    quickStartGuide: 'Quick Start Guide'
+  },
+  units: {
+    total: 'Total',
+    score: 'Score'
+  }
+} as TranslationKeys;
 
 // ブラウザ環境チェック
 const isBrowser = typeof window !== 'undefined';
 
-// 初期言語を決定する関数（クラス外で定義）
+// 初期言語を決定
 function getInitialLanguage(): LanguageCode {
   if (!isBrowser) return I18N_CONFIG.DEFAULT_LANGUAGE;
 
   try {
-    // 1. LocalStorage確認（最優先）
     const saved = localStorage.getItem('fact-checklist-language');
-    if (saved && saved in SUPPORTED_LANGUAGES) {
-      if (dev) console.warn(`🌍 Loaded saved language from localStorage: ${saved}`);
+    if (saved !== null && saved !== '' && saved in SUPPORTED_LANGUAGES) {
       return saved as LanguageCode;
     }
-
-    // 2. Cookie確認（SSRとの同期用）
-    const cookies = document.cookie.split(';');
-    for (const cookie of cookies) {
-      const [key, value] = cookie.trim().split('=');
-      if (key === 'language' && value && value in SUPPORTED_LANGUAGES) {
-        if (dev) console.warn(`🍪 Loaded language from cookie: ${value}`);
-        return value as LanguageCode;
-      }
-    }
-
-    // 3. ブラウザ言語検出（初回のみ）
-    const browserLang = navigator.language.toLowerCase();
-    for (const [code, info] of Object.entries(SUPPORTED_LANGUAGES)) {
-      if (browserLang.startsWith(code) || browserLang.startsWith(info.code.toLowerCase())) {
-        if (dev) console.warn(`🌐 Detected browser language: ${code}`);
-        return code as LanguageCode;
-      }
-    }
-  } catch (error) {
-    console.warn('⚠️ Language detection failed:', error);
+  } catch {
+    // Storage not available
   }
 
   return I18N_CONFIG.DEFAULT_LANGUAGE;
 }
 
 class I18nStore {
-  // Svelte 5 runesを使用した状態管理
+  // 状態管理
   private _currentLanguage = $state<LanguageCode>(getInitialLanguage());
-  private _translations = $state<Record<LanguageCode, TranslationKeys>>(
-    {} as Record<LanguageCode, TranslationKeys>
-  );
+  private _translations = $state<Record<LanguageCode, TranslationKeys>>(allTranslations);
   private _isLoading = $state<boolean>(false);
   private _error = $state<string | null>(null);
   private _initialized = $state<boolean>(false);
 
   constructor() {
-    // SSRでも安全に実行できるデフォルト初期化
-    this.initializeDefault();
+    // 🔴 同期的に即座に初期化（翻訳データは既に読み込み済み）
+    this._initialized = true;
 
-    // ブラウザ環境では追加の初期化
+    // ブラウザ環境での追加処理
     if (isBrowser) {
-      this.initializeImmediately();
+      this.updateDocumentAttributes();
+      this.loadLanguageFromStorage();
     }
+
+    // Initialization complete with language: this._currentLanguage
   }
 
-  // 現在の言語（読み取り専用）
+  // === Getters ===
   get currentLanguage(): LanguageCode {
     return this._currentLanguage;
   }
 
-  // 現在の言語情報
   get currentLanguageInfo(): SupportedLanguage {
     return SUPPORTED_LANGUAGES[this._currentLanguage];
   }
 
-  // テキスト方向
   get direction(): 'ltr' | 'rtl' {
     return this.currentLanguageInfo.dir;
   }
 
-  // RTL言語かどうか
   get isRTL(): boolean {
     return this.direction === 'rtl';
   }
 
-  // 読み込み状態
   get isLoading(): boolean {
     return this._isLoading;
   }
 
-  // エラー状態
   get error(): string | null {
     return this._error;
   }
 
-  // 初期化完了状態
   get initialized(): boolean {
     return this._initialized;
   }
 
-  // 利用可能な言語一覧
-  get availableLanguages(): SupportedLanguage[] {
-    return Object.values(SUPPORTED_LANGUAGES);
-  }
-
-  // 現在の翻訳データ
   get translations(): TranslationKeys | null {
-    return this._translations[this._currentLanguage] ?? null;
+    return this._translations[this._currentLanguage] || null;
+  }
+
+  // === メソッド ===
+
+  /**
+   * 🔴 改善された翻訳関数
+   * フォールバック順序:
+   * 1. 現在の言語の翻訳
+   * 2. デフォルト言語の翻訳
+   * 3. 英語の翻訳
+   * 4. ハードコードされたフォールバック
+   * 5. 最後の手段: キーを整形して返す
+   */
+  t: TranslationFunction = (key: string, params?: Record<string, unknown>): string => {
+    try {
+      // 1. 現在の言語で探す
+      let value = this.getTranslationValue(this._currentLanguage, key);
+
+      // 2. デフォルト言語で探す
+      if (value === null && this._currentLanguage !== I18N_CONFIG.DEFAULT_LANGUAGE) {
+        value = this.getTranslationValue(I18N_CONFIG.DEFAULT_LANGUAGE, key);
+      }
+
+      // 3. 英語で探す
+      if (value === null && this._currentLanguage !== 'en') {
+        value = this.getTranslationValue('en', key);
+      }
+
+      // 4. ハードコードされたフォールバックを使う
+      if (value === null) {
+        value = this.getFallbackValue(key);
+      }
+
+      // 5. 最後の手段: キーを整形して返す
+      if (value === null) {
+        // "checklist.title" → "Title"
+        // "checklistTitle" → "Checklist Title"
+        const parts = key.split('.');
+        const lastPart = parts[parts.length - 1] ?? key;
+        const formatted = lastPart
+          .replace(/([A-Z])/g, ' $1')
+          .replace(/[_-]/g, ' ')
+          .replace(/^./, str => str.toUpperCase())
+          .trim();
+
+        console.warn(`[i18n] Missing translation for "${key}", using: "${formatted}"`);
+        return formatted;
+      }
+
+      // パラメータ置換
+      if (typeof value === 'string' && params) {
+        return value.replace(/\{(\w+)\}/g, (_, k: string) => String(params[k] ?? `{${k}}`));
+      }
+
+      return value;
+    } catch (error) {
+      console.error(`[i18n] Error translating "${key}":`, error);
+      // エラー時も整形したキーを返す
+      const parts = key.split('.');
+      const lastPart = parts[parts.length - 1] || key;
+      return lastPart
+        .replace(/([A-Z])/g, ' $1')
+        .replace(/[_-]/g, ' ')
+        .trim();
+    }
+  };
+
+  /**
+   * 指定言語から翻訳値を取得
+   */
+  private getTranslationValue(language: LanguageCode, key: string): string | null {
+    const translations = this._translations[language];
+    if (!translations) return null;
+
+    const keys = key.split('.');
+    let value: unknown = translations;
+
+    for (const k of keys) {
+      if (value !== null && value !== undefined && typeof value === 'object' && k in value) {
+        value = (value as Record<string, unknown>)[k];
+      } else {
+        return null;
+      }
+    }
+
+    return typeof value === 'string' ? value : null;
   }
 
   /**
-   * SSR/CSR両方で安全に実行できるデフォルト初期化
-   * サーバーサイドでも翻訳データを読み込む
+   * ハードコードされたフォールバック値を取得
    */
-  private initializeDefault(): void {
-    try {
-      // デフォルト言語を取得
-      const defaultLang = I18N_CONFIG.DEFAULT_LANGUAGE;
+  private getFallbackValue(key: string): string | null {
+    const keys = key.split('.');
+    let value: unknown = FALLBACK_TRANSLATIONS;
 
-      // 静的インポートされた翻訳データを直接設定
-      // これはSSRでも安全（静的インポートのため）
-      if (translations && translations[defaultLang]) {
-        this._translations[defaultLang] = translations[defaultLang];
-        this._currentLanguage = defaultLang;
-
-        // 英語のフォールバックも読み込む
-        const enLang = 'en' as LanguageCode;
-        if (defaultLang !== enLang && translations[enLang]) {
-          this._translations[enLang] = translations[enLang];
-        }
-
-        // 初期化フラグを設定
-        this._initialized = true;
+    for (const k of keys) {
+      if (value !== null && value !== undefined && typeof value === 'object' && k in value) {
+        value = (value as Record<string, unknown>)[k];
       } else {
-        console.error(`Failed to load translations for ${defaultLang}`);
+        return null;
       }
-    } catch (error) {
-      console.error('❌ [SSR-Safe] Default initialization failed:', error);
-      // エラーでも初期化済みとマーク（無限ループ防止）
-      this._initialized = true;
     }
+
+    return typeof value === 'string' ? value : null;
   }
 
   /**
-   * 即座に翻訳データを同期的に読み込む
-   * 初期表示時の翻訳キー表示を防ぐための初期化
+   * 言語を変更
    */
-  private initializeImmediately(): void {
-    try {
-      const currentLang = this._currentLanguage;
-
-      // ブラウザで検出した言語がデフォルトと異なる場合のみ更新
-      const browserLang = getInitialLanguage();
-      if (browserLang !== currentLang && translations[browserLang]) {
-        this._currentLanguage = browserLang;
-        this._translations[browserLang] = translations[browserLang];
-
-        // HTML属性を更新
-        this.updateDocumentAttributes();
-
-        if (dev) {
-          console.warn(`✅ [Browser] Language updated to: ${browserLang}`);
-        }
-      }
-
-      // LocalStorage/Cookieとの同期
-      this.loadLanguageFromStorage(true);
-
-      // HTML属性を更新（言語が変わっていない場合でも）
-      this.updateDocumentAttributes();
-    } catch (error) {
-      console.error('❌ [Browser] Immediate initialization failed:', error);
-    }
-  }
-
-  // 公開初期化メソッド（SSR検出言語を受け取る）
-  async initializeWithLanguage(ssrDetectedLanguage?: LanguageCode): Promise<void> {
-    // 重複初期化の防止（すでに同期的に初期化されている場合はスキップ）
-    if (this._initialized && this._translations[this._currentLanguage]) {
-      if (dev) console.warn('🌍 i18n store already initialized with translations, skipping...');
-      return;
-    }
-
-    try {
-      this._isLoading = true;
-      this._error = null;
-
-      // 現在の言語が既に正しく設定されているか確認
-      const currentLang = this._currentLanguage;
-      if (dev) console.warn(`🌍 Current language on initialization: ${currentLang}`);
-
-      // 保存された言語設定を再確認（初回のみCookieと同期）
-      const savedLanguage = this.loadLanguageFromStorage(true);
-
-      // 言語を決定（優先順位）
-      // 1. LocalStorageに保存された言語（ユーザーが明示的に選択した場合）
-      // 2. 現在の言語（初期化時に設定されている場合）
-      // 3. SSR検出言語（サーバーサイドで検出された場合）
-      // 4. ブラウザ言語（初回アクセス時のみ）
-      // 5. デフォルト言語
-      let targetLanguage: LanguageCode;
-
-      if (savedLanguage) {
-        // LocalStorageに保存されている = ユーザーが明示的に選択した
-        targetLanguage = savedLanguage;
-      } else if (currentLang && currentLang !== I18N_CONFIG.DEFAULT_LANGUAGE) {
-        // 既に設定されている言語がデフォルト以外
-        targetLanguage = currentLang;
-      } else if (ssrDetectedLanguage) {
-        // サーバーサイドで検出された言語
-        targetLanguage = ssrDetectedLanguage;
-      } else if (isBrowser) {
-        // ブラウザ言語を検出（初回のみ）
-        const browserLang = this.detectBrowserLanguage();
-        targetLanguage = browserLang || I18N_CONFIG.DEFAULT_LANGUAGE;
-      } else {
-        // フォールバック
-        targetLanguage = I18N_CONFIG.DEFAULT_LANGUAGE;
-      }
-
-      if (dev) {
-        console.warn(
-          `🌍 Language selection: saved=${savedLanguage}, current=${currentLang}, ssrDetected=${ssrDetectedLanguage}, target=${targetLanguage}`
-        );
-      }
-
-      // 言語を設定（既に設定されている場合でも翻訳データの読み込みのため実行）
-      await this.setLanguage(targetLanguage);
-
-      this._initialized = true;
-      if (dev) console.warn('✅ i18n store initialized');
-    } catch (error) {
-      this._error = error instanceof Error ? error.message : '初期化エラー';
-      console.error('❌ Failed to initialize i18n store:', error);
-      throw error;
-    } finally {
-      this._isLoading = false;
-    }
-  }
-
-  // 言語変更
   async setLanguage(language: LanguageCode): Promise<void> {
-    // console.log(`🌍 Setting language to: ${language}`);
-
-    try {
-      this._isLoading = true;
-      this._error = null;
-
-      // 言語が有効かチェック
-      if (SUPPORTED_LANGUAGES[language] === null || SUPPORTED_LANGUAGES[language] === undefined) {
-        throw new Error(`Unsupported language: ${language}`);
-      }
-
-      // 翻訳データが未読み込みの場合は読み込み
-      if (this._translations[language] === null || this._translations[language] === undefined) {
-        // console.log(`📥 Loading translations for: ${language}`);
-        await this.loadTranslations(language);
-      }
-
-      // 言語を更新
-      this._currentLanguage = language;
-
-      // localStorageに保存
-      this.saveLanguageToStorage(language);
-
-      // HTML要素のlang属性とdir属性を更新
-      this.updateDocumentAttributes();
-
-      // console.log(`✅ Language changed to: ${language}`);
-    } catch (error) {
-      this._error = error instanceof Error ? error.message : 'Failed to set language';
-      console.error('❌ Language change failed:', error);
-      throw error;
-    } finally {
-      this._isLoading = false;
+    if (!(language in SUPPORTED_LANGUAGES)) {
+      throw new Error(`Unsupported language: ${language}`);
     }
+
+    this._currentLanguage = language;
+    this.saveLanguageToStorage(language);
+    this.updateDocumentAttributes();
+
+    // Language changed successfully to: ${language}
   }
 
-  // 翻訳データの読み込み（静的インポート版）
-  private async loadTranslations(language: LanguageCode): Promise<void> {
-    try {
-      // 静的インポートから翻訳データを取得
-      const baseTranslations = translations[language];
-
-      if (baseTranslations === null || baseTranslations === undefined) {
-        throw new Error(`No translations found for language: ${language}`);
-      }
-
-      // 翻訳データを保存
-      this._translations[language] = baseTranslations;
-
-      // console.log(`✅ Translations loaded for: ${language} (static import)`);
-    } catch (error) {
-      console.error(`❌ Failed to load translations for ${language}:`, error);
-
-      // フォールバック: デフォルト言語の翻訳を使用
-      if (
-        language !== I18N_CONFIG.DEFAULT_LANGUAGE &&
-        this._translations[I18N_CONFIG.DEFAULT_LANGUAGE] !== null &&
-        this._translations[I18N_CONFIG.DEFAULT_LANGUAGE] !== undefined
-      ) {
-        console.warn(`🔄 Using ${I18N_CONFIG.DEFAULT_LANGUAGE} fallback for: ${language}`);
-        this._translations[language] = this._translations[I18N_CONFIG.DEFAULT_LANGUAGE];
-      } else if (
-        language !== I18N_CONFIG.DEFAULT_LANGUAGE &&
-        translations[I18N_CONFIG.DEFAULT_LANGUAGE] !== null &&
-        translations[I18N_CONFIG.DEFAULT_LANGUAGE] !== undefined
-      ) {
-        console.warn(
-          `🔄 Using ${I18N_CONFIG.DEFAULT_LANGUAGE} fallback from static imports for: ${language}`
-        );
-        this._translations[language] = translations[I18N_CONFIG.DEFAULT_LANGUAGE];
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  // 翻訳関数（SSRセーフ版）
-  t: TranslationFunction = (key: string, params?: Record<string, string | number>): string => {
-    try {
-      // 現在の言語の翻訳を取得
-      let translations = this._translations[
-        this._currentLanguage
-      ] as unknown as NestedRecord | null;
-
-      // フォールバック: デフォルト言語
-      if (!translations && this._currentLanguage !== I18N_CONFIG.DEFAULT_LANGUAGE) {
-        translations = this._translations[
-          I18N_CONFIG.DEFAULT_LANGUAGE
-        ] as unknown as NestedRecord | null;
-      }
-
-      // それでも見つからない場合は、最初に見つかった翻訳を使用
-      if (!translations) {
-        const availableLanguages = Object.keys(this._translations) as LanguageCode[];
-        if (availableLanguages.length > 0) {
-          const firstLang = availableLanguages[0];
-          if (firstLang) {
-            translations = this._translations[firstLang] as unknown as NestedRecord | null;
-          }
-        }
-      }
-
-      // 翻訳データがまったくない場合はキーを返す
-      if (!translations) {
-        if (dev) {
-          console.warn(`[i18n] No translations available, returning key: ${key}`);
-        }
-        return key;
-      }
-
-      // safeTranslatorを使用
-      const safeTranslator = createSafeTranslator(translations);
-      return safeTranslator(key, params);
-    } catch (error) {
-      console.error(`[i18n] Error translating key "${key}":`, error);
-      return key;
-    }
-  };
-
-  // 配列対応翻訳関数
-  tArray = (key: string, params?: Record<string, string | number>): string | string[] => {
-    try {
-      const translations = this.translations as NestedRecord | null;
-
-      // 翻訳がまだ読み込まれていない場合は空文字を返す
-      if (!translations) {
-        return '';
-      }
-
-      const flexibleTranslator = createFlexibleTranslator(translations);
-      return flexibleTranslator(key, params);
-    } catch (error) {
-      console.error(`❌ Translation error for key "${key}":`, error);
-      return key;
-    }
-  };
-
-  // ブラウザ言語の検出
-  private detectBrowserLanguage(): LanguageCode | null {
-    if (!isBrowser) return null;
-
-    const browserLanguages = [navigator.language, ...navigator.languages];
-
-    for (const browserLang of browserLanguages) {
-      // 完全一致をチェック
-      if (browserLang in SUPPORTED_LANGUAGES) {
-        return browserLang as LanguageCode;
-      }
-
-      // 言語コードの前半部分をチェック（例: "en-US" -> "en"）
-      const langCode = browserLang.split('-')[0];
-      if (
-        langCode !== null &&
-        langCode !== undefined &&
-        langCode !== '' &&
-        langCode in SUPPORTED_LANGUAGES
-      ) {
-        return langCode as LanguageCode;
-      }
-    }
-
-    return null;
-  }
-
-  // localStorageから言語設定を読み込み（Cookieとの同期オプション付き）
-  private loadLanguageFromStorage(syncToCookie = false): LanguageCode | null {
-    if (!isBrowser) return null;
+  /**
+   * LocalStorageから言語設定を読み込む
+   */
+  private loadLanguageFromStorage(): void {
+    if (!isBrowser) return;
 
     try {
       const saved = localStorage.getItem('fact-checklist-language');
-      if (saved !== null && saved !== '' && saved in SUPPORTED_LANGUAGES) {
-        if (syncToCookie) {
-          // LocalStorageに保存されている場合、Cookieにも同期
-          // （PWAで LocalStorageに保存されたがCookieがない場合の対策）
-          document.cookie = `language=${saved}; max-age=31536000; path=/; SameSite=Lax`;
-        }
-        return saved as LanguageCode;
+      if (
+        saved !== null &&
+        saved !== '' &&
+        saved in SUPPORTED_LANGUAGES &&
+        saved !== this._currentLanguage
+      ) {
+        this._currentLanguage = saved as LanguageCode;
+        this.updateDocumentAttributes();
       }
     } catch (error) {
-      console.warn('⚠️ Failed to load language from localStorage:', error);
+      console.warn('Failed to load language from storage:', error);
     }
-
-    return null;
   }
 
-  // localStorageに言語設定を保存（Cookieとも同期）
+  /**
+   * LocalStorageに言語設定を保存
+   */
   private saveLanguageToStorage(language: LanguageCode): void {
     if (!isBrowser) return;
 
     try {
-      // LocalStorageに保存
       localStorage.setItem('fact-checklist-language', language);
-
-      // Cookieにも保存（サーバー側で読めるように）
-      this.saveLanguageToCookie(language);
+      // Cookieにも保存（SSR用）
+      document.cookie = `language=${language}; max-age=31536000; path=/; SameSite=Lax`;
     } catch (error) {
-      console.warn('⚠️ Failed to save language to localStorage:', error);
+      console.warn('Failed to save language:', error);
     }
   }
 
   /**
-   * Cookie同期メソッド
+   * HTML属性を更新
    */
-  private saveLanguageToCookie(language: LanguageCode): void {
-    if (!isBrowser) return;
-
-    try {
-      // max-age=31536000 (1年), SameSite=Lax, Path=/
-      document.cookie = `language=${language}; max-age=31536000; path=/; SameSite=Lax`;
-    } catch (error) {
-      console.warn('Cookie save failed:', error);
-    }
-  }
-
-  // HTMLドキュメントの属性を更新
   private updateDocumentAttributes(): void {
     if (!isBrowser) return;
 
@@ -479,29 +339,143 @@ class I18nStore {
       html.lang = this._currentLanguage;
       html.dir = this.direction;
 
-      // CSSカスタムプロパティでRTL状態を通知
-      html.style.setProperty('--text-direction', this.direction);
-      html.style.setProperty('--is-rtl', this.isRTL ? '1' : '0');
+      // RTL言語の場合、bodyにもクラスを追加
+      if (this.isRTL) {
+        document.body.classList.add('rtl');
+      } else {
+        document.body.classList.remove('rtl');
+      }
     } catch (error) {
-      console.warn('⚠️ Failed to update document attributes:', error);
+      console.warn('Failed to update document attributes:', error);
     }
   }
 
-  // デバッグ用: 翻訳データの統計
-  getTranslationStats(): {
-    loadedLanguages: LanguageCode[];
-    currentLanguage: LanguageCode;
-    translationCount: number;
-  } {
-    const loadedLanguages = Object.keys(this._translations) as LanguageCode[];
-    const currentTranslations = this.translations as NestedRecord | null;
-    const translationCount = currentTranslations ? countTranslations(currentTranslations) : 0;
+  /**
+   * SSR検出言語での初期化（互換性のため残す）
+   */
+  async initializeWithLanguage(ssrDetectedLanguage?: LanguageCode): Promise<void> {
+    // 既に初期化済みなので、言語設定のみ更新
+    if (ssrDetectedLanguage && ssrDetectedLanguage in SUPPORTED_LANGUAGES) {
+      if (!isBrowser || localStorage.getItem('fact-checklist-language') === null) {
+        // ユーザーが選択していない場合のみSSR言語を適用
+        await this.setLanguage(ssrDetectedLanguage);
+      }
+    }
+  }
 
-    return {
-      loadedLanguages,
-      currentLanguage: this._currentLanguage,
-      translationCount
+  /**
+   * 現在の言語情報を取得
+   */
+  getCurrentLanguageInfo(): SupportedLanguage {
+    return this.currentLanguageInfo;
+  }
+
+  /**
+   * サポートされている言語のリストを取得
+   */
+  getSupportedLanguages(): Record<LanguageCode, SupportedLanguage> {
+    return SUPPORTED_LANGUAGES;
+  }
+
+  /**
+   * 配列の翻訳を取得する関数
+   * 翻訳値が配列の場合はその配列を返し、文字列の場合は単一要素の配列を返す
+   */
+  tArray(key: string): string[] {
+    try {
+      // 1. 現在の言語で探す
+      let value = this.getTranslationArray(this._currentLanguage, key);
+      
+      // 2. デフォルト言語で探す
+      if (value === null && this._currentLanguage !== I18N_CONFIG.DEFAULT_LANGUAGE) {
+        value = this.getTranslationArray(I18N_CONFIG.DEFAULT_LANGUAGE, key);
+      }
+      
+      // 3. 英語で探す
+      if (value === null && this._currentLanguage !== 'en') {
+        value = this.getTranslationArray('en', key);
+      }
+      
+      // 4. 最後の手段: 空の配列を返す
+      if (value === null) {
+        console.warn(`[i18n] Missing translation array for "${key}"`);
+        return [];
+      }
+      
+      return value;
+    } catch (error) {
+      console.error(`[i18n] Error getting array for "${key}":`, error);
+      return [];
+    }
+  }
+
+  /**
+   * 指定言語から配列値を取得
+   */
+  private getTranslationArray(language: LanguageCode, key: string): string[] | null {
+    const translations = this._translations[language];
+    if (!translations) return null;
+
+    const keys = key.split('.');
+    let value: unknown = translations;
+
+    for (const k of keys) {
+      if (value !== null && value !== undefined && typeof value === 'object' && k in value) {
+        value = (value as Record<string, unknown>)[k];
+      } else {
+        return null;
+      }
+    }
+
+    // 配列の場合はそのまま返す
+    if (Array.isArray(value)) {
+      return value.filter((v): v is string => typeof v === 'string');
+    }
+    
+    // 文字列の場合は単一要素の配列として返す
+    if (typeof value === 'string') {
+      return [value];
+    }
+
+    return null;
+  }
+
+  /**
+   * 特定のキーが存在するか確認
+   */
+  hasTranslation(key: string, language?: LanguageCode): boolean {
+    const lang = language || this._currentLanguage;
+    return this.getTranslationValue(lang, key) !== null;
+  }
+
+  /**
+   * 翻訳の完全性をチェック
+   */
+  getTranslationCompleteness(language: LanguageCode): number {
+    const translations = this._translations[language];
+    const defaultTranslations = this._translations[I18N_CONFIG.DEFAULT_LANGUAGE];
+
+    if (!translations || !defaultTranslations) return 0;
+
+    const countKeys = (obj: unknown): number => {
+      if (obj === null || obj === undefined || typeof obj !== 'object') return 0;
+      let count = 0;
+      const record = obj as Record<string, unknown>;
+      for (const key in record) {
+        const value = record[key];
+        if (typeof value === 'string') {
+          count++;
+        } else if (typeof value === 'object' && value !== null) {
+          count += countKeys(value);
+        }
+      }
+      return count;
     };
+
+    const targetCount = countKeys(translations);
+    const defaultCount = countKeys(defaultTranslations);
+
+    return defaultCount === 0 ? 100 : Math.round((targetCount / defaultCount) * 100);
   }
 }
 
@@ -510,9 +484,16 @@ export const i18nStore = new I18nStore();
 
 // 便利なエクスポート
 export const t = i18nStore.t;
-export const tArray = i18nStore.tArray;
+export const tArray = (key: string): string[] => i18nStore.tArray(key);
 export const setLanguage = (language: LanguageCode): Promise<void> =>
   i18nStore.setLanguage(language);
 export const getCurrentLanguage = (): LanguageCode => i18nStore.currentLanguage;
 export const getDirection = (): 'ltr' | 'rtl' => i18nStore.direction;
 export const getIsRTL = (): boolean => i18nStore.isRTL;
+export const hasTranslation = (key: string, language?: LanguageCode): boolean =>
+  i18nStore.hasTranslation(key, language);
+export const getTranslationCompleteness = (language: LanguageCode): number =>
+  i18nStore.getTranslationCompleteness(language);
+
+// デフォルトエクスポート
+export default i18nStore;
