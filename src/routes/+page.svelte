@@ -10,18 +10,15 @@
   } from '$lib/stores/refactoredChecklistStore.svelte.js';
   import { getCategories } from '$lib/data/checklist-items.js';
   import type { JudgmentType } from '$lib/types/checklist.js';
-  import { t, i18nStore } from '$lib/i18n/index.js';
+  import { t, simpleI18nStore } from '$lib/i18n/simple-store.svelte.js';
   import type { PageData } from './$types';
 
   // Svelte5の新しいprops構文
   // dataは現在使用していないが、PageDataの型情報を保持
   const { data: _data } = $props<{ data: PageData }>();
 
-  // SSRから渡された言語はi18nStoreが既に適切に処理するため、
-  // ここでの追加の処理は不要（ユーザーの選択を上書きしない）
-
-  // i18n初期化状態を監視（常にtrueになるよう最適化）
-  const isInitialized = $derived(i18nStore.initialized && !!i18nStore.translations);
+  // シンプルなi18nストアは常に初期化済み
+  const isInitialized = true;
 
   import CheckSection from '$lib/components/CheckSection.svelte';
   import ScoreDisplay from '$lib/components/ScoreDisplay.svelte';

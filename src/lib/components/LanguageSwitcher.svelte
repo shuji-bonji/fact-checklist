@@ -3,7 +3,7 @@
 12言語対応のドロップダウン形式言語選択UI
 -->
 <script lang="ts">
-  import { t, setLanguage, i18nStore } from '$lib/i18n/index.js';
+  import { t, setLanguage, simpleI18nStore } from '$lib/i18n/simple-store.svelte.js';
   import { getLanguageOptions } from '$lib/i18n/utils.js';
   import type { LanguageCode } from '$lib/i18n/types.js';
 
@@ -18,8 +18,8 @@
   let isOpen = $state(false);
 
   // Reactive values from the store
-  const currentLanguage = $derived(i18nStore.currentLanguage);
-  const isRTL = $derived(i18nStore.isRTL);
+  const currentLanguage = $derived(simpleI18nStore.currentLanguage);
+  const isRTL = $derived(simpleI18nStore.direction === 'rtl');
 
   // 言語オプションの取得
   const languageOptions = getLanguageOptions();
@@ -30,9 +30,9 @@
   );
 
   // 言語変更ハンドラー
-  async function handleLanguageChange(languageCode: string) {
+  function handleLanguageChange(languageCode: string) {
     try {
-      await setLanguage(languageCode as LanguageCode);
+      setLanguage(languageCode as LanguageCode);
       isOpen = false;
     } catch (error) {
       console.error('Failed to change language:', error);

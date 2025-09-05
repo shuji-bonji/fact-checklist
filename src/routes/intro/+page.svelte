@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { t, i18nStore } from '$lib/i18n';
+  import { t } from '$lib/i18n/simple-store.svelte.js';
   // import { page } from '$app/stores'; // Unused, removed to fix linting
   import { base } from '$app/paths';
   import LanguageSwitcher from '$lib/components/LanguageSwitcher.svelte';
@@ -11,8 +11,8 @@
 
   const { data: _data }: Props = $props();
 
-  // i18n初期化状態を監視
-  const isI18nReady = $derived(i18nStore.initialized && !!i18nStore.translations);
+  // シンプルストアは常に初期化済み
+  const isI18nReady = true;
 
   let shareUrl = '';
   let shareTitle = '';

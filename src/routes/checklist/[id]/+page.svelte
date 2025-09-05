@@ -3,7 +3,8 @@
   import { base } from '$app/paths';
   import { page } from '$app/stores';
   import { getCategories } from '$lib/data/checklist-items.js';
-  import { factChecklistI18n, i18nStore, t } from '$lib/i18n/index.js';
+  import { t } from '$lib/i18n/simple-store.svelte.js';
+  import { factChecklistI18n } from '$lib/i18n/index.js';
   import { refactoredChecklistStore } from '$lib/stores/refactoredChecklistStore.svelte.js';
   import type { JudgmentType } from '$lib/types/checklist.js';
   import { onMount } from 'svelte';
@@ -12,11 +13,11 @@
   import PWAInstallPrompt from '$lib/components/PWAInstallPrompt.svelte';
   import ShareButton from '$lib/components/ShareButton.svelte';
 
-  // i18n初期化状態を監視
-  const isI18nReady = $derived(i18nStore.initialized && !!i18nStore.translations);
+  // シンプルストアは常に初期化済み
+  const isI18nReady = true;
 
   // カテゴリ情報をリアクティブに取得
-  const categories = $derived(isI18nReady ? getCategories() : []);
+  const categories = $derived(getCategories());
 
   // State
   let showExportModal = $state(false);

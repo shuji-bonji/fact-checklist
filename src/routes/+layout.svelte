@@ -9,7 +9,7 @@
   import { page } from '$app/stores';
 
   // i18n
-  import { t, i18nStore, setLanguage } from '$lib/i18n/index.js';
+  import { t, simpleI18nStore, setLanguage } from '$lib/i18n/simple-store.svelte.js';
   import type { LanguageCode } from '$lib/i18n/types.js';
   import { SUPPORTED_LANGUAGES } from '$lib/i18n/types.js';
   import LanguageSwitcher from '$lib/components/LanguageSwitcher.svelte';
@@ -19,8 +19,8 @@
   // PWA
   import { registerPWA, setupPWAInstallPrompt } from '$lib/utils/pwa-register.js';
 
-  // i18n初期化状態を監視
-  const isI18nReady = $derived(i18nStore.initialized && !!i18nStore.translations);
+  // シンプルなi18nストアは常に初期化済み
+  const isI18nReady = true;
 
   // Extend LayoutData with our server data
   interface Props {
@@ -63,10 +63,15 @@
     }
   });
 
-  // SSRデータとの同期（非同期処理を待たない）
+  // SSRデータとの同期（シンプルストアでは不要だが互換性のため残す）
   $effect(() => {
-    if (data?.currentLang) {
-      i18nStore.initializeWithLanguage(data.currentLang as LanguageCode);
+    if (data?.currentLang && data.currentLang !== simpleI18nStore.currentLanguage) {
+      // SSRで検出された言語がローカルと異なる場合のみ設定
+      // ただし、ユーザーが既に言語を選択している場合は上書きしない
+      const hasUserSelection = browser && localStorage.getItem('fact-checklist-language');
+      if (!hasUserSelection) {
+        setLanguage(data.currentLang as LanguageCode);
+      }
     }
   });
 
