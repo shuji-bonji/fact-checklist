@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { CheckItem } from '$lib/types/checklist.js';
-  import { t, factChecklistI18n } from '$lib/i18n/index.js';
+  import { t, factChecklistI18n } from '$lib/i18n/simple-store.svelte.js';
 
   interface Props {
     item: CheckItem;
