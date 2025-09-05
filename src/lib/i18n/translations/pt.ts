@@ -42,7 +42,7 @@ export const translations: TranslationKeys = {
     about: 'Sobre',
     privacy: 'Privacidade',
     terms: 'Termos',
-    home: 'Início',
+    home: 'Lista de verificação',
     menu: 'Menu',
     languages: 'Idiomas',
     darkMode: 'Modo Escuro',
@@ -107,7 +107,7 @@ export const translations: TranslationKeys = {
   },
 
   navigation: {
-    home: 'Início',
+    home: 'Lista de verificação',
     about: 'Sobre',
     help: 'Ajuda e Uso',
     privacy: 'Privacidade',
@@ -184,7 +184,7 @@ export const translations: TranslationKeys = {
     uncheckedItems: 'Não verificado',
     completionRate: 'Taxa de Conclusão',
     actions: 'Ações',
-    exportShare: 'Exportar e Compartilhar',
+    exportShare: 'Exportar',
     reEdit: 'Re-editar',
 
     // PWA installation prompt

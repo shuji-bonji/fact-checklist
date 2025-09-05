@@ -62,7 +62,7 @@ export class ExportI18nLoader {
       let result: I18nLoadResult;
 
       if (includeLanguageFunctions) {
-        const i18nModule = (await import('$lib/i18n/index.js')) as I18nModule;
+        const i18nModule = (await import('$lib/i18n/simple-store.svelte.js')) as I18nModule;
         const { factChecklistI18n, t, getCurrentLanguage, getSupportedLanguages } = i18nModule;
 
         result = {
@@ -72,7 +72,7 @@ export class ExportI18nLoader {
           ...(getSupportedLanguages && { getSupportedLanguages })
         };
       } else {
-        const i18nModule = (await import('$lib/i18n/index.js')) as I18nModule;
+        const i18nModule = (await import('$lib/i18n/simple-store.svelte.js')) as I18nModule;
         const { factChecklistI18n, t } = i18nModule;
         result = { factChecklistI18n, t };
       }
@@ -110,7 +110,7 @@ export class ExportI18nLoader {
    */
   private static async reloadWithLanguageFunctions(): Promise<void> {
     try {
-      const i18nModule = (await import('$lib/i18n/index.js')) as I18nModule;
+      const i18nModule = (await import('$lib/i18n/simple-store.svelte.js')) as I18nModule;
       const { factChecklistI18n, t, getCurrentLanguage, getSupportedLanguages } = i18nModule;
 
       this.cachedI18n = {

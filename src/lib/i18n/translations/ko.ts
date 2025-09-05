@@ -40,7 +40,7 @@ export const translations: TranslationKeys = {
     about: '정보',
     privacy: '개인정보',
     terms: '약관',
-    home: '홈',
+    home: '체크리스트',
     menu: '메뉴',
     languages: '언어',
     darkMode: '다크 모드',
@@ -102,7 +102,7 @@ export const translations: TranslationKeys = {
   },
 
   navigation: {
-    home: '홈',
+    home: '체크리스트',
     about: '정보',
     help: '도움말 및 사용법',
     privacy: '개인정보',
@@ -176,7 +176,7 @@ export const translations: TranslationKeys = {
     uncheckedItems: '미체크',
     completionRate: '완료율',
     actions: '조치',
-    exportShare: '내보내기 및 공유',
+    exportShare: '내보내기',
     reEdit: '재편집',
 
     // PWA installation prompt

@@ -406,10 +406,7 @@ export class ExportService {
    */
   private async loadI18n(): Promise<{ t: (key: string) => string }> {
     // Dynamic import to avoid circular dependencies
-    const i18nModule = await import('$lib/i18n/index.js');
-    // Create a wrapper that accepts any string
-    const t = (key: string): string =>
-      (i18nModule.t as unknown as (key: string) => string | undefined)(key) ?? key;
+    const { t } = await import('$lib/i18n/simple-store.svelte.js');
     return { t };
   }
 

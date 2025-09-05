@@ -5,8 +5,7 @@
   import { base } from '$app/paths';
   import { parseShareableUrl } from '$lib/utils/shareUrl';
   import { getChecklistItems, getCategories } from '$lib/data/checklist-items';
-  import { t } from '$lib/i18n/simple-store.svelte.js';
-  import { factChecklistI18n } from '$lib/i18n';
+  import { t, factChecklistI18n } from '$lib/i18n/simple-store.svelte.js';
   import type { ChecklistResult } from '$lib/types/checklist';
 
   // State

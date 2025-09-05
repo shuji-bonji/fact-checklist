@@ -41,7 +41,7 @@ export const translations: TranslationKeys = {
     about: 'के बारे में',
     privacy: 'गोपनीयता',
     terms: 'नियम',
-    home: 'होम',
+    home: 'चेकलिस्ट',
     menu: 'मेन्यू',
     languages: 'भाषाएं',
     darkMode: 'डार्क मोड',
@@ -105,7 +105,7 @@ export const translations: TranslationKeys = {
   },
 
   navigation: {
-    home: 'होम',
+    home: 'चेकलिस्ट',
     about: 'के बारे में',
     help: 'सहायता और उपयोग',
     privacy: 'गोपनीयता',
@@ -181,7 +181,7 @@ export const translations: TranslationKeys = {
     uncheckedItems: 'असाख्यांकित',
     completionRate: 'पूर्णता दर',
     actions: 'कार्रवाईयां',
-    exportShare: 'निर्यात और साझा करें',
+    exportShare: 'निर्यात',
     reEdit: 'पुन: संपादित करें',
 
     // PWA installation prompt
