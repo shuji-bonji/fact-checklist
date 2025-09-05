@@ -183,7 +183,7 @@ export const translations: TranslationKeys = {
     uncheckedItems: '未チェック',
     completionRate: '完了率',
     actions: 'アクション',
-    exportShare: 'エクスポート・共有',
+    exportShare: 'エクスポート',
     reEdit: '再編集',
     completed: '完了',
     // PWA installation prompt

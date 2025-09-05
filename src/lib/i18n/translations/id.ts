@@ -40,7 +40,7 @@ export const translations: TranslationKeys = {
     about: 'Tentang',
     privacy: 'Privasi',
     terms: 'Ketentuan',
-    home: 'Beranda',
+    home: 'Daftar Periksa',
     menu: 'Menu',
     languages: 'Bahasa',
     darkMode: 'Mode Gelap',
@@ -105,7 +105,7 @@ export const translations: TranslationKeys = {
   },
 
   navigation: {
-    home: 'Beranda',
+    home: 'Daftar Periksa',
     about: 'Tentang',
     help: 'Bantuan & Penggunaan',
     privacy: 'Privasi',
@@ -180,7 +180,7 @@ export const translations: TranslationKeys = {
     uncheckedItems: 'Belum diperiksa',
     completionRate: 'Tingkat Penyelesaian',
     actions: 'Tindakan',
-    exportShare: 'Ekspor & Bagikan',
+    exportShare: 'Ekspor',
     reEdit: 'Edit Ulang',
 
     // PWA installation prompt

@@ -6,6 +6,9 @@
 import type { LanguageCode } from './types.js';
 import { translations as allTranslations } from './translations/index.js';
 
+// availableLanguagesをエクスポート（後方互換性のため）
+export const availableLanguages = Object.keys(allTranslations) as LanguageCode[];
+
 // ブラウザ環境チェック
 const isBrowser = typeof window !== 'undefined';
 

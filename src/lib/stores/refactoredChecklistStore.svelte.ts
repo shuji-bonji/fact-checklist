@@ -15,7 +15,7 @@ import {
   type SearchCriteria,
   type SortCriteria
 } from '../services/SearchService.js';
-import { i18nStore } from '../i18n/store.svelte.js';
+import { getCurrentLanguage } from '../i18n/simple-store.svelte.js';
 import { SessionStorageService } from '../services/SessionStorageService.js';
 
 /**
@@ -573,10 +573,10 @@ class RefactoredChecklistStore {
    */
   private setupLanguageChangeListener(): void {
     // i18nストアの変更を定期的にチェック
-    let lastLanguage = i18nStore.currentLanguage;
+    let lastLanguage = getCurrentLanguage();
 
     const checkLanguageChange = (): void => {
-      const currentLanguage = i18nStore.currentLanguage;
+      const currentLanguage = getCurrentLanguage();
       if (currentLanguage !== lastLanguage && this._initialized && this._currentChecklist) {
         // console.log(
         //   'RefactoredChecklistStore: Language changed from',

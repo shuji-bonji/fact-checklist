@@ -1,5 +1,6 @@
 import type { RequestHandler } from './$types';
-import { availableLanguages, type LanguageCode } from '$lib/i18n';
+import { availableLanguages } from '$lib/i18n/simple-store.svelte.js';
+import type { LanguageCode } from '$lib/i18n/types.js';
 
 // サイトのベースURLを決定
 // Vercelでは環境変数VERCEL_URLが自動的に設定される
@@ -34,9 +35,17 @@ export const GET: RequestHandler = async () => {
   try {
     // Dynamic import to avoid Node.js dependencies in runtime
     const gitLastmodData = await import('$lib/data/git-lastmod.json');
-    const data = gitLastmodData.default !== undefined ? gitLastmodData.default : gitLastmodData;
-    if (data !== null && data !== undefined && typeof data === 'object') {
-      lastModMap = new Map<string, string>(Object.entries(data as Record<string, string>));
+    const rawData: unknown =
+      gitLastmodData.default !== undefined ? gitLastmodData.default : gitLastmodData;
+    if (rawData !== null && rawData !== undefined && typeof rawData === 'object') {
+      const data = rawData as Record<string, unknown>;
+      const entries: [string, string][] = [];
+      for (const [key, value] of Object.entries(data)) {
+        if (typeof value === 'string') {
+          entries.push([key, value]);
+        }
+      }
+      lastModMap = new Map<string, string>(entries);
     }
   } catch (error) {
     // ファイルが存在しない場合はデフォルトの日付を使用
