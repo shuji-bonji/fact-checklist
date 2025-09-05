@@ -6,7 +6,7 @@
     ExportOptionsManager,
     type ExportOptions
   } from '$lib/components/export/ExportOptions.svelte.js';
-  import { t } from '$lib/i18n/index.js';
+  import { t } from '$lib/i18n/simple-store.svelte.js';
 
   interface Props {
     checklist: ChecklistResult | null;

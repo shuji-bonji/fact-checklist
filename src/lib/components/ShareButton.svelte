@@ -1,7 +1,7 @@
 <script lang="ts">
   import { browser } from '$app/environment';
   import { page } from '$app/stores';
-  import { t } from '$lib/i18n';
+  import { t } from '$lib/i18n/simple-store.svelte.js';
   import type { ChecklistResult } from '$lib/types/checklist';
   import { createShareableUrl } from '$lib/utils/shareUrl';
 

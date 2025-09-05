@@ -143,3 +143,28 @@ export const t = (key: string, params?: Record<string, string | number>): string
 export const setLanguage = (language: LanguageCode): void => simpleI18nStore.setLanguage(language);
 
 export const getCurrentLanguage = (): LanguageCode => simpleI18nStore.currentLanguage;
+
+// チェックリスト専用のヘルパー関数
+export const factChecklistI18n = {
+  getCheckItemTitle: (itemId: string): string => {
+    return t(`checklistItems.${itemId}.title`);
+  },
+  getCheckItemDescription: (itemId: string): string => {
+    return t(`checklistItems.${itemId}.description`);
+  },
+  getCheckItemGuideTitle: (itemId: string): string => {
+    return t(`checklistItems.${itemId}.guideTitle`);
+  },
+  getCheckItemGuideContent: (itemId: string): string => {
+    return t(`checklistItems.${itemId}.guideContent`);
+  },
+  getCategoryName: (categoryId: string): string => {
+    return t(`categories.${categoryId}.name`);
+  },
+  getCategoryDescription: (categoryId: string): string => {
+    return t(`categories.${categoryId}.description`);
+  },
+  getCategoryEmoji: (categoryId: string): string => {
+    return t(`categories.${categoryId}.emoji`);
+  }
+};
