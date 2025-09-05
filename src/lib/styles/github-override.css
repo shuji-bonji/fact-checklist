@@ -544,8 +544,8 @@ div.section {
 
 /* ========== Quick Start エリア ========== */
 .quick-start {
-  background: white !important;
-  border: 1px solid var(--gh-gray-200) !important;
+  background: var(--gh-canvas-subtle, white) !important;
+  border: 1px solid var(--gh-border-default, var(--gh-gray-200)) !important;
   border-radius: 6px !important;
   padding: 12px !important;
   margin-bottom: 16px !important;

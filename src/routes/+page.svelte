@@ -592,13 +592,6 @@
 
   /* ダークモード対応 */
   @media (prefers-color-scheme: dark) {
-    .quick-start {
-      background: var(--surface-color);
-      padding: 1.5rem;
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-color);
-    }
-
     .form-group input,
     .form-group textarea {
       background: var(--surface-elevated);
