@@ -16,9 +16,8 @@
   // Svelte5の新しいprops構文
   const { data: _data } = $props<{ data: PageData }>();
 
-  // リアクティブな状態
-  let isI18nReady = $state(false);
-  let i18nError = $state<string | null>(null);
+  // i18n初期化状態を監視（aboutページと同じパターン）
+  const isInitialized = $derived(i18nStore.initialized && !!i18nStore.translations);
 
   import CheckSection from '$lib/components/CheckSection.svelte';
   import ScoreDisplay from '$lib/components/ScoreDisplay.svelte';
@@ -42,33 +41,6 @@
   const judgmentAdvice = $derived(refactoredChecklistStore.judgmentAdvice);
 
   onMount(async () => {
-    // i18nの初期化状態を確認（+layout.svelteで既に初期化済み）
-    try {
-      // console.log('🌍 Checking i18n initialization state...');
-
-      // i18nの初期化完了を監視
-      let attempts = 0;
-      const maxAttempts = 50; // 5秒間
-
-      while (attempts < maxAttempts) {
-        if (i18nStore.initialized && i18nStore.translations) {
-          // console.log('✅ i18n is ready');
-          isI18nReady = true;
-          break;
-        }
-        await new Promise(resolve => setTimeout(resolve, 100));
-        attempts++;
-      }
-
-      if (!isI18nReady) {
-        throw new Error('i18n initialization timeout');
-      }
-    } catch (error) {
-      console.error('❌ i18n not ready:', error);
-      i18nError = error instanceof Error ? error.message : 'i18n initialization failed';
-      isI18nReady = false;
-    }
-
     // ローディング画面を確実に非表示にする（ブラウザ環境でのみ）
     if (browser) {
       document.body.classList.add('app-loaded');
@@ -230,20 +202,7 @@
 
 <!-- Meta tags are now handled by server-side layout only to prevent duplicates -->
 
-{#if !isI18nReady}
-  <div class="loading-container">
-    <div class="loading-content">
-      <div class="loading-spinner"></div>
-      <p class="loading-text">
-        {#if i18nError}
-          エラーが発生しました: {i18nError}
-        {:else}
-          読み込み中...
-        {/if}
-      </p>
-    </div>
-  </div>
-{:else}
+{#if isInitialized}
   <div class="container">
     <!-- メインコンテンツ -->
     <div class="main-content">
@@ -347,49 +306,22 @@
       <ExportModal checklist={currentChecklist} onClose={() => (showExportModal = false)} />
     {/if}
   </div>
+{:else}
+  <div class="container">
+    <div class="loading">
+      <h1>Loading...</h1>
+    </div>
+  </div>
 {/if}
 
 <style>
-  /* ローディング画面 */
-  .loading-container {
-    min-height: 100vh;
+  /* ローディング状態 */
+  .loading {
     display: flex;
-    align-items: center;
     justify-content: center;
-    background: var(--bg-color);
-  }
-
-  .loading-content {
-    text-align: center;
-    padding: var(--spacing-8);
-    background: var(--surface-color);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-md);
-  }
-
-  .loading-spinner {
-    width: 48px;
-    height: 48px;
-    border: 3px solid var(--color-primary-200);
-    border-top: 3px solid var(--primary-color);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 0 auto 1rem;
-  }
-
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-
-  .loading-text {
-    color: var(--text-color);
-    font-size: var(--font-size-lg);
-    margin: 0;
+    align-items: center;
+    min-height: 60vh;
+    color: var(--text-color-secondary);
   }
 
   .container {
