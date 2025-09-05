@@ -137,7 +137,7 @@
 
             {#if displayGuideContent()?.examples}
               {@const examples = displayGuideContent()?.examples}
-              <div class="guide-examples">
+              <div class="guide-examples" class:dark-mode={isDark}>
                 {#if examples?.good && examples.good.length > 0}
                   <div class="examples-section examples-good" class:dark-mode={isDark}>
                     <h5>✅ {t('export.goodExamples')}:</h5>
@@ -480,15 +480,14 @@
     background: #fef2f2 !important;
   }
 
-  /* ダークモード対応 - よりクリアに */
-  :global(.dark) .guide-examples {
+  /* ダークモード対応 */
+  .guide-examples.dark-mode {
     background: transparent !important;
     border: none !important;
   }
 
-  :global(.dark) .examples-section {
+  .examples-section.dark-mode {
     background: transparent !important;
-    border: 2px solid #10b981 !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
   }
 
@@ -511,24 +510,6 @@
     color: #fca5a5 !important;
   }
 
-  /* フォールバック用 */
-  :global(.dark) .examples-section.examples-good {
-    background: transparent !important;
-    border: 2px solid #10b981 !important;
-  }
-
-  :global(.dark) .examples-section.examples-good h5 {
-    color: #86efac !important;
-  }
-
-  :global(.dark) .examples-section.examples-bad {
-    background: transparent !important;
-    border: 2px solid #ef4444 !important;
-  }
-
-  :global(.dark) .examples-section.examples-bad h5 {
-    color: #fca5a5 !important;
-  }
 
   /* ダークモード用 example-item - 専用クラス */
   .example-item.dark-mode {
@@ -555,30 +536,6 @@
     background: rgba(239, 68, 68, 0.15) !important;
   }
 
-  /* フォールバック用 */
-  :global(.dark) .example-item {
-    background: rgba(255, 255, 255, 0.03) !important;
-  }
-
-  :global(.dark) .example-item.good {
-    color: #bbf7d0 !important;
-    background: rgba(16, 185, 129, 0.05) !important;
-    border-left: 4px solid #10b981 !important;
-  }
-
-  :global(.dark) .example-item.good:hover {
-    background: rgba(16, 185, 129, 0.15) !important;
-  }
-
-  :global(.dark) .example-item.bad {
-    color: #fecaca !important;
-    background: rgba(239, 68, 68, 0.05) !important;
-    border-left: 4px solid #ef4444 !important;
-  }
-
-  :global(.dark) .example-item.bad:hover {
-    background: rgba(239, 68, 68, 0.15) !important;
-  }
 
   /* アクセシビリティ向上 */
   @media (prefers-reduced-motion: reduce) {
