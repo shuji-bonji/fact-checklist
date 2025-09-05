@@ -243,7 +243,8 @@
   --gradient-mesh: transparent;
 
   /* ========== Light Mode (Default) ========== */
-  --bg-color: #ffffff;
+  --bg-color: linear-gradient(135deg, #e3f2fd 0%, #42a5f5 100%);
+  --bg-color-solid: #ffffff;
   --surface-color: var(--color-gray-50);
   --surface-elevated: #ffffff;
   --text-color: var(--color-gray-900);
@@ -275,6 +276,7 @@
 :root.dark,
 html.dark {
   --bg-color: var(--color-gray-900);
+  --bg-color-solid: var(--color-gray-900);
   --surface-color: var(--color-gray-800);
   --surface-elevated: var(--color-gray-700);
   --text-color: var(--color-gray-50);
