@@ -27,13 +27,33 @@ function getInitialLanguage(): LanguageCode {
   if (!isBrowser) return I18N_CONFIG.DEFAULT_LANGUAGE;
 
   try {
+    // 1. LocalStorage確認（最優先）
     const saved = localStorage.getItem('fact-checklist-language');
-    if (saved !== null && saved !== '' && saved in SUPPORTED_LANGUAGES) {
+    if (saved && saved in SUPPORTED_LANGUAGES) {
       if (dev) console.warn(`🌍 Loaded saved language from localStorage: ${saved}`);
       return saved as LanguageCode;
     }
+
+    // 2. Cookie確認（SSRとの同期用）
+    const cookies = document.cookie.split(';');
+    for (const cookie of cookies) {
+      const [key, value] = cookie.trim().split('=');
+      if (key === 'language' && value && value in SUPPORTED_LANGUAGES) {
+        if (dev) console.warn(`🍪 Loaded language from cookie: ${value}`);
+        return value as LanguageCode;
+      }
+    }
+
+    // 3. ブラウザ言語検出（初回のみ）
+    const browserLang = navigator.language.toLowerCase();
+    for (const [code, info] of Object.entries(SUPPORTED_LANGUAGES)) {
+      if (browserLang.startsWith(code) || browserLang.startsWith(info.code.toLowerCase())) {
+        if (dev) console.warn(`🌐 Detected browser language: ${code}`);
+        return code as LanguageCode;
+      }
+    }
   } catch (error) {
-    console.warn('⚠️ Failed to load language from localStorage on init:', error);
+    console.warn('⚠️ Language detection failed:', error);
   }
 
   return I18N_CONFIG.DEFAULT_LANGUAGE;
@@ -50,10 +70,10 @@ class I18nStore {
   private _initialized = $state<boolean>(false);
 
   constructor() {
-    // 自動初期化を無効化 - 明示的な初期化を待つ
-    // if (isBrowser) {
-    //   this.initialize();
-    // }
+    // ブラウザ環境では即座にデフォルト翻訳を読み込む
+    if (isBrowser) {
+      this.initializeImmediately();
+    }
   }
 
   // 現在の言語（読み取り専用）
@@ -101,10 +121,41 @@ class I18nStore {
     return this._translations[this._currentLanguage] ?? null;
   }
 
+  /**
+   * 即座に翻訳データを同期的に読み込む
+   * 初期表示時の翻訳キー表示を防ぐための初期化
+   */
+  private initializeImmediately(): void {
+    try {
+      const currentLang = this._currentLanguage;
+
+      // 翻訳データを即座に設定
+      if (allTranslations[currentLang]) {
+        this._translations[currentLang] = allTranslations[currentLang];
+      }
+
+      // デフォルト言語もフォールバック用に読み込む
+      const defaultLang = I18N_CONFIG.DEFAULT_LANGUAGE;
+      if (currentLang !== defaultLang && allTranslations[defaultLang]) {
+        this._translations[defaultLang] = allTranslations[defaultLang];
+      }
+
+      // HTML属性を即座に更新
+      this.updateDocumentAttributes();
+
+      // 初期化フラグを立てる
+      this._initialized = true;
+    } catch (error) {
+      console.error('❌ Immediate initialization failed:', error);
+      this._initialized = true; // エラーでも初期化済みとする
+    }
+  }
+
   // 公開初期化メソッド（SSR検出言語を受け取る）
   async initializeWithLanguage(ssrDetectedLanguage?: LanguageCode): Promise<void> {
-    if (this._initialized) {
-      if (dev) console.warn('🌍 i18n store already initialized, skipping...');
+    // 重複初期化の防止（すでに同期的に初期化されている場合はスキップ）
+    if (this._initialized && this._translations[this._currentLanguage]) {
+      if (dev) console.warn('🌍 i18n store already initialized with translations, skipping...');
       return;
     }
 
@@ -248,9 +299,10 @@ class I18nStore {
     try {
       const translations = this.translations as NestedRecord | null;
 
-      // 翻訳がまだ読み込まれていない場合は空文字を返す
+      // 翻訳がまだ読み込まれていない場合はキーを返す（空文字ではなく）
       if (!translations) {
-        return '';
+        if (dev) console.warn(`⚠️ Translation not loaded for key: ${key}`);
+        return key; // 空文字ではなくキーを返すことで、問題を視覚的に確認できる
       }
 
       const safeTranslator = createSafeTranslator(translations);
@@ -336,10 +388,23 @@ class I18nStore {
       localStorage.setItem('fact-checklist-language', language);
 
       // Cookieにも保存（サーバー側で読めるように）
+      this.saveLanguageToCookie(language);
+    } catch (error) {
+      console.warn('⚠️ Failed to save language to localStorage:', error);
+    }
+  }
+
+  /**
+   * Cookie同期メソッド
+   */
+  private saveLanguageToCookie(language: LanguageCode): void {
+    if (!isBrowser) return;
+
+    try {
       // max-age=31536000 (1年), SameSite=Lax, Path=/
       document.cookie = `language=${language}; max-age=31536000; path=/; SameSite=Lax`;
     } catch (error) {
-      console.warn('⚠️ Failed to save language to localStorage:', error);
+      console.warn('Cookie save failed:', error);
     }
   }
 

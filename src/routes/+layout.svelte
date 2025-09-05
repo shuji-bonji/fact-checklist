@@ -9,8 +9,9 @@
   import { page } from '$app/stores';
 
   // i18n
-  import { t, i18nStore, init } from '$lib/i18n/index.js';
+  import { t, i18nStore, setLanguage } from '$lib/i18n/index.js';
   import type { LanguageCode } from '$lib/i18n/types.js';
+  import { SUPPORTED_LANGUAGES } from '$lib/i18n/types.js';
   import LanguageSwitcher from '$lib/components/LanguageSwitcher.svelte';
   import type { LayoutData } from './$types';
   import type { LayoutServerData } from '$lib/types/layout.js';
@@ -62,45 +63,39 @@
     }
   });
 
+  // SSRデータとの同期（非同期処理を待たない）
+  $effect(() => {
+    if (data?.currentLang) {
+      i18nStore.initializeWithLanguage(data.currentLang as LanguageCode);
+    }
+  });
+
   onMount(() => {
-    // 非同期初期化処理
-    (async () => {
-      // i18n初期化（サーバーサイドで決定された言語を使用）
-      try {
-        // サーバーサイドで決定された言語を使用
-        const serverLang = data?.currentLang || 'ja';
+    // URLパラメータ処理
+    const urlLang = $page.url.searchParams.get('lang');
+    if (urlLang && urlLang in SUPPORTED_LANGUAGES) {
+      setLanguage(urlLang as LanguageCode);
+    }
 
-        // i18nを初期化（設定オブジェクトを渡す）
-        await init({ currentLanguage: serverLang as LanguageCode });
-
-        // console.log('✅ i18n initialized with server language:', serverLang);
-      } catch (error) {
-        console.error('❌ Failed to initialize i18n:', error);
+    // ローディング画面を確実に非表示にする（ブラウザ環境でのみ）
+    if (browser) {
+      document.body.classList.add('app-loaded');
+      const loadingElement = document.querySelector('.app-loading') as HTMLElement;
+      if (loadingElement) {
+        loadingElement.style.display = 'none';
       }
+    }
 
-      // ローディング画面を確実に非表示にする（ブラウザ環境でのみ）
-      if (browser) {
-        document.body.classList.add('app-loaded');
-        const loadingElement = document.querySelector('.app-loading') as HTMLElement;
-        if (loadingElement) {
-          loadingElement.style.display = 'none';
-          // console.log('Loading screen hidden from layout');
-        }
-      }
-
-      // PWA Service Worker登録（Safari対応強化版）
-      if (!dev && browser) {
-        try {
-          await registerPWA();
-          // PWA registration completed
-
-          // PWAインストール促進設定
+    // PWA Service Worker登録（Safari対応強化版）
+    if (!dev && browser) {
+      registerPWA()
+        .then(() => {
           setupPWAInstallPrompt();
-        } catch (error) {
+        })
+        .catch(error => {
           console.error('PWA registration failed:', error);
-        }
-      }
-    })();
+        });
+    }
 
     // リサイズイベントでハンバーガーメニューを自動的に閉じる
     const handleResize = () => {
