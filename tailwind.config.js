@@ -1,10 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    './src/**/*.{html,js,svelte,ts}',
-    './src/**/*.svelte',
-    './src/**/*.{js,ts}'
-  ],
+  content: ['./src/**/*.{html,js,svelte,ts}', './src/**/*.svelte', './src/**/*.{js,ts}'],
   darkMode: 'class', // クラスベースのダークモード
   theme: {
     extend: {
@@ -74,7 +70,5 @@ export default {
       }
     }
   },
-  plugins: [
-    require('@tailwindcss/typography')
-  ]
-}
+  plugins: [require('@tailwindcss/typography')]
+};
