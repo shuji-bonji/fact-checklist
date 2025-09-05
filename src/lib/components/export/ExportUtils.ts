@@ -242,86 +242,89 @@ export async function generateSectionedHTMLContent(
     
     body {
       font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic Pro', 'Meiryo', sans-serif;
-      line-height: 1.6;
+      line-height: 1.3;
       color: #333;
       background: #fff;
       max-width: 800px;
       margin: 0 auto;
-      padding: 20px;
+      padding: 10px;
+      font-size: 11px;
     }
     
     .header {
       text-align: center;
-      margin-bottom: 40px;
-      padding-bottom: 20px;
-      border-bottom: 3px solid #2c3e50;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #2c3e50;
     }
     
     .title {
-      font-size: 2.5rem;
-      font-weight: bold;
-      color: #2c3e50;
-      margin-bottom: 10px;
-    }
-    
-    .subtitle {
-      font-size: 1.8rem;
-      font-weight: 600;
-      color: #34495e;
-      margin-bottom: 15px;
-      font-style: italic;
-    }
-    
-    .description {
-      font-size: 1.1rem;
-      color: #666;
-      margin-bottom: 20px;
-    }
-    
-    .metadata {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-    
-    .metadata-item {
-      background: #f8f9fa;
-      padding: 10px;
-      border-radius: 5px;
-      border-left: 4px solid #2c3e50;
-    }
-    
-    .metadata-label {
+      font-size: 1.4rem;
       font-weight: bold;
       color: #2c3e50;
       margin-bottom: 5px;
     }
     
+    .subtitle {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #34495e;
+      margin-bottom: 8px;
+      font-style: italic;
+    }
+    
+    .description {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 10px;
+    }
+    
+    .metadata {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    
+    .metadata-item {
+      background: #f8f9fa;
+      padding: 5px;
+      border-radius: 3px;
+      border-left: 3px solid #2c3e50;
+    }
+    
+    .metadata-label {
+      font-weight: bold;
+      color: #2c3e50;
+      margin-bottom: 2px;
+      font-size: 0.9rem;
+    }
+    
     .metadata-value {
       color: #333;
+      font-size: 0.85rem;
     }
     
     .section {
-      margin-bottom: 40px;
+      margin-bottom: 15px;
       ${options.sectionBreaks ? 'page-break-before: always;' : ''}
     }
     
     .section-header {
-      background: linear-gradient(135deg, #2c3e50, #34495e);
+      background: #2c3e50;
       color: white;
-      padding: 20px;
-      border-radius: 10px 10px 0 0;
+      padding: 8px 10px;
+      border-radius: 5px 5px 0 0;
       margin-bottom: 0;
     }
     
     .section-title {
-      font-size: 1.8rem;
+      font-size: 1.1rem;
       font-weight: bold;
-      margin-bottom: 10px;
+      margin-bottom: 4px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 5px;
     }
     
     .section-stats {
@@ -329,34 +332,34 @@ export async function generateSectionedHTMLContent(
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 5px;
     }
     
     .completion-rate {
-      font-size: 1.2rem;
+      font-size: 0.95rem;
       font-weight: bold;
     }
     
     .item-count {
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       opacity: 0.9;
     }
     
     .section-items {
       background: #f8f9fa;
-      padding: 20px;
-      border-radius: 0 0 10px 10px;
+      padding: 8px;
+      border-radius: 0 0 5px 5px;
       border: 1px solid #e9ecef;
       border-top: none;
     }
     
     .check-item {
       background: white;
-      margin-bottom: 15px;
-      padding: 15px;
-      border-radius: 8px;
-      border-left: 4px solid #ddd;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 6px;
+      padding: 6px 8px;
+      border-radius: 4px;
+      border-left: 3px solid #ddd;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
     
     .check-item.checked {
@@ -372,52 +375,56 @@ export async function generateSectionedHTMLContent(
     .check-item-header {
       display: flex;
       align-items: flex-start;
-      gap: 10px;
+      gap: 5px;
     }
     
     .check-icon {
-      font-size: 1.2rem;
-      margin-top: 2px;
+      font-size: 0.9rem;
+      margin-top: 1px;
     }
     
     .check-item-title {
-      font-size: 1.1rem;
+      font-size: 0.95rem;
       font-weight: bold;
       color: #2c3e50;
-      margin-bottom: 8px;
+      margin-bottom: 3px;
     }
     
     .check-item-description {
       color: #555;
-      margin-bottom: 10px;
+      margin-bottom: 4px;
+      font-size: 0.85rem;
     }
     
     .check-item-guide {
       background: #e8f4fd;
-      padding: 15px;
-      border-radius: 5px;
-      margin-top: 10px;
-      border-left: 3px solid #3498db;
+      padding: 5px;
+      border-radius: 3px;
+      margin-top: 4px;
+      border-left: 2px solid #3498db;
+      font-size: 0.8rem;
     }
     
     .guide-title {
       font-weight: bold;
       color: #2980b9;
-      margin-bottom: 8px;
+      margin-bottom: 3px;
+      font-size: 0.85rem;
     }
     
     .guide-examples {
-      margin-top: 10px;
+      margin-top: 3px;
     }
     
     .examples-title {
       font-weight: bold;
-      margin-bottom: 8px;
+      margin-bottom: 3px;
       color: #2980b9;
+      font-size: 0.85rem;
     }
     
     .good-examples, .bad-examples {
-      margin-bottom: 10px;
+      margin-bottom: 4px;
     }
     
     .good-examples ul, .bad-examples ul {
@@ -427,12 +434,14 @@ export async function generateSectionedHTMLContent(
     }
     
     .good-examples li, .bad-examples li {
-      margin-bottom: 4px;
+      margin-bottom: 2px;
+      font-size: 0.8rem;
     }
     
     .example-type {
       font-weight: bold;
-      margin-bottom: 5px;
+      margin-bottom: 2px;
+      font-size: 0.85rem;
     }
     
     .good-examples .example-type {
@@ -444,81 +453,84 @@ export async function generateSectionedHTMLContent(
     }
     
     .example {
-      margin-bottom: 8px;
+      margin-bottom: 3px;
+      font-size: 0.8rem;
     }
     
     .example.good {
-      border-left: 3px solid #27ae60;
-      padding-left: 10px;
+      border-left: 2px solid #27ae60;
+      padding-left: 5px;
     }
     
     .example.bad {
-      border-left: 3px solid #e74c3c;
-      padding-left: 10px;
+      border-left: 2px solid #e74c3c;
+      padding-left: 5px;
     }
     
     .check-item-notes {
       background: #fff3cd;
-      padding: 10px;
-      border-radius: 5px;
-      margin-top: 10px;
-      border-left: 3px solid #ffc107;
+      padding: 4px;
+      border-radius: 3px;
+      margin-top: 4px;
+      border-left: 2px solid #ffc107;
+      font-size: 0.8rem;
     }
     
     .notes-title {
       font-weight: bold;
       color: #856404;
-      margin-bottom: 5px;
+      margin-bottom: 2px;
+      font-size: 0.85rem;
     }
     
     .summary {
-      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-      padding: 30px;
-      border-radius: 15px;
-      margin-top: 40px;
+      background: #f8f9fa;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 15px;
       border: 1px solid #dee2e6;
     }
     
     .summary-title {
-      font-size: 1.8rem;
+      font-size: 1.1rem;
       font-weight: bold;
       color: #2c3e50;
-      margin-bottom: 20px;
+      margin-bottom: 8px;
       text-align: center;
     }
     
     .summary-stats {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      margin-bottom: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 8px;
+      margin-bottom: 8px;
     }
     
     .summary-stat {
       text-align: center;
       background: white;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      padding: 5px;
+      border-radius: 3px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
     
     .summary-stat-value {
-      font-size: 2rem;
+      font-size: 1.2rem;
       font-weight: bold;
-      margin-bottom: 5px;
+      margin-bottom: 2px;
     }
     
     .summary-stat-label {
       color: #666;
-      font-size: 0.9rem;
+      font-size: 0.75rem;
     }
     
     .judgment {
       text-align: center;
-      margin-top: 20px;
-      padding: 20px;
-      border-radius: 10px;
-      font-size: 1.2rem;
+      margin-top: 8px;
+      padding: 8px;
+      border-radius: 5px;
+      font-size: 0.95rem;
       font-weight: bold;
     }
     
@@ -544,15 +556,29 @@ export async function generateSectionedHTMLContent(
       body {
         max-width: none;
         margin: 0;
-        padding: 15px;
+        padding: 8px;
+        font-size: 10px;
       }
       
       .section {
+        margin-bottom: 10px;
         ${options.sectionBreaks ? 'page-break-before: always;' : ''}
       }
       
       .check-item {
         page-break-inside: avoid;
+      }
+      
+      .header {
+        margin-bottom: 10px;
+      }
+      
+      .title {
+        font-size: 1.2rem;
+      }
+      
+      .subtitle {
+        font-size: 1rem;
       }
     }
   </style>

@@ -103,78 +103,87 @@ export class HTMLToPDFGenerator {
 		body { 
 			font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif; 
 			margin: 0;
-			padding: 20px;
-			line-height: 1.6; 
+			padding: 10px;
+			line-height: 1.4; 
 			color: #333; 
 			background: #fff;
-			font-size: 14px;
+			font-size: 11px;
 		}
 		
-		/* ヘッダースタイル */
+		/* ヘッダースタイル - コンパクト */
 		.header-section { 
-			border-bottom: 3px solid #2c3e50; 
-			padding-bottom: 20px; 
-			margin-bottom: 30px; 
+			border-bottom: 1px solid #2c3e50; 
+			padding-bottom: 6px; 
+			margin-bottom: 6px; 
 		}
 		.header-section h1 { 
 			color: #2c3e50; 
-			margin: 0 0 15px 0; 
-			font-size: 28px;
+			margin: 0 0 4px 0; 
+			font-size: 14px;
 		}
 		.meta-info {
-			font-size: 14px;
+			font-size: 9px;
 			color: #666;
-			margin-bottom: 20px;
+			margin-bottom: 4px;
+			line-height: 1.3;
 		}
 		
-		/* サマリースタイル */
+		/* 見出しスタイル - コンパクト */
+		h3 {
+			font-size: 10px;
+			margin: 4px 0 3px 0;
+			color: #2c3e50;
+		}
+		
+		/* サマリースタイル - コンパクト */
 		.score-summary { 
-			background: linear-gradient(135deg, #f8f9fa, #e9ecef); 
-			padding: 25px; 
-			border-radius: 10px; 
-			margin-bottom: 30px;
-			border-left: 5px solid #3498db;
-			box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+			background: #f8f9fa; 
+			padding: 8px; 
+			border-radius: 4px; 
+			margin-bottom: 8px;
+			border-left: 3px solid #3498db;
 		}
 		.score-summary h2 {
-			margin: 0 0 20px 0; 
+			margin: 0 0 6px 0; 
 			color: #2c3e50; 
-			font-size: 22px;
+			font-size: 12px;
 		}
 		.score-grid {
 			display: grid;
-			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-			gap: 15px;
-			margin-bottom: 15px;
+			grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+			gap: 8px;
+			margin-bottom: 8px;
 		}
 		.score-item {
 			background: white;
-			padding: 15px;
-			border-radius: 8px;
-			border-left: 4px solid #3498db;
+			padding: 6px;
+			border-radius: 4px;
+			border-left: 3px solid #3498db;
+			font-size: 10px;
 		}
 		.score-item strong {
-			display: block;
+			display: inline;
 			color: #2c3e50;
-			margin-bottom: 5px;
+			margin-right: 4px;
+			font-size: 10px;
 		}
 		
-		/* セクションスタイル */
+		/* セクションスタイル - コンパクト */
 		.category-section { 
-			margin-bottom: 40px; 
+			margin-bottom: 8px; 
 			page-break-inside: avoid;
-			border: 1px solid #ddd;
-			border-radius: 10px;
+			border: 1px solid #e0e0e0;
+			border-radius: 4px;
 			overflow: hidden;
-			box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 		}
 		.section-header {
-			padding: 20px 25px;
+			padding: 5px 8px;
 			color: white;
 			font-weight: bold;
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
+			font-size: 11px;
 		}
 		.section-header.critical { background: linear-gradient(135deg, #e74c3c, #c0392b); }
 		.section-header.detailed { background: linear-gradient(135deg, #f39c12, #e67e22); }
@@ -182,99 +191,105 @@ export class HTMLToPDFGenerator {
 		.section-header.context { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
 		
 		.section-title {
-			font-size: 20px;
+			font-size: 12px;
 			display: flex;
 			align-items: center;
-			gap: 10px;
+			gap: 5px;
 		}
 		.section-stats {
-			font-size: 14px;
+			font-size: 10px;
 			opacity: 0.9;
 		}
 		
 		.section-content {
-			padding: 25px;
+			padding: 4px 6px;
 			background: #fff;
 		}
 		
-		/* チェックアイテムスタイル */
+		/* チェックアイテムスタイル - コンパクト */
 		.check-item { 
-			margin: 20px 0; 
-			padding: 20px; 
-			border-radius: 8px; 
-			border-left: 5px solid #ddd;
+			margin: 3px 0; 
+			padding: 4px 6px; 
+			border-radius: 3px; 
+			border-left: 2px solid #ddd;
 			background: #fafafa;
 			page-break-inside: avoid;
 		}
 		.check-item.checked { 
-			background: linear-gradient(135deg, #d5f4e6, #a8e6cf); 
+			background: #e8f5e9; 
 			border-left-color: #27ae60; 
 		}
 		.check-item.unchecked { 
-			background: linear-gradient(135deg, #ffeaa7, #fdcb6e); 
+			background: #fff3e0; 
 			border-left-color: #e17055; 
 		}
 		.check-item-header {
 			display: flex;
 			align-items: flex-start;
-			gap: 15px;
-			margin-bottom: 10px;
+			gap: 4px;
+			margin-bottom: 2px;
 		}
 		.check-icon {
-			font-size: 24px;
-			margin-top: 2px;
+			font-size: 12px;
+			margin-top: 0;
 		}
 		.check-item-title {
 			font-weight: bold;
-			font-size: 16px;
+			font-size: 10px;
 			color: #2c3e50;
-			margin-bottom: 8px;
+			margin-bottom: 2px;
+			line-height: 1.2;
 		}
 		.check-item-description {
 			color: #555;
-			margin-bottom: 15px;
-			line-height: 1.7;
+			margin-bottom: 3px;
+			line-height: 1.3;
+			font-size: 9px;
 		}
 		.check-item-guide {
 			background: rgba(255,255,255,0.7);
-			padding: 15px;
-			border-radius: 6px;
-			font-size: 13px;
+			padding: 4px;
+			border-radius: 2px;
+			font-size: 8px;
 			color: #666;
-			border-left: 3px solid #3498db;
+			border-left: 2px solid #3498db;
+			line-height: 1.2;
 		}
 		.guide-title {
 			font-weight: bold;
 			color: #2c3e50;
-			margin-bottom: 10px;
+			margin-bottom: 2px;
+			font-size: 9px;
 		}
 		
-		/* ノートセクション */
+		/* ノートセクション - コンパクト */
 		.notes-section { 
-			background: linear-gradient(135deg, #e8f4fd, #d1ecf1); 
-			padding: 25px; 
-			border-radius: 10px; 
-			margin-top: 30px; 
-			border-left: 5px solid #3498db;
+			background: #e8f4fd; 
+			padding: 6px; 
+			border-radius: 3px; 
+			margin-top: 8px; 
+			border-left: 2px solid #3498db;
 			page-break-inside: avoid;
 		}
 		.notes-section h2 {
-			margin: 0 0 20px 0;
+			margin: 0 0 4px 0;
 			color: #2c3e50;
+			font-size: 11px;
 		}
 		.notes-content {
 			background: white;
-			padding: 20px;
-			border-radius: 8px;
-			line-height: 1.7;
+			padding: 4px 6px;
+			border-radius: 3px;
+			line-height: 1.3;
+			font-size: 9px;
 		}
 		
-		/* 印刷対応 */
+		/* 印刷対応 - コンパクト */
 		@media print { 
-			body { margin: 15px; }
+			body { margin: 3px; padding: 5px; }
 			.category-section { 
 				page-break-inside: avoid;
-				margin-bottom: 30px;
+				margin-bottom: 6px;
 			}
 			.check-item { page-break-inside: avoid; }
 			${this.options.sectionBreaks ? '.category-section { page-break-before: always; }' : ''}
@@ -363,7 +378,7 @@ export class HTMLToPDFGenerator {
 			</div>
 		</div>
 		<div class="section-content">
-			<p style="color: #555; font-style: italic; margin-bottom: 20px;">
+			<p style="color: #555; font-style: italic; margin-bottom: 4px; font-size: 9px;">
 				${section.category.description}
 			</p>
 			${section.items.map(item => this.generateCheckItemHTML(item)).join('')}

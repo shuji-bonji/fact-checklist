@@ -138,7 +138,7 @@ export const REGEX_PATTERNS = {
 export const DEFAULTS = {
   LANGUAGE: 'ja',
   EXPORT_FORMAT: 'pdf',
-  INCLUDE_GUIDES: true,
+  INCLUDE_GUIDES: false,
   INCLUDE_NOTES: true,
   INCLUDE_SUMMARY: true,
   SECTION_BREAKS: false,
