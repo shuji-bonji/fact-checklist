@@ -31,6 +31,35 @@ body {
   min-height: 100vh;
   color: var(--text-color);
   transition: background var(--transition-slow) var(--ease-in-out);
+  /* ページ全体の滑らかなフェードイン（チラつき防止） */
+  animation: pageLoad 0.2s ease-out;
+}
+
+@keyframes pageLoad {
+  0% {
+    opacity: 0.95; /* 完全に0にしない - チラつき防止 */
+    transform: translateY(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* コンテンツの段階的表示 */
+.main-content,
+.checklist-sections,
+.sidebar {
+  animation: contentFadeIn 0.25s ease-out;
+}
+
+@keyframes contentFadeIn {
+  0% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 /* Typography Scale */

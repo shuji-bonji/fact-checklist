@@ -29,7 +29,7 @@
   // const _currentJudgment = $state<JudgmentType>(null); // 未使用
   let showExportModal = $state(false);
   const collapsedSections = $state<Record<string, boolean>>({});
-  let isClientReady = $state(false);
+  // isClientReady削除 - 常にコンテンツを表示
 
   // Derived state
   const categories = $derived(getCategories());
@@ -93,8 +93,7 @@
       }
     }
 
-    // クライアント準備完了
-    isClientReady = true;
+    // onMount処理完了
   });
 
   // === イベントハンドラー ===
@@ -312,7 +311,7 @@
             type="button"
             class="judgment-button adopt"
             onclick={() => handleComplete('adopt' as JudgmentType)}
-            disabled={!isClientReady}
+            disabled={!browser}
           >
             <span class="judgment-emoji">✅</span>
             <span class="judgment-text">{safeT('judgment.adopt', '採用（信頼できる）')}</span>
@@ -322,7 +321,7 @@
             type="button"
             class="judgment-button wait"
             onclick={() => handleComplete('wait' as JudgmentType)}
-            disabled={!isClientReady}
+            disabled={!browser}
           >
             <span class="judgment-emoji">⏸️</span>
             <span class="judgment-text">{safeT('judgment.wait', '保留（追加確認が必要）')}</span>
@@ -332,18 +331,16 @@
             type="button"
             class="judgment-button reject"
             onclick={() => handleComplete('reject' as JudgmentType)}
-            disabled={!isClientReady}
+            disabled={!browser}
           >
             <span class="judgment-emoji">❌</span>
             <span class="judgment-text">{safeT('judgment.reject', '不採用（信頼できない）')}</span>
           </button>
         </div>
 
-        {#if isClientReady}
-          <button type="button" class="export-button" onclick={handleExport}>
-            {safeT('ui.export', 'エクスポート')}
-          </button>
-        {/if}
+        <button type="button" class="export-button" onclick={handleExport} disabled={!browser}>
+          {safeT('ui.export', 'エクスポート')}
+        </button>
       {/if}
     </div>
   </div>
