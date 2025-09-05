@@ -58,14 +58,14 @@ export const translations: TranslationKeys = {
 
   // 應用程式特定
   app: {
-    title: '事實查核檢查表',
+    title: '事實檢查表',
     subtitle: '科學評估資訊可靠性的綜合系統',
-    brandTitle: '事實查核檢查表',
+    brandTitle: '事實檢查表',
     brandSubtitle: '系統性評估資訊可靠性',
     description: '科學系統性評估資訊可靠性的檢查表',
     version: '1.0.0',
-    author: '事實查核檢查表團隊',
-    copyright: '© 2025 事實查核檢查表團隊',
+    author: '事實檢查表團隊',
+    copyright: '© 2025 事實檢查表團隊',
     poweredBy: '技術支援'
   },
 
@@ -93,7 +93,7 @@ export const translations: TranslationKeys = {
       keywords: '隱私,個人資訊,資料保護,本機儲存,安全性'
     },
     intro: {
-      title: '在充滿假訊息的世界中生存的事實查核檢查表',
+      title: '在充滿假訊息的世界中生存的事實檢查表',
       description:
         '在政府社群媒體管制進展中，用自己的眼睛和頭腦評估資訊可靠性的簡單檢查表。科學系統性地評估資訊，不盲目信任AI或媒體。',
       keywords:

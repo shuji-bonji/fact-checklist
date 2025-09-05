@@ -55,14 +55,14 @@ export const translations: TranslationKeys = {
     }
   },
   app: {
-    title: '팩트체크 체크리스트',
+    title: '팩트 체크리스트',
     subtitle: '정보의 신뢰성을 과학적으로 평가하는 종합 시스템',
-    brandTitle: '팩트체크 체크리스트',
+    brandTitle: '팩트 체크리스트',
     brandSubtitle: '정보 신뢰성의 체계적 평가',
     description: '정보의 신뢰성을 과학적이고 체계적으로 평가하기 위한 체크리스트',
     version: '1.0.0',
-    author: '팩트체크 체크리스트 팀',
-    copyright: '© 2025 팩트체크 체크리스트 팀',
+    author: '팩트 체크리스트 팀',
+    copyright: '© 2025 팩트 체크리스트 팀',
     poweredBy: '개발:'
   },
 
@@ -93,7 +93,7 @@ export const translations: TranslationKeys = {
       keywords: '개인정보,개인 정보,데이터 보호,로컬 저장,보안'
     },
     intro: {
-      title: '가짜정보로 가득한 세상에서 살아남기 위한 팩트체크 체크리스트',
+      title: '가짜정보로 가득한 세상에서 살아남기 위한 팩트 체크리스트',
       description:
         '정부의 SNS 규제가 진행되는 가운데 자신의 눈과 머리로 정보의 신뢰성을 판단하기 위한 간단한 체크리스트입니다. AI나 미디어를 맹신하지 않고 과학적이고 체계적으로 정보를 평가하세요.',
       keywords:

@@ -6,8 +6,8 @@
  */
 export const APP_INFO = {
   NAME: 'Fact Checklist',
-  TITLE_JA: 'ファクトチェックシート',
-  SUBTITLE_JA: '情報の信頼性を科学的評価',
+  TITLE_JA: 'ファクトチェックリスト',
+  SUBTITLE_JA: '情報の信頼性を科学的に評価',
   VERSION: '1.0.0',
   AUTHOR: 'Fact Checklist Team',
   DESCRIPTION: 'Information reliability evaluation checklist',
