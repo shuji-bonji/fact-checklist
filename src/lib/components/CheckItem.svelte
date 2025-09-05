@@ -10,6 +10,29 @@
   const { item, onCheckChange }: Props = $props();
 
   let showGuide = $state(false);
+  
+  // ダークモードの状態を監視
+  let isDark = $state(false);
+  
+  $effect(() => {
+    // DOM が利用可能な場合のみ実行
+    if (typeof document !== 'undefined') {
+      const checkDarkMode = () => {
+        isDark = document.documentElement.classList.contains('dark');
+      };
+      
+      checkDarkMode();
+      
+      // MutationObserverでクラスの変更を監視
+      const observer = new MutationObserver(checkDarkMode);
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class']
+      });
+      
+      return () => observer.disconnect();
+    }
+  });
 
   // 動的翻訳：translationKeyがあれば使用、なければ既存のtitle/descriptionを使用
   const displayTitle = $derived(() => {
@@ -27,7 +50,7 @@
   });
 
   const displayGuideContent = $derived(() => {
-    if (item.translationKey && item.guideContent) {
+    if (item.translationKey) {
       return {
         title: factChecklistI18n.getCheckItemGuideTitle(item.translationKey),
         content: factChecklistI18n.getCheckItemGuideContent(item.translationKey),
@@ -115,19 +138,19 @@
               {@const examples = displayGuideContent()?.examples}
               <div class="guide-examples">
                 {#if examples?.good && examples.good.length > 0}
-                  <div class="examples-section">
+                  <div class="examples-section examples-good" class:dark-mode={isDark}>
                     <h5>✅ {t('export.goodExamples')}:</h5>
                     {#each examples.good as example}
-                      <div class="example-item good">{example}</div>
+                      <div class="example-item good" class:dark-mode={isDark}>{example}</div>
                     {/each}
                   </div>
                 {/if}
 
                 {#if examples?.bad && examples.bad.length > 0}
-                  <div class="examples-section">
+                  <div class="examples-section examples-bad" class:dark-mode={isDark}>
                     <h5>❌ {t('export.badExamples')}:</h5>
                     {#each examples.bad as example}
-                      <div class="example-item bad">{example}</div>
+                      <div class="example-item bad" class:dark-mode={isDark}>{example}</div>
                     {/each}
                   </div>
                 {/if}
@@ -368,17 +391,21 @@
   }
 
   .guide-examples {
-    background: var(--surface-elevated);
-    padding: var(--spacing-4);
-    border-radius: var(--radius-lg);
-    border-left: 4px solid var(--secondary-color);
-    box-shadow: var(--shadow-xs);
+    background: transparent !important;
+    padding: 0 !important;
     position: relative;
     z-index: 1;
+    border: none !important;
+    box-shadow: none !important;
   }
 
   .examples-section {
-    margin-bottom: var(--spacing-4);
+    margin-bottom: var(--spacing-4) !important;
+    padding: var(--spacing-4) !important;
+    border-radius: var(--radius-lg) !important;
+    background: #ffffff !important;
+    border: 2px solid #22c55e !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
   }
 
   .examples-section:last-child {
@@ -386,32 +413,170 @@
   }
 
   .examples-section h5 {
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-semibold);
+    font-size: 15px !important;
+    font-weight: 700 !important;
     font-family: var(--font-family-heading);
-    margin: 0 0 var(--spacing-2) 0;
-    color: var(--text-color);
+    margin: 0 0 12px 0 !important;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #15803d !important;
+  }
+
+  /* 良い例セクション - 色を明確に設定 */
+  .examples-section.examples-good {
+    background: #f0fdf4 !important;
+    border: 2px solid #22c55e !important;
+  }
+
+  .examples-section.examples-good h5 {
+    color: #15803d !important;
+  }
+
+  /* 悪い例セクション - 色を明確に設定 */
+  .examples-section.examples-bad {
+    background: #fef2f2 !important;
+    border: 2px solid #ef4444 !important;
+  }
+
+  .examples-section.examples-bad h5 {
+    color: #dc2626 !important;
   }
 
   .example-item {
-    padding: var(--spacing-2) 0;
-    border-bottom: 1px solid var(--border-color);
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-relaxed);
+    padding: 10px 12px !important;
+    margin: 6px 0 !important;
+    border-radius: 6px !important;
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease !important;
   }
 
-  .example-item:last-child {
-    border-bottom: none;
+  .example-item:hover {
+    transform: translateX(4px);
   }
 
   .example-item.good {
-    color: var(--success-color);
-    font-weight: var(--font-weight-medium);
+    color: #065f46 !important;
+    background: #ffffff !important;
+    border-left: 4px solid #10b981 !important;
+    padding-left: 12px !important;
+  }
+
+  .example-item.good:hover {
+    background: #f0fdf4 !important;
   }
 
   .example-item.bad {
-    color: var(--error-color);
-    font-weight: var(--font-weight-medium);
+    color: #7f1d1d !important;
+    background: #ffffff !important;
+    border-left: 4px solid #ef4444 !important;
+    padding-left: 12px !important;
+  }
+
+  .example-item.bad:hover {
+    background: #fef2f2 !important;
+  }
+
+  /* ダークモード対応 - よりクリアに */
+  :global(.dark) .guide-examples {
+    background: transparent !important;
+    border: none !important;
+  }
+
+  :global(.dark) .examples-section {
+    background: transparent !important;
+    border: 2px solid #10b981 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  /* ダークモード専用クラス - より高い優先度 */
+  .examples-section.examples-good.dark-mode {
+    background: transparent !important;
+    border: 2px solid #10b981 !important;
+  }
+
+  .examples-section.examples-good.dark-mode h5 {
+    color: #86efac !important;
+  }
+
+  .examples-section.examples-bad.dark-mode {
+    background: transparent !important;
+    border: 2px solid #ef4444 !important;
+  }
+
+  .examples-section.examples-bad.dark-mode h5 {
+    color: #fca5a5 !important;
+  }
+
+  /* フォールバック用 */
+  :global(.dark) .examples-section.examples-good {
+    background: transparent !important;
+    border: 2px solid #10b981 !important;
+  }
+
+  :global(.dark) .examples-section.examples-good h5 {
+    color: #86efac !important;
+  }
+
+  :global(.dark) .examples-section.examples-bad {
+    background: transparent !important;
+    border: 2px solid #ef4444 !important;
+  }
+
+  :global(.dark) .examples-section.examples-bad h5 {
+    color: #fca5a5 !important;
+  }
+
+  /* ダークモード用 example-item - 専用クラス */
+  .example-item.dark-mode {
+    background: rgba(255, 255, 255, 0.03) !important;
+  }
+
+  .example-item.good.dark-mode {
+    color: #bbf7d0 !important;
+    background: rgba(16, 185, 129, 0.05) !important;
+    border-left: 4px solid #10b981 !important;
+  }
+
+  .example-item.good.dark-mode:hover {
+    background: rgba(16, 185, 129, 0.15) !important;
+  }
+
+  .example-item.bad.dark-mode {
+    color: #fecaca !important;
+    background: rgba(239, 68, 68, 0.05) !important;
+    border-left: 4px solid #ef4444 !important;
+  }
+
+  .example-item.bad.dark-mode:hover {
+    background: rgba(239, 68, 68, 0.15) !important;
+  }
+
+  /* フォールバック用 */
+  :global(.dark) .example-item {
+    background: rgba(255, 255, 255, 0.03) !important;
+  }
+
+  :global(.dark) .example-item.good {
+    color: #bbf7d0 !important;
+    background: rgba(16, 185, 129, 0.05) !important;
+    border-left: 4px solid #10b981 !important;
+  }
+
+  :global(.dark) .example-item.good:hover {
+    background: rgba(16, 185, 129, 0.15) !important;
+  }
+
+  :global(.dark) .example-item.bad {
+    color: #fecaca !important;
+    background: rgba(239, 68, 68, 0.05) !important;
+    border-left: 4px solid #ef4444 !important;
+  }
+
+  :global(.dark) .example-item.bad:hover {
+    background: rgba(239, 68, 68, 0.15) !important;
   }
 
   /* アクセシビリティ向上 */

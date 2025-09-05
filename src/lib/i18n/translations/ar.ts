@@ -460,6 +460,13 @@ export const translations: TranslationKeys = {
           }
         }
       },
+      examples: {
+        title: 'Good and Bad Examples',
+        emoji: '💡',
+        description: 'Learn from specific evaluation examples',
+        content: '',
+        subSections: {}
+      },
       features: {
         title: 'المميزات',
         emoji: '⭐',
