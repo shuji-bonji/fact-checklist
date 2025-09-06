@@ -11,6 +11,7 @@ import type { ChecklistResult, ChecklistScore } from '$lib/types/checklist';
 interface MinimalShareData {
   v: number; // バージョン
   t: string; // タイトル
+  desc?: string; // 説明・概要（オプション）
   n?: string; // ノート（オプション）
   c: string[]; // チェックされたアイテムのID配列
   s: number; // スコア（パーセンテージ）
@@ -36,6 +37,11 @@ export function createShareableUrl(checklist: ChecklistResult): string {
       d: checklist.completedAt ? new Date(checklist.completedAt).getTime() : Date.now()
     };
 
+    // 説明がある場合は追加（150文字まで）
+    if (checklist.description) {
+      minimalData.desc = checklist.description.substring(0, 150);
+    }
+
     // ノートがある場合は追加（200文字まで）
     if (checklist.notes) {
       minimalData.n = checklist.notes.substring(0, 200);
@@ -49,11 +55,11 @@ export function createShareableUrl(checklist: ChecklistResult): string {
     // JSONを文字列化して圧縮
     const jsonStr = JSON.stringify(minimalData);
 
-    // Base64エンコード（URLセーフ）
-    const encoded = btoa(unescape(encodeURIComponent(jsonStr)))
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=/g, '');
+    // Base64エンコード（URLセーフ）- TextEncoderを使用
+    const encoder = new TextEncoder();
+    const data = encoder.encode(jsonStr);
+    const base64 = btoa(String.fromCharCode(...data));
+    const encoded = base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
     // 共有用URLを生成（GitHub Pagesのbase pathを考慮）
     if (typeof window !== 'undefined') {
@@ -103,7 +109,14 @@ export function parseShareableUrl(
       encoded.replace(/-/g, '+').replace(/_/g, '/') +
       '=='.substring(0, (4 - (encoded.length % 4)) % 4);
 
-    const jsonStr = decodeURIComponent(escape(atob(base64)));
+    // TextDecoderを使用してデコード
+    const binaryString = atob(base64);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    const decoder = new TextDecoder();
+    const jsonStr = decoder.decode(bytes);
     const data = JSON.parse(jsonStr) as MinimalShareData;
 
     // バージョンチェック
@@ -114,6 +127,7 @@ export function parseShareableUrl(
     // 復元データを作成
     const result = {
       title: data.t,
+      description: data.desc !== null && data.desc !== undefined ? data.desc : '',
       notes: data.n !== null && data.n !== undefined ? data.n : '',
       judgment:
         data.j !== null && data.j !== undefined
