@@ -60,6 +60,7 @@
 </script>
 
 <button
+  type="button"
   onclick={toggleDarkMode}
   class="dark-mode-toggle"
   aria-label={isDarkMode ? 'ライトモードに切り替え' : 'ダークモードに切り替え'}

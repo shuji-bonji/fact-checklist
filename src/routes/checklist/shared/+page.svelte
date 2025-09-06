@@ -71,7 +71,7 @@
       fullChecklist = {
         id: crypto.randomUUID(),
         title: data.title || t('intro.share.sharedChecklist'),
-        description: '',
+        description: data.description || '',
         createdAt: new Date(),
         updatedAt: new Date(),
         completedAt: data.completedAt,
@@ -182,6 +182,9 @@
     <header class="result-header">
       <div class="header-info">
         <h1>{fullChecklist.title}</h1>
+        {#if fullChecklist.description}
+          <p class="description">{fullChecklist.description}</p>
+        {/if}
         <div class="meta">
           <span class="meta-item">
             📅 {fullChecklist.completedAt?.toLocaleDateString()}
@@ -395,6 +398,12 @@
   .header-info h1 {
     margin: 0 0 var(--spacing-sm) 0;
     font-size: 1.8rem;
+  }
+
+  .header-info .description {
+    margin: 0 0 var(--spacing-sm) 0;
+    color: var(--text-color-secondary);
+    font-size: 1rem;
   }
 
   .meta {
