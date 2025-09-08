@@ -2,23 +2,25 @@
   import '../app.css';
 
   // PWA設定
-  import { onMount } from 'svelte';
-  import { dev, browser } from '$app/environment';
-  import { base } from '$app/paths';
+  import { browser, dev } from '$app/environment';
   import { goto } from '$app/navigation';
+  import { base } from '$app/paths';
   import { page } from '$app/stores';
-
+  import { onMount } from 'svelte';
   // i18n
-  import { t, simpleI18nStore, setLanguage } from '$lib/i18n/simple-store.svelte.js';
+  import DarkModeToggle from '$lib/components/DarkModeToggle.svelte';
+  import LanguageSwitcher from '$lib/components/LanguageSwitcher.svelte';
+  import { setLanguage, simpleI18nStore, t } from '$lib/i18n/simple-store.svelte.js';
   import type { LanguageCode } from '$lib/i18n/types.js';
   import { SUPPORTED_LANGUAGES } from '$lib/i18n/types.js';
-  import LanguageSwitcher from '$lib/components/LanguageSwitcher.svelte';
-  import DarkModeToggle from '$lib/components/DarkModeToggle.svelte';
-  import type { LayoutData } from './$types';
   import type { LayoutServerData } from '$lib/types/layout.js';
-
+  import type { LayoutData } from './$types';
   // PWA
   import { registerPWA, setupPWAInstallPrompt } from '$lib/utils/pwa-register.js';
+  // Vercel speed-insights
+  import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
+
+  injectSpeedInsights();
 
   // シンプルなi18nストアは常に初期化済み
   const isI18nReady = true;
