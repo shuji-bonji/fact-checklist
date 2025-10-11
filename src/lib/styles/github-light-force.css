@@ -1,0 +1,270 @@
+/* GitHub Light Mode Force Override */
+/* This file explicitly resets dark mode styles for Safari/Firefox compatibility */
+
+/* Force light mode with higher specificity than dark mode selectors */
+/* Using body.light and html.light together for maximum specificity */
+:root:not(.dark),
+html:not(.dark),
+:root.light:not(.dark),
+html.light:not(.dark),
+body.light {
+  /* Reset all dark mode overrides with !important to match dark mode specificity */
+
+  /* Text colors - reset to original */
+  p,
+  span,
+  div {
+    color: var(--text-color) !important;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--text-color) !important;
+  }
+
+  /* Navigation */
+  .global-nav {
+    background: rgba(227, 242, 253, 0.85) !important;
+    border-color: rgba(227, 242, 253, 0.3) !important;
+  }
+
+  /* Buttons */
+  button,
+  .btn {
+    background: var(--surface-color) !important;
+    color: var(--text-color) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  /* Desktop controls (dark mode toggle and language switcher) */
+  .desktop-controls,
+  .tablet-controls,
+  .mobile-controls {
+    background: transparent !important;
+  }
+
+  /* Confidence text colors - reset to design token colors */
+  .confidence-text.confidence-very-low,
+  .confidence-meter .confidence-text.confidence-very-low {
+    color: var(--error-color) !important;
+  }
+
+  .confidence-text.confidence-low,
+  .confidence-meter .confidence-text.confidence-low {
+    color: var(--warning-color) !important;
+  }
+
+  .confidence-text.confidence-medium,
+  .confidence-meter .confidence-text.confidence-medium {
+    color: var(--primary-color) !important;
+  }
+
+  .confidence-text.confidence-high,
+  .confidence-meter .confidence-text.confidence-high {
+    color: var(--success-color) !important;
+  }
+
+  /* Judgment advice */
+  .judgment-advice,
+  .judgment-advice-text,
+  .confidence-meter .judgment-advice {
+    background: var(--surface-elevated) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color) !important;
+  }
+
+  .judgment-advice p,
+  .judgment-advice-text p {
+    color: var(--text-color-secondary) !important;
+  }
+
+  /* History items */
+  .history-item {
+    background: var(--surface-elevated) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-color) !important;
+  }
+
+  .history-item:hover {
+    background: var(--surface-color) !important;
+  }
+
+  /* History item children */
+  .history-item .item-title,
+  .history-item .completion-date,
+  .history-item .score-summary {
+    color: var(--text-color) !important;
+  }
+
+  /* Judgment indicators */
+  .judgment-indicator {
+    background: var(--surface-elevated) !important;
+    color: var(--text-color) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  .judgment-indicator.unknown {
+    background: var(--surface-color) !important;
+    color: var(--text-color-secondary) !important;
+  }
+
+  .judgment-indicator.reject {
+    background: rgba(244, 67, 54, 0.1) !important;
+    color: var(--error-color) !important;
+    border-color: var(--error-color) !important;
+  }
+
+  .judgment-indicator.caution {
+    background: rgba(255, 152, 0, 0.1) !important;
+    color: var(--warning-color) !important;
+    border-color: var(--warning-color) !important;
+  }
+
+  .judgment-indicator.accept {
+    background: rgba(76, 175, 80, 0.1) !important;
+    color: var(--success-color) !important;
+    border-color: var(--success-color) !important;
+  }
+
+  /* Confidence indicators */
+  .confidence-indicator {
+    color: var(--text-color) !important;
+  }
+
+  .confidence-indicator.very-low {
+    background: rgba(244, 67, 54, 0.1) !important;
+    color: var(--error-color) !important;
+    border-color: var(--error-color) !important;
+  }
+
+  .confidence-indicator.low {
+    background: rgba(255, 152, 0, 0.1) !important;
+    color: var(--warning-color) !important;
+    border-color: var(--warning-color) !important;
+  }
+
+  .confidence-indicator.medium {
+    background: rgba(33, 150, 243, 0.1) !important;
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+  }
+
+  .confidence-indicator.high {
+    background: rgba(76, 175, 80, 0.1) !important;
+    color: var(--success-color) !important;
+    border-color: var(--success-color) !important;
+  }
+
+  /* Input fields */
+  input,
+  textarea,
+  select {
+    background: var(--surface-color) !important;
+    color: var(--text-color) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    border-color: var(--primary-color) !important;
+    background: var(--surface-elevated) !important;
+  }
+
+  /* Cards and sections */
+  .card,
+  .section,
+  .page-header,
+  .score-container,
+  .action-buttons,
+  .history-section,
+  .final-judgment,
+  .judgment-section {
+    background: var(--surface-elevated) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-color) !important;
+  }
+
+  /* Links */
+  a {
+    color: var(--primary-color) !important;
+  }
+
+  a:hover {
+    color: var(--primary-hover) !important;
+  }
+
+  /* Body background */
+  body {
+    background: var(--bg-color) !important;
+    color: var(--text-color) !important;
+  }
+
+  /* Main container */
+  .page-wrapper,
+  .main-container {
+    background: var(--bg-color) !important;
+  }
+
+  /* Score items */
+  .score-item,
+  .score-display .score-item,
+  .score-breakdown .score-item {
+    color: var(--text-color) !important;
+  }
+
+  .score-item .score-label,
+  .score-display .score-label,
+  .score-breakdown .score-label {
+    color: var(--text-color-secondary) !important;
+  }
+
+  .score-item .score-value,
+  .score-display .score-value,
+  .score-breakdown .score-value {
+    color: var(--text-color) !important;
+  }
+
+  /* Confidence bar */
+  .confidence-bar-container {
+    background: var(--surface-color) !important;
+    border: 1px solid var(--border-color) !important;
+  }
+
+  .confidence-bar {
+    background: var(--surface-elevated) !important;
+  }
+
+  /* Confidence meter */
+  .confidence-meter {
+    background: var(--surface-elevated) !important;
+    border: 1px solid var(--border-color) !important;
+  }
+
+  /* Section header */
+  .section-header {
+    background: var(--surface-elevated) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-color) !important;
+  }
+
+  /* Section content */
+  .section-content {
+    background: var(--surface-color) !important;
+    border-color: var(--border-color) !important;
+  }
+}
+
+/* Safari-specific fixes */
+@supports (-webkit-appearance: none) {
+  /* Force reflow on Safari when light class is added */
+  :root.light *,
+  html.light * {
+    /* Trigger repaint */
+    transform: translateZ(0);
+  }
+}

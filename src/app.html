@@ -16,24 +16,41 @@
           // 明示的な設定がある場合はそれを優先、なければシステム設定を使用
           const shouldUseDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
 
-          // ページ読み込み前にdarkクラスを適用（htmlとbody両方）
+          // デバッグ用ログ（本番環境でも確認可能）
+          console.log('[Dark Mode Init]', {
+            savedTheme: savedTheme,
+            prefersDark: prefersDark,
+            shouldUseDark: shouldUseDark,
+            userAgent: navigator.userAgent
+          });
+
+          // ページ読み込み前にクラスを設定
           if (shouldUseDark) {
             document.documentElement.classList.add('dark');
-            // bodyは後から追加されるため、DOMContentLoaded後に追加
           } else {
-            // ライトモードの場合は明示的にdarkクラスを削除
+            // ライトモードの場合は明示的にdarkクラスを削除し、lightクラスを追加
             document.documentElement.classList.remove('dark');
+            document.documentElement.classList.add('light');
           }
 
           // bodyへのクラス追加はDOMContentLoaded後
           document.addEventListener('DOMContentLoaded', function () {
             if (shouldUseDark) {
               document.body.classList.add('dark');
+              document.body.classList.remove('light');
             } else {
               document.body.classList.remove('dark');
+              document.body.classList.add('light');
             }
+
+            // デバッグ用：最終的なクラス状態を確認
+            console.log('[Dark Mode Applied]', {
+              htmlClasses: document.documentElement.className,
+              bodyClasses: document.body.className
+            });
           });
         } catch (e) {
+          console.error('[Dark Mode Error]', e);
           // localStorage が使用できない場合はシステム設定のみ使用
           const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
           if (prefersDark) {
@@ -43,8 +60,10 @@
             });
           } else {
             document.documentElement.classList.remove('dark');
+            document.documentElement.classList.add('light');
             document.addEventListener('DOMContentLoaded', function () {
               document.body.classList.remove('dark');
+              document.body.classList.add('light');
             });
           }
         }
