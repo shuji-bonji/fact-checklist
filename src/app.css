@@ -7,6 +7,9 @@
 /* GitHub Dark Mode Support */
 @import './lib/styles/github-dark-tokens.css';
 
+/* GitHub Light Mode Force Override - Must be after dark tokens for Safari compatibility */
+@import './lib/styles/github-light-force.css';
+
 /* Reset and base styles */
 * {
   margin: 0;

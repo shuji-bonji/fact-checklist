@@ -8,12 +8,21 @@
     const currentDark = document.documentElement.classList.contains('dark');
     isDarkMode = currentDark;
 
+    // デバッグログ
+    console.log('[DarkModeToggle] onMount', {
+      currentDark,
+      htmlClasses: document.documentElement.className,
+      bodyClasses: document.body.className,
+      savedTheme: localStorage.getItem('theme')
+    });
+
     // システムのダークモード設定変更を監視（ユーザーが明示的に設定していない場合のみ）
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = (e: MediaQueryListEvent) => {
       const savedTheme = localStorage.getItem('theme');
       // ユーザーが明示的にテーマを設定していない場合のみ、システム設定に追従
       if (!savedTheme) {
+        console.log('[DarkModeToggle] System theme changed', e.matches);
         isDarkMode = e.matches;
         updateTheme(isDarkMode);
       }
@@ -27,18 +36,31 @@
   });
 
   function updateTheme(dark: boolean): void {
+    console.log('[DarkModeToggle] updateTheme', { dark });
+
     // htmlとbody両方のクラスを同時に更新
     if (dark) {
+      document.documentElement.classList.remove('light');
       document.documentElement.classList.add('dark');
+      document.body.classList.remove('light');
       document.body.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
       document.body.classList.remove('dark');
+      document.body.classList.add('light');
     }
+
+    // デバッグログ：更新後の状態
+    console.log('[DarkModeToggle] After update', {
+      htmlClasses: document.documentElement.className,
+      bodyClasses: document.body.className
+    });
   }
 
   function toggleDarkMode(): void {
     isDarkMode = !isDarkMode;
+    console.log('[DarkModeToggle] Toggle clicked', { newValue: isDarkMode });
     updateTheme(isDarkMode);
     // ユーザーの選択を保存
     localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
