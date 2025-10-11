@@ -3,33 +3,17 @@
 
   let isDarkMode = $state(false);
 
-  // 初期状態のチェック（ブラウザ環境のみ）
-  $effect(() => {
-    if (typeof document !== 'undefined') {
-      // 現在のダークモード状態を検知
-      const hasDarkClass = document.documentElement.classList.contains('dark');
-      if (hasDarkClass !== isDarkMode) {
-        isDarkMode = hasDarkClass;
-      }
-    }
-  });
-
   onMount(() => {
-    // 初期状態の取得
-    const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    // app.htmlで既に設定された状態を読み取る
     const currentDark = document.documentElement.classList.contains('dark');
+    isDarkMode = currentDark;
 
-    // 既にdarkクラスがある場合はそれを優先、なければ保存値かシステム設定
-    isDarkMode = currentDark || (savedTheme ? savedTheme === 'dark' : prefersDark);
-
-    // 初期状態を適用
-    updateTheme(isDarkMode);
-
-    // システムのダークモード設定変更を監視
+    // システムのダークモード設定変更を監視（ユーザーが明示的に設定していない場合のみ）
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = (e: MediaQueryListEvent) => {
-      if (!localStorage.getItem('theme')) {
+      const savedTheme = localStorage.getItem('theme');
+      // ユーザーが明示的にテーマを設定していない場合のみ、システム設定に追従
+      if (!savedTheme) {
         isDarkMode = e.matches;
         updateTheme(isDarkMode);
       }
@@ -42,7 +26,8 @@
     };
   });
 
-  function updateTheme(dark: boolean) {
+  function updateTheme(dark: boolean): void {
+    // htmlとbody両方のクラスを同時に更新
     if (dark) {
       document.documentElement.classList.add('dark');
       document.body.classList.add('dark');
@@ -52,9 +37,10 @@
     }
   }
 
-  function toggleDarkMode() {
+  function toggleDarkMode(): void {
     isDarkMode = !isDarkMode;
     updateTheme(isDarkMode);
+    // ユーザーの選択を保存
     localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
   }
 </script>

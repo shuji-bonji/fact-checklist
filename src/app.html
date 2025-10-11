@@ -12,16 +12,40 @@
           // localStorage とシステム設定をチェック
           const savedTheme = localStorage.getItem('theme');
           const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+          // 明示的な設定がある場合はそれを優先、なければシステム設定を使用
           const shouldUseDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
 
-          // ページ読み込み前にdarkクラスを適用
+          // ページ読み込み前にdarkクラスを適用（htmlとbody両方）
           if (shouldUseDark) {
             document.documentElement.classList.add('dark');
+            // bodyは後から追加されるため、DOMContentLoaded後に追加
+          } else {
+            // ライトモードの場合は明示的にdarkクラスを削除
+            document.documentElement.classList.remove('dark');
           }
+
+          // bodyへのクラス追加はDOMContentLoaded後
+          document.addEventListener('DOMContentLoaded', function () {
+            if (shouldUseDark) {
+              document.body.classList.add('dark');
+            } else {
+              document.body.classList.remove('dark');
+            }
+          });
         } catch (e) {
           // localStorage が使用できない場合はシステム設定のみ使用
-          if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (prefersDark) {
             document.documentElement.classList.add('dark');
+            document.addEventListener('DOMContentLoaded', function () {
+              document.body.classList.add('dark');
+            });
+          } else {
+            document.documentElement.classList.remove('dark');
+            document.addEventListener('DOMContentLoaded', function () {
+              document.body.classList.remove('dark');
+            });
           }
         }
       })();

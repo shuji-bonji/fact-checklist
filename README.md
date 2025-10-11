@@ -21,8 +21,7 @@ languages** with full internationalization support.
 
 ファクトチェックシートは、インターネット上の情報の信頼性を科学的・体系的に評価するための**企業レベル高度PWA**です。偽情報やミスリーディングな情報が氾濫する現代において、**12言語完全対応**の国際化機能で情報リテラシーの向上を支援します。
 
-> [!IMPORTANT]
-> This "Fact Checklist" project is created through collaboration
+> [!IMPORTANT] This "Fact Checklist" project is created through collaboration
 > between a human engineer (@shuji-bonji) and AI
 > (Claude). この「ファクトチェックシート」プロジェクト(Github)は、人間のエンジニア（@shuji-bonji）と生成AI（Claude）との協働によって作成されています。
 
