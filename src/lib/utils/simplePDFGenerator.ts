@@ -74,7 +74,7 @@ export class SimplePDFGenerator {
             };
 
             // 定期的にキャンセルをチェック
-            cancelCheckInterval = setInterval(() => {
+            cancelCheckInterval = window.setInterval(() => {
               checkCancel();
               if (dialogClosed) {
                 clearInterval(cancelCheckInterval);

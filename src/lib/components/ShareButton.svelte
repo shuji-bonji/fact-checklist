@@ -115,7 +115,7 @@
   $effect(() => {
     let timer: number | undefined;
     if (copySuccess) {
-      timer = setTimeout(() => {
+      timer = window.setTimeout(() => {
         copySuccess = false;
       }, 3000);
     }
