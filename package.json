@@ -68,7 +68,7 @@
     "@sveltejs/adapter-vercel": "^5.7.2",
     "@vercel/speed-insights": "^1.2.0",
     "html2canvas": "^1.4.1",
-    "jspdf": "^3.0.1",
+    "jspdf": "^3.0.2",
     "uuid": "^10.0.0"
   },
   "keywords": [
