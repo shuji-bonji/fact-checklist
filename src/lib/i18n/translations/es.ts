@@ -8,8 +8,8 @@ import type { TranslationKeys } from '../types.js';
 export const metadata = {
   language: 'es' as const,
   version: '1.0.0',
-  lastUpdated: '2025-06-29',
-  translator: 'Claude Code',
+  lastUpdated: '2025-01-27',
+  translator: 'DeepL + Claude Code',
   completeness: 100
 };
 
@@ -102,7 +102,7 @@ export const translations: TranslationKeys = {
     intro: {
       title: 'Lista de Verificación de Hechos para Sobrevivir en un Mundo Lleno de Desinformación',
       description:
-        'Una lista de verificación simple para evaluar la confiabilidad de la información con sus propios ojos y mente mientras avanza la regulación gubernamental de redes sociales. Evalúe información científica y sistemáticamente sin confiar ciegamente en IA o medios.',
+        'Una sencilla lista de comprobación para evaluar la fiabilidad de la información con tus propios ojos y mente ante la regulación gubernamental de las redes sociales; una app PWA para evaluar la información de forma científica y sistemática sin dar por sentada la IA o los medios de comunicación.',
       keywords:
         'verificación de hechos,verificación de información,evaluación de confiabilidad,PWA,alfabetización informacional,contramedidas de desinformación,regulación de redes sociales,control de información,calidad de información,verificación de hechos por IA'
     }
@@ -1300,11 +1300,11 @@ export const translations: TranslationKeys = {
         title:
           'Regulación Gubernamental de Redes Sociales y la Realidad del Control de Información',
         quote:
-          'Bajo la noble causa de "eliminar la desinformación", ¿quién decide qué es la "verdad"?',
+          '¿Quién decide qué es "verdad" para "eliminar la desinformación y la desinformación"?',
         content1:
-          'Las regulaciones de redes sociales que avanzan mundialmente afirman ser "medidas anti-desinformación", pero en realidad, corren el riesgo de convertirse en herramientas para controlar información inconveniente para los gobiernos.',
+          'Las normativas sobre redes sociales que avanzan en muchos países del mundo tienen como objetivo aparente "combatir la desinformación", pero en realidad pueden convertirse en un medio de controlar la información incómoda para los gobiernos.',
         content2:
-          'Lo que necesitamos es la capacidad de juzgar la confiabilidad de la información nosotros mismos, sin depender de gobiernos, medios principales o IA.'
+          'Lo que necesitamos es la capacidad de juzgar la fiabilidad de la información por nosotros mismos, sin depender de los gobiernos, los grandes medios de comunicación o la IA.'
       },
       balance: {
         title: 'Control del Discurso vs. Calidad de la Información: Un Enfoque Equilibrado',

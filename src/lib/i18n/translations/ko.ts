@@ -8,8 +8,8 @@ import type { TranslationKeys } from '../types.js';
 export const metadata = {
   language: 'ko' as const,
   version: '1.0.0',
-  lastUpdated: '2025-01-01',
-  translator: 'Claude Code AI',
+  lastUpdated: '2025-01-27',
+  translator: 'DeepL + Claude Code',
   completeness: 100
 };
 
@@ -95,7 +95,7 @@ export const translations: TranslationKeys = {
     intro: {
       title: '가짜정보로 가득한 세상에서 살아남기 위한 팩트 체크리스트',
       description:
-        '정부의 SNS 규제가 진행되는 가운데 자신의 눈과 머리로 정보의 신뢰성을 판단하기 위한 간단한 체크리스트입니다. AI나 미디어를 맹신하지 않고 과학적이고 체계적으로 정보를 평가하세요.',
+        '정부의 SNS 규제가 강화되는 가운데, 정보의 신뢰성을 자신의 눈과 머리로 판단할 수 있는 간단한 체크리스트, AI와 미디어를 믿지 않고 과학적이고 체계적으로 정보를 평가하는 PWA 앱.',
       keywords:
         '팩트체크,정보 검증,신뢰성 평가,PWA,정보 리터러시,가짜정보 대응,SNS 규제,정보 통제,정보의 질,AI 팩트체크'
     }
@@ -669,11 +669,11 @@ export const translations: TranslationKeys = {
     sections: {
       regulation: {
         title: '정부 SNS 규제와 정보 통제의 현실',
-        quote: '"허위정보 제거"라는 숭고한 명분 아래, 누가 "진실"을 결정하는가?',
+        quote: "'허위-왜곡된 정보를 삭제한다'는 명분 아래 누가 '진실'을 결정하는가?",
         content1:
-          '전 세계적으로 진행되는 SNS 규제는 "허위정보 방지 조치"라고 주장하지만, 실제로는 정부에게 불편한 정보를 통제하는 도구가 될 위험이 있습니다.',
+          "세계 각국에서 진행되고 있는 SNS 규제는 표면적으로는 '가짜뉴스 대책'을 내세우고 있지만, 실상은 정부에 불리한 정보를 통제하기 위한 수단으로 활용될 수 있다.",
         content2:
-          '우리에게 필요한 것은 정부, 주류 언론, 또는 AI에 의존하지 않고 우리 자신이 정보의 신뢰성을 판단할 수 있는 능력입니다.'
+          '우리에게 필요한 것은 정부나 거대 미디어, AI에 의존하지 않고 스스로 정보의 신뢰성을 판단할 수 있는 힘이다.'
       },
       balance: {
         title: '언론 통제 대 정보 품질: 균형 잡힌 접근법',

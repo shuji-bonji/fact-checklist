@@ -8,8 +8,8 @@ import type { TranslationKeys } from '../types.js';
 export const metadata = {
   language: 'id' as const,
   version: '1.0.0',
-  lastUpdated: '2025-01-01',
-  translator: 'Claude Code AI',
+  lastUpdated: '2025-01-27',
+  translator: 'DeepL + Claude Code',
   completeness: 100
 };
 
@@ -98,7 +98,7 @@ export const translations: TranslationKeys = {
     intro: {
       title: 'Daftar Periksa Fakta untuk Bertahan di Dunia Penuh Misinformasi',
       description:
-        'Daftar periksa sederhana untuk mengevaluasi keandalan informasi dengan mata dan pikiran Anda sendiri saat regulasi media sosial pemerintah berkembang. Evaluasi informasi secara ilmiah dan sistematis tanpa mempercayai AI atau media secara membabi buta.',
+        'Daftar periksa sederhana untuk menilai keandalan informasi dengan mata dan pikiran Anda sendiri dalam menghadapi peraturan pemerintah tentang situs jejaring sosial; aplikasi PWA untuk mengevaluasi informasi secara ilmiah dan sistematis tanpa menganggap remeh AI atau media.',
       keywords:
         'pengecekan fakta,verifikasi informasi,evaluasi keandalan,PWA,literasi informasi,penanggulangan misinformasi,regulasi media sosial,kontrol informasi,kualitas informasi,pengecekan fakta AI'
     }
@@ -1248,11 +1248,11 @@ export const translations: TranslationKeys = {
       regulation: {
         title: 'Regulasi Media Sosial Pemerintah dan Realitas Kontrol Informasi',
         quote:
-          'Di bawah tujuan mulia "menghapus disinformasi", siapa yang memutuskan apa yang "benar"?',
+          "Siapa yang memutuskan apa yang dimaksud dengan 'kebenaran' dalam upaya 'menghapus disinformasi dan misinformasi'?",
         content1:
-          'Regulasi media sosial yang berkembang di seluruh dunia mengklaim sebagai "tindakan anti-disinformasi", tetapi pada kenyataannya, mereka berisiko menjadi alat untuk mengontrol informasi yang tidak nyaman bagi pemerintah.',
+          "Peraturan jejaring sosial yang berkembang di banyak negara di seluruh dunia seolah-olah ditujukan untuk 'memerangi disinformasi', tetapi pada kenyataannya peraturan tersebut dapat menjadi alat untuk mengendalikan informasi yang tidak nyaman bagi pemerintah.",
         content2:
-          'Yang kita butuhkan adalah kemampuan untuk menilai keandalan informasi sendiri, tanpa bergantung pada pemerintah, media mainstream, atau AI.'
+          'Yang kita butuhkan adalah kemampuan untuk menilai keandalan informasi untuk diri kita sendiri, tanpa bergantung pada pemerintah, media besar, atau AI.'
       },
       balance: {
         title: 'Kontrol Ucapan vs. Kualitas Informasi: Pendekatan Seimbang',

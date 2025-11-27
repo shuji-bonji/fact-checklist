@@ -8,8 +8,8 @@ import type { TranslationKeys } from '../types.js';
 export const metadata = {
   language: 'it' as const,
   version: '1.0.0',
-  lastUpdated: '2025-01-30',
-  translator: 'Claude',
+  lastUpdated: '2025-01-27',
+  translator: 'DeepL + Claude Code',
   completeness: 100
 };
 
@@ -99,7 +99,7 @@ export const translations: TranslationKeys = {
     intro: {
       title: 'Fact Checklist per Sopravvivere in un Mondo Pieno di Disinformazione',
       description:
-        "Una lista di controllo semplice per valutare l'affidabilità delle informazioni con i tuoi occhi e la tua mente mentre avanza la regolamentazione governativa dei social media. Valuta le informazioni scientificamente e sistematicamente senza fidarti ciecamente di IA o media.",
+        "Una semplice lista di controllo per valutare l'affidabilità delle informazioni con i propri occhi e la propria mente di fronte alla regolamentazione governativa dei siti di social network; un'app PWA per valutare scientificamente e sistematicamente le informazioni senza dare per scontata l'IA o i media.",
       keywords:
         "verifica dei fatti,verifica delle informazioni,valutazione dell'affidabilità,PWA,alfabetizzazione informativa,contromisure alla disinformazione,regolamentazione dei social media,controllo delle informazioni,qualità delle informazioni,verifica dei fatti tramite IA"
     }
@@ -1353,11 +1353,11 @@ export const translations: TranslationKeys = {
         title:
           "Regolamentazione Governativa dei Social Media e la Realtà del Controllo dell'Informazione",
         quote:
-          'Sotto la nobile causa di "rimuovere la disinformazione", chi decide cosa sia la "verità"?',
+          'Chi decide cosa è "verità" nella causa di "eliminare la disinformazione e la misinformazione"?',
         content1:
-          'Le regolamentazioni dei social media che avanzano a livello mondiale affermano di essere "misure anti-disinformazione", ma in realtà, rischiano di diventare strumenti per controllare informazioni scomode per i governi.',
+          'Le norme sui social network che si stanno diffondendo in molti Paesi del mondo sono apparentemente finalizzate a "combattere la disinformazione", ma in realtà potrebbero diventare un mezzo per controllare le informazioni scomode per i governi.',
         content2:
-          "Quello di cui abbiamo bisogno è la capacità di giudicare l'affidabilità delle informazioni da soli, senza fare affidamento su governi, media tradizionali o IA."
+          "Abbiamo bisogno della capacità di giudicare da soli l'affidabilità delle informazioni, senza affidarci ai governi, ai grandi media o all'intelligenza artificiale."
       },
       balance: {
         title: "Controllo del Discorso vs. Qualità dell'Informazione: Un Approccio Equilibrato",

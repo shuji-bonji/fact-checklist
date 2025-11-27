@@ -8,8 +8,8 @@ import type { TranslationKeys } from '../types.js';
 export const metadata = {
   language: 'zh-TW' as const,
   version: '1.0.0',
-  lastUpdated: '2025-06-29',
-  translator: 'Claude AI',
+  lastUpdated: '2025-01-27',
+  translator: 'DeepL + Claude Code',
   completeness: 100
 };
 
@@ -95,7 +95,7 @@ export const translations: TranslationKeys = {
     intro: {
       title: '在充滿假訊息的世界中生存的事實檢查表',
       description:
-        '在政府社群媒體管制進展中，用自己的眼睛和頭腦評估資訊可靠性的簡單檢查表。科學系統性地評估資訊，不盲目信任AI或媒體。',
+        '面對政府對社群網站的管制，用自己的眼睛和思維評估資訊可靠性的簡單核對表；科學化、系統化評估資訊的 PWA 應用程式，不將 AI 或媒體視為理所當然。',
       keywords:
         '事實查核,資訊驗證,可靠性評估,PWA,資訊素養,假訊息對策,社群媒體管制,資訊控制,資訊品質,AI事實查核'
     }
@@ -1118,10 +1118,10 @@ export const translations: TranslationKeys = {
     sections: {
       regulation: {
         title: '政府社交網路規範與資訊控制的現實',
-        quote: '在「清除虛假資訊」的崇高名義下，是誰決定什麼是「真相」？',
+        quote: '在「消除假消息和錯誤消息」的事業中，誰來決定什麼是「真相」？',
         content1:
-          '全球正在推進的社交網路規範聲稱是「反虛假資訊措施」，但實際上，它們有成為控制對政府不利資訊工具的風險。',
-        content2: '我們需要的是不依賴政府、主流媒體或人工智慧，而是自己判斷資訊可信度的能力。'
+          '全球許多國家正在推動的社交網路法規，表面上是為了「打擊假消息」，但實際上卻可能成為控制對政府而言不便的資訊的手段。',
+        content2: '我們需要的是自己判斷資訊可靠性的能力，而不是依賴政府、主要媒體或人工智能。'
       },
       balance: {
         title: '言論控制與資訊品質：平衡的做法',
