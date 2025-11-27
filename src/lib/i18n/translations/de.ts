@@ -8,8 +8,8 @@ import type { TranslationKeys } from '../types.js';
 export const metadata = {
   language: 'de' as const,
   version: '1.0.0',
-  lastUpdated: '2025-06-29',
-  translator: 'Claude Code',
+  lastUpdated: '2025-01-27',
+  translator: 'DeepL + Claude Code',
   completeness: 100
 };
 
@@ -100,7 +100,7 @@ export const translations: TranslationKeys = {
     intro: {
       title: 'Faktencheck-Checkliste zum Überleben in einer Welt voller Desinformation',
       description:
-        'Eine einfache Checkliste zur Bewertung der Informationszuverlässigkeit mit Ihren eigenen Augen und Ihrem Verstand, während die staatliche Regulierung sozialer Netzwerke voranschreitet. Bewerten Sie Informationen wissenschaftlich und systematisch, ohne blind KI oder Medien zu vertrauen.',
+        'Eine einfache Checkliste, um angesichts der staatlichen Regulierung von sozialen Netzwerken die Verlässlichkeit von Informationen mit den eigenen Augen und dem eigenen Verstand zu beurteilen; eine PWA-App, um Informationen wissenschaftlich und systematisch zu bewerten, ohne KI oder die Medien als selbstverständlich anzusehen.',
       keywords:
         'Faktenchecking,Informationsverifizierung,Zuverlässigkeitsbewertung,PWA,Informationskompetenz,Desinformations-Gegenmaßnahmen,Social-Media-Regulierung,Informationskontrolle,Informationsqualität,KI-Faktenchecking'
     }
@@ -1308,11 +1308,11 @@ export const translations: TranslationKeys = {
       regulation: {
         title: 'Staatliche SNS-Regulierung und die Realität der Informationskontrolle',
         quote:
-          'Unter dem noblen Vorwand der "Entfernung von Fehlinformationen" - wer entscheidet, was "Wahrheit" ist?',
+          'Wer entscheidet, was "Wahrheit" ist, wenn es darum geht, "Desinformationen und Fehlinformationen zu beseitigen"?',
         content1:
-          'Weltweit voranschreitende SNS-Regulierungen behaupten, "Anti-Fehlinformations-Maßnahmen" zu sein, drohen aber in Wirklichkeit zu Werkzeugen zur Kontrolle regierungsunbequemer Informationen zu werden.',
+          'Die Vorschriften für soziale Netzwerke, die in vielen Ländern der Welt auf dem Vormarsch sind, zielen angeblich darauf ab, "Desinformation" zu bekämpfen, aber in Wirklichkeit können sie zu einem Mittel werden, um Informationen zu kontrollieren, die für Regierungen unbequem sind.',
         content2:
-          'Was wir brauchen, ist die Fähigkeit, Informationszuverlässigkeit selbst zu beurteilen, ohne uns auf Regierungen, Mainstream-Medien oder KI zu verlassen.'
+          'Wir müssen in der Lage sein, die Zuverlässigkeit von Informationen selbst zu beurteilen, ohne uns auf Regierungen, große Medien oder KI zu verlassen.'
       },
       balance: {
         title: 'Meinungskontrolle vs. Informationsqualität: Ein ausgewogener Ansatz',

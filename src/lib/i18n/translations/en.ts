@@ -8,9 +8,9 @@ import type { TranslationKeys } from '../types.js';
 export const metadata = {
   language: 'en' as const,
   version: '1.0.0',
-  lastUpdated: '2025-01-01',
-  translator: 'To be translated',
-  completeness: 0
+  lastUpdated: '2025-01-27',
+  translator: 'Native + Claude Code',
+  completeness: 100
 };
 
 export const translations: TranslationKeys = {
@@ -101,7 +101,7 @@ export const translations: TranslationKeys = {
     intro: {
       title: 'Fact Checklist for Surviving in a World Full of Misinformation',
       description:
-        'A simple checklist to evaluate information reliability with your own eyes and mind as government SNS regulations advance. Scientifically and systematically evaluate information without blindly trusting AI or media.',
+        'A simple checklist to determine the reliability of information with your own eyes and mind in the midst of government regulation of social networking sites; a PWA app to evaluate information scientifically and systematically, without relying on AI or the media.',
       keywords:
         'fact-checking,information verification,reliability assessment,PWA,information literacy,misinformation countermeasures,SNS regulation,information control,information quality,AI fact-checking'
     }
@@ -1295,11 +1295,12 @@ export const translations: TranslationKeys = {
     sections: {
       regulation: {
         title: 'Government SNS Regulation and the Reality of Information Control',
-        quote: 'Under the noble cause of "removing misinformation," who decides what is "truth"?',
+        quote:
+          'Who decides what is "truth" in the cause of "removing disinformation and misinformation?"',
         content1:
-          'SNS regulations advancing worldwide claim to be "anti-misinformation measures," but in reality, they risk becoming tools for controlling information inconvenient to governments.',
+          'The social networking regulations that are being promoted in countries around the world are ostensibly designed to "prevent disinformation," but in reality they may become a means of controlling information that is inconvenient for governments.',
         content2:
-          'What we need is the ability to judge information reliability ourselves, without relying on governments, mainstream media, or AI.'
+          'What we need is the ability to judge the reliability of information for ourselves, without relying on the government, major media, or AI.'
       },
       balance: {
         title: 'Speech Control vs. Information Quality: A Balanced Approach',

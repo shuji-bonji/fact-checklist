@@ -8,8 +8,8 @@ import type { TranslationKeys } from '../types.js';
 export const metadata = {
   language: 'fr' as const,
   version: '1.0.0',
-  lastUpdated: '2025-06-29',
-  translator: 'Claude Code',
+  lastUpdated: '2025-01-27',
+  translator: 'DeepL + Claude Code',
   completeness: 100
 };
 
@@ -103,7 +103,7 @@ export const translations: TranslationKeys = {
     intro: {
       title: 'Liste de Vérification Factuelle pour Survivre dans un Monde Plein de Désinformation',
       description:
-        "Une liste de vérification simple pour évaluer la fiabilité des informations avec vos propres yeux et votre esprit alors que la réglementation gouvernementale des réseaux sociaux progresse. Évaluez scientifiquement et systématiquement les informations sans faire aveuglément confiance à l'IA ou aux médias.",
+        "Une liste de contrôle simple pour évaluer la fiabilité de l'information avec vos propres yeux et votre esprit face à la réglementation gouvernementale des sites de réseautage social ; une application PWA pour évaluer scientifiquement et systématiquement l'information sans prendre l'IA ou les médias pour acquis.",
       keywords:
         "vérification des faits,vérification des informations,évaluation de la fiabilité,PWA,littératie informationnelle,contre-mesures de désinformation,réglementation des réseaux sociaux,contrôle de l'information,qualité de l'information,vérification factuelle par IA"
     }
@@ -1335,11 +1335,11 @@ export const translations: TranslationKeys = {
         title:
           "Réglementation gouvernementale des réseaux sociaux et la réalité du contrôle de l'information",
         quote:
-          'Sous la noble cause de "supprimer la désinformation", qui décide de ce qui est "vérité" ?',
+          'Qui décide de ce qu\'est la "vérité" dans le but de "supprimer la désinformation et la mésinformation" ?',
         content1:
-          'Les réglementations des réseaux sociaux qui progressent mondialement prétendent être des "mesures anti-désinformation", mais en réalité, elles risquent de devenir des outils pour contrôler l\'information gênante pour les gouvernements.',
+          'Les réglementations sur les réseaux sociaux qui progressent dans de nombreux pays du monde visent ostensiblement à "lutter contre la désinformation", mais en réalité, elles pourraient devenir un moyen de contrôler les informations qui dérangent les gouvernements.',
         content2:
-          "Ce dont nous avons besoin, c'est la capacité de juger la fiabilité de l'information nous-mêmes, sans dépendre des gouvernements, des médias grand public, ou de l'IA."
+          "Ce dont nous avons besoin, c'est de pouvoir juger de la fiabilité des informations par nous-mêmes, sans dépendre des gouvernements, des grands médias ou de l'IA."
       },
       balance: {
         title: "Contrôle de la parole vs. Qualité de l'information : Une approche équilibrée",
