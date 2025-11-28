@@ -186,9 +186,9 @@ export const translations: TranslationKeys = {
     reEdit: 'Ri-modifica',
 
     // PWA installation prompt
-    pwaInstallTitle: "🎉 Valutazione completata! Installare l'app?",
+    pwaInstallTitle: "🎉 Valutazione completata! Volete installare l'applicazione?",
     pwaInstallMessage:
-      'Installa questa app per valutare rapidamente le informazioni in qualsiasi momento.',
+      'Perché non installare questa app per poter valutare rapidamente le informazioni in qualsiasi momento?',
     pwaBenefits: {
       fastLaunch: '🚀 Avvio rapido',
       homeScreen: '📱 Accesso diretto dalla schermata home',

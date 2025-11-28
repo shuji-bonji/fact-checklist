@@ -183,8 +183,8 @@ export const translations: TranslationKeys = {
     reEdit: '重新編輯',
 
     // PWA installation prompt
-    pwaInstallTitle: '🎉 評估完成！安裝應用程式？',
-    pwaInstallMessage: '安裝此應用程式，隨時快速評估資訊。',
+    pwaInstallTitle: '🎉 評估完成！您想安裝應用程式嗎？',
+    pwaInstallMessage: '何不安裝此應用程式，以便隨時快速評估資訊？',
     pwaBenefits: {
       fastLaunch: '🚀 快速啟動',
       homeScreen: '📱 從主畫面直接存取',
