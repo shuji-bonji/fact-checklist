@@ -181,7 +181,8 @@ export const translations: TranslationKeys = {
 
     // PWA installation prompt
     pwaInstallTitle: '🎉 평가 완료! 앱을 설치하시겠습니까?',
-    pwaInstallMessage: '이 앱을 설치하여 언제든 빠르게 정보를 평가할 수 있도록 해 보시지 않겠습니까?',
+    pwaInstallMessage:
+      '이 앱을 설치하여 언제든 빠르게 정보를 평가할 수 있도록 해 보시지 않겠습니까?',
     pwaBenefits: {
       fastLaunch: '🚀 빠른 실행',
       homeScreen: '📱 홈 화면에서 바로 접근',

@@ -192,21 +192,61 @@
   }
 
   .checkbox-wrapper input[type='checkbox'] {
-    width: 20px;
-    height: 20px;
+    /* カスタムチェックボックス */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
     cursor: pointer;
-    accent-color: var(--primary-color);
+    border: 2px solid var(--border-color, #d1d5db);
+    border-radius: var(--radius-sm, 4px);
+    background-color: var(--surface-color, #ffffff);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 14px 14px;
     transform: scale(1);
-    transition: transform var(--transition-fast) var(--ease-bounce);
-    border-radius: var(--radius-sm);
+    transition:
+      transform var(--transition-fast) var(--ease-bounce),
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
   }
 
   .checkbox-wrapper input[type='checkbox']:checked {
+    background-color: var(--primary-color, #3b82f6);
+    border-color: var(--primary-color, #3b82f6);
     transform: scale(1.1);
+    /* 白いチェックマークのSVG */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
   }
 
   .checkbox-wrapper input[type='checkbox']:hover {
     transform: scale(1.05);
+    border-color: var(--primary-color, #3b82f6);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  }
+
+  .checkbox-wrapper input[type='checkbox']:focus {
+    outline: none;
+    border-color: var(--primary-color, #3b82f6);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  }
+
+  /* ライトモード専用のスタイル強化 */
+  :global(:root:not(.dark)) .checkbox-wrapper input[type='checkbox'] {
+    border-color: #9ca3af;
+    background-color: #ffffff;
+  }
+
+  :global(:root:not(.dark)) .checkbox-wrapper input[type='checkbox']:checked {
+    background-color: #2563eb;
+    border-color: #2563eb;
+  }
+
+  :global(:root:not(.dark)) .checkbox-wrapper input[type='checkbox']:hover {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
   }
 
   .item-content {
@@ -562,8 +602,9 @@
     }
 
     .checkbox-wrapper input[type='checkbox'] {
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
+      background-size: 12px 12px;
     }
   }
 </style>

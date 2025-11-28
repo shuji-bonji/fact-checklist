@@ -159,8 +159,8 @@ body.light {
     border-color: var(--success-color) !important;
   }
 
-  /* Input fields */
-  input,
+  /* Input fields (exclude checkbox and radio to allow custom styling) */
+  input:not([type='checkbox']):not([type='radio']),
   textarea,
   select {
     background: var(--surface-color) !important;
@@ -168,7 +168,7 @@ body.light {
     border-color: var(--border-color) !important;
   }
 
-  input:focus,
+  input:not([type='checkbox']):not([type='radio']):focus,
   textarea:focus,
   select:focus {
     border-color: var(--primary-color) !important;
