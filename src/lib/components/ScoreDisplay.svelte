@@ -268,6 +268,23 @@
     position: relative;
   }
 
+  /* Confidence bar fill colors - Light mode (default) */
+  .confidence-bar.high .confidence-fill {
+    background: linear-gradient(90deg, #2ea043, #3fb950);
+  }
+
+  .confidence-bar.medium .confidence-fill {
+    background: linear-gradient(90deg, #2563eb, #3b82f6);
+  }
+
+  .confidence-bar.low .confidence-fill {
+    background: linear-gradient(90deg, #d97706, #f59e0b);
+  }
+
+  .confidence-bar.very-low .confidence-fill {
+    background: linear-gradient(90deg, #dc2626, #ef4444);
+  }
+
   .confidence-fill::after {
     content: '';
     position: absolute;

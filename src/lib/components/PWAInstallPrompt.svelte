@@ -161,23 +161,23 @@
     persistent: 'pwa-prompt-persistent'
   };
 
-  // デフォルトテキスト
-  const defaultTitles = {
+  // デフォルトテキスト（リアクティブに翻訳を取得）
+  const defaultTitles = $derived({
     success: t('checklist.pwaInstallTitle'),
     subtle: t('checklist.pwaHint'),
     feature: t('checklist.pwaFeature'),
     persistent: t('checklist.pwaPersistent')
-  };
+  });
 
-  const defaultMessages = {
+  const defaultMessages = $derived({
     success: t('checklist.pwaInstallMessage'),
     subtle: t('checklist.pwaHintMessage'),
     feature: t('checklist.pwaFeatureMessage'),
     persistent: t('checklist.pwaPersistentMessage')
-  };
+  });
 
-  const displayTitle = title || defaultTitles[variant];
-  const displayMessage = message || defaultMessages[variant];
+  const displayTitle = $derived(title || defaultTitles[variant]);
+  const displayMessage = $derived(message || defaultMessages[variant]);
 </script>
 
 {#if isVisible}
