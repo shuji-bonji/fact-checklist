@@ -184,9 +184,9 @@ export const translations: TranslationKeys = {
     reEdit: 'Edit Ulang',
 
     // PWA installation prompt
-    pwaInstallTitle: '🎉 Evaluasi Selesai! Pasang Aplikasi?',
+    pwaInstallTitle: '🎉 Evaluasi selesai! Apakah Anda ingin menginstal aplikasi?',
     pwaInstallMessage:
-      'Pasang aplikasi ini untuk evaluasi informasi yang cepat dan mudah kapan saja.',
+      'Mengapa tidak menginstal aplikasi ini agar Anda dapat dengan cepat menilai informasi kapan saja?',
     pwaBenefits: {
       fastLaunch: '🚀 Peluncuran Cepat',
       homeScreen: '📱 Akses Langsung dari Layar Beranda',
