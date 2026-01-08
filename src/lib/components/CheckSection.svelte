@@ -20,7 +20,9 @@
     context: 'context'
   };
 
-  const categoryClass = categoryClasses[category.id as keyof typeof categoryClasses] || 'default';
+  const categoryClass = $derived(
+    categoryClasses[category.id as keyof typeof categoryClasses] ?? 'default'
+  );
 </script>
 
 <div class="section">

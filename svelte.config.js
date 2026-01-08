@@ -19,7 +19,8 @@ const config = {
     prerender: {
       handleHttpError: 'warn',
       handleMissingId: 'warn',
-      entries: [], // No prerender entries - all pages use dynamic SSR
+      handleUnseenRoutes: 'ignore',
+      entries: ['/robots.txt', '/sitemap.xml'], // Prerender SEO routes
       crawl: false
     }
   }
