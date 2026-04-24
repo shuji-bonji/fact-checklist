@@ -21,7 +21,7 @@
     "generate:sitemap": "node scripts/generate-sitemap.js",
     "update:pwa-version": "node scripts/update-pwa-version.js",
     "generate:git-lastmod": "node scripts/get-git-lastmod.js",
-    "prebuild": "npm run generate:sitemap && npm run generate:git-lastmod && npm run update:pwa-version",
+    "prebuild": "npm run generate:git-lastmod && npm run generate:sitemap && npm run update:pwa-version",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
