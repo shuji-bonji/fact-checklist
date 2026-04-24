@@ -135,7 +135,7 @@
       name: t('about.categories.detailed.name'),
       emoji: '📝',
       description: t('about.categories.detailed.description'),
-      items: 5,
+      items: 6,
       color: '#f39c12'
     },
     {
@@ -143,7 +143,7 @@
       name: t('about.categories.verification.name'),
       emoji: '🔍',
       description: t('about.categories.verification.description'),
-      items: 5,
+      items: 4,
       color: '#3498db'
     },
     {

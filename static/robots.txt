@@ -39,6 +39,10 @@ Allow: /favicon.ico
 Allow: /robots.txt
 Allow: /sitemap.xml
 
+# Allow LLM-friendly documentation (llmstxt.org)
+Allow: /llms.txt
+Allow: /llms-ja.txt
+
 # Additional information
 # This PWA application is designed for fact-checking and information verification
 # All public pages are safe for indexing and provide educational value

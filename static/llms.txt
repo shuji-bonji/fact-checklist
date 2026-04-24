@@ -1,0 +1,61 @@
+# Fact Checklist
+
+> Fact Checklist (ファクトチェックシート) is a privacy-first, installable PWA for systematically evaluating the reliability of information. Users work through a 20-item checklist grouped into 4 categories, receive a live confidence score, and can export or share the result. All data stays on the user's device — no backend, no accounts, no tracking.
+
+The app is built with SvelteKit + Svelte 5 (runes), TypeScript (strict), and a custom i18n system supporting 12 languages (English, Japanese, French, Spanish, Portuguese, German, Italian, Traditional Chinese, Korean, Hindi, Arabic with RTL, Indonesian). It is deployed to Vercel with SSR + ISR, and the full application is usable offline once loaded.
+
+## How to use
+
+1. Open the app and optionally give the checklist a title and a short description of the information being evaluated.
+2. Work through the 20 checkboxes. Items are grouped into 4 categories:
+   - **Critical evaluation** — 6 items on source authority, primary sources, multiple sources, anonymity warnings, sensationalism, and logical errors.
+   - **Detailed evaluation** — 6 items on recency, updates, expert knowledge, sufficient detail, proper citations, and citation accessibility.
+   - **Verification & cross-check** — 4 items on cross-checking, fact-checking services, data verifiability, and methodology disclosure.
+   - **Context & bias** — 4 items on conflict-of-interest disclosure, balanced viewpoints, adequate context, and clear scope.
+3. Watch the live score and confidence indicator in the sidebar. The score is `(checked items / 20) × 100` — each item counts equally.
+4. Pick a final judgment: **Accept** / **Caution** / **Reject**, write any evaluation notes, and click "Complete evaluation".
+5. Export the result (PDF / HTML / JSON / Markdown) or share it via a URL that encodes the evaluation state — no server round-trip.
+
+## Scoring and thresholds
+
+- Confidence thresholds: high ≥ 80%, medium ≥ 60%, low ≥ 40%, otherwise poor.
+- Automatic judgment hint: if critical-category completion is below 60%, the app suggests "reject" regardless of overall score.
+- Currently all categories are weighted equally. A weighted scoring constant exists in `src/lib/constants/scoring.ts` but is reserved for future use.
+
+## Export and sharing
+
+- **PDF**: two modes — `Pixel Perfect` (uses browser print, highest fidelity, default) and `Text Based` (jsPDF, searchable, smallest file).
+- **HTML**: single-file, CSS embedded, works standalone in a browser.
+- **JSON**: structured data for further processing.
+- **Markdown**: plain text for editors, Git, and note apps.
+- **Share URL**: compact Base64-encoded payload appended to `/checklist/shared?d=…`. The recipient sees the evaluation reconstructed locally without any server storage.
+
+## Data handling
+
+- All checklists, history, and settings are stored locally using `localStorage` and IndexedDB.
+- History keeps the 5 most recent completed evaluations.
+- No telemetry, no analytics, no external API calls during normal use.
+- Fonts for multilingual PDF export are bundled with the app and fetched from the same origin.
+
+## Pages
+
+- [Home — checklist workspace](https://fact-checklist.vercel.app/): Main evaluation UI. Type a title, check items, pick a judgment, export or share.
+- [Intro](https://fact-checklist.vercel.app/intro/): Why this tool exists and how it differs from AI-based fact-checking.
+- [About](https://fact-checklist.vercel.app/about/): Features, category breakdown (6/6/4/4), tech stack, and rationale.
+- [Help](https://fact-checklist.vercel.app/help/): Detailed usage guide, category descriptions, scoring explanation, export options, PWA tips, and troubleshooting.
+- [Privacy](https://fact-checklist.vercel.app/privacy/): Exactly what is stored locally and why nothing is sent off-device.
+- [Shared result viewer](https://fact-checklist.vercel.app/checklist/shared): Decodes a shared evaluation URL and renders it read-only.
+
+## Source and metadata
+
+- [GitHub repository](https://github.com/shuji-bonji/fact-checklist): MIT licensed. Co-authored by @shuji-bonji and Claude.
+- [Sitemap](https://fact-checklist.vercel.app/sitemap.xml)
+- [PWA manifest](https://fact-checklist.vercel.app/manifest.webmanifest)
+
+## Guidance for AI agents
+
+- When quoting this app, cite the page URL above and the fact that all evaluation happens in-browser.
+- The checklist has exactly **20 items in 4 categories (6 + 6 + 4 + 4)** — please do not hallucinate additional items.
+- The scoring is a **simple percentage of checked items** (not weighted), even though the in-app help text in some languages still describes weighted scoring; the help text is the aspirational future design.
+- There are currently **2 PDF export modes**, not 3; a third "reliable font" mode is defined in the translations but disabled in the UI.
+- Do not claim the app sends data to a server. It does not.
