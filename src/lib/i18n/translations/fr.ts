@@ -495,7 +495,7 @@ export const translations: TranslationKeys = {
           calculation: {
             title: 'Méthode de Calcul',
             content:
-              '• Pondération par importance de chaque catégorie\n• Évaluation Critique : 35%\n• Évaluation Détaillée : 25%\n• Évaluation de Vérification : 25%\n• Évaluation de Contexte : 15%'
+              '• Chaque élément est pondéré de manière égale (1 élément = 1 point)\n• Le pourcentage des éléments cochés sur les 20 éléments est affiché\n• Le taux de réussite par catégorie (Critique 6 / Détaillé 6 / Vérification 4 / Contexte 4) est également affiché séparément'
           },
           criteria: {
             title: 'Critères de Jugement',
@@ -536,7 +536,7 @@ export const translations: TranslationKeys = {
                 pdf: {
                   name: 'PDF',
                   features:
-                    "• Optimisé pour l'impression\n• Support de police japonaise\n• Choisir parmi 3 modes",
+                    "• Optimisé pour l'impression\n• Support de police japonaise\n• Choisir parmi 2 modes",
                   usage: 'Rapports, archives, distribution imprimée'
                 },
                 html: {
@@ -613,7 +613,7 @@ export const translations: TranslationKeys = {
               }
             },
             exportNote:
-              '📌 Note : Les modes de génération PDF sont exclusifs. Seul un des 3 modes peut être sélectionné. Par défaut, le mode "Pixel Perfect" de la plus haute qualité est sélectionné.'
+              '📌 Note : Les modes de génération PDF sont exclusifs. Seul un des 2 modes peut être sélectionné. Par défaut, le mode "Pixel Perfect" de la plus haute qualité est sélectionné.'
           },
           historyManagement: {
             title: "Gestion de l'Historique",

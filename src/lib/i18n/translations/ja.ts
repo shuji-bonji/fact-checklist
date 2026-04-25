@@ -482,7 +482,7 @@ export const translations: TranslationKeys = {
           calculation: {
             title: '計算方法',
             content:
-              '• 各カテゴリの重要度による重み付け\n• クリティカル評価: 35%\n• 詳細評価: 25%\n• 検証評価: 25%\n• コンテキスト評価: 15%'
+              '• 各項目は均等配分（1項目 = 1点）で計算\n• 全20項目のうちチェック済みの割合をパーセンテージ表示\n• カテゴリ別（クリティカル6 / 詳細6 / 検証4 / 文脈4）の達成率も個別に表示'
           },
           criteria: {
             title: '判定基準',
@@ -522,7 +522,7 @@ export const translations: TranslationKeys = {
               formats: {
                 pdf: {
                   name: 'PDF',
-                  features: '• 印刷に最適\n• 日本語フォント対応\n• 3つのモードから選択可能',
+                  features: '• 印刷に最適\n• 日本語フォント対応\n• 2つのモードから選択可能',
                   usage: '報告書、アーカイブ、印刷配布'
                 },
                 html: {
@@ -594,7 +594,7 @@ export const translations: TranslationKeys = {
               }
             },
             exportNote:
-              '📌 注意: PDF生成モードは排他的です。3つのモードのうち、いずれか1つのみ選択できます。デフォルトでは最も高品質な「ピクセルパーフェクト」モードが選択されています。'
+              '📌 注意: PDF生成モードは排他的です。2つのモードのうち、いずれか1つのみ選択できます。デフォルトでは最も高品質な「ピクセルパーフェクト」モードが選択されています。'
           },
           historyManagement: {
             title: '履歴管理',
@@ -789,7 +789,7 @@ export const translations: TranslationKeys = {
         description: '4カテゴリ20項目の包括的チェック',
         details: [
           '体系的な評価基準',
-          '重み付けによる信頼度算出',
+          'チェック項目の完了率による信頼度算出',
           '客観的な判定支援',
           '専門家監修のチェック項目'
         ]

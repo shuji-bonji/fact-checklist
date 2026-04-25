@@ -489,7 +489,7 @@ export const translations: TranslationKeys = {
           calculation: {
             title: 'Calculation Method',
             content:
-              '• Weighting by importance of each category\n• Critical Assessment: 35%\n• Detailed Assessment: 25%\n• Verification Assessment: 25%\n• Context Assessment: 15%'
+              '• Each item is weighted equally (1 item = 1 point)\n• Percentage of checked items out of the total 20 is displayed\n• Per-category achievement (Critical 6 / Detailed 6 / Verification 4 / Context 4) is also shown separately'
           },
           criteria: {
             title: 'Judgment Criteria',
@@ -530,7 +530,7 @@ export const translations: TranslationKeys = {
                 pdf: {
                   name: 'PDF',
                   features:
-                    '• Optimized for printing\n• Japanese font support\n• Choose from 3 modes',
+                    '• Optimized for printing\n• Japanese font support\n• Choose from 2 modes',
                   usage: 'Reports, archives, printed distribution'
                 },
                 html: {
@@ -605,7 +605,7 @@ export const translations: TranslationKeys = {
               }
             },
             exportNote:
-              '📌 Note: PDF generation modes are exclusive. Only one of the 3 modes can be selected. By default, the highest quality "Pixel Perfect" mode is selected.'
+              '📌 Note: PDF generation modes are exclusive. Only one of the 2 modes can be selected. By default, the highest quality "Pixel Perfect" mode is selected.'
           },
           historyManagement: {
             title: 'History Management',
