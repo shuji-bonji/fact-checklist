@@ -272,23 +272,22 @@
                 <small>{t('export.pdfModes.pixelPerfectDescription')}</small>
               </label>
 
-              <!-- 🔥 フォント信頼性重視モードは一時的に非表示（文字被りやレイアウトの問題のため）
-              <label class="radio-option">
-                <input
-                  type="radio"
-                  name="pdfMode"
-                  checked={exportOptions.reliableMode &&
-                    !exportOptions.pixelPerfectMode &&
-                    !exportOptions.textMode}
-                  onchange={() => {
-                    updateExportOption('pixelPerfectMode', false);
-                    updateExportOption('reliableMode', true);
-                    updateExportOption('textMode', false);
-                  }}
-                />
-                <span>🔥 {t('export.pdfModes.reliableFont')}</span>
-                <small>{t('export.pdfModes.reliableFontDescription')}</small>
-              </label>
+              <!--
+                🔥 reliableFont モード（確実な日本語対応）は 2025-07-02 以降 UI から非表示化中。
+                commit 0dedeef "fix: PDF出力オプションの変更" にて「文字被りやレイアウトの問題のため」として
+                コメントアウトされた。実装本体 (src/lib/utils/reliablePDFGenerator.ts, 約1050行) は生存しているが、
+                以下の複合バグがあり、単純な復活は推奨されない。
+
+                主要バグ（復活時に要対応）:
+                  1. lineHeight が 7mm 固定でフォントサイズ 9〜18pt と不整合（文字被りの主因）
+                  2. addInternationalText 内で x=0 を「自動配置」と誤判定する条件分岐
+                  3. addScoreGrid / addSectionHeader 等で生の pdf.text() を直接呼び出しており、
+                     RTL (アラビア語) のテキスト方向が壊れる
+                  4. addGuideContent の page-break 閾値が不足し、ガイド付き出力でページ末尾被りが発生
+                  5. addLeftBorder が page margin 固定で、スコアカードごとの位置に追従しない
+
+                復活作業の見積もり: 3〜5日 (12言語 × ガイド有無での目視確認を含む)。
+                詳細な復活計画は docs/reliable-pdf-mode-restoration.md を参照。
               -->
 
               <label class="radio-option">
