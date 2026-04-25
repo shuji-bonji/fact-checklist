@@ -259,12 +259,19 @@ body.light {
   }
 }
 
-/* Safari-specific fixes */
-@supports (-webkit-appearance: none) {
-  /* Force reflow on Safari when light class is added */
-  :root.light *,
-  html.light * {
-    /* Trigger repaint */
-    transform: translateZ(0);
-  }
-}
+/*
+ * Safari-specific fixes
+ *
+ * NOTE: 以前ここに `:root.light *, html.light * { transform: translateZ(0) }` という
+ * 強制リペイントハックがあったが、全要素に transform を当てると position: fixed の
+ * containing block が親要素に移ってしまい、モーダル等が viewport 中央ではなく
+ * ドキュメント中央に描画される致命的なバグを引き起こしていた (#176 fix の副作用)。
+ *
+ * 代わりに DarkModeToggle.svelte の updateTheme() で
+ * `void document.body.offsetHeight` により reflow を強制しているため、
+ * CSS 側の * セレクタによる transform は不要。
+ *
+ * Safari ライトモードで再度スタイル不整合が出た場合は、
+ * 個別の要素 (.card / .nav / .section-header など) に限定して
+ * contain: style や isolation: isolate を試すこと。
+ */
