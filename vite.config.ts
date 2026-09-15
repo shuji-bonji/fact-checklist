@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
         // GitHub Pages対応: baseパス設定
         base,
         workbox: {
-          // version: '1.0.0'
+          // version: '1.1.0'
           globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2}'],
           maximumFileSizeToCacheInBytes: 3 * 1024 * 1024, // 3MBまでキャッシュ可能にする
           navigateFallback: null,

@@ -865,9 +865,7 @@ tests/
 // Example mocking patterns used in setup.ts
 vi.stubGlobal('localStorage', localStorageMock);
 vi.stubGlobal('indexedDB', indexedDBMock);
-vi.mock('jspdf', () => ({
-  /* PDF mock */
-}));
+vi.mock('jspdf', () => ({/* PDF mock */}));
 ```
 
 ### Coverage Targets

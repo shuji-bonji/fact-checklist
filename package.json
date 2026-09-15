@@ -1,6 +1,6 @@
 {
   "name": "fact-checklist",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "ファクトチェックリスト - 情報の信頼性を科学的・体系的に評価するファクトチェック支援PWA",
   "type": "module",
   "scripts": {
@@ -88,7 +88,7 @@
     "node": ">=20.0.0 <23.0.0"
   },
   "overrides": {
-    "cookie": ">=0.7.0",
+    "cookie": "^0.7.0",
     "dompurify": ">=3.2.4",
     "esbuild": ">=0.24.3"
   }

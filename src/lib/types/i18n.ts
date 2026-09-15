@@ -157,18 +157,7 @@ export type TranslationKey =
 
 /** 言語コード */
 export type LanguageCode =
-  | 'ja'
-  | 'en'
-  | 'fr'
-  | 'zh-TW'
-  | 'es'
-  | 'pt'
-  | 'hi'
-  | 'de'
-  | 'it'
-  | 'ar'
-  | 'id'
-  | 'ko';
+  'ja' | 'en' | 'fr' | 'zh-TW' | 'es' | 'pt' | 'hi' | 'de' | 'it' | 'ar' | 'id' | 'ko';
 
 /** RTL言語の判定 */
 export type RTLLanguage = 'ar';
